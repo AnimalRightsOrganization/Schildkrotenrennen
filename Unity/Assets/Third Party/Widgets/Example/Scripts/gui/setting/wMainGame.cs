@@ -23,7 +23,7 @@ public class wMainGame : Widget
         spawnPool = PoolManager.Pools["GameAssets"];
 
         m_closeButton.onClick.AddListener(OnCloseButtonClick);
-        m_startButton.onClick.AddListener(OnStartButtonClick);
+        m_startButton.onClick.AddListener(OnPlayButtonClick);
     }
 
     void Start()
@@ -34,7 +34,7 @@ public class wMainGame : Widget
     void OnDestroy()
     {
         m_closeButton.onClick.RemoveListener(OnCloseButtonClick);
-        m_startButton.onClick.RemoveListener(OnStartButtonClick);
+        m_startButton.onClick.RemoveListener(OnPlayButtonClick);
 
         base.DestroyWidget();
     }
@@ -44,9 +44,9 @@ public class wMainGame : Widget
         WidgetManager.Instance.Pop(this.Id, false);
     }
 
-    private void OnStartButtonClick()
+    private void OnPlayButtonClick()
     {
-        Debug.Log("开始游戏");
+        Debug.Log("出牌");
     }
 
     public void InitGame()
@@ -68,7 +68,7 @@ public class wMainGame : Widget
             obj.SetParent(playerRoot);
 
             PlayerItem item = obj.GetComponent<PlayerItem>();
-            item.InitData();
+            item.InitData(i);
         }
         //创建手牌
         for (int i = 0; i < handPoints.Length; i++)

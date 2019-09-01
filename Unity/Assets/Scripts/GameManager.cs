@@ -133,6 +133,23 @@ public class GameManager : wSingleton<GameManager>
 
         ///TODO: 如果牌库不足10张，执行洗牌
     }
+    //打出一张牌，抽一张牌
+    public void DealOnce(int chair_id)
+    {
+        if (playerList[chair_id].handCardsList.Count < 5)
+        {
+            // 从牌库抽一张牌
+            int index = Random.Range(1, libraryList.Count);
+
+            CardAttribute card = libraryList[index];
+
+            // 把牌放入玩家手中
+            playerList[chair_id].handCardsList.Add(card);
+
+            // 把牌从牌库中移除
+            libraryList.Remove(card);
+        }
+    }
 }
 
 // 52张牌

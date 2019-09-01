@@ -20,11 +20,16 @@ public class Card : MonoBehaviour
         cardAttribute = data;
 
         string combName = (data.cardColor.ToString().ToLower() + "" + (data.cardNum > 0 ? "+" : "") + (int)data.cardNum);
-        Debug.Log(combName);
+        //Debug.Log(combName);
 
         //var array = cardArray.Where(x => x.name == combName).ToList();
         //Debug.Log(array.Count);
         var sp = cardArray.First(x => x.name == combName);
         mMainSP.sprite = sp;
+    }
+
+    public void Select()
+    {
+        Debug.Log("选中");
     }
 }
