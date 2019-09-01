@@ -1,0 +1,11 @@
+Widgets/Example contains demo scenes, for getting start see setup guide 
+note : don't put Widgets folder under any folder
+
+
+
+Change Log:
+-Actor Component Added for UI element animation
+-Set Interactable of previous panel on or off
+-Tons of warnings removed.
+-Known BUG fix.
+-Many Demo scenes.
