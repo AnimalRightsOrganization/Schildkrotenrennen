@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class Card : MonoBehaviour
 {
+    [HideInInspector] public Sprite[] cardArray;
     [SerializeField] Image mMainSP;
-    [SerializeField] Sprite[] cardArray;
     [SerializeField] CardAttribute cardAttribute;
 
     void Start()
@@ -30,6 +31,14 @@ public class Card : MonoBehaviour
 
     public void Select()
     {
-        Debug.Log("选中");
+        //Debug.Log("选中");
+        transform.DOScale(1.1f, 0.2f);
+
+        wMainGame.playCardEvent.Invoke(cardAttribute); //通知方式执行事件
+    }
+
+    public void UnSelect()
+    {
+        transform.DOScale(1f, 0.2f);
     }
 }

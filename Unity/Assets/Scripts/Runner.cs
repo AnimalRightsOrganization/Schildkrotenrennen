@@ -3,17 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum RunnerColor
-{
-    Red = 0,
-    Yellow = 1,
-    Green = 2,
-    Blue = 3,
-    Purple = 4
-}
 public class Runner : MonoBehaviour
 {
-    [SerializeField] RunnerColor mColor;
+    public RunnerColor mColor;
     [SerializeField] Sprite[] mColorSp = new Sprite[5];
     [SerializeField] Image mColorImage;
     [SerializeField] int CurrentWayPoint;

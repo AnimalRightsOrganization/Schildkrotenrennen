@@ -150,6 +150,12 @@ public class GameManager : wSingleton<GameManager>
             libraryList.Remove(card);
         }
     }
+
+    // 出牌
+    public void Play(CardAttribute card)
+    {
+
+    }
 }
 
 // 52张牌
@@ -162,6 +168,14 @@ public class GameManager : wSingleton<GameManager>
  * 慢+1，3
  * 慢+2，2
  * */
+public enum RunnerColor
+{
+    Red = 0,
+    Yellow = 1,
+    Green = 2,
+    Blue = 3,
+    Purple = 4
+}
 public enum CardColor
 {
     Red = 0,
