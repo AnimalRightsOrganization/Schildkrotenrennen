@@ -15,8 +15,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using LitJson;
 
-public class GameManager : wSingleton<GameManager>
+public class GameManager : MonoBehaviour
 {
+    static GameManager _instance;
+    public static GameManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<GameManager>();
+            }
+            return _instance;
+        }
+    }
+
     public const int CARD_COUNT = 52;
     [SerializeField] List<CardAttribute> libraryList;
     [SerializeField] List<CardAttribute> deskList = new List<CardAttribute>(); //桌上的牌

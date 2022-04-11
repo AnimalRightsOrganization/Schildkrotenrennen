@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,11 +9,6 @@ public class Card : MonoBehaviour
     [HideInInspector] public Sprite[] cardArray;
     [SerializeField] Image mMainSP;
     [SerializeField] CardAttribute cardAttribute;
-
-    void Start()
-    {
-
-    }
 
     public void InitData(CardAttribute data)
     {
@@ -34,7 +28,7 @@ public class Card : MonoBehaviour
         //Debug.Log("选中");
         transform.DOScale(1.1f, 0.2f);
 
-        wMainGame.playCardEvent.Invoke(cardAttribute); //通知方式执行事件
+        //wMainGame.playCardEvent.Invoke(cardAttribute); //通知方式执行事件
     }
 
     public void UnSelect()

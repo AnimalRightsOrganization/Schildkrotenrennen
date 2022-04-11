@@ -21,15 +21,14 @@ public class PlayerItem : MonoBehaviour
 
     public void InitData(int chair_id)
     {
-        isLocalPlayer = (wMainGame.Instance.identify == chair_id);
+        //isLocalPlayer = (wMainGame.Instance.identify == chair_id);
 
         int sid = Random.Range(0, 5); //服务器下发身份颜色
         mIdImage.sprite = mIdArray[sid];
 
         gamePlayer = GameManager.Instance.playerList[chair_id];
 
-        //handCards = gamePlayer.handCardsList;
-        handCards = wMainGame.Instance.cardList;
+        //handCards = wMainGame.Instance.cardList;
     }
 
     public void OnPlay()
