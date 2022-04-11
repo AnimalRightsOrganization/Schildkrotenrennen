@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,16 +11,16 @@ public class Runner : MonoBehaviour
 
     void Awake()
     {
-        mColorImage = GetComponent<Image>();
-    }
+        mColorImage = GetComponentInChildren<Image>();
 
-    void Update()
-    {
-        
+        var sp = ResManager.LoadSprite("Sprites/Models");
+        mColorSp = sp;
     }
 
     public void InitData(int id)
     {
+        //Debug.Log($"棋子：{id}");
+
         CurrentWayPoint = 0;
         mColor = (RunnerColor)id;
         mColorImage.sprite = mColorSp[id];

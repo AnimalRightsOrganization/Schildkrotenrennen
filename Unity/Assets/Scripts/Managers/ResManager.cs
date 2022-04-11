@@ -102,6 +102,32 @@ public class ResManager
         return config;
     }
 
+    public static Sprite[] LoadSprite(string configName)
+    {
+        Sprite[] sp;
+#if UNITY_EDITOR && !USE_ASSETBUNDLE
+        string filePath = $"Assets/Bundles/{configName}.png";
+        var assets = AssetDatabase.LoadAllAssetsAtPath(filePath);
+#else
+        string filePath = GetFilePath($"{configName}.unity3d");
+        AssetBundle asset = AssetBundle.LoadFromFile(filePath);
+        var assets = asset.LoadAllAssets();
+        asset.Unload(false);
+#endif
+        int count = assets.Count();
+        //Debug.Log($"子物体：{count}个");
+
+        sp = new Sprite[count - 1];
+        for (int i = 1; i < count; i++)
+        {
+            var subAsset = assets[i];
+            //Debug.Log($"{i}---{asset.name}");
+            sp[i - 1] = subAsset as Sprite;
+        }
+
+        return sp;
+    }
+
     static string GetFilePath(string assetName)
     {
         JsonAssets obj = assetsObj.Where(x => x.filePath == assetName.ToLower()).FirstOrDefault();

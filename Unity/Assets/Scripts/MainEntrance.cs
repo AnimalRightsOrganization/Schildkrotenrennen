@@ -16,7 +16,17 @@ public class MainEntrance : MonoBehaviour
         //    //Debug.Log("跳转到Client场景就执行一次");
         //    UIManager.Get().Push<UI_Main>();
         //}
-        
+
+        InitGlobalManagers();
+
         UIManager.Get().Push<UI_Main>();
+    }
+
+    // 初始化全局配置
+    void InitGlobalManagers()
+    {
+        //ConfigManager.Get();
+        AudioManager.Get();
+        UIManager.Get();
     }
 }

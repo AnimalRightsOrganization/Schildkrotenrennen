@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     }
 
     public const int CARD_COUNT = 52;
-    [SerializeField] List<CardAttribute> libraryList;
+    [SerializeField] List<CardAttribute> libraryList; //所有牌
     [SerializeField] List<CardAttribute> deskList = new List<CardAttribute>(); //桌上的牌
     [SerializeField, Range(2, 6)] int playerCount = 2; //本局玩家数，开房间时确定
     public List<GamePlayer> playerList = new List<GamePlayer>(); //玩家列表
@@ -54,22 +54,6 @@ public class GameManager : MonoBehaviour
         int roomId = Random.Range(1000, 10000);
 
         ///TODO: 等待其他玩家加入
-
-        // 从总玩家数max中，随机取count个数
-        /*
-        int max = System.Enum.GetNames(typeof(AvatarModel)).GetLength(0);
-        int[] startArray = new int[max];
-        int[] resultArray = new int[playerCount]; //结果存放在里面
-        for (int i = 0; i < max; i++)
-        {
-            startArray[i] = i;
-        }
-        for (int i = 0; i < playerCount; i++)
-        {
-            int seed = Random.Range(0, startArray.Length - i); //从剩下的随机数里生成
-            resultArray[i] = startArray[seed];//赋值给结果数组
-            startArray[seed] = startArray[startArray.Length - i - 1]; //把随机数产生过的位置替换为未被选中的值。
-        }*/
 
         // 创建当局玩家列表
         playerList.Clear();
@@ -178,26 +162,26 @@ public class GameManager : MonoBehaviour
  * 5色+1，5*5=25
  * 彩色+1，5
  * 5色+2，5
- * 慢+1，3
- * 慢+2，2
+ * 最慢+1，3
+ * 最慢+2，2
  * */
 public enum RunnerColor
 {
-    Red = 0,
-    Yellow = 1,
-    Green = 2,
-    Blue = 3,
-    Purple = 4
+    Red     = 0,
+    Yellow  = 1,
+    Green   = 2,
+    Blue    = 3,
+    Purple  = 4
 }
 public enum CardColor
 {
-    Red = 0,
-    Yellow = 1,
-    Green = 2,
-    Blue = 3,
-    Purple = 4,
-    Color = 5,
-    Slow = 6
+    Red     = 0,
+    Yellow  = 1,
+    Green   = 2,
+    Blue    = 3,
+    Purple  = 4,
+    Color   = 5,
+    Slowest = 6
 }
 public enum CardNum
 {

@@ -14,11 +14,6 @@ public class PlayerItem : MonoBehaviour
     public bool isLocalPlayer;
     public List<Card> handCards;
 
-    void Start()
-    {
-        
-    }
-
     public void InitData(int chair_id)
     {
         //isLocalPlayer = (wMainGame.Instance.identify == chair_id);
