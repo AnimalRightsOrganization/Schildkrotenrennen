@@ -2,8 +2,8 @@
 using Random = System.Random;
 using Debug = UnityEngine.Debug;
 
-// 承载输入输出的逻辑盒子
-public class GameLogic
+// 公共算法黑盒
+public partial class GameLogic
 {
     //protected int seed;
     static Random rd;
@@ -13,6 +13,91 @@ public class GameLogic
 
     List<CardAttribute> libraryList; //所有牌
     List<CardAttribute> deskList = new List<CardAttribute>(); //桌上的牌
+
+    // 开局，分配玩家颜色
+    public byte[] AllotColor()
+    {
+        // 5色，不重复
+        //List<RunnerColor> colors = new List<RunnerColor>()
+        //{
+        //    (RunnerColor)0,
+        //    (RunnerColor)1,
+        //    (RunnerColor)2,
+        //    (RunnerColor)3,
+        //    (RunnerColor)4,
+        //};
+        int count = (int)RunnerColor.COUNT;
+        byte[] colors = new byte[] { 0,1,2,3,4 };
+
+        // 打乱排序
+        Random _rd = new Random();
+        int index = 0;
+        //RunnerColor temp;
+        byte temp;
+        for (int i = 0; i < count; i++)
+        {
+            index = _rd.Next(0, count - 1);
+            if (index != i)
+            {
+                temp = colors[i];
+                colors[i] = colors[index];
+                colors[index] = temp;
+            }
+        }
+
+        //for (int i = playerList.Count - 1; i >= 0; i--)
+        //{
+        //    var player = playerList[i];
+        //    var color = colors[i];
+        //    Debug.Log($"玩家{i}---颜色{color}");
+        //}
+        return colors;
+    }
+}
+// 客户端逻辑
+public partial class GameLogic
+{
+    public void OnGetRoomList()
+    {
+
+    }
+
+    // 房间内广播
+    public void OnEnterRoom()
+    {
+
+    }
+
+    // 房间内广播
+    public void OnLeaveRoom()
+    {
+
+    }
+
+    // 通知玩家切换场景，房间内广播
+    public void OnGameStart()
+    {
+        //S2C_GameStart，下发房间号、玩家ID
+        //玩家颜色，初始手牌5张。
+    }
+
+    // 某人出牌，房间内广播
+    public void OnPlay()
+    {
+        //S2C_Play，下发玩家ID，出牌ID
+    }
+
+    // 发牌给自己，房间内广播
+    public void OnDeal()
+    {
+        //S2C_Deal，下发玩家ID(自己)，得牌ID
+    }
+
+    // 弹出结算，房间内广播
+    public void OnGameResult()
+    {
+
+    }
 
     // 创建房间
     public void CreateRoom()
@@ -39,41 +124,6 @@ public class GameLogic
     public void InitMap()
     {
         //var obj = ResManager.LoadPrefab("Prefabs/runner");
-    }
-
-    // 开局，分配玩家颜色
-    public void AllotColor()
-    {
-        // 5色，不重复
-        List<RunnerColor> colors = new List<RunnerColor>()
-        {
-            (RunnerColor)0,
-            (RunnerColor)1,
-            (RunnerColor)2,
-            (RunnerColor)3,
-            (RunnerColor)4,
-        };
-
-        Random _rd = new Random();
-        int index = 0;
-        RunnerColor temp;
-        for (int i = 0; i < colors.Count; i++)
-        {
-            index = _rd.Next(0, colors.Count - 1);
-            if (index != i)
-            {
-                temp = colors[i];
-                colors[i] = colors[index];
-                colors[index] = temp;
-            }
-        }
-
-        for (int i = playerList.Count - 1; i >= 0; i--)
-        {
-            var player = playerList[i];
-            var color = colors[i];
-            Debug.Log($"玩家{i}---颜色{color}");
-        }
     }
 
     // 洗牌
@@ -134,4 +184,43 @@ public class GameLogic
     // 出牌
 
     // 出牌后再抽取一张
+}
+// 服务器逻辑
+public partial class GameLogic
+{
+
+    public void OnGetRoomList_Server()
+    {
+
+    }
+
+    public void OnEnterRoom_Server()
+    {
+
+    }
+
+    public void OnLeaveRoom_Server()
+    {
+
+    }
+
+    // 服务器收到房主按下开始
+    public void OnGameStart_Server()
+    {
+        var colors = AllotColor();
+        for (int i = 0; i < colors.Length; i++)
+        {
+            Debug.Log($"打印随机数：{i}---{colors[i]}");
+        }
+
+        S2C_GameStart info = new S2C_GameStart
+        {
+            RoomID = 0, //TODO: 从C2S_GameStart中提取
+            Seats = new S2C_SeatInfo[]
+            {
+                new S2C_SeatInfo { },
+                new S2C_SeatInfo { },
+            },
+        };
+    }
 }

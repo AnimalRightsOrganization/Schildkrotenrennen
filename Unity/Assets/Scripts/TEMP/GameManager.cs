@@ -155,8 +155,7 @@ public class GameManager : MonoBehaviour
     }
 }
 
-// 52张牌
-/*
+/* 52张牌
  * 5色-1，5*2=10
  * 彩色-1，2
  * 5色+1，5*5=25
@@ -165,13 +164,14 @@ public class GameManager : MonoBehaviour
  * 最慢+1，3
  * 最慢+2，2
  * */
-public enum RunnerColor
+public enum RunnerColor : byte
 {
     Red     = 0,
     Yellow  = 1,
     Green   = 2,
     Blue    = 3,
-    Purple  = 4
+    Purple  = 4,
+    COUNT   = 5,
 }
 public enum CardColor
 {
@@ -181,7 +181,7 @@ public enum CardColor
     Blue    = 3,
     Purple  = 4,
     Color   = 5,
-    Slowest = 6
+    Slowest = 6,
 }
 public enum CardNum
 {

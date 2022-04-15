@@ -25,6 +25,8 @@ public class UI_Main : UIBase
 
     void OnSingleBtnClick()
     {
+        var obj = new GameObject("TEMP_Local");
+        var script = obj.AddComponent<TEMP_Local>();
         UIManager.Get().Push<UI_Game>();
     }
 

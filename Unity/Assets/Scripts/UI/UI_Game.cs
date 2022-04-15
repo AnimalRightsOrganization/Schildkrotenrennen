@@ -56,18 +56,16 @@ public class UI_Game : UIBase
             var runnerScript = runnerObj.AddComponent<Runner>();
             runnerScript.InitData(i);
         }
-
-        //TestGame();
     }
 
-    void TestGame()
-    {
-        var game = new GameLogic();
-        game.CreateRoom();
-        game.InitMap();
-        game.AllotColor();
-        game.InitOption();
-    }
+    //void TestGame()
+    //{
+    //    var game = new GameLogic();
+    //    game.CreateRoom();
+    //    game.InitMap();
+    //    game.AllotColor();
+    //    game.InitOption();
+    //}
 
     #region 网络消息
     void OnAllotColor()
