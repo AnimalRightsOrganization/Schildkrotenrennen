@@ -205,7 +205,7 @@ public partial class GameLogic
     }
 
     // 服务器收到房主按下开始
-    public void OnGameStart_Server()
+    public void OnGameStart_Server(C2S_GameStart cmd)
     {
         var colors = AllotColor();
         for (int i = 0; i < colors.Length; i++)
@@ -215,12 +215,13 @@ public partial class GameLogic
 
         S2C_GameStart info = new S2C_GameStart
         {
-            RoomID = 0, //TODO: 从C2S_GameStart中提取
+            RoomID = cmd.RoomID,
             Seats = new S2C_SeatInfo[]
             {
                 new S2C_SeatInfo { },
                 new S2C_SeatInfo { },
             },
         };
+        //TODO: 发送给客户端
     }
 }

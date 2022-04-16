@@ -27,5 +27,11 @@ public class CreateConfig : Editor
     {
         CreateAsset<SpriteObject>();
     }
+
+    [MenuItem("Tools/取消读条")]
+    static void CancelableProgressBar()
+    {
+        EditorUtility.ClearProgressBar();
+    }
 }
 #endif
