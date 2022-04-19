@@ -32,6 +32,7 @@ Unity3D demo project for ILRuntime
 - 2. 使用工具栏 ``Tools/打包AB/MoveDLL`` 将 HotFix.dll 热更新程序集拷贝到 AssetBundle 资源打包目录中。
 - 3. 再打包AB，将热更新代码座位AB打包。
 - 4. 注意阿里云、腾讯云等远程部署时，端口规则不在远程电脑上设置，而是在平台防火墙规则管理中。
+- 5. MonoBehaviourAdapterEditor.cs 中补充类型，不然在Inspector上会报错。
 
 ### //TODO
 - [x] 1. 使用包管理或其他方法，方便升级 ILRuntime 源码。

@@ -100,12 +100,12 @@ namespace TcpChatServer
         protected void OnCreateRoom(byte[] body)
         {
             C2S_CreateRoom msg = ProtobufferTool.Deserialize<C2S_CreateRoom>(body);
-            Debug.Print($"Name={msg.Name}, Pwd={msg.Pwd}, playerNum={msg.Num} by {Id}");
+            Debug.Print($"Name={msg.RoomName}, Pwd={msg.RoomPwd}, playerNum={msg.MaxNum} by {Id}");
 
             //TODO: 验证合法性，在服务器创建房间
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            S2C_CreateRoom packet = new S2C_CreateRoom { Id = 0, Name = msg.Name, Num = msg.Num };
+            S2C_CreateRoom packet = new S2C_CreateRoom { RoomId = 0, RoomName = msg.RoomName, MaxNum = msg.MaxNum };
             p.SendAsync(PacketType.S2C_CreateRoom, packet);
         }
         protected void OnChat(byte[] body)

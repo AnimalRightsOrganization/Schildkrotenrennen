@@ -38,6 +38,7 @@ namespace HotFix
         C2S_Settings    ,   //设置选项
         C2S_CreateRoom  ,   //创建房间
         C2S_LeaveRoom   ,   //离开房间
+        C2S_CreateList  ,   //房间列表
         C2S_GameReady   ,   //请求准备
         C2S_BattleStart ,   //请求开始战斗
         C2S_BattlePause ,   //请求暂停战斗
@@ -50,6 +51,7 @@ namespace HotFix
         S2C_Chat        ,   //聊天消息广播
         S2C_Settings    ,   //设置选项
         S2C_CreateRoom  ,   //创建房间结果
+        S2C_CreateList  ,   //房间列表
         S2C_GameReady   ,   //准备结果
         S2C_LoadScene   ,   //跳转场景
         S2C_BattleStart ,   //开始战斗（第一帧同步）

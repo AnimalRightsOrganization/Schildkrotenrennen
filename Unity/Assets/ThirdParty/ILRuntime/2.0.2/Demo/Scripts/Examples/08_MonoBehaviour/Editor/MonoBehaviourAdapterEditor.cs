@@ -32,11 +32,17 @@ public class MonoBehaviourAdapterEditor : UnityEditor.UI.GraphicEditor
                 index++;
 
                 var cType = type.TypeForCLR;
-                if (cType.IsPrimitive)//如果是基础类型
+                //if (cType.IsPublic == false)
+                //    continue; //非公开不显示
+                if (cType.IsPrimitive)//如果是基础类型（boolean、char、byte、short、int、long、float、double）
                 {
                     if (cType == typeof(float))
                     {
                         instance[i.Value] = EditorGUILayout.FloatField(name, (float)instance[i.Value]);
+                    }
+                    else if (cType == typeof(int))
+                    {
+                        instance[i.Value] = EditorGUILayout.IntField(name, (int)instance[i.Value]);
                     }
                     else
                         throw new System.NotImplementedException();//剩下的大家自己补吧

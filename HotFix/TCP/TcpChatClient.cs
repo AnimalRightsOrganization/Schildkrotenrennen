@@ -95,7 +95,7 @@ namespace HotFix
             byte[] buffer = new byte[header.Length + body.Length];
             System.Array.Copy(header, 0, buffer, 0, header.Length);
             System.Array.Copy(body, 0, buffer, header.Length, body.Length);
-            Debug.Log($"[Send] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
+            //Debug.Log($"[Send] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
             client.Send(buffer);
         }
         public static void SendAsync(PacketType msgId, IMessage cmd)
@@ -105,7 +105,7 @@ namespace HotFix
             byte[] buffer = new byte[header.Length + body.Length];
             System.Array.Copy(header, 0, buffer, 0, header.Length);
             System.Array.Copy(body, 0, buffer, header.Length, body.Length);
-            Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
+            //Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
             client.SendAsync(buffer);
         }
 
@@ -121,7 +121,7 @@ namespace HotFix
         }
         public static void SendCreateRoom(string name, string pwd, int num)
         {
-            C2S_CreateRoom cmd = new C2S_CreateRoom { Name = name, Pwd = pwd, Num = num };
+            C2S_CreateRoom cmd = new C2S_CreateRoom { RoomName = name, RoomPwd = pwd, MaxNum = num };
             SendAsync(PacketType.C2S_CreateRoom, cmd);
         }
     }

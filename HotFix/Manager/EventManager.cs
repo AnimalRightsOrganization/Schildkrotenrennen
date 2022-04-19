@@ -53,7 +53,18 @@ namespace HotFix
                 case PacketType.S2C_CreateRoom:
                     {
                         S2C_CreateRoom msg = ProtobufferTool.Deserialize<S2C_CreateRoom>(body); //解包
-                        Debug.Log($"[{type}] RoomId={msg.Id}, RoomName={msg.Name}, Num={msg.Num}");
+                        Debug.Log($"[{type}] RoomId={msg.RoomId}, RoomName={msg.RoomName}, Num={msg.MaxNum}");
+                        NetPacketManager.Trigger(type); //派发
+                    }
+                    break;
+                case PacketType.S2C_CreateList:
+                    {
+                        S2C_GetRoomList msg = ProtobufferTool.Deserialize<S2C_GetRoomList>(body); //解包
+                        Debug.Log($"[{type}] RoomCount={msg.Rooms.Count}");
+                        if (msg.Rooms.Count > 0)
+                        {
+                            Debug.Log($"Room.0={msg.Rooms[0].RoomId}");
+                        }
                         NetPacketManager.Trigger(type); //派发
                     }
                     break;
