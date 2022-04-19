@@ -114,7 +114,9 @@ namespace HotFix
         }
         void OnConfirmBtnClick()
         {
-            Empty cmd = new Empty();
+            Debug.Log($"确认");
+
+            C2S_CreateRoom cmd = new C2S_CreateRoom { Num = playerNum };
             TcpHelper.SendAsync(PacketType.C2S_CreateRoom, cmd);
 
             m_CreatePanel.SetActive(false);

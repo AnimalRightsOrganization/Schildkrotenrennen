@@ -1,4 +1,4 @@
-﻿namespace NetCoreServer
+﻿namespace HotFix
 {
     public abstract class BasePlayer
     {

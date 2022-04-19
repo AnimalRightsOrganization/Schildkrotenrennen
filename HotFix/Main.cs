@@ -77,7 +77,11 @@ namespace HotFix
         public static void Init()
         {
             UIManager.Get().Push<UI_Login>();
-            //UIManager.Get().Push<UI_Lobby>();
+        }
+
+        public static void Dispose()
+        {
+            TcpHelper.Dispose(); //关闭网络线程
         }
     }
 }

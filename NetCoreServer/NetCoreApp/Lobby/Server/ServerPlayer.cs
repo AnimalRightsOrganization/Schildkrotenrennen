@@ -1,4 +1,5 @@
 using TcpChatServer;
+using HotFix;
 
 namespace NetCoreServer
 {

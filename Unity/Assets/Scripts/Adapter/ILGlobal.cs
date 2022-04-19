@@ -15,6 +15,16 @@ namespace Client
             appdomain = new AppDomain();
         }
 
+        void OnApplicationQuit()
+        {
+            appdomain.Invoke("HotFix.Main", "Dispose", null, null);
+        }
+
+        void OnDestroy()
+        {
+
+        }
+
         public void GlobalInit()
         {
             StartCoroutine(LoadHotFixAssembly());

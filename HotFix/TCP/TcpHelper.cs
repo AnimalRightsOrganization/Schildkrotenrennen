@@ -3,15 +3,16 @@ using IMessage = Google.Protobuf.IMessage;
 
 namespace HotFix
 {
-    public class TcpHelper : System.IDisposable
+    public class TcpHelper
     {
         protected static ChatClient client;
         const string address = "127.0.0.1";
         const int port = 1111;
 
-        public void Dispose()
+        public static void Dispose()
         {
-            client.DisconnectAndStop();
+            Debug.Log("¹Ø±ÕÍøÂç");
+            client?.DisconnectAndStop();
             client = null;
         }
         public static void Connect()

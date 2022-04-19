@@ -81,6 +81,7 @@
     <Compile Include="Lobby\Shared\GamePackets.cs" />
     <Compile Include="Lobby\TEMP_Proto.cs" />
     <Compile Include="Manager\AudioManager.cs" />
+    <Compile Include="Message\CreateRoom.cs" />
     <Compile Include="Message\Empty.cs" />
     <Compile Include="Message\Login.cs" />
     <Compile Include="Demo\Proto3.cs" />

@@ -6,3 +6,8 @@ message Login {
   string username = 1;
   string password = 2;
 }
+
+message S2C_Login {
+  string code = 1;
+  string username = 2;
+}

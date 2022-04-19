@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NetCoreServer
+namespace HotFix
 {
     public class BaseRoom : IDisposable
     {

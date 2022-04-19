@@ -396,12 +396,12 @@ namespace NetCoreServer
 
             //  π”√ProtobufΩ‚Œˆ
             string message = string.Empty;
-            if (length > 0)
-            {
-                HotFix.Login msg2 = ProtobufferTool.Deserialize<HotFix.Login>(buffer);
-                message = $"’À∫≈{msg2.Username}£¨√‹¬Î{msg2.Password}";
-                Debug.Print(message);
-            }
+            //if (length > 0)
+            //{
+            //    HotFix.Login msg2 = ProtobufferTool.Deserialize<HotFix.Login>(buffer);
+            //    message = $"’À∫≈{msg2.Username}£¨√‹¬Î{msg2.Password}";
+            //    Debug.Print(message);
+            //}
 
             return message;
         }

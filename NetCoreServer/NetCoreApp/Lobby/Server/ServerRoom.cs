@@ -1,4 +1,6 @@
-﻿namespace NetCoreServer
+﻿using HotFix;
+
+namespace NetCoreServer
 {
     /* 远程房间 */
     public class ServerRoom : BaseRoom

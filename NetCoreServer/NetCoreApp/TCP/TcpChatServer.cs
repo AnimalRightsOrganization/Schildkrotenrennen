@@ -4,6 +4,7 @@ using System.Text;
 using System.Net.Sockets;
 using System.Diagnostics;
 using NetCoreServer;
+using HotFix;
 
 namespace TcpChatServer
 {
@@ -63,10 +64,18 @@ namespace TcpChatServer
 
                         ServerPlayer p = new ServerPlayer(msg.Name, Id);
                         TCPChatServer.m_PlayerManager.AddPlayer(p);
+
+                        break;
                     }
-                    break;
-                case PacketType.C2S_MatchRequest:
-                    break;
+                case PacketType.C2S_CreateRoom:
+                    {
+                        Debug.Print($"create by:");
+
+                        C2S_CreateRoom msg = ProtobufferTool.Deserialize<C2S_CreateRoom>(body);
+                        Debug.Print($"[{type}] playerNum={msg.Num}");
+
+                        break;
+                    }
             }
             //TODO: 通过委托分发出去
         }
