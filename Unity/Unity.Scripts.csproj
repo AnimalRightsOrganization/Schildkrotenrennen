@@ -67,7 +67,6 @@
     <Compile Include="Assets\Scripts\Adapter\AdaptHelper.cs" />
     <Compile Include="Assets\Scripts\UI\UIBase.cs" />
     <Compile Include="Assets\Scripts\Managers\ResManager.cs" />
-    <Compile Include="Assets\Scripts\Adapter\UIBaseAdapter.cs" />
     <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
     <Compile Include="Assets\Scripts\Utils\ThreadDownload.cs" />
     <Compile Include="Assets\Scripts\Managers\AudioManager.cs" />

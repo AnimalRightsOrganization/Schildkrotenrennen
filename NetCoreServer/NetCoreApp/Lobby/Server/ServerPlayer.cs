@@ -15,17 +15,9 @@ namespace NetCoreServer
             Session = TCPChatServer.server.FindSession(PeerId);
         }
 
-        public void Send(string message)
-        {
-            Session.Send(message);
-        }
         public void Send(byte[] buffer)
         {
             Session.Send(buffer);
-        }
-        public void SendAsync(string message)
-        {
-            Session.SendAsync(message);
         }
         public void SendAsync(byte[] buffer)
         {

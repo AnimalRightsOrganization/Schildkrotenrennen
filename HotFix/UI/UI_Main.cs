@@ -60,23 +60,25 @@ namespace HotFix
             m_ListPanel.SetActive(false);
         }
 
-        void OnEnable()
+        void Start()
         {
             playerNum = 2;
             RefreshPlayerNum();
             m_CreatePanel.SetActive(false);
             m_ListPanel.SetActive(false);
 
-            //NetPacketManager.RegisterEvent(action);
+            Push.RegisterEvent(OnNetCallback);
         }
 
-        void OnDisable()
+        void OnDestroy()
         {
-            //NetPacketManager.UnRegisterEvent(action);
+            Push.UnRegisterEvent(OnNetCallback);
         }
 
-        //UnityAction<PacketType> action;
-        //public void OnNetCallback(UnityAction<PacketType> act) { }
+        public void OnNetCallback(PacketType type)
+        {
+
+        }
 
         void OnListBtnClick()
         {

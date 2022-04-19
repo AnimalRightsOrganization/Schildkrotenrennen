@@ -27,23 +27,20 @@ namespace HotFix
             m_WXBtn.onClick.AddListener(OnWXBtnClick);
             m_LoginBtn.onClick.AddListener(OLoginBtnClick);
             m_RegisterBtn.onClick.AddListener(OnRegisterBtnClick);
+        }
 
+        void Start()
+        {
+            Debug.Log("UI_Login.Start");
+            Push.RegisterEvent(OnNetCallback);
             TcpChatClient.Connect();
-        }
-
-        void OnEnable()
-        {
-            Debug.Log("OnEnable");
-            //NetPacketManager.RegisterEvent(action);
-        }
-
-        void OnDisable()
-        {
-            //NetPacketManager.UnRegisterEvent(action);
         }
 
         void OnDestroy()
         {
+            Debug.Log("UI_Login.OnDestroy");
+            Push.UnRegisterEvent(OnNetCallback);
+
             m_HelpBtn.onClick.RemoveListener(OnHelpBtnClick);
             m_QQBtn.onClick.RemoveListener(OnQQBtnClick);
             m_WXBtn.onClick.RemoveListener(OnWXBtnClick);
@@ -56,10 +53,23 @@ namespace HotFix
             m_RegisterBtn = null;
         }
 
+        public void OnNetCallback(PacketType type)
+        {
+            switch (type)
+            {
+                case PacketType.S2C_LoginResult:
+                    {
+                        Debug.Log("推送成功");
+                        UIManager.Get().Push<UI_Main>(); //成功回调中执行
+                        Debug.Log("创建UI");
+                    }
+                    break;
+            }
+        }
+
         void OnHelpBtnClick()
         {
-            //TheMsg cmd = new TheMsg { Name = "lala", Content = "say hello" };
-            //TcpChatClient.SendAsync(PacketType.C2S_LoginReq, cmd);
+            UIManager.Get().Push<UI_Main>();
         }
 
         void OnQQBtnClick()

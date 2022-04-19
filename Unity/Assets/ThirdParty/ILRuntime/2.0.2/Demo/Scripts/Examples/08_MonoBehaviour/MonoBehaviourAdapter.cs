@@ -70,6 +70,44 @@ public class MonoBehaviourAdapter : CrossBindingAdaptor
                 }
             }
         }
+        
+        IMethod mOnEnableMethod;
+        bool mOnEnableMethodGot;
+        void OnEnable()
+        {
+            if (instance != null)
+            {
+                if (!mOnEnableMethodGot)
+                {
+                    mOnEnableMethod = instance.Type.GetMethod("OnEnable", 0);
+                    mOnEnableMethodGot = true;
+                }
+
+                if (mOnEnableMethod != null)
+                {
+                    appdomain.Invoke(mOnEnableMethod, instance, null);
+                }
+            }
+        }
+
+        IMethod mOnDisableMethod;
+        bool mOnDisableMethodGot;
+        void OnDisable()
+        {
+            if (instance != null)
+            {
+                if (!mOnDisableMethodGot)
+                {
+                    mOnDisableMethod = instance.Type.GetMethod("OnDisable", 0);
+                    mOnDisableMethodGot = true;
+                }
+
+                if (mOnDisableMethod != null)
+                {
+                    appdomain.Invoke(mOnDisableMethod, instance, null);
+                }
+            }
+        }
 
         IMethod mStartMethod;
         bool mStartMethodGot;
@@ -100,6 +138,63 @@ public class MonoBehaviourAdapter : CrossBindingAdaptor
             if (mUpdateMethod != null)
             {
                 appdomain.Invoke(mUpdateMethod, instance, null);
+            }
+        }
+
+        IMethod mLateUpdateMethod;
+        bool mLateUpdateMethodGot;
+        void LateUpdate()
+        {
+            if (instance != null)
+            {
+                if (!mLateUpdateMethodGot)
+                {
+                    mLateUpdateMethod = instance.Type.GetMethod("LateUpdate", 0);
+                    mLateUpdateMethodGot = true;
+                }
+
+                if (mLateUpdateMethod != null)
+                {
+                    appdomain.Invoke(mLateUpdateMethod, instance, null);
+                }
+            }
+        }
+
+        IMethod mOnDestroyMethod;
+        bool mOnDestroyMethodGot;
+        void OnDestroy()
+        {
+            if (instance != null)
+            {
+                if (!mOnDestroyMethodGot)
+                {
+                    mOnDestroyMethod = instance.Type.GetMethod("OnDestroy", 0);
+                    mOnDestroyMethodGot = true;
+                }
+
+                if (mOnDestroyMethod != null)
+                {
+                    appdomain.Invoke(mOnDestroyMethod, instance, null);
+                }
+            }
+        }
+
+        IMethod mOnApplicationQuitMethod;
+        bool mOnApplicationQuitMethodGot;
+        void OnApplicationQuit()
+        {
+            if (instance != null)
+            {
+                if (!mOnApplicationQuitMethodGot)
+                {
+                    mOnApplicationQuitMethod = instance.Type.GetMethod("OnApplicationQuit", 0);
+                    mOnApplicationQuitMethodGot = true;
+                }
+
+                if (mOnApplicationQuitMethod != null)
+                {
+                    appdomain.Invoke(mOnApplicationQuitMethod, instance, null);
+                }
             }
         }
 

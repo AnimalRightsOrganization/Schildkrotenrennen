@@ -27,6 +27,7 @@ namespace HotFix
         protected override void OnDisconnected()
         {
             Debug.Log($"Chat TCP client disconnected a session with Id {Id}");
+            Debug.Log("<color=red>Disonnected</color>");
 
             // Wait for a while...
             Thread.Sleep(1000);
@@ -57,19 +58,19 @@ namespace HotFix
                     {
                         S2C_Login msg = ProtobufferTool.Deserialize<S2C_Login>(body); //解包
                         Debug.Log($"[{type}] Code={msg.Code}, Nickname={msg.Nickname}");
-                        //NetPacketManager.Trigger(type); //派发
-                        //这里是线程中，需要派发出去执行
-                        {
-                            Debug.Log(123123);
-                            //UIManager.Get().Push<UI_Main>(); //成功回调中执行
-                        }
+
+                        // 这里是线程中，需要派发出去执行
+                        //NetPacketManager.Trigger(type);
+                        Debug.Log("Trigger...");
+                        Push.Trigger(type); //派发
+                        Debug.Log("Trigger OK");
                     }
                     break;
                 case PacketType.S2C_CreateRoom:
                     {
                         S2C_CreateRoom msg = ProtobufferTool.Deserialize<S2C_CreateRoom>(body); //解包
                         Debug.Log($"[{type}] Name={msg.Id}");
-                        //NetPacketManager.Trigger(type); //派发
+                        Push.Trigger(type); //派发
                     }
                     break;
                 case PacketType.S2C_Chat:
@@ -92,6 +93,8 @@ namespace HotFix
         }
 
         private bool _stop;
+
+        private int retry = 5; //TODO:根据断开形式，服务器主动断开则不再重连
     }
 
     public class TcpChatClient

@@ -47,10 +47,10 @@ namespace Client
         unsafe void InitializeILRuntime()
         {
             // 这里做一些ILRuntime的注册
-            appdomain.RegisterCrossBindingAdaptor(new MonoBehaviourAdapter());
+            appdomain.RegisterCrossBindingAdaptor(new MonoBehaviourAdapter()); //注册跨域继承（HotFix的Class需要继承Unity工程代码的类时）
+            //appdomain.RegisterCrossBindingAdaptor(new UIBaseAdapter()); //不用Unity的UIBase，用HotFix里的UIBase
             appdomain.RegisterCrossBindingAdaptor(new ProtobufAdapter());
             appdomain.RegisterCrossBindingAdaptor(new Adapt_IMessage());
-            appdomain.RegisterCrossBindingAdaptor(new UIBaseAdapter()); //注册跨域继承
             appdomain.RegisterCrossBindingAdaptor(new CoroutineAdapter()); //注册System.IDisposable, IEnumerator
 
             // 注册"空参空返回"型的委托
@@ -84,7 +84,6 @@ namespace Client
             appdomain.Invoke("HotFix.Proto3", "_TheMsg", null, null);
             */
 
-            //IL_InitAdapter("EventManager");
             IL_InitAdapter("UIManager");
 
             // IL热更加载UI
