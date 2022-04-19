@@ -99,10 +99,5 @@ namespace WinFormsApp1
                 Debug.Print("关闭服务器");
             }
         }
-
-        private void logText_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

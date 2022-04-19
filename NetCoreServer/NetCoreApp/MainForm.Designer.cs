@@ -18,13 +18,14 @@ namespace WinFormsApp1
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            TcpChatServer.TCPChatServer.Stop();
+            this.notifyIcon1.Dispose(); //清理托盘图标
+            TcpChatServer.TCPChatServer.Stop(); //执行速度较慢
+
             if (disposing && (components != null))
             {
                 components.Dispose();
             }
             base.Dispose(disposing);
-            this.notifyIcon1.Dispose(); //清理托盘图标
         }
 
         #region Windows Form Designer generated code
@@ -126,7 +127,6 @@ namespace WinFormsApp1
             this.logText.Size = new System.Drawing.Size(48, 20);
             this.logText.TabIndex = 6;
             this.logText.Text = "NULL";
-            this.logText.Click += new System.EventHandler(this.logText_Click);
             // 
             // notifyIcon1
             // 
