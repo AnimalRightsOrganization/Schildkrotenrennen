@@ -5,7 +5,7 @@ namespace NetCoreServer
 {
     public class ServerRoomManager
     {
-        protected Dictionary<int, ServerRoom> dic_rooms;
+        public Dictionary<int, ServerRoom> dic_rooms;
         public int Count => dic_rooms.Count;
 
         public ServerRoomManager()

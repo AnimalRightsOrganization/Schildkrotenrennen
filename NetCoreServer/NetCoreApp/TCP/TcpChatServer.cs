@@ -5,6 +5,7 @@ using System.Diagnostics;
 using NetCoreServer;
 using NetCoreServer.Utils;
 using HotFix;
+using Google.Protobuf.Collections;
 using IMessage = Google.Protobuf.IMessage;
 
 namespace TcpChatServer
@@ -51,6 +52,9 @@ namespace TcpChatServer
                     break;
                 case PacketType.C2S_CreateRoom:
                     OnCreateRoom(body);
+                    break;
+                case PacketType.C2S_RoomList:
+                    OnRoomList(body);
                     break;
                 case PacketType.C2S_Chat:
                     OnChat(body);
@@ -106,6 +110,20 @@ namespace TcpChatServer
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             S2C_CreateRoom packet = new S2C_CreateRoom { RoomId = 0, RoomName = msg.RoomName, MaxNum = msg.MaxNum };
+            p.SendAsync(PacketType.S2C_CreateRoom, packet);
+        }
+        protected void OnRoomList(byte[] body)
+        {
+            Empty msg = ProtobufferTool.Deserialize<Empty>(body); //空消息
+
+            S2C_GetRoomList packet = new S2C_GetRoomList();
+            foreach(var room in TCPChatServer.m_RoomManager.dic_rooms)
+            {
+                RoomInfo info = new RoomInfo { RoomId = room.Value.RoomID };
+                packet.Rooms.Add(info);
+            }
+
+            ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             p.SendAsync(PacketType.S2C_CreateRoom, packet);
         }
         protected void OnChat(byte[] body)

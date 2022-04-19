@@ -57,7 +57,7 @@ namespace HotFix
                         NetPacketManager.Trigger(type); //派发
                     }
                     break;
-                case PacketType.S2C_CreateList:
+                case PacketType.S2C_RoomList:
                     {
                         S2C_GetRoomList msg = ProtobufferTool.Deserialize<S2C_GetRoomList>(body); //解包
                         Debug.Log($"[{type}] RoomCount={msg.Rooms.Count}");

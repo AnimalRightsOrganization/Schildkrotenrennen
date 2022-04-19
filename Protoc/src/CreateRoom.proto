@@ -14,9 +14,9 @@ message S2C_CreateRoom {
 }
 
 
-message C2S_GetRoomList {
-  //传Empty就行
-}
+//message C2S_GetRoomList {
+//  //传Empty就行
+//}
 message RoomInfo {
   int32 room_id = 1;	//房间Id
   string room_name = 2; //房间名
@@ -25,4 +25,5 @@ message RoomInfo {
 }
 message S2C_GetRoomList {
   repeated RoomInfo rooms = 1;
+  //repeated string rooms = 1;
 }
