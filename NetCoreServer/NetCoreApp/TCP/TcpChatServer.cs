@@ -33,10 +33,9 @@ namespace TcpChatServer
             TCPChatServer.m_PlayerManager.RemovePlayer(Id);
         }
 
+        // 注意这里是线程中
         protected override void OnReceived(byte[] buffer, long offset, long size)
         {
-            // 注意这里是线程中
-
             // 解析msgId
             byte msgId = buffer[0];
             byte[] body = new byte[buffer.Length - 1];
@@ -54,16 +53,12 @@ namespace TcpChatServer
                     OnCreateRoom(body);
                     break;
                 case PacketType.C2S_Chat:
-                    {
-                        TheMsg msg = ProtobufferTool.Deserialize<TheMsg>(body);
-                        Debug.Print($"{msg.Name}说: {msg.Content}");
-                    }
+                    OnChat(body);
                     break;
                 default:
                     Debug.Print($"无法识别的消息: {type}");
                     break;
             }
-            //TODO: 通过委托分发出去
         }
 
         protected override void OnError(SocketError error)
@@ -102,7 +97,7 @@ namespace TcpChatServer
             S2C_Login packet = new S2C_Login { Code = 0, Nickname = result.nickname };
             p.SendAsync(PacketType.S2C_LoginResult, packet);
         }
-        protected async void OnCreateRoom(byte[] body)
+        protected void OnCreateRoom(byte[] body)
         {
             C2S_CreateRoom msg = ProtobufferTool.Deserialize<C2S_CreateRoom>(body);
             Debug.Print($"Name={msg.Name}, Pwd={msg.Pwd}, playerNum={msg.Num} by {Id}");
@@ -112,6 +107,11 @@ namespace TcpChatServer
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             S2C_CreateRoom packet = new S2C_CreateRoom { Id = 0, Name = msg.Name, Num = msg.Num };
             p.SendAsync(PacketType.S2C_CreateRoom, packet);
+        }
+        protected void OnChat(byte[] body)
+        {
+            TheMsg msg = ProtobufferTool.Deserialize<TheMsg>(body);
+            Debug.Print($"{msg.Name}说: {msg.Content}");
         }
     }
 

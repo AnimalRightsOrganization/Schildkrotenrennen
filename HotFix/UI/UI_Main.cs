@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Events;
 
 namespace HotFix
 {
@@ -8,22 +7,22 @@ namespace HotFix
     {
         private int playerNum;
 
-        [SerializeField] Button m_ListBtn;
-        [SerializeField] Button m_CreateButton;
-        [SerializeField] Button m_SettingsButton;
-        [SerializeField] Button m_ExitButton;
+        public Button m_ListBtn;
+        public Button m_CreateButton;
+        public Button m_SettingsButton;
+        public Button m_ExitButton;
 
-        [SerializeField] GameObject m_CreatePanel;
-        [SerializeField] Button m_CloseCreatePanel;
-        [SerializeField] InputField m_NameInput;
-        [SerializeField] InputField m_KeyInput;
-        [SerializeField] Text m_NumText;
-        [SerializeField] Button m_LeftBtn;
-        [SerializeField] Button m_RightBtn;
-        [SerializeField] Button m_ConfirmBtn;
+        public GameObject m_CreatePanel;
+        public Button m_CloseCreatePanel;
+        public InputField m_NameInput;
+        public InputField m_KeyInput;
+        public Text m_NumText;
+        public Button m_LeftBtn;
+        public Button m_RightBtn;
+        public Button m_ConfirmBtn;
 
-        [SerializeField] GameObject m_ListPanel;
-        [SerializeField] Button m_CloseListPanel;
+        public GameObject m_ListPanel;
+        public Button m_CloseListPanel;
 
         void Awake()
         {
@@ -77,7 +76,12 @@ namespace HotFix
 
         public void OnNetCallback(PacketType type)
         {
-
+            switch (type)
+            {
+                case PacketType.C2S_CreateRoom:
+                    Debug.Log("派发创建房间");
+                    break;
+            }
         }
 
         void OnListBtnClick()
@@ -129,8 +133,6 @@ namespace HotFix
         {
             Debug.Log($"确认");
 
-            //C2S_CreateRoom cmd = new C2S_CreateRoom { Num = playerNum };
-            //TcpChatClient.SendAsync(PacketType.C2S_CreateRoom, cmd);
             TcpChatClient.SendCreateRoom(m_NameInput.text, m_KeyInput.text, playerNum);
 
             m_CreatePanel.SetActive(false);
