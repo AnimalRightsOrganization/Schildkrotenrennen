@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Net.Sockets;
 using Debug = UnityEngine.Debug;
@@ -108,6 +107,22 @@ namespace HotFix
             System.Array.Copy(body, 0, buffer, header.Length, body.Length);
             Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
             client.SendAsync(buffer);
+        }
+
+        public static void SendLogin(string usr, string pwd)
+        {
+            C2S_Login cmd = new C2S_Login { Username = usr, Password = pwd };
+            SendAsync(PacketType.C2S_LoginReq, cmd);
+        }
+        public static void SendChat(string message)
+        {
+            TheMsg cmd = new TheMsg { Name = "lala", Content = message };
+            SendAsync(PacketType.C2S_Chat, cmd);
+        }
+        public static void SendCreateRoom(string name, string pwd, int num)
+        {
+            C2S_CreateRoom cmd = new C2S_CreateRoom { Name = name, Pwd = pwd, Num = num };
+            SendAsync(PacketType.C2S_CreateRoom, cmd);
         }
     }
 }

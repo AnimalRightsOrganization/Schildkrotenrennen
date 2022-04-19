@@ -47,17 +47,13 @@ namespace HotFix
                     {
                         S2C_Login msg = ProtobufferTool.Deserialize<S2C_Login>(body); //解包
                         Debug.Log($"[{type}] Code={msg.Code}, Nickname={msg.Nickname}");
-
-                        // 这里是线程中，需要派发出去执行
-                        Debug.Log("Trigger...");
                         Push.Trigger(type); //派发（为什么在这创建UI，会堵塞接收线程？？）
-                        Debug.Log("Trigger OK");
                     }
                     break;
                 case PacketType.S2C_CreateRoom:
                     {
                         S2C_CreateRoom msg = ProtobufferTool.Deserialize<S2C_CreateRoom>(body); //解包
-                        Debug.Log($"[{type}] Name={msg.Id}");
+                        Debug.Log($"[{type}] RoomId={msg.Id}, RoomName={msg.Name}, Num={msg.Num}");
                         Push.Trigger(type); //派发
                     }
                     break;

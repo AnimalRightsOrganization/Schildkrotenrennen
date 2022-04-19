@@ -22,14 +22,15 @@ namespace HotFix {
     static CreateRoomReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChBDcmVhdGVSb29tLnByb3RvIh0KDkMyU19DcmVhdGVSb29tEgsKA251bRgB",
-            "IAEoBSIcCg5TMkNfQ3JlYXRlUm9vbRIKCgJpZBgBIAEoBUIJqgIGSG90Rml4",
-            "YgZwcm90bzM="));
+            "ChBDcmVhdGVSb29tLnByb3RvIjgKDkMyU19DcmVhdGVSb29tEgwKBG5hbWUY",
+            "ASABKAkSCwoDcHdkGAIgASgJEgsKA251bRgDIAEoBSI3Cg5TMkNfQ3JlYXRl",
+            "Um9vbRIKCgJpZBgBIAEoBRIMCgRuYW1lGAIgASgJEgsKA251bRgDIAEoBUIJ",
+            "qgIGSG90Rml4YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.C2S_CreateRoom), global::HotFix.C2S_CreateRoom.Parser, new[]{ "Num" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.S2C_CreateRoom), global::HotFix.S2C_CreateRoom.Parser, new[]{ "Id" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.C2S_CreateRoom), global::HotFix.C2S_CreateRoom.Parser, new[]{ "Name", "Pwd", "Num" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.S2C_CreateRoom), global::HotFix.S2C_CreateRoom.Parser, new[]{ "Id", "Name", "Num" }, null, null, null)
           }));
     }
     #endregion
@@ -60,6 +61,8 @@ namespace HotFix {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public C2S_CreateRoom(C2S_CreateRoom other) : this() {
+      name_ = other.name_;
+      pwd_ = other.pwd_;
       num_ = other.num_;
     }
 
@@ -68,9 +71,40 @@ namespace HotFix {
       return new C2S_CreateRoom(this);
     }
 
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 1;
+    private string name_ = "";
+    /// <summary>
+    /// 房间名
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string Name {
+      get { return name_; }
+      set {
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "pwd" field.</summary>
+    public const int PwdFieldNumber = 2;
+    private string pwd_ = "";
+    /// <summary>
+    /// 房间密码
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string Pwd {
+      get { return pwd_; }
+      set {
+        pwd_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     /// <summary>Field number for the "num" field.</summary>
-    public const int NumFieldNumber = 1;
+    public const int NumFieldNumber = 3;
     private int num_;
+    /// <summary>
+    /// 玩家数
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int Num {
       get { return num_; }
@@ -92,6 +126,8 @@ namespace HotFix {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (Name != other.Name) return false;
+      if (Pwd != other.Pwd) return false;
       if (Num != other.Num) return false;
       return true;
     }
@@ -99,6 +135,8 @@ namespace HotFix {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (Pwd.Length != 0) hash ^= Pwd.GetHashCode();
       if (Num != 0) hash ^= Num.GetHashCode();
       return hash;
     }
@@ -110,8 +148,16 @@ namespace HotFix {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
+      if (Name.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Name);
+      }
+      if (Pwd.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Pwd);
+      }
       if (Num != 0) {
-        output.WriteRawTag(8);
+        output.WriteRawTag(24);
         output.WriteInt32(Num);
       }
     }
@@ -119,6 +165,12 @@ namespace HotFix {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      }
+      if (Pwd.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Pwd);
+      }
       if (Num != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Num);
       }
@@ -129,6 +181,12 @@ namespace HotFix {
     public void MergeFrom(C2S_CreateRoom other) {
       if (other == null) {
         return;
+      }
+      if (other.Name.Length != 0) {
+        Name = other.Name;
+      }
+      if (other.Pwd.Length != 0) {
+        Pwd = other.Pwd;
       }
       if (other.Num != 0) {
         Num = other.Num;
@@ -143,7 +201,15 @@ namespace HotFix {
           default:
             input.SkipLastField();
             break;
-          case 8: {
+          case 10: {
+            Name = input.ReadString();
+            break;
+          }
+          case 18: {
+            Pwd = input.ReadString();
+            break;
+          }
+          case 24: {
             Num = input.ReadInt32();
             break;
           }
@@ -178,6 +244,8 @@ namespace HotFix {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public S2C_CreateRoom(S2C_CreateRoom other) : this() {
       id_ = other.id_;
+      name_ = other.name_;
+      num_ = other.num_;
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -188,11 +256,42 @@ namespace HotFix {
     /// <summary>Field number for the "id" field.</summary>
     public const int IdFieldNumber = 1;
     private int id_;
+    /// <summary>
+    /// 房间Id
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int Id {
       get { return id_; }
       set {
         id_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 2;
+    private string name_ = "";
+    /// <summary>
+    /// 房间名
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string Name {
+      get { return name_; }
+      set {
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "num" field.</summary>
+    public const int NumFieldNumber = 3;
+    private int num_;
+    /// <summary>
+    /// 玩家数
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Num {
+      get { return num_; }
+      set {
+        num_ = value;
       }
     }
 
@@ -210,6 +309,8 @@ namespace HotFix {
         return true;
       }
       if (Id != other.Id) return false;
+      if (Name != other.Name) return false;
+      if (Num != other.Num) return false;
       return true;
     }
 
@@ -217,6 +318,8 @@ namespace HotFix {
     public override int GetHashCode() {
       int hash = 1;
       if (Id != 0) hash ^= Id.GetHashCode();
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (Num != 0) hash ^= Num.GetHashCode();
       return hash;
     }
 
@@ -231,6 +334,14 @@ namespace HotFix {
         output.WriteRawTag(8);
         output.WriteInt32(Id);
       }
+      if (Name.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Name);
+      }
+      if (Num != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(Num);
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -238,6 +349,12 @@ namespace HotFix {
       int size = 0;
       if (Id != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Id);
+      }
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      }
+      if (Num != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Num);
       }
       return size;
     }
@@ -249,6 +366,12 @@ namespace HotFix {
       }
       if (other.Id != 0) {
         Id = other.Id;
+      }
+      if (other.Name.Length != 0) {
+        Name = other.Name;
+      }
+      if (other.Num != 0) {
+        Num = other.Num;
       }
     }
 
@@ -262,6 +385,14 @@ namespace HotFix {
             break;
           case 8: {
             Id = input.ReadInt32();
+            break;
+          }
+          case 18: {
+            Name = input.ReadString();
+            break;
+          }
+          case 24: {
+            Num = input.ReadInt32();
             break;
           }
         }

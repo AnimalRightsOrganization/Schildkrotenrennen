@@ -86,9 +86,9 @@ namespace HotFix
 
         void OLoginBtnClick()
         {
-            //TheMsg cmd = new TheMsg { Name = "lala", Content = "say hello" };
-            C2S_Login cmd = new C2S_Login { Username = "lala", Password = "123456" };
-            TcpChatClient.SendAsync(PacketType.C2S_LoginReq, cmd);
+            //C2S_Login cmd = new C2S_Login { Username = "lala", Password = "123456" };
+            //TcpChatClient.SendAsync(PacketType.C2S_LoginReq, cmd);
+            TcpChatClient.SendLogin("lala", "123456");
         }
 
         void OnRegisterBtnClick()

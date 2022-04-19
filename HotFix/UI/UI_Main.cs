@@ -129,8 +129,9 @@ namespace HotFix
         {
             Debug.Log($"确认");
 
-            C2S_CreateRoom cmd = new C2S_CreateRoom { Num = playerNum };
-            TcpChatClient.SendAsync(PacketType.C2S_CreateRoom, cmd);
+            //C2S_CreateRoom cmd = new C2S_CreateRoom { Num = playerNum };
+            //TcpChatClient.SendAsync(PacketType.C2S_CreateRoom, cmd);
+            TcpChatClient.SendCreateRoom(m_NameInput.text, m_KeyInput.text, playerNum);
 
             m_CreatePanel.SetActive(false);
         }

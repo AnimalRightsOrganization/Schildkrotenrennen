@@ -23,7 +23,6 @@ namespace TcpChatServer
             //string message = "Hello from TCP chat! Please send a message or '!' to disconnect the client!";
             //SendAsync(message);
 
-            //SendAsync("hello, you're connected");
             Empty cmd = new Empty();
             SendAsync(PacketType.Connected, cmd); //TODO: 多个客户端，验证这是否为广播
         }
@@ -62,22 +61,27 @@ namespace TcpChatServer
                 case PacketType.C2S_LoginReq:
                     {
                         C2S_Login msg = ProtobufferTool.Deserialize<C2S_Login>(body);
-                        Debug.Print($"[{type}] Username={msg.Username}, Password={msg.Password}");
+                        Debug.Print($"[{type}] Username={msg.Username}, Password={msg.Password} by {Id}");
 
                         //TODO: SQL验证操作
                         ServerPlayer p = new ServerPlayer(msg.Username, Id);
                         TCPChatServer.m_PlayerManager.AddPlayer(p);
+                        string nickName = string.Empty;
 
-                        Debug.Print("111111111111111");
-                        S2C_Login packet = new S2C_Login { Code = 0, Nickname = "" };
+                        S2C_Login packet = new S2C_Login { Code = 0, Nickname = nickName };
                         p.SendAsync(PacketType.S2C_LoginResult, packet);
                     }
                     break;
                 case PacketType.C2S_CreateRoom:
                     {
                         C2S_CreateRoom msg = ProtobufferTool.Deserialize<C2S_CreateRoom>(body);
-                        Debug.Print($"[{type}] playerNum={msg.Num}");
+                        Debug.Print($"[{type}] Name={msg.Name}, Pwd={msg.Pwd}, playerNum={msg.Num} by {Id}");
 
+                        //TODO: 验证合法性，在服务器创建房间
+
+                        ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
+                        S2C_CreateRoom packet = new S2C_CreateRoom { Id = 0, Name = msg.Name, Num = msg.Num };
+                        p.SendAsync(PacketType.S2C_CreateRoom, packet);
                     }
                     break;
                 case PacketType.C2S_Chat:

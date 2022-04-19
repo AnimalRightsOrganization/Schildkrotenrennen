@@ -35,6 +35,7 @@ namespace NetCoreServer.Utils
     }
     public class UpdateController
     {
+        public static int Interval = 66; //ms 30次/秒
         private UserController _userController;
         private BackgroundWorker _backgroundWorker;
 
@@ -57,7 +58,7 @@ namespace NetCoreServer.Utils
         {
             while (true)
             {
-                Thread.Sleep(66);
+                Thread.Sleep(Interval);
                 // Do the long-duration work here, and optionally
                 // send the update back to the UI thread...
                 int p = 0;// set your progress if appropriate
