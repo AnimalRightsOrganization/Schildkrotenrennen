@@ -1,7 +1,7 @@
 fileFormatVersion: 2
-guid: 91ba68daa8066624c809565e30ffb418
+guid: 926f5f6977acf864d983aca9cdc2ab47
 PrefabImporter:
   externalObjects: {}
   userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+  assetBundleName: prefabs/uimanager
+  assetBundleVariant: unity3d

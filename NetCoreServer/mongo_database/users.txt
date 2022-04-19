@@ -1,0 +1,6 @@
+{"_id":{"$oid":"613278b7dfe27cf5c26232ce"},"name":"Henry","number":14}
+{"_id":{"$oid":"61327d15dfe27cf5c26234ac"},"name":"sadio","number":10}
+{"_id":{"$oid":"61328242dfe27cf5c26236a3"},"name":"Owen","number":10}
+{"_id":{"$oid":"61328258dfe27cf5c26236ad"},"name":"Ronaldo","number":9}
+{"_id":{"$oid":"61328396dfe27cf5c26236e9"},"name":"Beckham","number":7}
+{"_id":{"$oid":"6132855bdfe27cf5c2623776"},"name":"Salah","number":11}

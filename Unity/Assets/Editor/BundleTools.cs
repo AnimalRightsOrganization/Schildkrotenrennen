@@ -1,12 +1,10 @@
 ﻿using System.IO;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using LitJson;
-
 #if UNITY_EDITOR
+using UnityEditor;
 public partial class BundleTools : Editor
 {
     #region 路径
@@ -46,7 +44,7 @@ public partial class BundleTools : Editor
     }
     private static string GetServerDir()
     {
-        string path = @"D:\wamp\www\download";
+        string path = @"D:\wamp64\www\download";
         return path;
     }
 
@@ -395,15 +393,10 @@ public partial class BundleTools : Editor
         Debug.Log("打包完成");
     }
 
-    [MenuItem("Tools/打包AB/本地部署")]
-    private static void LocalDeploy()
-    {
-        Deploy(BuildTarget.StandaloneWindows64);
-    }
     private static void Deploy(BuildTarget target)
     {
         string srcPath = Path.Combine(GetUnityDir(), target.ToString());
-        Debug.Log($"from: {srcPath}");
+        //Debug.Log($"from: {srcPath}");
         if (!Directory.Exists(srcPath))
         {
             Debug.LogError($"src不存在：{srcPath}");
@@ -412,7 +405,7 @@ public partial class BundleTools : Editor
 
         string dstPath = $@"{Application.persistentDataPath}\{target}"; //本地部署
         //string dstPath = $@"{GetServerDir()}\{target}"; //远程部署
-        Debug.Log($"to: {dstPath}");
+        //Debug.Log($"to: {dstPath}");
         if (Directory.Exists(dstPath))
         {
             Debug.Log($"dst存在：{dstPath}，先删除");
@@ -423,10 +416,9 @@ public partial class BundleTools : Editor
         //Directory.Move(srcPath, dstPath);
         //DirectoryInfo dirInfo = new DirectoryInfo(srcPath);
         //dirInfo.MoveTo(dstPath);
-
         CopyFolder(srcPath, dstPath);
-        Debug.Log("部署完成");
-        Directory.Delete(srcPath, true);
+        Debug.Log($"部署完成\n{srcPath}--->\n{dstPath}");
+        Directory.Delete(srcPath, true); //删除 ./StandaloneWindows64
     }
     private static void CopyFolder(string strFromPath, string strToPath)
     {
@@ -463,14 +455,6 @@ public partial class BundleTools : Editor
             //把得到的子文件夹当成新的源文件夹，从头开始新一轮的拷贝
             CopyFolder(strZiPath, strToPath);
         }
-    }
-
-    [MenuItem("Tools/游戏文件夹")]
-    static void OpenPersistentDataPath()
-    {
-        System.Diagnostics.Process open = new System.Diagnostics.Process();
-        open.StartInfo.FileName = Application.persistentDataPath;
-        open.Start();
     }
 
     #endregion

@@ -21,17 +21,5 @@ public class CreateConfig : Editor
         EditorUtility.FocusProjectWindow();
         Selection.activeObject = asset;
     }
-
-    [MenuItem("Assets/CreateConfig/SpriteObject")]
-    static void CreateSpriteObject()
-    {
-        CreateAsset<SpriteObject>();
-    }
-
-    [MenuItem("Tools/取消读条")]
-    static void CancelableProgressBar()
-    {
-        EditorUtility.ClearProgressBar();
-    }
 }
 #endif

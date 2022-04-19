@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LitJson;
@@ -8,7 +7,7 @@ using LitJson;
 using UnityEditor;
 #endif
 
-public class JsonAssets
+public class JsonAssets //就是ABInfo
 {
     public string filePath;
     public string md5;
@@ -72,7 +71,7 @@ public class ResManager
     public static AudioClip LoadAudioClip(string fileName)
     {
 #if UNITY_EDITOR && !USE_ASSETBUNDLE
-        var obj = AssetDatabase.LoadAssetAtPath<AudioClip>($"{BUNDLES_FOLDER}/{fileName}.mp3");
+        var clip = AssetDatabase.LoadAssetAtPath<AudioClip>($"{BUNDLES_FOLDER}/{fileName}.mp3");
 #else
         string filePath0 = $"{BUNDLES_FOLDER}/{fileName}.unity3d";
         Debug.Log($"filePath0={filePath0}"); //~~Assets/Bundles/Audios/round1.unity3d
@@ -83,9 +82,9 @@ public class ResManager
         AssetBundle asset = AssetBundle.LoadFromFile(filePath);
         object config = asset.LoadAllAssets()[0];
         asset.Unload(false);
-        var obj = (AudioClip)config;
+        var clip = (AudioClip)config;
 #endif
-        return obj;
+        return clip;
     }
 
     public static object LoadConfig(string configName)
@@ -100,6 +99,19 @@ public class ResManager
         asset.Unload(false);
 #endif
         return config;
+    }
+
+    public static byte[] LoadDLL()
+    {
+#if UNITY_EDITOR && !USE_ASSETBUNDLE
+        string filePath = $"Assets/Bundles/Configs/Hotfix.dll.bytes";
+        TextAsset textAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(filePath);
+#else
+        AssetBundle asset = AssetBundle.LoadFromFile("configs/hotfix.unity3d");
+        TextAsset textAsset = asset.LoadAllAssets()[0] as TextAsset;
+        asset.Unload(false);
+#endif
+        return textAsset.bytes;
     }
 
     public static Sprite[] LoadSprite(string configName)

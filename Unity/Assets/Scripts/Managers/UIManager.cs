@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void ShowSkillText(int pid, string content);
-public delegate void SetTimeText(string second);
-public delegate void SetCurrentHp(int pid, int hp);
+//public delegate void ShowSkillText(int pid, string content);
+//public delegate void SetTimeText(string second);
+//public delegate void SetCurrentHp(int pid, int hp);
 // 全局配置。不放场景中，通过脚本创建。
 public class UIManager : MonoBehaviour
 {
@@ -47,9 +47,9 @@ public class UIManager : MonoBehaviour
     }
 
     // 给UI的委托
-    public static ShowSkillText doShowSkillText;
-    public static SetTimeText doSetTimeText;
-    public static SetCurrentHp doSetCurrentHp;
+    //public static ShowSkillText doShowSkillText;
+    //public static SetTimeText doSetTimeText;
+    //public static SetCurrentHp doSetCurrentHp;
 
     // UI存储栈
     [SerializeField] List<UIBase> stack = new List<UIBase>();
@@ -96,7 +96,7 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            GameObject prefab = ResManager.LoadPrefab($"ui/{scriptName}"); //UI_Login
+            GameObject prefab = ResManager.LoadPrefab($"ui/{scriptName}");
             Transform p = layer == 1 ? Parent : Top;
             GameObject obj = Instantiate(prefab, p);
             obj.transform.localPosition = Vector3.zero;

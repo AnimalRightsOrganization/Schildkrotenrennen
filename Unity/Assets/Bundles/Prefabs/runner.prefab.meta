@@ -3,5 +3,5 @@ guid: 5aad89964ce1fa643a2472d8e2a04d19
 PrefabImporter:
   externalObjects: {}
   userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+  assetBundleName: prefabs/runner
+  assetBundleVariant: unity3d

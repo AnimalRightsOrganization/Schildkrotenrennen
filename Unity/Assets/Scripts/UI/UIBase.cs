@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
-//using Code.Shared;
-//using LiteNetLib;
-//using LiteNetLib.Utils;
 
-public class UIBase : MonoBehaviour
+public abstract class UIBase : MonoBehaviour
 {
+    public virtual void PopUp()
+    {
+        Destroy(this.gameObject);
+    }
+
     public virtual void Pop()
     {
         UIManager.Get().Pop(this);
