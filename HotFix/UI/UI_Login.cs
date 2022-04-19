@@ -46,21 +46,21 @@ namespace HotFix
         void OnHelpBtnClick()
         {
             TheMsg cmd = new TheMsg { Name = "lala", Content = "say hello" };
-            TcpHelper.SendAsync(PacketType.C2S_LoginReq, cmd);
+            TcpChatClient.SendAsync(PacketType.C2S_LoginReq, cmd);
         }
 
         void OnQQBtnClick()
         {
             Debug.Log("[Hotfix] QQ登录");
 
-            TcpHelper.Connect();
+            TcpChatClient.Connect();
         }
 
         void OnWXBtnClick()
         {
             Debug.Log("[Hotfix] 微信登录");
 
-            TcpHelper.Disconnect();
+            TcpChatClient.Disconnect();
         }
 
         void OLoginBtnClick()

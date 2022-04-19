@@ -81,7 +81,7 @@ namespace HotFix
 
         public static void Dispose()
         {
-            TcpHelper.Dispose(); //关闭网络线程
+            TcpChatClient.Dispose(); //关闭网络线程
         }
     }
 }

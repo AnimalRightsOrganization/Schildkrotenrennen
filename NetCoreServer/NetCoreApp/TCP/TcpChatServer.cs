@@ -119,35 +119,19 @@ namespace TcpChatServer
             Debug.Print("Server starting...");
             server.Start();
             Debug.Print("Done!");
-
-            /*
-            // Perform text input
-            for (;;)
-            {
-                string line = Console.ReadLine();
-                if (string.IsNullOrEmpty(line))
-                    break;
-
-                // Restart the server
-                if (line == "!")
-                {
-                    Debug.Print("Server restarting...");
-                    server.Restart();
-                    Debug.Print("Done!");
-                    continue;
-                }
-
-                // Multicast admin message to all sessions
-                line = "(admin) " + line;
-                server.Multicast(line);
-            }
-            */
         }
         public static void Stop()
         {
             // Stop the server
             Debug.Print("Server stopping...");
             server?.Stop();
+            Debug.Print("Done!");
+        }
+        public static void Restart()
+        {
+            // Restart the server
+            Debug.Print("Server restarting...");
+            server.Restart();
             Debug.Print("Done!");
         }
     }
