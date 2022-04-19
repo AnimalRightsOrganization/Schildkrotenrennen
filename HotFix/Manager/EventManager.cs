@@ -47,21 +47,21 @@ namespace HotFix
                     {
                         S2C_Login msg = ProtobufferTool.Deserialize<S2C_Login>(body); //解包
                         Debug.Log($"[{type}] Code={msg.Code}, Nickname={msg.Nickname}");
-                        Push.Trigger(type); //派发（为什么在这创建UI，会堵塞接收线程？？）
+                        NetPacketManager.Trigger(type); //派发（为什么在这创建UI，会堵塞接收线程？？）
                     }
                     break;
                 case PacketType.S2C_CreateRoom:
                     {
                         S2C_CreateRoom msg = ProtobufferTool.Deserialize<S2C_CreateRoom>(body); //解包
                         Debug.Log($"[{type}] RoomId={msg.Id}, RoomName={msg.Name}, Num={msg.Num}");
-                        Push.Trigger(type); //派发
+                        NetPacketManager.Trigger(type); //派发
                     }
                     break;
                 case PacketType.S2C_Chat:
                     {
                         TheMsg msg = ProtobufferTool.Deserialize<TheMsg>(body); //解包
                         Debug.Log($"[{type}] {msg.Name}说: {msg.Content}");
-                        Push.Trigger(type); //派发
+                        NetPacketManager.Trigger(type); //派发
                     }
                     break;
                 default:
@@ -72,7 +72,7 @@ namespace HotFix
         }
     }
 
-    public class Push
+    public class NetPacketManager
     {
         public delegate void SampleEventHandler(PacketType t);
         public static event SampleEventHandler SampleEvent;
@@ -90,43 +90,21 @@ namespace HotFix
         }
     }
 
-    /*
-    public class MyEvent<T0> : UnityEvent<T0> { }
-    public class MyEvent<T0, T1> : UnityEvent<T0, T1> { }
-    public class MyEvent<T0, T1, T2> : UnityEvent<T0, T1, T2> { }
-
     public class NetStateManager
     {
-        private static MyEvent<int> eventList = new MyEvent<int>();
-        public static void RegisterEvent(UnityAction<int> action)
+        public delegate void SampleEventHandler(int t);
+        public static event SampleEventHandler SampleEvent;
+        public static void RegisterEvent(SampleEventHandler action)
         {
-            eventList.AddListener(action);
+            SampleEvent += action;
         }
-        public static void UnRegisterEvent(UnityAction<int> action)
+        public static void UnRegisterEvent(SampleEventHandler action)
         {
-            eventList.RemoveListener(action);
+            SampleEvent -= action;
         }
-        public static void Trigger(int peer)
+        public static void Trigger(int type)
         {
-            eventList.Invoke(peer);
-        }
-    }
-
-    public class NetPacketManager
-    {
-        private static MyEvent<PacketType> eventList = new MyEvent<PacketType>();
-        public static void RegisterEvent(UnityAction<PacketType> action)
-        {
-            eventList.AddListener(action);
-        }
-        public static void UnRegisterEvent(UnityAction<PacketType> action)
-        {
-            eventList.RemoveListener(action);
-        }
-        public static void Trigger(PacketType peer)
-        {
-            eventList.Invoke(peer);
+            SampleEvent?.Invoke(type);
         }
     }
-    */
 }

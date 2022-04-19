@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
 using NetCoreServer;
+using NetCoreServer.Utils;
 using HotFix;
 using IMessage = Google.Protobuf.IMessage;
 
@@ -64,6 +65,8 @@ namespace TcpChatServer
                         Debug.Print($"[{type}] Username={msg.Username}, Password={msg.Password} by {Id}");
 
                         //TODO: SQL验证操作
+                        //bool result = MySQLTool.CheckLogin();
+
                         ServerPlayer p = new ServerPlayer(msg.Username, Id);
                         TCPChatServer.m_PlayerManager.AddPlayer(p);
                         string nickName = string.Empty;

@@ -67,12 +67,12 @@ namespace HotFix
             m_CreatePanel.SetActive(false);
             m_ListPanel.SetActive(false);
 
-            Push.RegisterEvent(OnNetCallback);
+            NetPacketManager.RegisterEvent(OnNetCallback);
         }
 
         void OnDestroy()
         {
-            Push.UnRegisterEvent(OnNetCallback);
+            NetPacketManager.UnRegisterEvent(OnNetCallback);
         }
 
         public void OnNetCallback(PacketType type)

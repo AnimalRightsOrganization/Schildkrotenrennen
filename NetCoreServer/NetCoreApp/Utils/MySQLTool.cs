@@ -8,31 +8,35 @@ namespace NetCoreServer.Utils
 {
     public class MySQLTool
     {
-        const string connectionString = "localhost";
-        protected MySqlConnection client;
-
-        public void Connect()
+        //const string connectionString = "localhost";
+        //protected static MySqlConnection client;
+        protected static MySqlConnectionStringBuilder builder
         {
-            client = new MySqlConnection(connectionString);
+            get
+            {
+                var bd = new MySqlConnectionStringBuilder
+                {
+                    Server = "localhost",
+                    Database = "turtle",
+                    UserID = "root",
+                    Password = "",
+                    SslMode = MySqlSslMode.None,
+                };
+                return bd;
+            }
         }
-        public void Insert() { }
-        public void Delete() { }
-        public void Update() { }
-        public void Query() { }
+
+        public static void Connect()
+        {
+            //client = new MySqlConnection(connectionString);
+        }
+        public static void Insert() { }
+        public static void Delete() { }
+        public static void Update() { }
+        public static void Query() { }
 
         public static async Task Main()
         {
-            var builder = new MySqlConnectionStringBuilder
-            {
-                Server = "localhost",
-                Database = "turtle",
-                UserID = "root",
-                Password = "",
-                SslMode = MySqlSslMode.None,
-            };
-
-            Debug.Print($"builder.{builder.Server}");
-
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
                 Debug.Print("Opening connection");
@@ -68,15 +72,6 @@ namespace NetCoreServer.Utils
         }
         public static async Task TestQuery()
         {
-            var builder = new MySqlConnectionStringBuilder
-            {
-                Server = "localhost",
-                Database = "turtle",
-                UserID = "root",
-                Password = "",
-                SslMode = MySqlSslMode.None,
-            };
-
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
                 Debug.Print("Opening connection");
@@ -103,6 +98,32 @@ namespace NetCoreServer.Utils
             }
 
             Debug.Print("Press RETURN to exit");
+        }
+
+        public static async Task<bool> CheckLogin(string usr, string pwd)
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                Debug.Print("Opening connection");
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = $"SELECT * FROM turtle WHERE username={usr};";
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            Debug.Print($"Reading from table={reader.GetString(1)}");
+                        }
+                    }
+                }
+
+                Debug.Print("Closing connection");
+            }
+
+            return true;
         }
     }
 }
