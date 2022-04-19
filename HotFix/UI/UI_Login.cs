@@ -59,9 +59,7 @@ namespace HotFix
             {
                 case PacketType.S2C_LoginResult:
                     {
-                        Debug.Log("推送成功");
                         UIManager.Get().Push<UI_Main>(); //成功回调中执行
-                        Debug.Log("创建UI");
                     }
                     break;
             }
@@ -70,24 +68,21 @@ namespace HotFix
         void OnHelpBtnClick()
         {
             UIManager.Get().Push<UI_Main>();
+            //TcpChatClient.Disconnect();
         }
 
         void OnQQBtnClick()
         {
             Debug.Log("[Hotfix] QQ登录");
-            //TcpChatClient.Connect();
         }
 
         void OnWXBtnClick()
         {
             Debug.Log("[Hotfix] 微信登录");
-            //TcpChatClient.Disconnect();
         }
 
         void OLoginBtnClick()
         {
-            //C2S_Login cmd = new C2S_Login { Username = "lala", Password = "123456" };
-            //TcpChatClient.SendAsync(PacketType.C2S_LoginReq, cmd);
             TcpChatClient.SendLogin("lala", "123456");
         }
 

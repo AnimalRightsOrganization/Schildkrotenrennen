@@ -5,10 +5,16 @@ using MySqlConnector;
 
 namespace NetCoreServer.Utils
 {
+    public class UserInfo
+    {
+        public int userid;
+        public string username;
+        public string nickname;
+        public int score;
+    }
+
     public class MySQLTool
     {
-        //const string connectionString = "localhost";
-        //protected static MySqlConnection client;
         protected static MySqlConnectionStringBuilder builder
         {
             get
@@ -25,10 +31,6 @@ namespace NetCoreServer.Utils
             }
         }
 
-        public static void Connect()
-        {
-            //client = new MySqlConnection(connectionString);
-        }
         public static void Insert()
         {
             //一次插入多条
@@ -38,7 +40,7 @@ namespace NetCoreServer.Utils
         public static void Update() { }
         public static void Query() { }
 
-        public static async Task Main()
+        public static async Task MultiSQL()
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
@@ -99,10 +101,22 @@ namespace NetCoreServer.Utils
 
                 Debug.Print("Closing connection");
             }
-
-            Debug.Print("Press RETURN to exit");
         }
 
+        public static async Task<int> QueryUsersCount()
+        {
+            // 查询全服玩家数
+            string SQL = "SELECT COUNT(*) FROM db_user";
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+                using (var cmd = new MySqlCommand(SQL, conn))
+                {
+                    int count = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    return count;
+                }
+            }
+        }
         public static async Task<bool> CheckLogin(string usr, string pwd)
         {
             string SQL = $"SELECT * FROM db_user WHERE username='{usr}';";
@@ -129,23 +143,44 @@ namespace NetCoreServer.Utils
                         }
                     }
                 }
+                return false;
             }
-            return false;
         }
-        public static async Task<int> QueryAll()
+
+        public static async void OnGetUserInfo(string usr, string pwd)
         {
-            // 查询全服玩家数
-            string SQL = "SELECT COUNT(*) FROM db_user";
+            UserInfo result = (await GetUserInfo(usr, pwd));
+        }
+        public static async Task<UserInfo> GetUserInfo(string usr, string pwd)
+        {
+            UserInfo userInfo = new UserInfo();
+
+            string SQL = $"SELECT * FROM db_user WHERE username='{usr}' AND password='{pwd}';";
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
                 await conn.OpenAsync();
-                using (var cmd = new MySqlCommand(SQL, conn))
+
+                using (var command = conn.CreateCommand())
                 {
-                    int count = Convert.ToInt32(await cmd.ExecuteScalarAsync());
-                    return count;
+                    command.CommandText = SQL;
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            userInfo.userid = reader.GetInt32("userid");
+                            userInfo.username = reader.GetString("username");
+                            userInfo.nickname = reader.GetString("nickname");
+                            userInfo.score = reader.GetInt32("score");
+                            return userInfo;
+                        }
+                    }
                 }
+                Debug.Print("Closing connection");
+                return null;
             }
         }
+
         public static async Task<int> CheckUserExist(string usr, string pwd)
         {
             string SQL = $"SELECT COUNT(*) FROM db_user WHERE username='{usr}';";
@@ -159,8 +194,10 @@ namespace NetCoreServer.Utils
                     int count = Convert.ToInt32(command.ExecuteScalarAsync());
                     return count;
                 }
+                Debug.Print("Closing connection");
             }
         }
+
         public static async Task<bool> Register(string usr, string pwd)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))

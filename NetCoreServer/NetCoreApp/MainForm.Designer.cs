@@ -213,7 +213,7 @@ namespace WinFormsApp1
 
         private async void TestQuery()
         {
-            //await MySQLTool.Main();
+            //await MySQLTool.MultiSQL();
             //await MySQLTool.TestQuery();
 
             //var result = await MySQLTool.CheckLogin("lala", "123456");
@@ -224,6 +224,15 @@ namespace WinFormsApp1
             //Debug.Print($"test3: {result3}");
             //var result4 = await MySQLTool.Register("test3", "123456");
             //Debug.Print($"test4: {result4}");
+            //int result5 = Convert.ToInt32(await MySQLTool.CheckUserExist("test3", "123456"));
+            //Debug.Print($"test5: {result5}");
+            //UserInfo result6 = (await MySQLTool.GetUserInfo("test3", "123456"));
+            //if (result6 == null)
+            //{
+            //    Debug.Print($"result6: 用户名或密码错误");
+            //    return;
+            //}
+            //Debug.Print($"result6: {result6.nickname}");
         }
 
         private void StartServer_Click(object sender, System.EventArgs e)
