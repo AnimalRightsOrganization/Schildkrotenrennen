@@ -213,8 +213,17 @@ namespace WinFormsApp1
 
         private async void TestQuery()
         {
-            await MySQLTool.Main();
+            //await MySQLTool.Main();
             //await MySQLTool.TestQuery();
+
+            //var result = await MySQLTool.CheckLogin("lala", "123456");
+            //Debug.Print($"lala: {result}");
+            //var result2 = await MySQLTool.CheckLogin("test1", "123456");
+            //Debug.Print($"test2: {result2}");
+            //var result3 = await MySQLTool.CheckUserExist("test1", "123456");
+            //Debug.Print($"test3: {result3}");
+            //var result4 = await MySQLTool.Register("test3", "123456");
+            //Debug.Print($"test4: {result4}");
         }
 
         private void StartServer_Click(object sender, System.EventArgs e)
