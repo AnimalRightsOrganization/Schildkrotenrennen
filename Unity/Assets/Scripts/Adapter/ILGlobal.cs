@@ -85,6 +85,7 @@ namespace Client
             */
 
             IL_InitAdapter("UIManager");
+            IL_InitAdapter("EventManager");
 
             // IL热更加载UI
             appdomain.Invoke("HotFix.Main", "Init", gameObject, null); //static方法

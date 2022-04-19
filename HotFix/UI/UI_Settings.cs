@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace HotFix
@@ -10,16 +9,13 @@ namespace HotFix
 
         void Awake()
         {
-            Debug.Log("<color=yellow>UI_Main.Awake</color>");
-
             m_CloseBtn = transform.Find("CloseButton").GetComponent<Button>();
-
             m_CloseBtn.onClick.AddListener(OnCloseBtnClick);
         }
 
         void OnCloseBtnClick()
         {
-            Debug.Log("OnCloseBtnClick");
+            UIManager.Get().Pop(this);
         }
     }
 }

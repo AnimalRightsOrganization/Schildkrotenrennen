@@ -71,6 +71,10 @@ namespace HotFix
         {
             go.AddComponent<UIManager>();
         }
+        public static void EventManagerAdapter(GameObject go)
+        {
+            go.AddComponent<EventManager>();
+        }
 
         #endregion
 

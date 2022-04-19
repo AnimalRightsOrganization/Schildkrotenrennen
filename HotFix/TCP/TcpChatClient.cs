@@ -41,50 +41,9 @@ namespace HotFix
         {
             //string message = System.Text.Encoding.UTF8.GetString(buffer, (int)offset, (int)size);
             //Debug.Log($"S2C: {message}({size})");
-            //return;
 
-            // 解析msgId
-            byte msgId = buffer[0];
-            byte[] body = new byte[buffer.Length - 1];
-            Array.Copy(buffer, 1, body, 0, buffer.Length - 1);
-
-            PacketType type = (PacketType)msgId;
-            //Debug.Log($"PacketType={type}");
-            switch (type)
-            {
-                case PacketType.Connected:
-                    break;
-                case PacketType.S2C_LoginResult:
-                    {
-                        S2C_Login msg = ProtobufferTool.Deserialize<S2C_Login>(body); //解包
-                        Debug.Log($"[{type}] Code={msg.Code}, Nickname={msg.Nickname}");
-
-                        // 这里是线程中，需要派发出去执行
-                        //NetPacketManager.Trigger(type);
-                        Debug.Log("Trigger...");
-                        Push.Trigger(type); //派发
-                        Debug.Log("Trigger OK");
-                    }
-                    break;
-                case PacketType.S2C_CreateRoom:
-                    {
-                        S2C_CreateRoom msg = ProtobufferTool.Deserialize<S2C_CreateRoom>(body); //解包
-                        Debug.Log($"[{type}] Name={msg.Id}");
-                        Push.Trigger(type); //派发
-                    }
-                    break;
-                case PacketType.S2C_Chat:
-                    {
-                        TheMsg msg = ProtobufferTool.Deserialize<TheMsg>(body); //解包
-                        Debug.Log($"[{type}] {msg.Name}说: {msg.Content}");
-                        //NetPacketManager.Trigger(type); //派发
-                    }
-                    break;
-                default:
-                    Debug.LogError($"无法识别的消息: {type}");
-                    break;
-            }
-            //TODO: 通过委托分发出去
+            // 这里是异步线程中，需要通过Update推送到主线程。
+            EventManager.Get().queue.Enqueue(buffer);
         }
 
         protected override void OnError(SocketError error)
@@ -94,7 +53,7 @@ namespace HotFix
 
         private bool _stop;
 
-        private int retry = 5; //TODO:根据断开形式，服务器主动断开则不再重连
+        //private const int RETRY = 5; //TODO:根据断开形式，服务器主动断开则不再重连
     }
 
     public class TcpChatClient
