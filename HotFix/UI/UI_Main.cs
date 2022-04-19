@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 namespace HotFix
 {
@@ -65,7 +66,17 @@ namespace HotFix
             RefreshPlayerNum();
             m_CreatePanel.SetActive(false);
             m_ListPanel.SetActive(false);
+
+            //NetPacketManager.RegisterEvent(action);
         }
+
+        void OnDisable()
+        {
+            //NetPacketManager.UnRegisterEvent(action);
+        }
+
+        //UnityAction<PacketType> action;
+        //public void OnNetCallback(UnityAction<PacketType> act) { }
 
         void OnListBtnClick()
         {

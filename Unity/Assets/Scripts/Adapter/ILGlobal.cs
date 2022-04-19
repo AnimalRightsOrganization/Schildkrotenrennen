@@ -96,7 +96,7 @@ namespace Client
             obj.transform.SetParent(this.transform);
             var script = obj.AddComponent<ILMonoBehaviour>();
             script.className = adapterName;
-            Debug.Log($"{adapterName}.Run");
+            //Debug.Log($"{adapterName}.Run");
             script.Run();
         }
     }

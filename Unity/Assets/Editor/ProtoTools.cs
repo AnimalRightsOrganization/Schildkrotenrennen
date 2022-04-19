@@ -44,10 +44,10 @@ public partial class BundleTools : Editor
 
     #region 测试
 
-    [MenuItem("Tools/取消读条")]
-    static void CancelableProgressBar()
+    [MenuItem("Tools/测试/同步共享代码")]
+    static void SyncSharedCode()
     {
-        EditorUtility.ClearProgressBar();
+
     }
     [MenuItem("Tools/测试/CMD")]
     private static void TestCMD()
@@ -83,6 +83,11 @@ public partial class BundleTools : Editor
                 Directory.Delete(path, true);
         }
         Debug.Log("清理完成");
+    }
+    [MenuItem("Tools/取消读条")]
+    static void CancelableProgressBar()
+    {
+        EditorUtility.ClearProgressBar();
     }
 
     #endregion

@@ -5,3 +5,7 @@ option csharp_namespace = "HotFix";
 message C2S_CreateRoom {
   int32 num = 1;
 }
+
+message S2C_CreateRoom {
+  int32 id = 1;
+}

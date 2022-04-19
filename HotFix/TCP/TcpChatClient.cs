@@ -21,6 +21,7 @@ namespace HotFix
         protected override void OnConnected()
         {
             Debug.Log($"Chat TCP client connected a new session with Id {Id}");
+            Debug.Log("<color=green>Connected!</color>");
         }
 
         protected override void OnDisconnected()
@@ -37,8 +38,9 @@ namespace HotFix
 
         protected override void OnReceived(byte[] buffer, long offset, long size)
         {
-            //string message = Encoding.UTF8.GetString(buffer, (int)offset, (int)size);
+            //string message = System.Text.Encoding.UTF8.GetString(buffer, (int)offset, (int)size);
             //Debug.Log($"S2C: {message}({size})");
+            //return;
 
             // 解析msgId
             byte msgId = buffer[0];
@@ -46,20 +48,40 @@ namespace HotFix
             Array.Copy(buffer, 1, body, 0, buffer.Length - 1);
 
             PacketType type = (PacketType)msgId;
-            Debug.Log($"msgId={msgId}");
-
+            //Debug.Log($"PacketType={type}");
             switch (type)
             {
-                case PacketType.C2S_LoginReq:
+                case PacketType.Connected:
+                    break;
+                case PacketType.S2C_LoginResult:
                     {
-                        TheMsg msg = ProtobufferTool.Deserialize<TheMsg>(body);
-                        Debug.Log($"[{type}] Name={msg.Name}, Content={msg.Content}");
-                        break;
+                        S2C_Login msg = ProtobufferTool.Deserialize<S2C_Login>(body); //解包
+                        Debug.Log($"[{type}] Code={msg.Code}, Nickname={msg.Nickname}");
+                        //NetPacketManager.Trigger(type); //派发
+                        //这里是线程中，需要派发出去执行
+                        {
+                            Debug.Log(123123);
+                            //UIManager.Get().Push<UI_Main>(); //成功回调中执行
+                        }
                     }
-                case PacketType.C2S_CreateRoom:
+                    break;
+                case PacketType.S2C_CreateRoom:
                     {
-                        break;
+                        S2C_CreateRoom msg = ProtobufferTool.Deserialize<S2C_CreateRoom>(body); //解包
+                        Debug.Log($"[{type}] Name={msg.Id}");
+                        //NetPacketManager.Trigger(type); //派发
                     }
+                    break;
+                case PacketType.S2C_Chat:
+                    {
+                        TheMsg msg = ProtobufferTool.Deserialize<TheMsg>(body); //解包
+                        Debug.Log($"[{type}] {msg.Name}说: {msg.Content}");
+                        //NetPacketManager.Trigger(type); //派发
+                    }
+                    break;
+                default:
+                    Debug.LogError($"无法识别的消息: {type}");
+                    break;
             }
             //TODO: 通过委托分发出去
         }
@@ -112,7 +134,7 @@ namespace HotFix
             byte[] buffer = new byte[header.Length + body.Length];
             System.Array.Copy(header, 0, buffer, 0, header.Length);
             System.Array.Copy(body, 0, buffer, header.Length, body.Length);
-            Debug.Log($"header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
+            Debug.Log($"[Send] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
             client.Send(buffer);
         }
         public static void SendAsync(PacketType msgId, IMessage cmd)
@@ -122,7 +144,7 @@ namespace HotFix
             byte[] buffer = new byte[header.Length + body.Length];
             System.Array.Copy(header, 0, buffer, 0, header.Length);
             System.Array.Copy(body, 0, buffer, header.Length, body.Length);
-            Debug.Log($"header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
+            Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
             client.SendAsync(buffer);
         }
     }

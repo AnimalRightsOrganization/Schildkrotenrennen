@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Net;
-using System.Text;
 using System.Net.Sockets;
 using System.Diagnostics;
 using NetCoreServer;
 using HotFix;
+using IMessage = Google.Protobuf.IMessage;
 
 namespace TcpChatServer
 {
@@ -22,7 +22,10 @@ namespace TcpChatServer
             // Send invite message
             //string message = "Hello from TCP chat! Please send a message or '!' to disconnect the client!";
             //SendAsync(message);
-            SendAsync("hello, you're connected");
+
+            //SendAsync("hello, you're connected");
+            Empty cmd = new Empty();
+            SendAsync(PacketType.Connected, cmd); //TODO: 多个客户端，验证这是否为广播
         }
 
         protected override void OnDisconnected()
@@ -34,12 +37,12 @@ namespace TcpChatServer
 
         protected override void OnReceived(byte[] buffer, long offset, long size)
         {
-            string message = Encoding.UTF8.GetString(buffer, (int)offset, (int)size);
-            Debug.Print($"C2S: {message}({size})");
+            //string message = System.Text.Encoding.UTF8.GetString(buffer, (int)offset, (int)size);
+            //Debug.Print($"C2S: {message}({size})");
 
             // Multicast message to all connected sessions
-            Server.Multicast(message);
-            //SendAsync(message);
+            //Server.Multicast(message);
+            //return;
 
             // If the buffer starts with '!' the disconnect the current session
             //if (message == "!")
@@ -51,31 +54,41 @@ namespace TcpChatServer
             Array.Copy(buffer, 1, body, 0, buffer.Length - 1);
 
             PacketType type = (PacketType)msgId;
-            Debug.Print($"msgId={msgId}");
-
+            //Debug.Print($"msgType={type}, from {Id}");
             switch (type)
             {
+                case PacketType.Connected:
+                    break;
                 case PacketType.C2S_LoginReq:
                     {
-                        HotFix.TheMsg msg = ProtobufferTool.Deserialize<HotFix.TheMsg>(body);
-                        Debug.Print($"[{type}] Name={msg.Name}, Content={msg.Content}");
+                        C2S_Login msg = ProtobufferTool.Deserialize<C2S_Login>(body);
+                        Debug.Print($"[{type}] Username={msg.Username}, Password={msg.Password}");
 
                         //TODO: SQL验证操作
-
-                        ServerPlayer p = new ServerPlayer(msg.Name, Id);
+                        ServerPlayer p = new ServerPlayer(msg.Username, Id);
                         TCPChatServer.m_PlayerManager.AddPlayer(p);
 
-                        break;
+                        Debug.Print("111111111111111");
+                        S2C_Login packet = new S2C_Login { Code = 0, Nickname = "" };
+                        p.SendAsync(PacketType.S2C_LoginResult, packet);
                     }
+                    break;
                 case PacketType.C2S_CreateRoom:
                     {
-                        Debug.Print($"create by:");
-
                         C2S_CreateRoom msg = ProtobufferTool.Deserialize<C2S_CreateRoom>(body);
                         Debug.Print($"[{type}] playerNum={msg.Num}");
 
-                        break;
                     }
+                    break;
+                case PacketType.C2S_Chat:
+                    {
+                        TheMsg msg = ProtobufferTool.Deserialize<TheMsg>(body);
+                        Debug.Print($"[{type}] {msg.Name}说: {msg.Content}");
+                    }
+                    break;
+                default:
+                    Debug.Print($"无法识别的消息: {type}");
+                    break;
             }
             //TODO: 通过委托分发出去
         }
@@ -83,6 +96,17 @@ namespace TcpChatServer
         protected override void OnError(SocketError error)
         {
             Debug.Print($"Chat TCP session caught an error with code {error}");
+        }
+
+        protected void SendAsync(PacketType msgId, IMessage cmd)
+        {
+            byte[] header = new byte[1] { (byte)msgId };
+            byte[] body = ProtobufferTool.Serialize(cmd);
+            byte[] buffer = new byte[header.Length + body.Length];
+            System.Array.Copy(header, 0, buffer, 0, header.Length);
+            System.Array.Copy(body, 0, buffer, header.Length, body.Length);
+            //Debug.Print($"header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
+            SendAsync(buffer);
         }
     }
 

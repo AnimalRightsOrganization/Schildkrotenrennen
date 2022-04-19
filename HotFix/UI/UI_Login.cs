@@ -27,6 +27,19 @@ namespace HotFix
             m_WXBtn.onClick.AddListener(OnWXBtnClick);
             m_LoginBtn.onClick.AddListener(OLoginBtnClick);
             m_RegisterBtn.onClick.AddListener(OnRegisterBtnClick);
+
+            TcpChatClient.Connect();
+        }
+
+        void OnEnable()
+        {
+            Debug.Log("OnEnable");
+            //NetPacketManager.RegisterEvent(action);
+        }
+
+        void OnDisable()
+        {
+            //NetPacketManager.UnRegisterEvent(action);
         }
 
         void OnDestroy()
@@ -45,27 +58,27 @@ namespace HotFix
 
         void OnHelpBtnClick()
         {
-            TheMsg cmd = new TheMsg { Name = "lala", Content = "say hello" };
-            TcpChatClient.SendAsync(PacketType.C2S_LoginReq, cmd);
+            //TheMsg cmd = new TheMsg { Name = "lala", Content = "say hello" };
+            //TcpChatClient.SendAsync(PacketType.C2S_LoginReq, cmd);
         }
 
         void OnQQBtnClick()
         {
             Debug.Log("[Hotfix] QQ登录");
-
-            TcpChatClient.Connect();
+            //TcpChatClient.Connect();
         }
 
         void OnWXBtnClick()
         {
             Debug.Log("[Hotfix] 微信登录");
-
-            TcpChatClient.Disconnect();
+            //TcpChatClient.Disconnect();
         }
 
         void OLoginBtnClick()
         {
-            UIManager.Get().Push<UI_Main>();
+            //TheMsg cmd = new TheMsg { Name = "lala", Content = "say hello" };
+            C2S_Login cmd = new C2S_Login { Username = "lala", Password = "123456" };
+            TcpChatClient.SendAsync(PacketType.C2S_LoginReq, cmd);
         }
 
         void OnRegisterBtnClick()
