@@ -5,7 +5,7 @@ using ILRuntime.Runtime.Enviorment;
 using ILRuntime.Runtime.Intepreter;
 using AppDomain = ILRuntime.Runtime.Enviorment.AppDomain;
 
-public class Adapt_IMessage : CrossBindingAdaptor
+public class IMessageAdapt : CrossBindingAdaptor
 {
     public override Type BaseCLRType
     {
