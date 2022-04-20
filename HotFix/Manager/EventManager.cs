@@ -60,7 +60,9 @@ namespace HotFix
                     break;
                 case PacketType.S2C_RoomList:
                     {
+                        Debug.Log($"[Handle:{type}]");
                         S2C_GetRoomList packet = ProtobufferTool.Deserialize<S2C_GetRoomList>(body); //解包
+                        Debug.Log(222);
                         Debug.Log($"[Handle:{type}] RoomCount={packet.Rooms.Count}");
                         if (packet.Rooms.Count > 0)
                         {
