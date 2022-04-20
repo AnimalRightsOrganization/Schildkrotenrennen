@@ -48,11 +48,10 @@ namespace Client
         {
             // 这里做一些ILRuntime的注册
             appdomain.RegisterCrossBindingAdaptor(new MonoBehaviourAdapter()); //注册跨域继承（HotFix的Class需要继承Unity工程代码的类时）
-            appdomain.RegisterCrossBindingAdaptor(new CoroutineAdapter()); //注册System.IDisposable, IEnumerator
-            appdomain.RegisterCrossBindingAdaptor(new ProtobufAdapter());
-            appdomain.RegisterCrossBindingAdaptor(new IMessageAdapt());
-            //appdomain.RegisterCrossBindingAdaptor(new IListAdapter());
-            
+            appdomain.RegisterCrossBindingAdaptor(new CoroutineAdapter()); //注册IDisposable, IEnumerator
+            appdomain.RegisterCrossBindingAdaptor(new ProtobufAdapter()); //注册IEquatable, IComparable, IEnumerable, ICollection, IList
+            appdomain.RegisterCrossBindingAdaptor(new IMessageAdapt()); //注册IMessage, System.IO.IOException
+
             // 注册"空参空返回"型的委托
             appdomain.DelegateManager.RegisterDelegateConvertor<UnityAction>((act) => { return new UnityAction(() => { ((System.Action)act)(); }); });
             appdomain.DelegateManager.RegisterFunctionDelegate<UIBase, System.Boolean>();
