@@ -46,11 +46,17 @@ namespace Client
         // 注册类、委托、跨域继承(Adaptor)
         unsafe void InitializeILRuntime()
         {
+            // CLR绑定（当需要绑定代码时）
+            //ILRuntime.Runtime.Generated.CLRBindings.Initialize(appdomain);
+
             // 这里做一些ILRuntime的注册
             appdomain.RegisterCrossBindingAdaptor(new MonoBehaviourAdapter()); //注册跨域继承（HotFix的Class需要继承Unity工程代码的类时）
             appdomain.RegisterCrossBindingAdaptor(new CoroutineAdapter()); //注册IDisposable, IEnumerator
             appdomain.RegisterCrossBindingAdaptor(new ProtobufAdapter()); //注册IEquatable, IComparable, IEnumerable, ICollection, IList
             appdomain.RegisterCrossBindingAdaptor(new IMessageAdapt()); //注册IMessage, System.IO.IOException
+
+            //注册litjson
+            //LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(appdomain);
 
             // 注册"空参空返回"型的委托
             appdomain.DelegateManager.RegisterDelegateConvertor<UnityAction>((act) => { return new UnityAction(() => { ((System.Action)act)(); }); });
@@ -98,5 +104,30 @@ namespace Client
             //Debug.Log($"{adapterName}.Run");
             script.Run();
         }
+
+        #region C#调用HotFix的方法
+        [ContextMenu("LoadJson")]
+        void LoadJson()
+        {
+            appdomain.Invoke("HotFix_Project.DemoLoader", "LoadJson", null, null);
+        }
+        #endregion
+
+        #region HotFix调用C#的方法
+        [ContextMenu("EnterUI_UI_PDKBattle")]
+        public void EnterUI_UI_PDKBattle()
+        {
+            Debug.Log("跑得快登录成功");
+            //UI.ExitAllUI();
+            //if (PDKGameManager.SortId >= PDKGameConfig.DoubleMatchSortId && PDKGameManager.SortId < PDKGameConfig.JJCLeastSortId)
+            //{
+            //    UI.EnterUI<UI_PDKDoubleMatch>(GameEnum.PDK).InitData();
+            //}
+            //else
+            //{
+            //    UI.EnterUI<UI_PDKBattle>(GameEnum.PDK).InitData();
+            //}
+        }
+        #endregion
     }
 }

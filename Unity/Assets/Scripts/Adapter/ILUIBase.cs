@@ -62,6 +62,7 @@ namespace Client
             }
         }
 
+        // 挟持 MonoBehaviour中原本的 GetComponent 方法
         MonoBehaviourAdapter.Adaptor GetComponent(ILType type)
         {
             var arr = GetComponents<MonoBehaviourAdapter.Adaptor>();
