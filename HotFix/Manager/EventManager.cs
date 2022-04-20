@@ -53,7 +53,7 @@ namespace HotFix
                 case PacketType.S2C_RoomInfo:
                     {
                         S2C_RoomInfo msg = ProtobufferTool.Deserialize<S2C_RoomInfo>(body); //解包
-                        Debug.Log($"[{type}] RoomId={msg.Room.RoomId}, RoomName={msg.Room.RoomName}, Num={msg.Room.MaxNum}");
+                        Debug.Log($"[{type}] RoomId={msg.Room.RoomId}, RoomName={msg.Room.RoomName}, Num={msg.Room.LimitNum}");
                         NetPacketManager.Trigger(type); //派发
                     }
                     break;

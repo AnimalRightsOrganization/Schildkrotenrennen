@@ -273,11 +273,19 @@ namespace WinFormsApp1
             this.BeginInvoke(new MethodInvoker(a));
         }
 
-        public void RefreshNum()
+        public void RefreshPlayerNum()
         {
             var num = TcpChatServer.TCPChatServer.m_PlayerManager.Count;
             InvokeUI(() => {
                 this.logText.Text = $"在线人数={num}";
+            });
+        }
+
+        public void RefreshRoomNum()
+        {
+            var num = TcpChatServer.TCPChatServer.m_RoomManager.Count;
+            InvokeUI(() => {
+                this.logText.Text = $"房间数={num}";
             });
         }
 

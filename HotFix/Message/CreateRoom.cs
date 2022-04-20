@@ -22,20 +22,21 @@ namespace HotFix {
     static CreateRoomReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChBDcmVhdGVSb29tLnByb3RvIkYKDkMyU19DcmVhdGVSb29tEhEKCXJvb21f",
-            "bmFtZRgBIAEoCRIQCghyb29tX3B3ZBgCIAEoCRIPCgdtYXhfbnVtGAMgASgF",
-            "Ih8KDEMyU19Kb2luUm9vbRIPCgdyb29tX2lkGAEgASgFIicKDFMyQ19Sb29t",
-            "SW5mbxIXCgRyb29tGAEgASgLMgkuUm9vbUluZm8iUAoIUm9vbUluZm8SDwoH",
-            "cm9vbV9pZBgBIAEoBRIRCglyb29tX25hbWUYAiABKAkSDwoHY3VyX251bRgD",
-            "IAEoBRIPCgdtYXhfbnVtGAQgASgFIisKD1MyQ19HZXRSb29tTGlzdBIYCgVy",
-            "b29tcxgBIAMoCzIJLlJvb21JbmZvQgmqAgZIb3RGaXhiBnByb3RvMw=="));
+            "ChBDcmVhdGVSb29tLnByb3RvIkgKDkMyU19DcmVhdGVSb29tEhEKCXJvb21f",
+            "bmFtZRgBIAEoCRIQCghyb29tX3B3ZBgCIAEoCRIRCglsaW1pdF9udW0YAyAB",
+            "KAUiMQoMQzJTX0pvaW5Sb29tEg8KB3Jvb21faWQYASABKAUSEAoIcm9vbV9w",
+            "d2QYAiABKAkiJwoMUzJDX1Jvb21JbmZvEhcKBHJvb20YASABKAsyCS5Sb29t",
+            "SW5mbyJSCghSb29tSW5mbxIPCgdyb29tX2lkGAEgASgFEhEKCXJvb21fbmFt",
+            "ZRgCIAEoCRIPCgdjdXJfbnVtGAMgASgFEhEKCWxpbWl0X251bRgEIAEoBSIr",
+            "Cg9TMkNfR2V0Um9vbUxpc3QSGAoFcm9vbXMYASADKAsyCS5Sb29tSW5mb0IJ",
+            "qgIGSG90Rml4YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.C2S_CreateRoom), global::HotFix.C2S_CreateRoom.Parser, new[]{ "RoomName", "RoomPwd", "MaxNum" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.C2S_JoinRoom), global::HotFix.C2S_JoinRoom.Parser, new[]{ "RoomId" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.C2S_CreateRoom), global::HotFix.C2S_CreateRoom.Parser, new[]{ "RoomName", "RoomPwd", "LimitNum" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.C2S_JoinRoom), global::HotFix.C2S_JoinRoom.Parser, new[]{ "RoomId", "RoomPwd" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.S2C_RoomInfo), global::HotFix.S2C_RoomInfo.Parser, new[]{ "Room" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.RoomInfo), global::HotFix.RoomInfo.Parser, new[]{ "RoomId", "RoomName", "CurNum", "MaxNum" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.RoomInfo), global::HotFix.RoomInfo.Parser, new[]{ "RoomId", "RoomName", "CurNum", "LimitNum" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.S2C_GetRoomList), global::HotFix.S2C_GetRoomList.Parser, new[]{ "Rooms" }, null, null, null)
           }));
     }
@@ -69,7 +70,7 @@ namespace HotFix {
     public C2S_CreateRoom(C2S_CreateRoom other) : this() {
       roomName_ = other.roomName_;
       roomPwd_ = other.roomPwd_;
-      maxNum_ = other.maxNum_;
+      limitNum_ = other.limitNum_;
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -105,17 +106,17 @@ namespace HotFix {
       }
     }
 
-    /// <summary>Field number for the "max_num" field.</summary>
-    public const int MaxNumFieldNumber = 3;
-    private int maxNum_;
+    /// <summary>Field number for the "limit_num" field.</summary>
+    public const int LimitNumFieldNumber = 3;
+    private int limitNum_;
     /// <summary>
     /// 玩家数
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int MaxNum {
-      get { return maxNum_; }
+    public int LimitNum {
+      get { return limitNum_; }
       set {
-        maxNum_ = value;
+        limitNum_ = value;
       }
     }
 
@@ -134,7 +135,7 @@ namespace HotFix {
       }
       if (RoomName != other.RoomName) return false;
       if (RoomPwd != other.RoomPwd) return false;
-      if (MaxNum != other.MaxNum) return false;
+      if (LimitNum != other.LimitNum) return false;
       return true;
     }
 
@@ -143,7 +144,7 @@ namespace HotFix {
       int hash = 1;
       if (RoomName.Length != 0) hash ^= RoomName.GetHashCode();
       if (RoomPwd.Length != 0) hash ^= RoomPwd.GetHashCode();
-      if (MaxNum != 0) hash ^= MaxNum.GetHashCode();
+      if (LimitNum != 0) hash ^= LimitNum.GetHashCode();
       return hash;
     }
 
@@ -162,9 +163,9 @@ namespace HotFix {
         output.WriteRawTag(18);
         output.WriteString(RoomPwd);
       }
-      if (MaxNum != 0) {
+      if (LimitNum != 0) {
         output.WriteRawTag(24);
-        output.WriteInt32(MaxNum);
+        output.WriteInt32(LimitNum);
       }
     }
 
@@ -177,8 +178,8 @@ namespace HotFix {
       if (RoomPwd.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(RoomPwd);
       }
-      if (MaxNum != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxNum);
+      if (LimitNum != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(LimitNum);
       }
       return size;
     }
@@ -194,8 +195,8 @@ namespace HotFix {
       if (other.RoomPwd.Length != 0) {
         RoomPwd = other.RoomPwd;
       }
-      if (other.MaxNum != 0) {
-        MaxNum = other.MaxNum;
+      if (other.LimitNum != 0) {
+        LimitNum = other.LimitNum;
       }
     }
 
@@ -216,7 +217,7 @@ namespace HotFix {
             break;
           }
           case 24: {
-            MaxNum = input.ReadInt32();
+            LimitNum = input.ReadInt32();
             break;
           }
         }
@@ -250,6 +251,7 @@ namespace HotFix {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public C2S_JoinRoom(C2S_JoinRoom other) : this() {
       roomId_ = other.roomId_;
+      roomPwd_ = other.roomPwd_;
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -271,6 +273,20 @@ namespace HotFix {
       }
     }
 
+    /// <summary>Field number for the "room_pwd" field.</summary>
+    public const int RoomPwdFieldNumber = 2;
+    private string roomPwd_ = "";
+    /// <summary>
+    /// 房间密码
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string RoomPwd {
+      get { return roomPwd_; }
+      set {
+        roomPwd_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as C2S_JoinRoom);
@@ -285,6 +301,7 @@ namespace HotFix {
         return true;
       }
       if (RoomId != other.RoomId) return false;
+      if (RoomPwd != other.RoomPwd) return false;
       return true;
     }
 
@@ -292,6 +309,7 @@ namespace HotFix {
     public override int GetHashCode() {
       int hash = 1;
       if (RoomId != 0) hash ^= RoomId.GetHashCode();
+      if (RoomPwd.Length != 0) hash ^= RoomPwd.GetHashCode();
       return hash;
     }
 
@@ -306,6 +324,10 @@ namespace HotFix {
         output.WriteRawTag(8);
         output.WriteInt32(RoomId);
       }
+      if (RoomPwd.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(RoomPwd);
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -313,6 +335,9 @@ namespace HotFix {
       int size = 0;
       if (RoomId != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoomId);
+      }
+      if (RoomPwd.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(RoomPwd);
       }
       return size;
     }
@@ -324,6 +349,9 @@ namespace HotFix {
       }
       if (other.RoomId != 0) {
         RoomId = other.RoomId;
+      }
+      if (other.RoomPwd.Length != 0) {
+        RoomPwd = other.RoomPwd;
       }
     }
 
@@ -337,6 +365,10 @@ namespace HotFix {
             break;
           case 8: {
             RoomId = input.ReadInt32();
+            break;
+          }
+          case 18: {
+            RoomPwd = input.ReadString();
             break;
           }
         }
@@ -383,7 +415,7 @@ namespace HotFix {
     /// <summary>
     /// int32 room_id = 1; 	  //房间Id
     /// string room_name = 2; //房间名
-    /// int32 max_num = 3;    //玩家数
+    /// int32 limit_num = 3;    //玩家数
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::HotFix.RoomInfo Room {
@@ -503,7 +535,7 @@ namespace HotFix {
       roomId_ = other.roomId_;
       roomName_ = other.roomName_;
       curNum_ = other.curNum_;
-      maxNum_ = other.maxNum_;
+      limitNum_ = other.limitNum_;
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -553,17 +585,17 @@ namespace HotFix {
       }
     }
 
-    /// <summary>Field number for the "max_num" field.</summary>
-    public const int MaxNumFieldNumber = 4;
-    private int maxNum_;
+    /// <summary>Field number for the "limit_num" field.</summary>
+    public const int LimitNumFieldNumber = 4;
+    private int limitNum_;
     /// <summary>
     /// 玩家总数
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int MaxNum {
-      get { return maxNum_; }
+    public int LimitNum {
+      get { return limitNum_; }
       set {
-        maxNum_ = value;
+        limitNum_ = value;
       }
     }
 
@@ -583,7 +615,7 @@ namespace HotFix {
       if (RoomId != other.RoomId) return false;
       if (RoomName != other.RoomName) return false;
       if (CurNum != other.CurNum) return false;
-      if (MaxNum != other.MaxNum) return false;
+      if (LimitNum != other.LimitNum) return false;
       return true;
     }
 
@@ -593,7 +625,7 @@ namespace HotFix {
       if (RoomId != 0) hash ^= RoomId.GetHashCode();
       if (RoomName.Length != 0) hash ^= RoomName.GetHashCode();
       if (CurNum != 0) hash ^= CurNum.GetHashCode();
-      if (MaxNum != 0) hash ^= MaxNum.GetHashCode();
+      if (LimitNum != 0) hash ^= LimitNum.GetHashCode();
       return hash;
     }
 
@@ -616,9 +648,9 @@ namespace HotFix {
         output.WriteRawTag(24);
         output.WriteInt32(CurNum);
       }
-      if (MaxNum != 0) {
+      if (LimitNum != 0) {
         output.WriteRawTag(32);
-        output.WriteInt32(MaxNum);
+        output.WriteInt32(LimitNum);
       }
     }
 
@@ -634,8 +666,8 @@ namespace HotFix {
       if (CurNum != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(CurNum);
       }
-      if (MaxNum != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxNum);
+      if (LimitNum != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(LimitNum);
       }
       return size;
     }
@@ -654,8 +686,8 @@ namespace HotFix {
       if (other.CurNum != 0) {
         CurNum = other.CurNum;
       }
-      if (other.MaxNum != 0) {
-        MaxNum = other.MaxNum;
+      if (other.LimitNum != 0) {
+        LimitNum = other.LimitNum;
       }
     }
 
@@ -680,7 +712,7 @@ namespace HotFix {
             break;
           }
           case 32: {
-            MaxNum = input.ReadInt32();
+            LimitNum = input.ReadInt32();
             break;
           }
         }

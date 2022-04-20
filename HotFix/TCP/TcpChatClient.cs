@@ -145,7 +145,7 @@ namespace HotFix
                 return false;
             }
 
-            C2S_CreateRoom cmd = new C2S_CreateRoom { RoomName = name, RoomPwd = pwd, MaxNum = num };
+            C2S_CreateRoom cmd = new C2S_CreateRoom { RoomName = name, RoomPwd = pwd, LimitNum = num };
             SendAsync(PacketType.C2S_CreateRoom, cmd);
             return true;
         }

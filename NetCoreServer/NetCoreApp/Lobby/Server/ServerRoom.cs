@@ -1,4 +1,5 @@
 ﻿using HotFix;
+using System.Collections.Generic;
 
 namespace NetCoreServer
 {
@@ -7,12 +8,21 @@ namespace NetCoreServer
     {
         #region 房间数据
 
-        public ServerRoom(int roomId, ServerPlayer host) : base(roomId, host)
+        public ServerRoom(ServerPlayer host, int roomId, int limit) : base(host, roomId, limit)
         {
-            m_PlayerList = new ServerPlayer[] { host };
+            // 被override的才需要在这里赋值
+            //RoomID = roomId;
+            //RoomLimit = limit;
+            m_PlayerList = new Dictionary<int, BasePlayer>();
+            m_PlayerList.Add(0, host); //房主座位号0
         }
 
-        public override BasePlayer[] m_PlayerList { get; protected set; }
+        public void JoinRoom()
+        {
+            
+        }
+
+        public override Dictionary<int, BasePlayer> m_PlayerList { get; protected set; }
         public override void Dispose() { }
 
         #endregion
