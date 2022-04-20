@@ -32,6 +32,8 @@ namespace TcpChatServer
             Debug.Print($"Chat TCP session with Id {Id} disconnected!");
 
             TCPChatServer.m_PlayerManager.RemovePlayer(Id);
+
+            WinFormsApp1.MainForm.Instance.RefreshNum();
         }
 
         // 注意这里是线程中
@@ -100,6 +102,8 @@ namespace TcpChatServer
 
             S2C_Login packet = new S2C_Login { Code = 0, Nickname = result.nickname };
             p.SendAsync(PacketType.S2C_LoginResult, packet);
+
+            WinFormsApp1.MainForm.Instance.RefreshNum();
         }
         protected void OnCreateRoom(byte[] body)
         {
@@ -109,8 +113,9 @@ namespace TcpChatServer
             //TODO: 验证合法性，在服务器创建房间
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            S2C_CreateRoom packet = new S2C_CreateRoom { RoomId = 0, RoomName = msg.RoomName, MaxNum = msg.MaxNum };
-            p.SendAsync(PacketType.S2C_CreateRoom, packet);
+            RoomInfo room = new RoomInfo { RoomId = 0, RoomName = msg.RoomName, MaxNum = msg.MaxNum };
+            S2C_RoomInfo packet = new S2C_RoomInfo { Room = room };
+            p.SendAsync(PacketType.S2C_RoomInfo, packet);
         }
         protected void OnRoomList(byte[] body)
         {
@@ -124,7 +129,7 @@ namespace TcpChatServer
             }
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            p.SendAsync(PacketType.S2C_CreateRoom, packet);
+            p.SendAsync(PacketType.S2C_RoomList, packet);
         }
         protected void OnChat(byte[] body)
         {

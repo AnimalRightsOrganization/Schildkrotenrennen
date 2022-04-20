@@ -50,10 +50,10 @@ namespace HotFix
                         NetPacketManager.Trigger(type); //派发（为什么在这创建UI，会堵塞接收线程？？）
                     }
                     break;
-                case PacketType.S2C_CreateRoom:
+                case PacketType.S2C_RoomInfo:
                     {
-                        S2C_CreateRoom msg = ProtobufferTool.Deserialize<S2C_CreateRoom>(body); //解包
-                        Debug.Log($"[{type}] RoomId={msg.RoomId}, RoomName={msg.RoomName}, Num={msg.MaxNum}");
+                        S2C_RoomInfo msg = ProtobufferTool.Deserialize<S2C_RoomInfo>(body); //解包
+                        Debug.Log($"[{type}] RoomId={msg.Room.RoomId}, RoomName={msg.Room.RoomName}, Num={msg.Room.MaxNum}");
                         NetPacketManager.Trigger(type); //派发
                     }
                     break;

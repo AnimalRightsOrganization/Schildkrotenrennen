@@ -76,16 +76,22 @@ namespace HotFix
 
         public void OnNetCallback(PacketType type)
         {
+            //Debug.Log($"UI_Main.OnNetCallback:{type}");
             switch (type)
             {
-                case PacketType.C2S_CreateRoom:
-                    Debug.Log("派发创建房间");
+                case PacketType.S2C_RoomInfo:
+                    UIManager.Get().Push<UI_Room>();
+                    break;
+                case PacketType.S2C_RoomList:
+                    Debug.Log("派发房间列表");
                     break;
             }
         }
 
         void OnListBtnClick()
         {
+            TcpChatClient.SendGetRoomList();
+
             //弹出大厅列表
             m_ListPanel.SetActive(true);
         }
@@ -131,9 +137,9 @@ namespace HotFix
         }
         void OnConfirmBtnClick()
         {
-            Debug.Log($"确认");
-
-            TcpChatClient.SendCreateRoom(m_NameInput.text, m_KeyInput.text, playerNum);
+            bool result = TcpChatClient.SendCreateRoom(m_NameInput.text, m_KeyInput.text, playerNum);
+            if (!result)
+                return;
 
             m_CreatePanel.SetActive(false);
         }

@@ -266,6 +266,30 @@ namespace WinFormsApp1
 
         #endregion
 
+        #region Refresh UI in Thread
+
+        private void InvokeUI(Action a)
+        {
+            this.BeginInvoke(new MethodInvoker(a));
+        }
+
+        public void RefreshNum()
+        {
+            var num = TcpChatServer.TCPChatServer.m_PlayerManager.Count;
+            InvokeUI(() => {
+                this.logText.Text = $"在线人数={num}";
+            });
+        }
+
+        public void RefreshLogs(string logs)
+        {
+            InvokeUI(() => {
+                this.logText.Text += "\n{logs}";
+            });
+        }
+
+        #endregion
+
         private Label title;
         private Button connectBtn;
         private Button startServerBtn;

@@ -36,26 +36,29 @@ namespace HotFix
         C2S_UserInfo    ,   //请求用户信息
         C2S_Chat        ,   //聊天消息
         C2S_Settings    ,   //设置选项
-        C2S_CreateRoom  ,   //创建房间
-        C2S_LeaveRoom   ,   //离开房间
+        
         C2S_RoomList    ,   //房间列表
+        C2S_CreateRoom  ,   //创建房间
+        C2S_JoinRoom    ,   //加入房间
+        C2S_LeaveRoom   ,   //离开房间
+
         C2S_GameReady   ,   //请求准备
         C2S_BattleStart ,   //请求开始战斗
-        C2S_BattlePause ,   //请求暂停战斗
         C2S_BattleQuit  ,   //离开比赛（认输） =>返回大厅
         C2S_BattleEnd   ,   //上报比赛结果（双方都要发，由战斗系统判定）
         ///////////////////////////////////////////////
-        S2C_LoginResult ,   //登录结果
+        S2C_LoginResult ,   //登录、注册结果
         S2C_LogoutResult,   //登出结果
         S2C_UserInfo    ,   //下发用户信息
         S2C_Chat        ,   //聊天消息广播
         S2C_Settings    ,   //设置选项
-        S2C_CreateRoom  ,   //创建房间结果
+        
         S2C_RoomList    ,   //房间列表
+        S2C_RoomInfo    ,   //创建、加入房间后，获取房间内信息
+        S2C_LeaveRoom   ,   //离开房间
+
         S2C_GameReady   ,   //准备结果
         S2C_LoadScene   ,   //跳转场景
-        S2C_BattleStart ,   //开始战斗（第一帧同步）
-        S2C_BattlePause ,   //暂停战斗（暂停帧同步）
         S2C_BattleEnd   ,   //比赛结束，结算
         S2C_ErrorOperate,   //错误代码
     }

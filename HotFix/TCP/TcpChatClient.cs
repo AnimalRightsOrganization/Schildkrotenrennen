@@ -111,18 +111,58 @@ namespace HotFix
 
         public static void SendLogin(string usr, string pwd)
         {
+            if (string.IsNullOrEmpty(usr) || string.IsNullOrEmpty(pwd))
+            {
+                Debug.LogError($"用户名或密码不能为空"); //TODO: Toast
+                return;
+            }
+            if (pwd.Length < 6)
+            {
+                Debug.LogError($"密码长度过短"); //TODO: Toast
+                return;
+            }
+            //TODO: 服务器/客户端共用规则，双边验证...
+
             C2S_Login cmd = new C2S_Login { Username = usr, Password = pwd };
             SendAsync(PacketType.C2S_LoginReq, cmd);
         }
         public static void SendChat(string message)
         {
+            if (message.Length <= 0)
+            {
+                Debug.LogError($"内容为空"); //TODO: Toast
+                return;
+            }
+
             TheMsg cmd = new TheMsg { Name = "lala", Content = message };
             SendAsync(PacketType.C2S_Chat, cmd);
         }
-        public static void SendCreateRoom(string name, string pwd, int num)
+        public static bool SendCreateRoom(string name, string pwd, int num)
         {
+            if (name.Length < 3)
+            {
+                Debug.LogError($"房间名称至少3个字:{name.Length}"); //TODO: Toast
+                return false;
+            }
+
             C2S_CreateRoom cmd = new C2S_CreateRoom { RoomName = name, RoomPwd = pwd, MaxNum = num };
             SendAsync(PacketType.C2S_CreateRoom, cmd);
+            return true;
+        }
+        public static void SendEnterRoom(int roomId)
+        {
+            C2S_JoinRoom cmd = new C2S_JoinRoom { RoomId = roomId };
+            SendAsync(PacketType.C2S_LeaveRoom, cmd);
+        }
+        public static void SendLeaveRoom()
+        {
+            Empty cmd = new Empty();
+            SendAsync(PacketType.C2S_LeaveRoom, cmd);
+        }
+        public static void SendGetRoomList()
+        {
+            Empty cmd = new Empty();
+            SendAsync(PacketType.C2S_RoomList, cmd);
         }
     }
 }

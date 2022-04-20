@@ -6,6 +6,18 @@ namespace WinFormsApp1
 {
     public partial class MainForm : Form
     {
+        // 跨类调用单例
+        static MainForm _instance;
+        public static MainForm Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = new MainForm();
+                return _instance;
+            }
+        }
+
         public MainForm()
         {
             InitializeComponent();
