@@ -26,9 +26,9 @@ namespace HotFix {
             "bmFtZRgBIAEoCRIQCghyb29tX3B3ZBgCIAEoCRIRCglsaW1pdF9udW0YAyAB",
             "KAUiMQoMQzJTX0pvaW5Sb29tEg8KB3Jvb21faWQYASABKAUSEAoIcm9vbV9w",
             "d2QYAiABKAkiJwoMUzJDX1Jvb21JbmZvEhcKBHJvb20YASABKAsyCS5Sb29t",
+            "SW5mbyIrCg9TMkNfR2V0Um9vbUxpc3QSGAoFcm9vbXMYASADKAsyCS5Sb29t",
             "SW5mbyJSCghSb29tSW5mbxIPCgdyb29tX2lkGAEgASgFEhEKCXJvb21fbmFt",
-            "ZRgCIAEoCRIPCgdjdXJfbnVtGAMgASgFEhEKCWxpbWl0X251bRgEIAEoBSIr",
-            "Cg9TMkNfR2V0Um9vbUxpc3QSGAoFcm9vbXMYASADKAsyCS5Sb29tSW5mb0IJ",
+            "ZRgCIAEoCRIPCgdjdXJfbnVtGAMgASgFEhEKCWxpbWl0X251bRgEIAEoBUIJ",
             "qgIGSG90Rml4YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
@@ -36,8 +36,8 @@ namespace HotFix {
             new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.C2S_CreateRoom), global::HotFix.C2S_CreateRoom.Parser, new[]{ "RoomName", "RoomPwd", "LimitNum" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.C2S_JoinRoom), global::HotFix.C2S_JoinRoom.Parser, new[]{ "RoomId", "RoomPwd" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.S2C_RoomInfo), global::HotFix.S2C_RoomInfo.Parser, new[]{ "Room" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.RoomInfo), global::HotFix.RoomInfo.Parser, new[]{ "RoomId", "RoomName", "CurNum", "LimitNum" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.S2C_GetRoomList), global::HotFix.S2C_GetRoomList.Parser, new[]{ "Rooms" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.S2C_GetRoomList), global::HotFix.S2C_GetRoomList.Parser, new[]{ "Rooms" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::HotFix.RoomInfo), global::HotFix.RoomInfo.Parser, new[]{ "RoomId", "RoomName", "CurNum", "LimitNum" }, null, null, null)
           }));
     }
     #endregion
@@ -412,11 +412,6 @@ namespace HotFix {
     /// <summary>Field number for the "room" field.</summary>
     public const int RoomFieldNumber = 1;
     private global::HotFix.RoomInfo room_;
-    /// <summary>
-    /// int32 room_id = 1; 	  //房间Id
-    /// string room_name = 2; //房间名
-    /// int32 limit_num = 3;    //玩家数
-    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::HotFix.RoomInfo Room {
       get { return room_; }
@@ -508,6 +503,115 @@ namespace HotFix {
   /// <summary>
   /// message C2S_GetRoomList {} //传Empty就行
   /// </summary>
+  public sealed partial class S2C_GetRoomList : pb::IMessage<S2C_GetRoomList> {
+    private static readonly pb::MessageParser<S2C_GetRoomList> _parser = new pb::MessageParser<S2C_GetRoomList>(() => new S2C_GetRoomList());
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<S2C_GetRoomList> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::HotFix.CreateRoomReflection.Descriptor.MessageTypes[3]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public S2C_GetRoomList() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public S2C_GetRoomList(S2C_GetRoomList other) : this() {
+      rooms_ = other.rooms_.Clone();
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public S2C_GetRoomList Clone() {
+      return new S2C_GetRoomList(this);
+    }
+
+    /// <summary>Field number for the "rooms" field.</summary>
+    public const int RoomsFieldNumber = 1;
+    private static readonly pb::FieldCodec<global::HotFix.RoomInfo> _repeated_rooms_codec
+        = pb::FieldCodec.ForMessage(10, global::HotFix.RoomInfo.Parser);
+    private readonly pbc::RepeatedField<global::HotFix.RoomInfo> rooms_ = new pbc::RepeatedField<global::HotFix.RoomInfo>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::HotFix.RoomInfo> Rooms {
+      get { return rooms_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as S2C_GetRoomList);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(S2C_GetRoomList other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if(!rooms_.Equals(other.rooms_)) return false;
+      return true;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      hash ^= rooms_.GetHashCode();
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      rooms_.WriteTo(output, _repeated_rooms_codec);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      size += rooms_.CalculateSize(_repeated_rooms_codec);
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(S2C_GetRoomList other) {
+      if (other == null) {
+        return;
+      }
+      rooms_.Add(other.rooms_);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            input.SkipLastField();
+            break;
+          case 10: {
+            rooms_.AddEntriesFrom(input, _repeated_rooms_codec);
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
   public sealed partial class RoomInfo : pb::IMessage<RoomInfo> {
     private static readonly pb::MessageParser<RoomInfo> _parser = new pb::MessageParser<RoomInfo>(() => new RoomInfo());
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -515,7 +619,7 @@ namespace HotFix {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::HotFix.CreateRoomReflection.Descriptor.MessageTypes[3]; }
+      get { return global::HotFix.CreateRoomReflection.Descriptor.MessageTypes[4]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -713,115 +817,6 @@ namespace HotFix {
           }
           case 32: {
             LimitNum = input.ReadInt32();
-            break;
-          }
-        }
-      }
-    }
-
-  }
-
-  public sealed partial class S2C_GetRoomList : pb::IMessage<S2C_GetRoomList> {
-    private static readonly pb::MessageParser<S2C_GetRoomList> _parser = new pb::MessageParser<S2C_GetRoomList>(() => new S2C_GetRoomList());
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<S2C_GetRoomList> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::HotFix.CreateRoomReflection.Descriptor.MessageTypes[4]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public S2C_GetRoomList() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public S2C_GetRoomList(S2C_GetRoomList other) : this() {
-      rooms_ = other.rooms_.Clone();
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public S2C_GetRoomList Clone() {
-      return new S2C_GetRoomList(this);
-    }
-
-    /// <summary>Field number for the "rooms" field.</summary>
-    public const int RoomsFieldNumber = 1;
-    private static readonly pb::FieldCodec<global::HotFix.RoomInfo> _repeated_rooms_codec
-        = pb::FieldCodec.ForMessage(10, global::HotFix.RoomInfo.Parser);
-    private readonly pbc::RepeatedField<global::HotFix.RoomInfo> rooms_ = new pbc::RepeatedField<global::HotFix.RoomInfo>();
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::HotFix.RoomInfo> Rooms {
-      get { return rooms_; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as S2C_GetRoomList);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(S2C_GetRoomList other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if(!rooms_.Equals(other.rooms_)) return false;
-      return true;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      hash ^= rooms_.GetHashCode();
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-      rooms_.WriteTo(output, _repeated_rooms_codec);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      size += rooms_.CalculateSize(_repeated_rooms_codec);
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(S2C_GetRoomList other) {
-      if (other == null) {
-        return;
-      }
-      rooms_.Add(other.rooms_);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            input.SkipLastField();
-            break;
-          case 10: {
-            rooms_.AddEntriesFrom(input, _repeated_rooms_codec);
             break;
           }
         }

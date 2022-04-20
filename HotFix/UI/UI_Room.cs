@@ -38,9 +38,9 @@ namespace HotFix
             }
         }
 
-        public void InitUI()
+        public void InitUI(BaseRoomData roomData)
         {
-            m_NameText.text = "";
+            m_NameText.text = roomData.RoomName;
         }
 
         void OnCloseBtnClick()

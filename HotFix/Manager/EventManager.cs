@@ -47,21 +47,21 @@ namespace HotFix
                 case PacketType.S2C_LoginResult:
                     {
                         S2C_Login packet = ProtobufferTool.Deserialize<S2C_Login>(body); //解包
-                        Debug.Log($"[{type}] Code={packet.Code}, Nickname={packet.Nickname}");
+                        Debug.Log($"[Handle:{type}] Code={packet.Code}, Nickname={packet.Nickname}");
                         NetPacketManager.Trigger(type, packet); //派发（为什么在这创建UI，会堵塞接收线程？？）
                     }
                     break;
                 case PacketType.S2C_RoomInfo:
                     {
                         S2C_RoomInfo packet = ProtobufferTool.Deserialize<S2C_RoomInfo>(body); //解包
-                        Debug.Log($"[{type}] RoomId={packet.Room.RoomId}, RoomName={packet.Room.RoomName}, Num={packet.Room.LimitNum}");
+                        Debug.Log($"[Handle:{type}] RoomId={packet.Room.RoomId}, RoomName={packet.Room.RoomName}, Num={packet.Room.LimitNum}");
                         NetPacketManager.Trigger(type, packet); //派发
                     }
                     break;
                 case PacketType.S2C_RoomList:
                     {
                         S2C_GetRoomList packet = ProtobufferTool.Deserialize<S2C_GetRoomList>(body); //解包
-                        Debug.Log($"[{type}] RoomCount={packet.Rooms.Count}");
+                        Debug.Log($"[Handle:{type}] RoomCount={packet.Rooms.Count}");
                         if (packet.Rooms.Count > 0)
                         {
                             Debug.Log($"Room.0={packet.Rooms[0].RoomId}");
@@ -72,12 +72,12 @@ namespace HotFix
                 case PacketType.S2C_Chat:
                     {
                         TheMsg packet = ProtobufferTool.Deserialize<TheMsg>(body); //解包
-                        Debug.Log($"[{type}] {packet.Name}说: {packet.Content}");
+                        Debug.Log($"[Handle:{type}] {packet.Name}说: {packet.Content}");
                         NetPacketManager.Trigger(type, packet); //派发
                     }
                     break;
                 default:
-                    Debug.LogError($"无法识别的消息: {type}");
+                    Debug.LogError($"Handle:无法识别的消息: {type}");
                     break;
             }
             //TODO: 通过委托分发出去

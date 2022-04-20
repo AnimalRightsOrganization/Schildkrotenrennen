@@ -9,7 +9,7 @@ namespace NetCoreServer
     {
         #region 房间数据
 
-        public ServerRoom(ServerPlayer host, int roomId, int limit) : base(host, roomId, limit)
+        public ServerRoom(ServerPlayer host, BaseRoomData data) : base(host, data)
         {
             // 被override的才需要在这里赋值
             //RoomID = roomId;
@@ -31,7 +31,7 @@ namespace NetCoreServer
 
             int SeatId = GetAvailableRoomID();
             m_PlayerList.Add(SeatId, p);
-            p.SetRoomID((short)RoomID)
+            p.SetRoomID((short)m_RoomData.RoomID)
                 .SetSeatID((short)SeatId)
                 .SetStatus(PlayerStatus.AtRoomWait);
 
@@ -62,6 +62,7 @@ namespace NetCoreServer
             }
             return false;
         }
+        public int CurCount => m_PlayerList.Count;
 
         const int MIN_INDEX = 0;
         const int MAX_INDEX = 4;

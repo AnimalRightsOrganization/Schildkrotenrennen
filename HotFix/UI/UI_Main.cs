@@ -6,6 +6,7 @@ namespace HotFix
 {
     public class UI_Main : UIBase
     {
+        #region 界面组件
         private int playerNum;
 
         public Button m_ListBtn;
@@ -24,7 +25,9 @@ namespace HotFix
 
         public GameObject m_ListPanel;
         public Button m_CloseListPanel;
+        #endregion
 
+        #region 内置方法
         void Awake()
         {
             playerNum = 2;
@@ -74,24 +77,9 @@ namespace HotFix
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
         }
+        #endregion
 
-        public void OnNetCallback(PacketType type, IMessage packet)
-        {
-            //Debug.Log($"UI_Main.OnNetCallback:{type}");
-            switch (type)
-            {
-                case PacketType.S2C_RoomInfo:
-                    {
-                        var room = UIManager.Get().Push<UI_Room>();
-                        room.InitUI();
-                        break;
-                    }
-                case PacketType.S2C_RoomList:
-                    Debug.Log("派发房间列表");
-                    break;
-            }
-        }
-
+        #region 按钮事件
         void OnListBtnClick()
         {
             TcpChatClient.SendGetRoomList();
@@ -147,5 +135,36 @@ namespace HotFix
 
             m_CreatePanel.SetActive(false);
         }
+        #endregion
+
+        #region 网络事件
+        public void OnNetCallback(PacketType type, IMessage packet)
+        {
+            switch (type)
+            {
+                case PacketType.S2C_RoomInfo:
+                    OnGetRoomInfo(type, packet);
+                    break;
+                case PacketType.S2C_RoomList:
+                    Debug.Log("派发房间列表");
+                    break;
+            }
+        }
+        void OnGetRoomInfo(PacketType type, IMessage packet)
+        {
+            S2C_RoomInfo data = (S2C_RoomInfo)packet;
+            Debug.Log($"派发房间列表: {data.Room.RoomId}:{data.Room.RoomName}, {data.Room.CurNum}/{data.Room.LimitNum}");
+
+            BaseRoomData roomData = new BaseRoomData
+            { 
+                RoomID = data.Room.RoomId, 
+                RoomName = data.Room.RoomName, 
+                //RoomPwd = data.Room.LimitNum,
+                RoomLimit = data.Room.LimitNum,
+            };
+            var room = UIManager.Get().Push<UI_Room>();
+            room.InitUI(roomData);
+        }
+        #endregion
     }
 }

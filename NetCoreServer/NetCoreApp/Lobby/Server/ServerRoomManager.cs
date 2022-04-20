@@ -16,9 +16,10 @@ namespace NetCoreServer
         }
 
         // 创建房间
-        public ServerRoom CreateServerRoom(ServerPlayer hostPlayer, int limit)
+        public ServerRoom CreateServerRoom(ServerPlayer hostPlayer, BaseRoomData roomData)
         {
             int roomId = GetAvailableRoomID();
+            roomData.RoomID = roomId;
             if (dic_rooms.ContainsKey(roomId))
             {
                 Debug.Print("严重的错误，创建房间时，ID重复");
@@ -29,8 +30,7 @@ namespace NetCoreServer
                 Debug.Print("大厅爆满，无法创建新房间");
                 return null;
             }
-
-            ServerRoom serverRoom = new ServerRoom(hostPlayer, roomId, limit);
+            ServerRoom serverRoom = new ServerRoom(hostPlayer, roomData);
             dic_rooms.Add(roomId, serverRoom);
             return serverRoom;
         }
@@ -52,6 +52,11 @@ namespace NetCoreServer
         public bool RemoveIfHost(ServerPlayer p)
         {
             ServerRoom serverRoom = GetServerRoom(p.RoomId);
+            if (serverRoom == null)
+            {
+                Debug.Print($"找不到房间#{p.RoomId}");
+                return false;
+            }
             if (serverRoom.hostPlayer.PeerId == p.PeerId)
             {
                 RemoveServerRoom(p.RoomId);

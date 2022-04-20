@@ -32,14 +32,12 @@ namespace HotFix
 
         void Start()
         {
-            //Debug.Log("UI_Login.Start");
             NetPacketManager.RegisterEvent(OnNetCallback);
             TcpChatClient.Connect();
         }
 
         void OnDestroy()
         {
-            //Debug.Log("UI_Login.OnDestroy");
             NetPacketManager.UnRegisterEvent(OnNetCallback);
 
             m_HelpBtn.onClick.RemoveListener(OnHelpBtnClick);

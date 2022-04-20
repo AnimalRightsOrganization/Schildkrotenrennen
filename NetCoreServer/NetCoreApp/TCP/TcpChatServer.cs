@@ -113,14 +113,18 @@ namespace TcpChatServer
         }
         protected void OnRoomList(byte[] body)
         {
-            Empty msg = ProtobufferTool.Deserialize<Empty>(body); //空消息
-
             S2C_GetRoomList packet = new S2C_GetRoomList();
-            //foreach(var room in TCPChatServer.m_RoomManager.dic_rooms)
-            //{
-            //    RoomInfo info = new RoomInfo { RoomId = room.Value.RoomID };
-            //    packet.Rooms.Add(info);
-            //}
+            foreach (ServerRoom room in TCPChatServer.m_RoomManager.GetAll())
+            {
+                RoomInfo info = new RoomInfo
+                { 
+                    RoomId = room.m_RoomData.RoomID,
+                    RoomName = room.m_RoomData.RoomName,
+                    CurNum = room.CurCount,
+                    LimitNum = room.m_RoomData.RoomLimit,
+                };
+                packet.Rooms.Add(info);
+            }
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             p.SendAsync(PacketType.S2C_RoomList, packet);
@@ -134,7 +138,8 @@ namespace TcpChatServer
             RoomInfo roomInfo = new RoomInfo { RoomId = 0, RoomName = msg.RoomName, LimitNum = msg.LimitNum };
 
             // 验证合法性（总数是否超过等），在服务器创建房间
-            ServerRoom serverRoom = TCPChatServer.m_RoomManager.CreateServerRoom(p, msg.LimitNum);
+            BaseRoomData baseRoomData = new BaseRoomData { RoomID = -1, RoomName = msg.RoomName, RoomPwd = msg.RoomPwd, RoomLimit = msg.LimitNum };
+            ServerRoom serverRoom = TCPChatServer.m_RoomManager.CreateServerRoom(p, baseRoomData);
             if (serverRoom == null)
             {
                 Debug.Print("创建房间出错");
@@ -156,19 +161,19 @@ namespace TcpChatServer
 
             // 验证合法性（座位是否够，房间状态是否在等待，密码，等）
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(msg.RoomId);
-            if (serverRoom.RoomKey == msg.RoomPwd)
+            if (serverRoom.m_RoomData.RoomPwd == msg.RoomPwd)
             {
                 Debug.Print("房间密码错误");
                 return;
             }
-            if (serverRoom.m_PlayerList.Count >= serverRoom.RoomLimit)
+            if (serverRoom.m_PlayerList.Count >= serverRoom.m_RoomData.RoomLimit)
             {
                 Debug.Print("房间爆满");
                 return;
             }
             serverRoom.AddPlayer(p);
 
-            RoomInfo roomInfo = new RoomInfo { RoomId = serverRoom.RoomID, RoomName = serverRoom.RoomName, LimitNum = serverRoom.RoomLimit };
+            RoomInfo roomInfo = new RoomInfo { RoomId = serverRoom.m_RoomData.RoomID, RoomName = serverRoom.m_RoomData.RoomName, LimitNum = serverRoom.m_RoomData.RoomLimit };
             S2C_RoomInfo packet = new S2C_RoomInfo { Room = roomInfo };
             p.SendAsync(PacketType.S2C_RoomInfo, packet);
         }

@@ -71,7 +71,7 @@ namespace HotFix
                     obj.AddComponent<T>();
                 var script = obj.GetComponent<T>();
                 stack.Add(scriptName, script);
-                Debug.Log($"<color=yellow>New{stack.Count}/{recyclePool.Count}</color>");
+                //Debug.Log($"<color=yellow>New{stack.Count}/{recyclePool.Count}</color>");
                 return script;
             }
         }

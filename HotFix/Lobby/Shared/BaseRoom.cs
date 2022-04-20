@@ -2,6 +2,13 @@
 
 namespace HotFix
 {
+    public class BaseRoomData
+    {
+        public int RoomID;
+        public string RoomName;
+        public string RoomPwd;
+        public int RoomLimit;
+    }
     public class BaseRoom : IDisposable
     {
         public BaseRoom(int id, BasePlayer host, BasePlayer guest)
@@ -13,7 +20,6 @@ namespace HotFix
         public string BattleID;     // 服务器战斗编号
         public int Seed;            // 随机种子
         public byte MapId = 0;      // 地图编号（暂时用不到）
-        //public BattleMode BattleMode;
 
         // 一个房间必须满足有2个人(掉线?)
         public virtual BasePlayer[] m_PlayerList { get; protected set; }
