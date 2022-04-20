@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using IMessage = Google.Protobuf.IMessage;
 
 namespace HotFix
 {
@@ -45,34 +46,34 @@ namespace HotFix
                     break;
                 case PacketType.S2C_LoginResult:
                     {
-                        S2C_Login msg = ProtobufferTool.Deserialize<S2C_Login>(body); //解包
-                        Debug.Log($"[{type}] Code={msg.Code}, Nickname={msg.Nickname}");
-                        NetPacketManager.Trigger(type); //派发（为什么在这创建UI，会堵塞接收线程？？）
+                        S2C_Login packet = ProtobufferTool.Deserialize<S2C_Login>(body); //解包
+                        Debug.Log($"[{type}] Code={packet.Code}, Nickname={packet.Nickname}");
+                        NetPacketManager.Trigger(type, packet); //派发（为什么在这创建UI，会堵塞接收线程？？）
                     }
                     break;
                 case PacketType.S2C_RoomInfo:
                     {
-                        S2C_RoomInfo msg = ProtobufferTool.Deserialize<S2C_RoomInfo>(body); //解包
-                        Debug.Log($"[{type}] RoomId={msg.Room.RoomId}, RoomName={msg.Room.RoomName}, Num={msg.Room.LimitNum}");
-                        NetPacketManager.Trigger(type); //派发
+                        S2C_RoomInfo packet = ProtobufferTool.Deserialize<S2C_RoomInfo>(body); //解包
+                        Debug.Log($"[{type}] RoomId={packet.Room.RoomId}, RoomName={packet.Room.RoomName}, Num={packet.Room.LimitNum}");
+                        NetPacketManager.Trigger(type, packet); //派发
                     }
                     break;
                 case PacketType.S2C_RoomList:
                     {
-                        S2C_GetRoomList msg = ProtobufferTool.Deserialize<S2C_GetRoomList>(body); //解包
-                        Debug.Log($"[{type}] RoomCount={msg.Rooms.Count}");
-                        if (msg.Rooms.Count > 0)
+                        S2C_GetRoomList packet = ProtobufferTool.Deserialize<S2C_GetRoomList>(body); //解包
+                        Debug.Log($"[{type}] RoomCount={packet.Rooms.Count}");
+                        if (packet.Rooms.Count > 0)
                         {
-                            Debug.Log($"Room.0={msg.Rooms[0].RoomId}");
+                            Debug.Log($"Room.0={packet.Rooms[0].RoomId}");
                         }
-                        NetPacketManager.Trigger(type); //派发
+                        NetPacketManager.Trigger(type, packet); //派发
                     }
                     break;
                 case PacketType.S2C_Chat:
                     {
-                        TheMsg msg = ProtobufferTool.Deserialize<TheMsg>(body); //解包
-                        Debug.Log($"[{type}] {msg.Name}说: {msg.Content}");
-                        NetPacketManager.Trigger(type); //派发
+                        TheMsg packet = ProtobufferTool.Deserialize<TheMsg>(body); //解包
+                        Debug.Log($"[{type}] {packet.Name}说: {packet.Content}");
+                        NetPacketManager.Trigger(type, packet); //派发
                     }
                     break;
                 default:
@@ -85,37 +86,37 @@ namespace HotFix
 
     public class NetPacketManager
     {
-        public delegate void SampleEventHandler(PacketType t);
-        public static event SampleEventHandler SampleEvent;
-        public static void RegisterEvent(SampleEventHandler action)
+        public delegate void EventHandler(PacketType t, IMessage packet);
+        public static event EventHandler Event;
+        public static void RegisterEvent(EventHandler action)
         {
-            SampleEvent += action;
+            Event += action;
         }
-        public static void UnRegisterEvent(SampleEventHandler action)
+        public static void UnRegisterEvent(EventHandler action)
         {
-            SampleEvent -= action;
+            Event -= action;
         }
-        public static void Trigger(PacketType type)
+        public static void Trigger(PacketType type, IMessage packet)
         {
-            SampleEvent?.Invoke(type);
+            Event?.Invoke(type, packet);
         }
     }
 
     public class NetStateManager
     {
-        public delegate void SampleEventHandler(int t);
-        public static event SampleEventHandler SampleEvent;
-        public static void RegisterEvent(SampleEventHandler action)
+        public delegate void EventHandler(int t);
+        public static event EventHandler Event;
+        public static void RegisterEvent(EventHandler action)
         {
-            SampleEvent += action;
+            Event += action;
         }
-        public static void UnRegisterEvent(SampleEventHandler action)
+        public static void UnRegisterEvent(EventHandler action)
         {
-            SampleEvent -= action;
+            Event -= action;
         }
         public static void Trigger(int type)
         {
-            SampleEvent?.Invoke(type);
+            Event?.Invoke(type);
         }
     }
 }

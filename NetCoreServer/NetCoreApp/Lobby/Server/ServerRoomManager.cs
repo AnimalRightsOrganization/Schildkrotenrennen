@@ -40,10 +40,6 @@ namespace NetCoreServer
             ServerRoom serverRoom = null;
             if (dic_rooms.TryGetValue(roomId, out serverRoom))
             {
-                //if (m_BattleRoomList.Contains(serverRoom))
-                //{
-                //    RemoveBattleRoom(serverRoom);
-                //}
                 serverRoom.Dispose();
                 dic_rooms.Remove(roomId);
             }
@@ -51,6 +47,17 @@ namespace NetCoreServer
             {
                 Debug.Print("严重的错误，无法移除房间");
             }
+        }
+        // 关闭房间（如果该用户是房主）
+        public bool RemoveIfHost(ServerPlayer p)
+        {
+            ServerRoom serverRoom = GetServerRoom(p.RoomId);
+            if (serverRoom.hostPlayer.PeerId == p.PeerId)
+            {
+                RemoveServerRoom(p.RoomId);
+                return true;
+            }
+            return false;
         }
         // 关闭房间（所有）
         public void RemoveAll()

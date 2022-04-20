@@ -31,6 +31,22 @@ namespace NetCoreServer.Utils
             }
         }
 
+        public static async Task<bool> IsConnected()
+        {
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                try
+                {
+                    await conn.OpenAsync();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    Debug.Print($"error: {e.ToString()}, db conn: {conn.State}");
+                    return false;
+                }
+            }
+        }
         public static void Insert()
         {
             //一次插入多条

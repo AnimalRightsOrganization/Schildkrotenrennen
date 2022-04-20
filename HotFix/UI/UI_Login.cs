@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using IMessage = Google.Protobuf.IMessage;
 
 namespace HotFix
 {
@@ -53,15 +54,15 @@ namespace HotFix
             m_RegisterBtn = null;
         }
 
-        public void OnNetCallback(PacketType type)
+        public void OnNetCallback(PacketType type, IMessage packet)
         {
             switch (type)
             {
                 case PacketType.S2C_LoginResult:
                     {
                         UIManager.Get().Push<UI_Main>(); //成功回调中执行
+                        break;
                     }
-                    break;
             }
         }
 

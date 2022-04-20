@@ -204,17 +204,10 @@ namespace WinFormsApp1
 
         }
 
-        private void DB_Click(object sender, System.EventArgs e)
-        {
-            //MongoDBTool mongo = new MongoDBTool();
-            //mongo.Query();
-            TestQuery();
-        }
-
-        private async void TestQuery()
+        private async void DB_Click(object sender, System.EventArgs e)
         {
             //await MySQLTool.MultiSQL();
-            //await MySQLTool.TestQuery();
+            await MySQLTool.TestQuery();
 
             //var result = await MySQLTool.CheckLogin("lala", "123456");
             //Debug.Print($"lala: {result}");
@@ -235,8 +228,18 @@ namespace WinFormsApp1
             //Debug.Print($"result6: {result6.nickname}");
         }
 
-        private void StartServer_Click(object sender, System.EventArgs e)
+        private async void StartServer_Click(object sender, System.EventArgs e)
         {
+            // 检查数据库连接是否正常
+            bool db = await MySQLTool.IsConnected();
+            if (db == false)
+            {
+                string error_message = "无法启动服务器，SQL连接失败";
+                RefreshLogs(error_message);
+                Debug.Print(error_message);
+                return;
+            }
+
             TcpChatServer.TCPChatServer.Run();
 
             this.pictureBox1.Image = global::NetCoreServer.Properties.Resources.green_light_x32;
@@ -292,7 +295,7 @@ namespace WinFormsApp1
         public void RefreshLogs(string logs)
         {
             InvokeUI(() => {
-                this.logText.Text += "\n{logs}";
+                this.logText.Text += $"\n{logs}";
             });
         }
 

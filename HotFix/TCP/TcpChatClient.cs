@@ -149,9 +149,9 @@ namespace HotFix
             SendAsync(PacketType.C2S_CreateRoom, cmd);
             return true;
         }
-        public static void SendEnterRoom(int roomId)
+        public static void SendJoinRoom(int roomId, string pwd)
         {
-            C2S_JoinRoom cmd = new C2S_JoinRoom { RoomId = roomId };
+            C2S_JoinRoom cmd = new C2S_JoinRoom { RoomId = roomId, RoomPwd = pwd };
             SendAsync(PacketType.C2S_LeaveRoom, cmd);
         }
         public static void SendLeaveRoom()

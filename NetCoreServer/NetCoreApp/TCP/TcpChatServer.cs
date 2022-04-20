@@ -5,7 +5,6 @@ using System.Diagnostics;
 using NetCoreServer;
 using NetCoreServer.Utils;
 using HotFix;
-using Google.Protobuf.Collections;
 using IMessage = Google.Protobuf.IMessage;
 
 namespace TcpChatServer
@@ -31,6 +30,13 @@ namespace TcpChatServer
         {
             Debug.Print($"Chat TCP session with Id {Id} disconnected!");
 
+            ServerPlayer player = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
+            if (player == null)
+            {
+                Debug.Print("找不到用户了");
+                return;
+            }
+            TCPChatServer.m_RoomManager.RemoveIfHost(player); //如果是房主
             TCPChatServer.m_PlayerManager.RemovePlayer(Id);
 
             WinFormsApp1.MainForm.Instance.RefreshPlayerNum();
@@ -105,6 +111,20 @@ namespace TcpChatServer
 
             WinFormsApp1.MainForm.Instance.RefreshPlayerNum();
         }
+        protected void OnRoomList(byte[] body)
+        {
+            Empty msg = ProtobufferTool.Deserialize<Empty>(body); //空消息
+
+            S2C_GetRoomList packet = new S2C_GetRoomList();
+            //foreach(var room in TCPChatServer.m_RoomManager.dic_rooms)
+            //{
+            //    RoomInfo info = new RoomInfo { RoomId = room.Value.RoomID };
+            //    packet.Rooms.Add(info);
+            //}
+
+            ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
+            p.SendAsync(PacketType.S2C_RoomList, packet);
+        }
         protected void OnCreateRoom(byte[] body)
         {
             C2S_CreateRoom msg = ProtobufferTool.Deserialize<C2S_CreateRoom>(body);
@@ -128,7 +148,6 @@ namespace TcpChatServer
 
             WinFormsApp1.MainForm.Instance.RefreshRoomNum();
         }
-
         protected void OnJoinRoom(byte[] body)
         {
             C2S_JoinRoom msg = ProtobufferTool.Deserialize<C2S_JoinRoom>(body);
@@ -137,20 +156,35 @@ namespace TcpChatServer
 
             // 验证合法性（座位是否够，房间状态是否在等待，密码，等）
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(msg.RoomId);
+            if (serverRoom.RoomKey == msg.RoomPwd)
+            {
+                Debug.Print("房间密码错误");
+                return;
+            }
+            if (serverRoom.m_PlayerList.Count >= serverRoom.RoomLimit)
+            {
+                Debug.Print("房间爆满");
+                return;
+            }
+            serverRoom.AddPlayer(p);
+
+            RoomInfo roomInfo = new RoomInfo { RoomId = serverRoom.RoomID, RoomName = serverRoom.RoomName, LimitNum = serverRoom.RoomLimit };
+            S2C_RoomInfo packet = new S2C_RoomInfo { Room = roomInfo };
+            p.SendAsync(PacketType.S2C_RoomInfo, packet);
         }
-        protected void OnRoomList(byte[] body)
+        protected void OnLeaveRoom(byte[] body)
         {
-            Empty msg = ProtobufferTool.Deserialize<Empty>(body); //空消息
-
-            S2C_GetRoomList packet = new S2C_GetRoomList();
-            //foreach(var room in TCPChatServer.m_RoomManager.dic_rooms)
-            //{
-            //    RoomInfo info = new RoomInfo { RoomId = room.Value.RoomID };
-            //    packet.Rooms.Add(info);
-            //}
-
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            p.SendAsync(PacketType.S2C_RoomList, packet);
+            Debug.Print($"{p.UserName}当前在房间#{p.RoomId},座位#{p.SeatId}，请求离开");
+
+            // 验证合法性
+            ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
+            bool verify = serverRoom.RemovePlayer(p);
+            if (verify == false)
+            {
+                Debug.Print($"错误，无法离开房间#{p.RoomId}");
+                return;
+            }
         }
         protected void OnChat(byte[] body)
         {

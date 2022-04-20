@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using IMessage = Google.Protobuf.IMessage;
 
 namespace HotFix
 {
@@ -74,14 +75,17 @@ namespace HotFix
             NetPacketManager.UnRegisterEvent(OnNetCallback);
         }
 
-        public void OnNetCallback(PacketType type)
+        public void OnNetCallback(PacketType type, IMessage packet)
         {
             //Debug.Log($"UI_Main.OnNetCallback:{type}");
             switch (type)
             {
                 case PacketType.S2C_RoomInfo:
-                    UIManager.Get().Push<UI_Room>();
-                    break;
+                    {
+                        var room = UIManager.Get().Push<UI_Room>();
+                        room.InitUI();
+                        break;
+                    }
                 case PacketType.S2C_RoomList:
                     Debug.Log("派发房间列表");
                     break;
