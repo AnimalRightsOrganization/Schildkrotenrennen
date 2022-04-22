@@ -1,5 +1,12 @@
 ﻿namespace HotFix
 {
+    public class BasePlayerData
+    {
+        public System.Guid PeerId;  //房间ID
+        public string UserName;     //登录名
+        public string NickName;     //昵称
+        public int SeatId;          //座位号
+    }
     public abstract class BasePlayer
     {
         public readonly System.Guid PeerId; //连接ID（Connect后生成，登录后和用户名绑定）

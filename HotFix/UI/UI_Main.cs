@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 using ET;
 
@@ -152,15 +153,22 @@ namespace HotFix
         }
         void OnGetRoomInfo(PacketType type, object packet)
         {
-            S2C_RoomInfo data = (S2C_RoomInfo)packet;
-            Debug.Log($"房间信息: {data.Room.RoomID}:{data.Room.RoomName}, {data.Room.CurNum}/{data.Room.LimitNum}");
+            S2C_RoomInfo response = (S2C_RoomInfo)packet;
+            Debug.Log($"房间信息: #{response.Room.RoomID}-{response.Room.RoomName}，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
 
             BaseRoomData roomData = new BaseRoomData
-            { 
-                RoomID = data.Room.RoomID, 
-                RoomName = data.Room.RoomName, 
-                RoomLimit = data.Room.LimitNum,
+            {
+                RoomID = response.Room.RoomID,
+                RoomName = response.Room.RoomName,
+                RoomLimit = response.Room.LimitNum,
+                Players = new List<BasePlayerData>(),
             };
+            for (int i = 0; i < response.Room.Players.Count; i++)
+            {
+                var p = response.Room.Players[i];
+                BasePlayerData bp = new BasePlayerData { NickName = p.NickName, SeatId = p.SeatID };
+                roomData.Players.Add(bp);
+            }
             var room = UIManager.Get().Push<UI_Room>();
             room.InitUI(roomData);
         }

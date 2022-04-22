@@ -78,7 +78,7 @@ namespace HotFix
                     {
                         MemoryStream stream = new MemoryStream(body, 0, body.Length); //解包
                         S2C_RoomInfo packet = ProtobufHelper.FromStream(typeof(S2C_RoomInfo), stream) as S2C_RoomInfo;
-                        Debug.Log($"[Handle:{type}] RoomId={packet.Room.RoomID}, RoomName={packet.Room.RoomName}, Num={packet.Room.LimitNum}");
+                        Debug.Log($"[Handle:{type}] 房间#{packet.Room.RoomID}，Name={packet.Room.RoomName}，人数{packet.Room.Players.Count}/{packet.Room.LimitNum}");
                         NetPacketManager.Trigger(type, packet); //派发
                         break;
                     }

@@ -123,6 +123,7 @@ namespace ET
 
 //message C2S_LeaveRoom {} //传Empty就行
 //message S2C_LeaveRoom {}
+//房间信息
 	[Message(OuterOpcode.RoomInfo)]
 	[ProtoContract]
 	public partial class RoomInfo: Object
@@ -134,10 +135,23 @@ namespace ET
 		public string RoomName { get; set; }
 
 		[ProtoMember(3)]
-		public int CurNum { get; set; }
+		public int LimitNum { get; set; }
 
 		[ProtoMember(4)]
-		public int LimitNum { get; set; }
+		public List<PlayerInfo> Players = new List<PlayerInfo>();
+
+	}
+
+//房间内玩家信息
+	[Message(OuterOpcode.PlayerInfo)]
+	[ProtoContract]
+	public partial class PlayerInfo: Object
+	{
+		[ProtoMember(1)]
+		public string NickName { get; set; }
+
+		[ProtoMember(2)]
+		public int SeatID { get; set; }
 
 	}
 

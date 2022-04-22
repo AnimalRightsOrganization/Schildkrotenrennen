@@ -55,8 +55,8 @@ namespace HotFix
             for (int i = 0; i < 5; i++)
             {
                 var runnerObj = Instantiate(runnerPrefab, startPoints[i]);
-                var runnerScript = runnerObj.AddComponent<Runner>();
-                runnerScript.InitData(i);
+                //var runnerScript = runnerObj.AddComponent<Runner>();
+                //runnerScript.InitData(i);
             }
         }
 

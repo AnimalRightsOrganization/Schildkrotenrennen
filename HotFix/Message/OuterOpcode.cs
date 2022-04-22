@@ -13,5 +13,6 @@ namespace ET
 		 public const ushort S2C_RoomInfo = 10009;
 		 public const ushort S2C_GetRoomList = 10010;
 		 public const ushort RoomInfo = 10011;
+		 public const ushort PlayerInfo = 10012;
 	}
 }

@@ -11,11 +11,21 @@ namespace HotFix
         public Text m_PwdText;
         public Button m_CloseBtn;
         public Button m_StartBtn;
-        public List<Button> Seats;
+        //public List<Button> Seats;
+        public List<Item_Room> SeatList;
 
         void Awake()
         {
-            Seats = new List<Button>();
+            Transform seatRoot = transform.Find("SeatPanel/Layout");
+            //Seats = new List<Button>();
+            SeatList = new List<Item_Room>();
+            for (int i = 0; i < seatRoot.childCount; i++)
+            {
+                var seatItem = seatRoot.GetChild(i).GetComponent<Button>();
+                //Seats.Add(seatItem);
+                var script = seatItem.gameObject.AddComponent<Item_Room>();
+                SeatList.Add(script);
+            }
 
             m_NameText = transform.Find("Background/Text").GetComponent<Text>();
             m_CloseBtn = transform.Find("Background/CloseBtn").GetComponent<Button>();
@@ -47,8 +57,8 @@ namespace HotFix
                     UIManager.Get().Pop(this);
                     break;
                 case PacketType.S2C_GameStart:
-                    //UIManager.Get().Pop(this);
-                    Debug.Log("TODO: 切换场景");
+                    UIManager.Get().Pop(this);
+                    UIManager.Get().Push<UI_Game>();
                     break;
             }
         }
@@ -57,7 +67,41 @@ namespace HotFix
         {
             m_NameText.text = roomData.RoomName;
 
-            Debug.Log($"房间初始化：{roomData.RoomID}/{roomData.RoomLimit}");
+            Debug.Log($"房间初始化：ID={roomData.RoomID}，人数={roomData.Players.Count}/{roomData.RoomLimit}");
+
+            // 控制座位总数显示
+            for (int i = 0; i < SeatList.Count; i++)
+            {
+                var scriptItem = SeatList[i];
+                if (i >= roomData.RoomLimit)
+                {
+                    scriptItem.gameObject.SetActive(false);
+                }
+                else
+                {
+                    scriptItem.gameObject.SetActive(true);
+
+                    //BasePlayerData playerData = roomData.Players.Find(x => x.SeatId == i); //不能用IList.Find
+                    BasePlayerData playerData = null;
+                    foreach (var data in roomData.Players)
+                    {
+                        if (data.SeatId == i) 
+                        {
+                            playerData = data;
+                            break;
+                        }
+                    }
+                    if (playerData != null)
+                    {
+                        Debug.Log($"playerName={playerData.NickName}");
+                        scriptItem.InitUI(playerData.NickName);
+                    }
+                    else
+                    {
+                        scriptItem.InitUI("空");
+                    }
+                }
+            }
         }
 
         void OnSendLeaveRoom()

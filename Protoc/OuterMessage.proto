@@ -60,10 +60,17 @@ message S2C_GetRoomList
 }
 //message C2S_LeaveRoom {} //传Empty就行
 //message S2C_LeaveRoom {}
+//房间信息
 message RoomInfo
 {
-	int32 RoomID 	= 1; //房间Id
-	string RoomName = 2; //房间名
-	int32 CurNum 	= 3; //当前玩家数
-	int32 LimitNum 	= 4; //玩家总数
+	int32 RoomID 				= 1; //房间Id
+	string RoomName 			= 2; //房间名
+	int32 LimitNum 				= 3; //人数限制
+	repeated PlayerInfo Players = 4; //玩家信息
+}
+//房间内玩家信息
+message PlayerInfo
+{
+	string NickName = 1; //房间名
+	int32 SeatID 	= 2; //座位号
 }

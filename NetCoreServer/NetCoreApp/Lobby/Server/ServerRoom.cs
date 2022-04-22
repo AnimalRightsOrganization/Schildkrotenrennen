@@ -20,10 +20,6 @@ namespace NetCoreServer
         }
 
         public override Dictionary<int, BasePlayer> m_PlayerList { get; protected set; }
-        public override void Dispose()
-        {
-            RemoveAll();
-        }
 
         public bool AddPlayer(BasePlayer p)
         {

@@ -42,7 +42,7 @@ namespace NetCoreServer
             if (dic_rooms.TryGetValue(roomId, out serverRoom))
             {
                 serverRoom.SendAsync(PacketType.S2C_LeaveRoom, new Empty()); //群发离开
-                serverRoom.Dispose();
+                serverRoom.RemoveAll();
                 dic_rooms.Remove(roomId);
             }
             else
@@ -71,7 +71,7 @@ namespace NetCoreServer
         {
             foreach (var roomItem in dic_rooms)
             {
-                roomItem.Value.Dispose();
+                roomItem.Value.RemoveAll();
                 dic_rooms.Remove(roomItem.Key);
             }
         }

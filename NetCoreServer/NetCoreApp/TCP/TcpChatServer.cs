@@ -7,6 +7,7 @@ using NetCoreServer;
 using NetCoreServer.Utils;
 using HotFix;
 using ET;
+using System.Collections.Generic;
 
 namespace TcpChatServer
 {
@@ -109,15 +110,16 @@ namespace TcpChatServer
             var request = ProtobufHelper.FromStream(typeof(C2S_Login), ms) as C2S_Login; //解包
             Debug.Print($"Username={request.Username}, Password={request.Password} by {Id}");
 
-            ServerPlayer p = new ServerPlayer(request.Username, Id);
-
+            //UserInfo result = await MySQLTool.GetUserInfo(request.Username, request.Password);
             UserInfo result = await MySQLTool.GetUserInfo("test3", "123456");
             if (result == null)
             {
                 Debug.Print($"用户名或密码错误");
                 return;
             }
-            Debug.Print($"昵称: {result.nickname}");
+            //Debug.Print($"昵称: {result.nickname}");
+            ServerPlayer p = new ServerPlayer(request.Username, Id);
+            p.NickName = result.nickname;
 
             TCPChatServer.m_PlayerManager.AddPlayer(p);
 
@@ -130,14 +132,15 @@ namespace TcpChatServer
         {
             // 空消息，不用解析
             S2C_GetRoomList packet = new S2C_GetRoomList();
+            List<PlayerInfo> players = new List<PlayerInfo>();
             foreach (ServerRoom room in TCPChatServer.m_RoomManager.GetAll())
             {
                 RoomInfo info = new RoomInfo
-                { 
+                {
                     RoomID = room.m_RoomData.RoomID,
                     RoomName = room.m_RoomData.RoomName,
-                    CurNum = room.CurCount,
                     LimitNum = room.m_RoomData.RoomLimit,
+                    Players = players,
                 };
                 packet.Rooms.Add(info);
             }
@@ -152,10 +155,28 @@ namespace TcpChatServer
             Debug.Print($"Name={request.RoomName}, Pwd={request.RoomPwd}, playerNum={request.LimitNum} by {Id}");
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            RoomInfo roomInfo = new RoomInfo { RoomID = 0, RoomName = request.RoomName, LimitNum = request.LimitNum };
+            PlayerInfo hostPlayer = new PlayerInfo { NickName = p.NickName, SeatID = 0 };
+            Debug.Print($"host={hostPlayer.NickName}");
+            List<PlayerInfo> players = new List<PlayerInfo>();
+            players.Add(hostPlayer);
+            RoomInfo roomInfo = new RoomInfo
+            {
+                RoomID = 0,
+                RoomName = request.RoomName,
+                LimitNum = request.LimitNum,
+                Players = players,
+            };
 
             // 验证合法性（总数是否超过等），在服务器创建房间
-            BaseRoomData baseRoomData = new BaseRoomData { RoomID = -1, RoomName = request.RoomName, RoomPwd = request.RoomPwd, RoomLimit = request.LimitNum };
+            BasePlayerData hostPlayerData = new BasePlayerData { PeerId = p.PeerId, UserName = p.UserName, NickName = p.NickName, SeatId = p.SeatId };
+            BaseRoomData baseRoomData = new BaseRoomData
+            {
+                RoomID = -1, //通过Manager创建时会生成。
+                RoomName = request.RoomName,
+                RoomPwd = request.RoomPwd,
+                RoomLimit = request.LimitNum,
+                Players = new List<BasePlayerData>() { hostPlayerData },
+            };
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.CreateServerRoom(p, baseRoomData);
             if (serverRoom == null)
             {

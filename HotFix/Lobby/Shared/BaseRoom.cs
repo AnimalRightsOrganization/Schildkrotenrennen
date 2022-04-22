@@ -12,6 +12,7 @@ namespace HotFix
         public string RoomName;             //房间名
         public string RoomPwd;              //密码
         public int RoomLimit;               //限定人数
+        public List<BasePlayerData> Players;//成员
 
         public BaseRoomData()
         {
@@ -19,9 +20,10 @@ namespace HotFix
             RoomName = string.Empty;
             RoomPwd = string.Empty;
             RoomLimit = MIN_PLAYERS;
+            Players = new List<BasePlayerData>();
         }
     }
-    public class BaseRoom : IDisposable
+    public abstract class BaseRoom
     {
         public BaseRoomData m_RoomData;
 
@@ -33,7 +35,6 @@ namespace HotFix
 
         public virtual Dictionary<int, BasePlayer> m_PlayerList { get; protected set; } //int是座位号
         public virtual BasePlayer hostPlayer => m_PlayerList[0];
-        public virtual void Dispose() { }
 
         public override string ToString()
         {
