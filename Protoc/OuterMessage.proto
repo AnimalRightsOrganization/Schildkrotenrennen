@@ -1,0 +1,69 @@
+syntax = "proto3";
+package ET;
+//option csharp_namespace = "HotFix";
+
+// 错误码
+message ErrorPacket
+{
+	int32 Code = 1;
+	string Message = 2;
+}
+//message Empty {} //注意括号不能写在一行，工具不认。
+message Empty
+{
+}
+
+// 聊天
+message TheMsg
+{
+	string Name = 1;
+	string Content = 2;
+}
+message TheMsgList
+{
+	int32 Id = 1;
+	repeated string Content = 2;
+}
+
+// 登录
+message C2S_Login
+{
+	string Username = 1;
+	string Password = 2;
+}
+message S2C_Login
+{
+	int32 Code = 1;
+	string Nickname = 2;
+}
+
+// 房间
+message C2S_CreateRoom
+{
+	string RoomName = 1; //房间名
+	string RoomPwd 	= 2; //房间密码
+	int32 LimitNum 	= 3; //玩家数
+}
+message C2S_JoinRoom
+{
+	int32 RoomID 	= 1; //房间Id
+	string RoomPwd 	= 2; //房间密码
+}
+message S2C_RoomInfo
+{
+	RoomInfo Room = 1;
+}
+//message C2S_GetRoomList {} //传Empty就行
+message S2C_GetRoomList
+{
+	repeated RoomInfo Rooms = 1;
+}
+//message C2S_LeaveRoom {} //传Empty就行
+//message S2C_LeaveRoom {}
+message RoomInfo
+{
+	int32 RoomID 	= 1; //房间Id
+	string RoomName = 2; //房间名
+	int32 CurNum 	= 3; //当前玩家数
+	int32 LimitNum 	= 4; //玩家总数
+}

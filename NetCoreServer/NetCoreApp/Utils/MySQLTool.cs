@@ -210,7 +210,6 @@ namespace NetCoreServer.Utils
                     int count = Convert.ToInt32(command.ExecuteScalarAsync());
                     return count;
                 }
-                Debug.Print("Closing connection");
             }
         }
 
@@ -240,7 +239,6 @@ namespace NetCoreServer.Utils
                     Debug.Print($"Number of rows inserted={rowCount}"); //插入了几行
                     return rowCount == 1;
                 }
-                Debug.Print("Closing connection");
             }
         }
     }

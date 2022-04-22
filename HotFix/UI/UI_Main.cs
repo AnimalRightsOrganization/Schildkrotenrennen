@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using IMessage = Google.Protobuf.IMessage;
+using ET;
 
 namespace HotFix
 {
@@ -138,7 +138,7 @@ namespace HotFix
         #endregion
 
         #region 网络事件
-        public void OnNetCallback(PacketType type, IMessage packet)
+        public void OnNetCallback(PacketType type, object packet)
         {
             switch (type)
             {
@@ -150,14 +150,14 @@ namespace HotFix
                     break;
             }
         }
-        void OnGetRoomInfo(PacketType type, IMessage packet)
+        void OnGetRoomInfo(PacketType type, object packet)
         {
             S2C_RoomInfo data = (S2C_RoomInfo)packet;
-            Debug.Log($"派发房间列表: {data.Room.RoomId}:{data.Room.RoomName}, {data.Room.CurNum}/{data.Room.LimitNum}");
+            Debug.Log($"派发房间列表: {data.Room.RoomID}:{data.Room.RoomName}, {data.Room.CurNum}/{data.Room.LimitNum}");
 
             BaseRoomData roomData = new BaseRoomData
             { 
-                RoomID = data.Room.RoomId, 
+                RoomID = data.Room.RoomID, 
                 RoomName = data.Room.RoomName, 
                 //RoomPwd = data.Room.LimitNum,
                 RoomLimit = data.Room.LimitNum,

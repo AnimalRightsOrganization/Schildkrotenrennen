@@ -198,9 +198,9 @@ namespace LibSample
                 Thread.Sleep(10);
             }
 
-            _c1.Stop();
-            _c2.Stop();
-            _puncher.Stop();
+            //_c1.Stop();
+            //_c2.Stop();
+            //_puncher.Stop();
         }
     }
 }

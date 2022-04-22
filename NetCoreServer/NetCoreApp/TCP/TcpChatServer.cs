@@ -1,11 +1,12 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
 using NetCoreServer;
 using NetCoreServer.Utils;
 using HotFix;
-using IMessage = Google.Protobuf.IMessage;
+using ET;
 
 namespace TcpChatServer
 {
@@ -45,12 +46,15 @@ namespace TcpChatServer
         // 注意这里是线程中
         protected override void OnReceived(byte[] buffer, long offset, long size)
         {
+            Debug.Print($"OnReceived: buffer={buffer.Length}, offset={offset}, size={size}");
+
             // 解析msgId
             byte msgId = buffer[0];
-            byte[] body = new byte[buffer.Length - 1];
-            Array.Copy(buffer, 1, body, 0, buffer.Length - 1);
+            byte[] body = new byte[size - 1];
+            Array.Copy(buffer, 1, body, 0, size - 1);
             PacketType type = (PacketType)msgId;
-            //Debug.Print($"msgType={type}, from {Id}");
+            Debug.Print($"msgType={type}, from {Id}");
+
             switch (type)
             {
                 case PacketType.Connected:
@@ -78,10 +82,10 @@ namespace TcpChatServer
             Debug.Print($"Chat TCP session caught an error with code {error}");
         }
 
-        protected void SendAsync(PacketType msgId, IMessage cmd)
+        protected void SendAsync(PacketType msgId, object cmd)
         {
             byte[] header = new byte[1] { (byte)msgId };
-            byte[] body = ProtobufferTool.Serialize(cmd);
+            byte[] body = ProtobufHelper.ToBytes(cmd);
             byte[] buffer = new byte[header.Length + body.Length];
             System.Array.Copy(header, 0, buffer, 0, header.Length);
             System.Array.Copy(body, 0, buffer, header.Length, body.Length);
@@ -91,12 +95,14 @@ namespace TcpChatServer
 
         protected async void OnLoginReq(byte[] body)
         {
-            C2S_Login msg = ProtobufferTool.Deserialize<C2S_Login>(body);
-            Debug.Print($"Username={msg.Username}, Password={msg.Password} by {Id}");
+            //C2S_Login msg = ProtobufferTool.Deserialize<C2S_Login>(body);
+            MemoryStream ms = new MemoryStream(body, 0, body.Length);
+            var request = ProtobufHelper.FromStream(typeof(C2S_Login), ms) as C2S_Login; //解包
+            Debug.Print($"Username={request.Username}, Password={request.Password} by {Id}");
 
-            ServerPlayer p = new ServerPlayer(msg.Username, Id);
+            ServerPlayer p = new ServerPlayer(request.Username, Id);
 
-            UserInfo result = (await MySQLTool.GetUserInfo("test3", "123456"));
+            UserInfo result = await MySQLTool.GetUserInfo("test3", "123456");
             if (result == null)
             {
                 Debug.Print($"用户名或密码错误");
@@ -113,12 +119,13 @@ namespace TcpChatServer
         }
         protected void OnRoomList(byte[] body)
         {
+            // 空消息，不用解析
             S2C_GetRoomList packet = new S2C_GetRoomList();
             foreach (ServerRoom room in TCPChatServer.m_RoomManager.GetAll())
             {
                 RoomInfo info = new RoomInfo
                 { 
-                    RoomId = room.m_RoomData.RoomID,
+                    RoomID = room.m_RoomData.RoomID,
                     RoomName = room.m_RoomData.RoomName,
                     CurNum = room.CurCount,
                     LimitNum = room.m_RoomData.RoomLimit,
@@ -131,14 +138,16 @@ namespace TcpChatServer
         }
         protected void OnCreateRoom(byte[] body)
         {
-            C2S_CreateRoom msg = ProtobufferTool.Deserialize<C2S_CreateRoom>(body);
-            Debug.Print($"Name={msg.RoomName}, Pwd={msg.RoomPwd}, playerNum={msg.LimitNum} by {Id}");
+            //C2S_CreateRoom msg = ProtobufferTool.Deserialize<C2S_CreateRoom>(body);
+            MemoryStream ms = new MemoryStream(body, 0, body.Length);
+            var request = ProtobufHelper.FromStream(typeof(C2S_CreateRoom), ms) as C2S_CreateRoom; //解包
+            Debug.Print($"Name={request.RoomName}, Pwd={request.RoomPwd}, playerNum={request.LimitNum} by {Id}");
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            RoomInfo roomInfo = new RoomInfo { RoomId = 0, RoomName = msg.RoomName, LimitNum = msg.LimitNum };
+            RoomInfo roomInfo = new RoomInfo { RoomID = 0, RoomName = request.RoomName, LimitNum = request.LimitNum };
 
             // 验证合法性（总数是否超过等），在服务器创建房间
-            BaseRoomData baseRoomData = new BaseRoomData { RoomID = -1, RoomName = msg.RoomName, RoomPwd = msg.RoomPwd, RoomLimit = msg.LimitNum };
+            BaseRoomData baseRoomData = new BaseRoomData { RoomID = -1, RoomName = request.RoomName, RoomPwd = request.RoomPwd, RoomLimit = request.LimitNum };
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.CreateServerRoom(p, baseRoomData);
             if (serverRoom == null)
             {
@@ -155,13 +164,15 @@ namespace TcpChatServer
         }
         protected void OnJoinRoom(byte[] body)
         {
-            C2S_JoinRoom msg = ProtobufferTool.Deserialize<C2S_JoinRoom>(body);
+            //C2S_JoinRoom msg = ProtobufferTool.Deserialize<C2S_JoinRoom>(body);
+            MemoryStream ms = new MemoryStream(body, 0, body.Length);
+            var request = ProtobufHelper.FromStream(typeof(C2S_JoinRoom), ms) as C2S_JoinRoom; //解包
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            Debug.Print($"{p.UserName}请求加入房间#{msg.RoomId}");
+            Debug.Print($"{p.UserName}请求加入房间#{request.RoomID}");
 
             // 验证合法性（座位是否够，房间状态是否在等待，密码，等）
-            ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(msg.RoomId);
-            if (serverRoom.m_RoomData.RoomPwd == msg.RoomPwd)
+            ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(request.RoomID);
+            if (serverRoom.m_RoomData.RoomPwd == request.RoomPwd)
             {
                 Debug.Print("房间密码错误");
                 return;
@@ -173,7 +184,7 @@ namespace TcpChatServer
             }
             serverRoom.AddPlayer(p);
 
-            RoomInfo roomInfo = new RoomInfo { RoomId = serverRoom.m_RoomData.RoomID, RoomName = serverRoom.m_RoomData.RoomName, LimitNum = serverRoom.m_RoomData.RoomLimit };
+            RoomInfo roomInfo = new RoomInfo { RoomID = serverRoom.m_RoomData.RoomID, RoomName = serverRoom.m_RoomData.RoomName, LimitNum = serverRoom.m_RoomData.RoomLimit };
             S2C_RoomInfo packet = new S2C_RoomInfo { Room = roomInfo };
             p.SendAsync(PacketType.S2C_RoomInfo, packet);
         }
@@ -193,8 +204,10 @@ namespace TcpChatServer
         }
         protected void OnChat(byte[] body)
         {
-            TheMsg msg = ProtobufferTool.Deserialize<TheMsg>(body);
-            Debug.Print($"{msg.Name}说: {msg.Content}");
+            //TheMsg msg = ProtobufferTool.Deserialize<TheMsg>(body);
+            MemoryStream ms = new MemoryStream(body, 0, body.Length);
+            var request = ProtobufHelper.FromStream(typeof(TheMsg), ms) as TheMsg; //解包
+            Debug.Print($"{request.Name}说: {request.Content}");
         }
     }
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using IMessage = Google.Protobuf.IMessage;
+using ET;
 
 namespace HotFix
 {
@@ -26,7 +26,7 @@ namespace HotFix
             m_HelpBtn.onClick.AddListener(OnHelpBtnClick);
             m_QQBtn.onClick.AddListener(OnQQBtnClick);
             m_WXBtn.onClick.AddListener(OnWXBtnClick);
-            m_LoginBtn.onClick.AddListener(OLoginBtnClick);
+            m_LoginBtn.onClick.AddListener(OnLoginBtnClick);
             m_RegisterBtn.onClick.AddListener(OnRegisterBtnClick);
         }
 
@@ -43,16 +43,18 @@ namespace HotFix
             m_HelpBtn.onClick.RemoveListener(OnHelpBtnClick);
             m_QQBtn.onClick.RemoveListener(OnQQBtnClick);
             m_WXBtn.onClick.RemoveListener(OnWXBtnClick);
+            m_LoginBtn.onClick.RemoveListener(OnLoginBtnClick);
             m_RegisterBtn.onClick.RemoveListener(OnRegisterBtnClick);
 
             Debug.Log("释放临时变量");
             m_HelpBtn = null;
             m_QQBtn = null;
             m_WXBtn = null;
+            m_LoginBtn = null;
             m_RegisterBtn = null;
         }
 
-        public void OnNetCallback(PacketType type, IMessage packet)
+        public void OnNetCallback(PacketType type, object packet)
         {
             switch (type)
             {
@@ -80,7 +82,7 @@ namespace HotFix
             Debug.Log("[Hotfix] 微信登录");
         }
 
-        void OLoginBtnClick()
+        void OnLoginBtnClick()
         {
             TcpChatClient.SendLogin("lala", "123456");
         }

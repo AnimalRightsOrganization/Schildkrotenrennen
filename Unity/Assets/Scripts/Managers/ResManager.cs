@@ -107,7 +107,9 @@ public class ResManager
         string filePath = $"Assets/Bundles/Configs/Hotfix.dll.bytes";
         TextAsset textAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(filePath);
 #else
-        AssetBundle asset = AssetBundle.LoadFromFile("configs/hotfix.unity3d");
+        string fileName = "configs/hotfix";
+        string filePath = GetFilePath($"{fileName}.unity3d"); //文件名是加密子串
+        AssetBundle asset = AssetBundle.LoadFromFile(filePath);
         TextAsset textAsset = asset.LoadAllAssets()[0] as TextAsset;
         asset.Unload(false);
 #endif

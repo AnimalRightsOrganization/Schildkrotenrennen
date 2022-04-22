@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Net.Sockets;
 using Debug = UnityEngine.Debug;
-using IMessage = Google.Protobuf.IMessage;
+using ET;
 
 namespace HotFix
 {
@@ -88,24 +88,24 @@ namespace HotFix
             client?.DisconnectAndStop();
         }
 
-        public static void Send(PacketType msgId, IMessage cmd)
+        public static void Send(PacketType msgId, object cmd)
         {
             byte[] header = new byte[1] { (byte)msgId };
-            byte[] body = ProtobufferTool.Serialize(cmd);
+            byte[] body = ProtobufHelper.ToBytes(cmd);
             byte[] buffer = new byte[header.Length + body.Length];
             System.Array.Copy(header, 0, buffer, 0, header.Length);
             System.Array.Copy(body, 0, buffer, header.Length, body.Length);
             //Debug.Log($"[Send] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
             client.Send(buffer);
         }
-        public static void SendAsync(PacketType msgId, IMessage cmd)
+        public static void SendAsync(PacketType msgId, object cmd)
         {
             byte[] header = new byte[1] { (byte)msgId };
-            byte[] body = ProtobufferTool.Serialize(cmd);
+            byte[] body = ProtobufHelper.ToBytes(cmd);
             byte[] buffer = new byte[header.Length + body.Length];
             System.Array.Copy(header, 0, buffer, 0, header.Length);
             System.Array.Copy(body, 0, buffer, header.Length, body.Length);
-            //Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
+            Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
             client.SendAsync(buffer);
         }
 
@@ -151,7 +151,7 @@ namespace HotFix
         }
         public static void SendJoinRoom(int roomId, string pwd)
         {
-            C2S_JoinRoom cmd = new C2S_JoinRoom { RoomId = roomId, RoomPwd = pwd };
+            C2S_JoinRoom cmd = new C2S_JoinRoom { RoomID = roomId, RoomPwd = pwd };
             SendAsync(PacketType.C2S_LeaveRoom, cmd);
         }
         public static void SendLeaveRoom()
