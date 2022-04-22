@@ -13,7 +13,7 @@ namespace HotFix
         [SerializeField] Transform m_RunnerRoot; //棋子
         [SerializeField] Transform m_HandRoot; //手牌
 
-        //[SerializeField] Button m_SettingsButton;
+        //[SerializeField] Button m_SettingsBtn;
 
         void Awake()
         {
@@ -60,22 +60,53 @@ namespace HotFix
             }
         }
 
+        void Start()
+        {
+            NetPacketManager.RegisterEvent(OnNetCallback);
+        }
+
+        void OnDestroy()
+        {
+            NetPacketManager.UnRegisterEvent(OnNetCallback);
+        }
+
+        public void OnNetCallback(PacketType type, object packet)
+        {
+            switch (type)
+            {
+                case PacketType.S2C_GameDeal:
+                    break;
+                case PacketType.S2C_GamePlay:
+                    break;
+            }
+        }
+
         #region 网络消息
+        // 颜色消息
         void OnAllotColor()
         {
 
         }
 
+        // 洗牌消息
         void OnShuffe()
         {
 
         }
 
+        // 发牌消息
         void OnDeal()
         {
 
         }
 
+        // 出牌消息
+        void OnPlay()
+        {
+
+        }
+
+        // 结算消息
         void OnMatchResult()
         {
 

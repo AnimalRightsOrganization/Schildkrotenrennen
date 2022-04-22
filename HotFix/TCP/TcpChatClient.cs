@@ -65,11 +65,16 @@ namespace HotFix
     public class TcpChatClient
     {
         protected static ChatClient client;
-        const string address = "127.0.0.1";
+        //const string address = "127.0.0.1";
+        const string address = "110.42.198.150";
         const int port = 1111;
+
+        public static ClientPlayerManager m_PlayerManager;
 
         public static void Dispose()
         {
+            m_PlayerManager = null;
+
             Debug.Log("¹Ø±ÕÍøÂç");
 
             //Debug.Log($"IsExist:{client != null}"); //True
@@ -90,6 +95,8 @@ namespace HotFix
         }
         public static void Connect()
         {
+            m_PlayerManager = new ClientPlayerManager();
+
             // Create a new TCP chat client
             client = new ChatClient(address, port);
 
@@ -106,6 +113,7 @@ namespace HotFix
         {
             //if (client == null)
             //    return;
+            m_PlayerManager = null;
             client?.DisconnectAndStop();
         }
 
@@ -158,6 +166,11 @@ namespace HotFix
             TheMsg cmd = new TheMsg { Name = "lala", Content = message };
             SendAsync(PacketType.C2S_Chat, cmd);
         }
+        public static void SendGetRoomList()
+        {
+            Empty cmd = new Empty();
+            SendAsync(PacketType.C2S_RoomList, cmd);
+        }
         public static bool SendCreateRoom(string name, string pwd, int num)
         {
             if (name.Length < 3)
@@ -180,10 +193,10 @@ namespace HotFix
             Empty cmd = new Empty();
             SendAsync(PacketType.C2S_LeaveRoom, cmd);
         }
-        public static void SendGetRoomList()
+        public static void SendPlayCard(int cardId)
         {
-            Empty cmd = new Empty();
-            SendAsync(PacketType.C2S_RoomList, cmd);
+            C2S_PlayCard cmd = new C2S_PlayCard { CardID = cardId };
+            SendAsync(PacketType.C2S_GamePlay, cmd);
         }
     }
 }

@@ -155,4 +155,39 @@ namespace ET
 
 	}
 
+//出牌
+	[Message(OuterOpcode.C2S_PlayCard)]
+	[ProtoContract]
+	public partial class C2S_PlayCard: Object
+	{
+		[ProtoMember(1)]
+		public int CardID { get; set; }
+
+	}
+
+	[Message(OuterOpcode.S2C_PlayCard)]
+	[ProtoContract]
+	public partial class S2C_PlayCard: Object
+	{
+		[ProtoMember(1)]
+		public int CardID { get; set; }
+
+		[ProtoMember(2)]
+		public int SeatID { get; set; }
+
+	}
+
+//发牌
+	[Message(OuterOpcode.S2C_Deal)]
+	[ProtoContract]
+	public partial class S2C_Deal: Object
+	{
+		[ProtoMember(1)]
+		public int CardID { get; set; }
+
+		[ProtoMember(2)]
+		public int SeatID { get; set; }
+
+	}
+
 }

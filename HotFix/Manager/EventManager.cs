@@ -59,6 +59,8 @@ namespace HotFix
                         S2C_Login packet = ProtobufHelper.FromStream(typeof(S2C_Login), stream) as S2C_Login;
                         Debug.Log($"[Handle:{type}] Code={packet.Code}, Nickname={packet.Nickname}");
                         NetPacketManager.Trigger(type, packet); //派发（为什么在这创建UI，会堵塞接收线程？？）
+                        //ClientPlayer p = new ClientPlayer(packet.Nickname, p.PeerId);
+                        //TcpChatClient.m_PlayerManager.AddClientPlayer(p, true);
                         break;
                     }
                 case PacketType.S2C_RoomList:
@@ -101,6 +103,14 @@ namespace HotFix
                     {
                         Debug.Log($"[Handle:{type}]");
                         NetPacketManager.Trigger(type, new Empty()); //派发
+                        break;
+                    }
+                case PacketType.S2C_GamePlay:
+                    {
+                        MemoryStream stream = new MemoryStream(body, 0, body.Length); //解包
+                        S2C_PlayCard packet = ProtobufHelper.FromStream(typeof(S2C_PlayCard), stream) as S2C_PlayCard;
+                        Debug.Log($"[Handle:{type}] 座位#{packet.SeatID}出牌{packet.CardID}");
+                        NetPacketManager.Trigger(type, packet); //派发
                         break;
                     }
                 default:

@@ -76,16 +76,18 @@ message PlayerInfo
 }
 
 //出牌
-message C2S_Deal
+message C2S_PlayCard
 {
-	string CardID = 1; //唯一识别号
+	int32 CardID = 1; //唯一识别号
 }
-message S2C_Deal
+message S2C_PlayCard
 {
-	string CardID = 1; //唯一识别号
+	int32 CardID = 1; //唯一识别号
+	int32 SeatID = 2; //出牌人的座位
 }
 //发牌
 message S2C_Deal
 {
-	string CardID = 1; //唯一识别号
+	int32 CardID = 1; //唯一识别号
+	int32 SeatID = 2; //发给的座位
 }

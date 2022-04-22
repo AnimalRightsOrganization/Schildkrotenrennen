@@ -11,18 +11,15 @@ namespace HotFix
         public Text m_PwdText;
         public Button m_CloseBtn;
         public Button m_StartBtn;
-        //public List<Button> Seats;
         public List<Item_Room> SeatList;
 
         void Awake()
         {
             Transform seatRoot = transform.Find("SeatPanel/Layout");
-            //Seats = new List<Button>();
             SeatList = new List<Item_Room>();
             for (int i = 0; i < seatRoot.childCount; i++)
             {
                 var seatItem = seatRoot.GetChild(i).GetComponent<Button>();
-                //Seats.Add(seatItem);
                 var script = seatItem.gameObject.AddComponent<Item_Room>();
                 SeatList.Add(script);
             }
@@ -57,6 +54,7 @@ namespace HotFix
                     UIManager.Get().Pop(this);
                     break;
                 case PacketType.S2C_GameStart:
+                    //TODO: 解包，获取完整比赛信息，座位号和颜色。重连也下发这个消息。
                     UIManager.Get().Pop(this);
                     UIManager.Get().Push<UI_Game>();
                     break;
@@ -81,7 +79,6 @@ namespace HotFix
                 {
                     scriptItem.gameObject.SetActive(true);
 
-                    //BasePlayerData playerData = roomData.Players.Find(x => x.SeatId == i); //不能用IList.Find
                     BasePlayerData playerData = null;
                     foreach (var data in roomData.Players)
                     {
@@ -94,11 +91,11 @@ namespace HotFix
                     if (playerData != null)
                     {
                         Debug.Log($"playerName={playerData.NickName}");
-                        scriptItem.InitUI(playerData.NickName);
+                        scriptItem.InitUI(playerData);
                     }
                     else
                     {
-                        scriptItem.InitUI("空");
+                        scriptItem.InitUI(null);
                     }
                 }
             }
