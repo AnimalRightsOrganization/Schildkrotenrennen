@@ -78,6 +78,9 @@ namespace TcpChatServer
                 case PacketType.C2S_Chat:
                     OnChat(body);
                     break;
+                case PacketType.C2S_GameStart:
+                    OnStartGame(body);
+                    break;
                 default:
                     Debug.Print($"无法识别的消息: {type}");
                     break;
@@ -227,10 +230,19 @@ namespace TcpChatServer
         }
         protected void OnChat(byte[] body)
         {
-            //TheMsg msg = ProtobufferTool.Deserialize<TheMsg>(body);
             MemoryStream ms = new MemoryStream(body, 0, body.Length);
             var request = ProtobufHelper.FromStream(typeof(TheMsg), ms) as TheMsg; //解包
             Debug.Print($"{request.Name}说: {request.Content}");
+        }
+        protected void OnStartGame(byte[] body)
+        {
+            //空消息
+            ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
+            Debug.Print($"{p.UserName}当前在房间#{p.RoomId}，座位#{p.SeatId}，请求开始比赛");
+
+            ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
+            //var packet = new XXX(); //组织开局所需数据
+            serverRoom.SendAsync(PacketType.S2C_GameStart, new Empty()); //给所有成员发送开始
         }
     }
 

@@ -97,6 +97,12 @@ namespace HotFix
                         NetPacketManager.Trigger(type, packet); //派发
                         break;
                     }
+                case PacketType.S2C_GameStart:
+                    {
+                        Debug.Log($"[Handle:{type}]");
+                        NetPacketManager.Trigger(type, new Empty()); //派发
+                        break;
+                    }
                 default:
                     Debug.LogError($"Handle:无法识别的消息: {type}");
                     break;

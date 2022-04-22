@@ -10,6 +10,7 @@ namespace HotFix
         public Text m_NameText;
         public Text m_PwdText;
         public Button m_CloseBtn;
+        public Button m_StartBtn;
         public List<Button> Seats;
 
         void Awake()
@@ -18,7 +19,9 @@ namespace HotFix
 
             m_NameText = transform.Find("Background/Text").GetComponent<Text>();
             m_CloseBtn = transform.Find("Background/CloseBtn").GetComponent<Button>();
+            m_StartBtn = transform.Find("StartBtn").GetComponent<Button>();
             m_CloseBtn.onClick.AddListener(OnSendLeaveRoom);
+            m_StartBtn.onClick.AddListener(OnSendStartGame);
         }
 
         void Start()
@@ -29,6 +32,11 @@ namespace HotFix
         void OnDestroy()
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
+
+            m_CloseBtn.onClick.RemoveListener(OnSendLeaveRoom);
+            m_StartBtn.onClick.RemoveListener(OnSendStartGame);
+            m_CloseBtn = null;
+            m_StartBtn = null;
         }
 
         public void OnNetCallback(PacketType type, object packet)
@@ -37,6 +45,10 @@ namespace HotFix
             {
                 case PacketType.S2C_LeaveRoom:
                     UIManager.Get().Pop(this);
+                    break;
+                case PacketType.S2C_GameStart:
+                    //UIManager.Get().Pop(this);
+                    Debug.Log("TODO: 切换场景");
                     break;
             }
         }
@@ -52,6 +64,12 @@ namespace HotFix
         {
             Debug.Log("请求离开房间");
             TcpChatClient.SendAsync(PacketType.C2S_LeaveRoom, new Empty());
+        }
+
+        void OnSendStartGame()
+        {
+            Debug.Log("请求开始比赛");
+            TcpChatClient.SendAsync(PacketType.C2S_GameStart, new Empty());
         }
     }
 }

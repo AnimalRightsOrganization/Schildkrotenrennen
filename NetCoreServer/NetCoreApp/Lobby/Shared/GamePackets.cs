@@ -28,8 +28,8 @@ namespace HotFix
 
     public enum PacketType : byte
     {
-        Connected = 0   ,   //连接成功
-        Disconnect      ,   //连接断开
+        Connected = 0   ,   //连接成功（本地消息）
+        Disconnect      ,   //连接断开（本地消息）
         ///////////////////////////////////////////////
         C2S_RegisterReq ,   //注册请求
         C2S_LoginReq    ,   //登录请求
@@ -43,11 +43,12 @@ namespace HotFix
         C2S_JoinRoom    ,   //加入房间
         C2S_LeaveRoom   ,   //离开房间
 
-        C2S_GameReady   ,   //请求准备
-        C2S_BattleStart ,   //请求开始战斗
-        C2S_BattleQuit  ,   //离开比赛（认输） =>返回大厅
-        C2S_BattleEnd   ,   //上报比赛结果（双方都要发，由战斗系统判定）
+        C2S_GameReady   ,   //请求准备（成员）
+        C2S_GameStart   ,   //请求开始战斗（房主）
+        C2S_GameDeal    ,   //出牌
+        C2S_GameQuit    ,   //离开比赛（认输） =>返回大厅
         ///////////////////////////////////////////////
+        S2C_ErrorOperate,   //错误代码
         S2C_LoginResult ,   //登录、注册结果
         S2C_LogoutResult,   //登出结果
         S2C_UserInfo    ,   //下发用户信息
@@ -58,9 +59,9 @@ namespace HotFix
         S2C_RoomInfo    ,   //创建、加入房间后，获取房间内信息
         S2C_LeaveRoom   ,   //离开房间
 
-        S2C_GameReady   ,   //准备结果
-        S2C_LoadScene   ,   //跳转场景
-        S2C_BattleEnd   ,   //比赛结束，结算
-        S2C_ErrorOperate,   //错误代码
+        S2C_GameReady   ,   //准备结果（成员）
+        S2C_GameStart   ,   //比赛开始，跳转场景
+        S2C_GameDeal    ,   //出牌信息
+        S2C_GameResult  ,   //比赛结算
     }
 }
