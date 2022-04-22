@@ -23,6 +23,7 @@ namespace TcpChatServer
             //string message = "Hello from TCP chat! Please send a message or '!' to disconnect the client!";
             //SendAsync(message);
 
+            // 这里是异步线程中。
             Empty cmd = new Empty();
             SendAsync(PacketType.Connected, cmd); //TODO: 多个客户端，验证这是否为广播
         }
@@ -46,7 +47,7 @@ namespace TcpChatServer
         // 注意这里是线程中
         protected override void OnReceived(byte[] buffer, long offset, long size)
         {
-            Debug.Print($"OnReceived: buffer={buffer.Length}, offset={offset}, size={size}");
+            //Debug.Print($"OnReceived: buffer={buffer.Length}, offset={offset}, size={size}");
 
             // 解析msgId
             byte msgId = buffer[0];
@@ -62,11 +63,17 @@ namespace TcpChatServer
                 case PacketType.C2S_LoginReq:
                     OnLoginReq(body);
                     break;
+                case PacketType.C2S_RoomList:
+                    OnRoomList(body);
+                    break;
                 case PacketType.C2S_CreateRoom:
                     OnCreateRoom(body);
                     break;
-                case PacketType.C2S_RoomList:
-                    OnRoomList(body);
+                case PacketType.C2S_JoinRoom:
+                    OnJoinRoom(body);
+                    break;
+                case PacketType.C2S_LeaveRoom:
+                    OnLeaveRoom(body);
                     break;
                 case PacketType.C2S_Chat:
                     OnChat(body);
@@ -95,7 +102,6 @@ namespace TcpChatServer
 
         protected async void OnLoginReq(byte[] body)
         {
-            //C2S_Login msg = ProtobufferTool.Deserialize<C2S_Login>(body);
             MemoryStream ms = new MemoryStream(body, 0, body.Length);
             var request = ProtobufHelper.FromStream(typeof(C2S_Login), ms) as C2S_Login; //解包
             Debug.Print($"Username={request.Username}, Password={request.Password} by {Id}");
@@ -138,7 +144,6 @@ namespace TcpChatServer
         }
         protected void OnCreateRoom(byte[] body)
         {
-            //C2S_CreateRoom msg = ProtobufferTool.Deserialize<C2S_CreateRoom>(body);
             MemoryStream ms = new MemoryStream(body, 0, body.Length);
             var request = ProtobufHelper.FromStream(typeof(C2S_CreateRoom), ms) as C2S_CreateRoom; //解包
             Debug.Print($"Name={request.RoomName}, Pwd={request.RoomPwd}, playerNum={request.LimitNum} by {Id}");
@@ -164,7 +169,6 @@ namespace TcpChatServer
         }
         protected void OnJoinRoom(byte[] body)
         {
-            //C2S_JoinRoom msg = ProtobufferTool.Deserialize<C2S_JoinRoom>(body);
             MemoryStream ms = new MemoryStream(body, 0, body.Length);
             var request = ProtobufHelper.FromStream(typeof(C2S_JoinRoom), ms) as C2S_JoinRoom; //解包
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
@@ -191,16 +195,35 @@ namespace TcpChatServer
         protected void OnLeaveRoom(byte[] body)
         {
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            Debug.Print($"{p.UserName}当前在房间#{p.RoomId},座位#{p.SeatId}，请求离开");
+            Debug.Print($"{p.UserName}当前在房间#{p.RoomId}，座位#{p.SeatId}，请求离开");
 
             // 验证合法性
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
-            bool verify = serverRoom.RemovePlayer(p);
+            bool verify = serverRoom.ContainsPlayer(p);
             if (verify == false)
             {
-                Debug.Print($"错误，无法离开房间#{p.RoomId}");
+                Debug.Print($"错误，用户不在该房间#{p.RoomId}");
                 return;
             }
+            Debug.Print($"验证成功，可以离开房间#{p.RoomId}，座位#{p.SeatId}"); //-1, -1
+            if (p.SeatId == 0)
+            {
+                // 如果是房主，解散房间
+                TCPChatServer.m_RoomManager.RemoveServerRoom(serverRoom.m_RoomData.RoomID);
+                Debug.Print("是房主，解散房间");
+            }
+            else
+            {
+                p.SendAsync(PacketType.S2C_LeaveRoom, new Empty());
+                Debug.Print("房间内其他人员广播，更新房间信息");
+
+                // 房间内其他人员广播，更新房间信息
+                RoomInfo roomInfo = new RoomInfo { RoomID = serverRoom.m_RoomData.RoomID, RoomName = serverRoom.m_RoomData.RoomName, LimitNum = serverRoom.m_RoomData.RoomLimit };
+                S2C_RoomInfo packet1 = new S2C_RoomInfo { Room = roomInfo };
+                serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet1);
+            }
+
+            WinFormsApp1.MainForm.Instance.RefreshRoomNum();
         }
         protected void OnChat(byte[] body)
         {
@@ -233,6 +256,12 @@ namespace TcpChatServer
 
         public static void Run()
         {
+            if (server != null && server.IsStarted)
+            {
+                Debug.Print("Server is Started!");
+                return;
+            }
+
             m_RoomManager = new ServerRoomManager();
             m_PlayerManager = new ServerPlayerManager();
             Debug.Print("TCPChatServer Init...");
@@ -247,6 +276,12 @@ namespace TcpChatServer
         }
         public static void Stop()
         {
+            if (server == null || server.IsStarted == false)
+            {
+                Debug.Print("No server!");
+                return;
+            }
+
             // Stop the server
             Debug.Print("Server stopping...");
             server?.Stop();

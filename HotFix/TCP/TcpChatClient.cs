@@ -34,6 +34,12 @@ namespace HotFix
             // Try to connect again
             if (!_stop)
                 ConnectAsync();
+
+            //TODO: 只执行一次！！！
+            // 这里是异步线程中，需要通过Update推送到主线程。
+            PacketType msgId = PacketType.Disconnect;
+            byte[] buffer = new byte[1] { (byte)msgId };
+            EventManager.Get().queue.Enqueue(buffer);
         }
 
         protected override void OnReceived(byte[] buffer, long offset, long size)
@@ -65,7 +71,21 @@ namespace HotFix
         public static void Dispose()
         {
             Debug.Log("关闭网络");
-            client?.DisconnectAndStop();
+
+            //Debug.Log($"IsExist:{client != null}"); //True
+            if (client != null)
+            {
+                //Debug.Log($"IsConnected:{client.IsConnected}"); //False
+                if (client.IsConnected)
+                {
+                    client.DisconnectAndStop();
+                }
+                //Debug.Log($"IsSocketDisposed:{client.IsDisposed}"); //False
+                if (client.IsDisposed == false)
+                {
+                    client.Dispose();
+                }
+            }
             client = null;
         }
         public static void Connect()

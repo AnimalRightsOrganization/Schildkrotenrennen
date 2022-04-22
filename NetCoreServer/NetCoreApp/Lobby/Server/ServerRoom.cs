@@ -1,14 +1,12 @@
-﻿using HotFix;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Debug = System.Diagnostics.Debug;
+using HotFix;
 
 namespace NetCoreServer
 {
     /* 远程房间 */
     public class ServerRoom : BaseRoom
     {
-        #region 房间数据
-
         public ServerRoom(ServerPlayer host, BaseRoomData data) : base(host, data)
         {
             // 被override的才需要在这里赋值
@@ -16,10 +14,16 @@ namespace NetCoreServer
             //RoomLimit = limit;
             m_PlayerList = new Dictionary<int, BasePlayer>();
             m_PlayerList.Add(0, host); //房主座位号0
+            host.SetRoomID(data.RoomID)
+                .SetSeatID(0)
+                .SetStatus(PlayerStatus.AtRoomWait);
         }
 
         public override Dictionary<int, BasePlayer> m_PlayerList { get; protected set; }
-        public override void Dispose() { }
+        public override void Dispose()
+        {
+            RemoveAll();
+        }
 
         public bool AddPlayer(BasePlayer p)
         {
@@ -31,8 +35,8 @@ namespace NetCoreServer
 
             int SeatId = GetAvailableRoomID();
             m_PlayerList.Add(SeatId, p);
-            p.SetRoomID((short)m_RoomData.RoomID)
-                .SetSeatID((short)SeatId)
+            p.SetRoomID(m_RoomData.RoomID)
+                .SetSeatID(SeatId)
                 .SetStatus(PlayerStatus.AtRoomWait);
 
             return true;
@@ -46,6 +50,15 @@ namespace NetCoreServer
                 return true;
             }
             Debug.Print("严重的错误，无法移除房间");
+            return false;
+        }
+        public bool RemoveAll()
+        {
+            foreach (var p in m_PlayerList)
+            {
+                //ServerPlayer serverPlayer = p.Value as ServerPlayer;
+                RemovePlayer(p.Value);
+            }
             return false;
         }
         public bool ContainsPlayer(BasePlayer p)
@@ -84,6 +97,14 @@ namespace NetCoreServer
             }
             return id;
         }
-        #endregion
+
+        public void SendAsync(PacketType msgId, object cmd)
+        {
+            foreach(var p in m_PlayerList)
+            {
+                ServerPlayer serverPlayer = p.Value as ServerPlayer;
+                serverPlayer.SendAsync(msgId, cmd);
+            }
+        }
     }
 }

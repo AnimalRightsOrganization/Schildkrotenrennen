@@ -45,28 +45,25 @@ namespace HotFix
             {
                 case PacketType.Connected:
                     break;
+                case PacketType.Disconnect:
+                    {
+                        // 销毁所有UI，返回登录页
+                        //Debug.Log($"[Handle:{type}]");
+                        //UIManager.Get().PopAll();
+                        //UIManager.Get().Push<UI_Login>();
+                        break;
+                    }
                 case PacketType.S2C_LoginResult:
                     {
-                        //S2C_Login packet = ProtobufferTool.Deserialize<S2C_Login>(body); //解包
                         MemoryStream stream = new MemoryStream(body, 0, body.Length); //解包
                         S2C_Login packet = ProtobufHelper.FromStream(typeof(S2C_Login), stream) as S2C_Login;
                         Debug.Log($"[Handle:{type}] Code={packet.Code}, Nickname={packet.Nickname}");
                         NetPacketManager.Trigger(type, packet); //派发（为什么在这创建UI，会堵塞接收线程？？）
+                        break;
                     }
-                    break;
-                case PacketType.S2C_RoomInfo:
-                    {
-                        //S2C_RoomInfo packet = ProtobufferTool.Deserialize<S2C_RoomInfo>(body); //解包
-                        MemoryStream stream = new MemoryStream(body, 0, body.Length); //解包
-                        S2C_RoomInfo packet = ProtobufHelper.FromStream(typeof(S2C_RoomInfo), stream) as S2C_RoomInfo;
-                        Debug.Log($"[Handle:{type}] RoomId={packet.Room.RoomID}, RoomName={packet.Room.RoomName}, Num={packet.Room.LimitNum}");
-                        NetPacketManager.Trigger(type, packet); //派发
-                    }
-                    break;
                 case PacketType.S2C_RoomList:
                     {
                         Debug.Log($"[Handle:{type}]");
-                        //S2C_GetRoomList packet = ProtobufferTool.Deserialize<S2C_GetRoomList>(body); //解包
                         MemoryStream stream = new MemoryStream(body, 0, body.Length); //解包
                         S2C_GetRoomList packet = ProtobufHelper.FromStream(typeof(S2C_GetRoomList), stream) as S2C_GetRoomList;
                         Debug.Log($"[Handle:{type}] RoomCount={packet.Rooms.Count}");
@@ -75,17 +72,31 @@ namespace HotFix
                             Debug.Log($"Room.0={packet.Rooms[0].RoomID}");
                         }
                         NetPacketManager.Trigger(type, packet); //派发
+                        break;
                     }
-                    break;
+                case PacketType.S2C_RoomInfo:
+                    {
+                        MemoryStream stream = new MemoryStream(body, 0, body.Length); //解包
+                        S2C_RoomInfo packet = ProtobufHelper.FromStream(typeof(S2C_RoomInfo), stream) as S2C_RoomInfo;
+                        Debug.Log($"[Handle:{type}] RoomId={packet.Room.RoomID}, RoomName={packet.Room.RoomName}, Num={packet.Room.LimitNum}");
+                        NetPacketManager.Trigger(type, packet); //派发
+                        break;
+                    }
+                case PacketType.S2C_LeaveRoom:
+                    {
+                        Empty packet = new Empty();
+                        Debug.Log($"[Handle:{type}]");
+                        NetPacketManager.Trigger(type, packet); //派发
+                        break;
+                    }
                 case PacketType.S2C_Chat:
                     {
-                        //TheMsg packet = ProtobufferTool.Deserialize<TheMsg>(body); //解包
                         MemoryStream stream = new MemoryStream(body, 0, body.Length); //解包
                         TheMsg packet = ProtobufHelper.FromStream(typeof(TheMsg), stream) as TheMsg;
                         Debug.Log($"[Handle:{type}] {packet.Name}说: {packet.Content}");
                         NetPacketManager.Trigger(type, packet); //派发
+                        break;
                     }
-                    break;
                 default:
                     Debug.LogError($"Handle:无法识别的消息: {type}");
                     break;

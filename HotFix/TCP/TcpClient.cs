@@ -200,6 +200,7 @@ namespace HotFix
                 _sendEventArg.Dispose();
 
                 // Call the client disconnected handler
+                UnityEngine.Debug.Log($"OnDisconnected.111.err={ex.SocketErrorCode}");
                 OnDisconnected();
 
                 return false;
@@ -293,6 +294,7 @@ namespace HotFix
             ClearBuffers();
 
             // Call the client disconnected handler
+            UnityEngine.Debug.Log($"OnDisconnected.222.收到服务器断开:");
             OnDisconnected();
 
             return true;
@@ -430,6 +432,7 @@ namespace HotFix
             if (ec != SocketError.Success)
             {
                 SendError(ec);
+                UnityEngine.Debug.Log($"OnDisconnected.555.发送: {ec}");
                 Disconnect();
             }
 
@@ -537,6 +540,7 @@ namespace HotFix
             if (ec != SocketError.Success)
             {
                 SendError(ec);
+                UnityEngine.Debug.Log($"OnDisconnected.444.接收错误: {ec}");
                 Disconnect();
             }
 
@@ -751,6 +755,7 @@ namespace HotFix
             {
                 // Call the client disconnected handler
                 SendError(e.SocketError);
+                UnityEngine.Debug.Log($"OnDisconnected.333.重连失败: {e.SocketError}"); //ConnectionRefused
                 OnDisconnected();
             }
         }

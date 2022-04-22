@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using HotFix;
+using ET;
 
 namespace NetCoreServer
 {
@@ -34,12 +35,13 @@ namespace NetCoreServer
             dic_rooms.Add(roomId, serverRoom);
             return serverRoom;
         }
-        // 关闭房间（房主解散或房间结算后执行）
+        // 关闭房间（群发离开消息，重置成员状态）
         public void RemoveServerRoom(int roomId)
         {
             ServerRoom serverRoom = null;
             if (dic_rooms.TryGetValue(roomId, out serverRoom))
             {
+                serverRoom.SendAsync(PacketType.S2C_LeaveRoom, new Empty()); //群发离开
                 serverRoom.Dispose();
                 dic_rooms.Remove(roomId);
             }

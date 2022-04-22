@@ -29,6 +29,7 @@ namespace HotFix
     public enum PacketType : byte
     {
         Connected = 0   ,   //连接成功
+        Disconnect      ,   //连接断开
         ///////////////////////////////////////////////
         C2S_RegisterReq ,   //注册请求
         C2S_LoginReq    ,   //登录请求

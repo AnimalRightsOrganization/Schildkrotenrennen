@@ -146,24 +146,28 @@ namespace HotFix
                     OnGetRoomInfo(type, packet);
                     break;
                 case PacketType.S2C_RoomList:
-                    Debug.Log("派发房间列表");
+                    OnGetRoomList(type, packet);
                     break;
             }
         }
         void OnGetRoomInfo(PacketType type, object packet)
         {
             S2C_RoomInfo data = (S2C_RoomInfo)packet;
-            Debug.Log($"派发房间列表: {data.Room.RoomID}:{data.Room.RoomName}, {data.Room.CurNum}/{data.Room.LimitNum}");
+            Debug.Log($"房间信息: {data.Room.RoomID}:{data.Room.RoomName}, {data.Room.CurNum}/{data.Room.LimitNum}");
 
             BaseRoomData roomData = new BaseRoomData
             { 
                 RoomID = data.Room.RoomID, 
                 RoomName = data.Room.RoomName, 
-                //RoomPwd = data.Room.LimitNum,
                 RoomLimit = data.Room.LimitNum,
             };
             var room = UIManager.Get().Push<UI_Room>();
             room.InitUI(roomData);
+        }
+        void OnGetRoomList(PacketType type, object packet)
+        {
+            S2C_GetRoomList data = (S2C_GetRoomList)packet;
+            Debug.Log($"派发房间列表: count={data.Rooms.Count}");
         }
         #endregion
     }

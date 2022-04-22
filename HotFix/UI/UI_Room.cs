@@ -17,7 +17,7 @@ namespace HotFix
 
             m_NameText = transform.Find("Background/Text").GetComponent<Text>();
             m_CloseBtn = transform.Find("Background/CloseBtn").GetComponent<Button>();
-            m_CloseBtn.onClick.AddListener(OnCloseBtnClick);
+            m_CloseBtn.onClick.AddListener(OnSendLeaveRoom);
         }
 
         void Start()
@@ -34,7 +34,9 @@ namespace HotFix
         {
             switch (type)
             {
-
+                case PacketType.S2C_LeaveRoom:
+                    UIManager.Get().Pop(this);
+                    break;
             }
         }
 
@@ -43,10 +45,10 @@ namespace HotFix
             m_NameText.text = roomData.RoomName;
         }
 
-        void OnCloseBtnClick()
+        void OnSendLeaveRoom()
         {
-            UIManager.Get().Pop(this);
-
+            Debug.Log("请求离开房间");
+            TcpChatClient.SendAsync(PacketType.C2S_LeaveRoom, new Empty());
         }
     }
 }

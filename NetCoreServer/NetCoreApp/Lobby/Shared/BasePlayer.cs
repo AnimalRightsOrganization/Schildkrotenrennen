@@ -15,14 +15,14 @@
             UserName = userName;
             ResetToLobby(); //登录成功创建的，已经在大厅
         }
-        public virtual BasePlayer SetRoomID(short roomId)
+        public virtual BasePlayer SetRoomID(int roomId)
         {
-            this.RoomId = roomId;
+            this.RoomId = (short)roomId;
             return this;
         }
-        public virtual BasePlayer SetSeatID(short seatid)
+        public virtual BasePlayer SetSeatID(int seatid)
         {
-            this.SeatId = seatid;
+            this.SeatId = (short)seatid;
             return this;
         }
         public virtual BasePlayer SetStatus(PlayerStatus status)
