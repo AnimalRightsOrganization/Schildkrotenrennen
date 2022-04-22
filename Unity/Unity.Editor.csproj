@@ -58,9 +58,9 @@
   <ItemGroup>
     <Compile Include="Assets\Editor\BundleTools.cs" />
     <Compile Include="Assets\Editor\CustomHierarchy.cs" />
+    <Compile Include="Assets\Editor\ToolsEditor.cs" />
     <Compile Include="Assets\Editor\ProtoTools.cs" />
     <Compile Include="Assets\Editor\CreateConfig.cs" />
-    <Compile Include="Assets\Editor\ToolsEditor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Editor\Unity.Editor.asmdef" />
