@@ -4,6 +4,6 @@ namespace HotFix
     [System.Serializable]
     public class ClientPlayer : BasePlayer
     {
-        public ClientPlayer(string name, short peerId) : base(name, peerId) { }
+        public ClientPlayer(string name, System.Guid peerId) : base(name, peerId) { }
     }
 }

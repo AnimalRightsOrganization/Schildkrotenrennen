@@ -8,6 +8,7 @@ namespace HotFix
     public class UI_Room : UIBase
     {
         public Text m_NameText;
+        public Text m_PwdText;
         public Button m_CloseBtn;
         public List<Button> Seats;
 
@@ -43,6 +44,8 @@ namespace HotFix
         public void InitUI(BaseRoomData roomData)
         {
             m_NameText.text = roomData.RoomName;
+
+            Debug.Log($"房间初始化：{roomData.RoomID}/{roomData.RoomLimit}");
         }
 
         void OnSendLeaveRoom()

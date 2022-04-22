@@ -1,35 +1,24 @@
-﻿namespace HotFix
+﻿using System.Collections.Generic;
+
+namespace HotFix
 {
     /* 本地房间 */
     public class ClientRoom : BaseRoom
     {
         #region 房间数据
-        public ClientRoom(int roomId, ClientPlayer host, ClientPlayer guest) : base(roomId, host, guest)
+        public ClientRoom(ClientPlayer host, BaseRoomData data) : base(host, data)
         {
-            //Debug.LogError("测试先执行.ClientRoom"); //子类迟
-            m_PlayerList = new ClientPlayer[] { host, guest };
+            // 被override的才需要在这里赋值
+            //RoomID = roomId;
+            //RoomLimit = limit;
+            m_PlayerList = new Dictionary<int, BasePlayer>();
+            m_PlayerList.Add(0, host); //房主座位号0
+            host.SetRoomID(data.RoomID)
+                .SetSeatID(0)
+                .SetStatus(PlayerStatus.AtRoomWait);
         }
 
-        public override BasePlayer[] m_PlayerList { get; protected set; }
-        public override void Dispose()
-        {
-            // 清空帧同步，清空数据
-        }
-        public ClientPlayer GetOtherPlayer(short peerId)
-        {
-            if (m_PlayerList[0].PeerId == peerId && m_PlayerList[1].PeerId != peerId)
-            {
-                return m_PlayerList[1] as ClientPlayer;
-            }
-            else if (m_PlayerList[0].PeerId != peerId && m_PlayerList[1].PeerId == peerId)
-            {
-                return m_PlayerList[0] as ClientPlayer;
-            }
-            else
-            {
-                return null;
-            }
-        }
+        public override Dictionary<int, BasePlayer> m_PlayerList { get; protected set; }
         #endregion
     }
 }

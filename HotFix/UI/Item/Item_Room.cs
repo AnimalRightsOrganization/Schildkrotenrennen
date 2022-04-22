@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using IMessage = Google.Protobuf.IMessage;
+using ET;
 
 namespace HotFix
 {
