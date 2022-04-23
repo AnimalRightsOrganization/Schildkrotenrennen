@@ -18,9 +18,9 @@ namespace ET
 	}
 
 //message Empty {} //注意括号不能写在一行，工具不认。
-	[Message(OuterOpcode.Empty)]
+	[Message(OuterOpcode.EmptyPacket)]
 	[ProtoContract]
-	public partial class Empty: Object
+	public partial class EmptyPacket: Object
 	{
 	}
 
@@ -70,6 +70,9 @@ namespace ET
 		public int Code { get; set; }
 
 		[ProtoMember(2)]
+		public string Username { get; set; }
+
+		[ProtoMember(3)]
 		public string Nickname { get; set; }
 
 	}

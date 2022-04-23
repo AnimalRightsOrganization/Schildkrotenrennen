@@ -27,18 +27,23 @@ namespace HotFix
 
         void OnSelfClick()
         {
-            Debug.Log($"座位上的人是: {(playerData == null ? "空" : playerData.NickName)}");
+            //Debug.Log($"座位上的人是: {(playerData == null ? "空" : playerData.NickName)}");
 
             if (playerData == null)
             {
-                //空，加入机器人
+                Debug.Log("空座位，加入机器人");
             }
             else
             {
-                //自己，没效果
-                //if (playerData.UserName == localPlayer.UserName)
-                //别人，踢人
-                //else
+                Debug.Log($"{playerData.UserName}\n{TcpChatClient.m_PlayerManager.LocalPlayer.UserName}");
+                if (playerData.UserName == TcpChatClient.m_PlayerManager.LocalPlayer.UserName)
+                {
+                    Debug.Log("是自己，没效果");
+                }
+                else
+                {
+                    Debug.Log("是别人，踢人");
+                }
             }
         }
     }

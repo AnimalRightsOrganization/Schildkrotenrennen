@@ -70,7 +70,7 @@ namespace HotFix
             NetPacketManager.UnRegisterEvent(OnNetCallback);
         }
 
-        public void OnNetCallback(PacketType type, object packet)
+        public void OnNetCallback(PacketType type, object reader)
         {
             switch (type)
             {

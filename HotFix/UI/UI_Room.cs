@@ -46,7 +46,7 @@ namespace HotFix
             m_StartBtn = null;
         }
 
-        public void OnNetCallback(PacketType type, object packet)
+        public void OnNetCallback(PacketType type, object reader)
         {
             switch (type)
             {
@@ -90,7 +90,7 @@ namespace HotFix
                     }
                     if (playerData != null)
                     {
-                        Debug.Log($"playerName={playerData.NickName}");
+                        Debug.Log($"InitUI: {playerData.ToString()}");
                         scriptItem.InitUI(playerData);
                     }
                     else
@@ -104,13 +104,15 @@ namespace HotFix
         void OnSendLeaveRoom()
         {
             Debug.Log("请求离开房间");
-            TcpChatClient.SendAsync(PacketType.C2S_LeaveRoom, new Empty());
+            EmptyPacket cmd = new EmptyPacket();
+            TcpChatClient.SendAsync(PacketType.C2S_LeaveRoom, cmd);
         }
 
         void OnSendStartGame()
         {
             Debug.Log("请求开始比赛");
-            TcpChatClient.SendAsync(PacketType.C2S_GameStart, new Empty());
+            EmptyPacket cmd = new EmptyPacket();
+            TcpChatClient.SendAsync(PacketType.C2S_GameStart, cmd);
         }
     }
 }

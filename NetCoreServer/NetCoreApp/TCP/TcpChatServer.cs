@@ -3,11 +3,11 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
+using System.Collections.Generic;
 using NetCoreServer;
 using NetCoreServer.Utils;
 using HotFix;
 using ET;
-using System.Collections.Generic;
 
 namespace TcpChatServer
 {
@@ -25,7 +25,7 @@ namespace TcpChatServer
             //SendAsync(message);
 
             // 这里是异步线程中。
-            Empty cmd = new Empty();
+            EmptyPacket cmd = new EmptyPacket();
             SendAsync(PacketType.Connected, cmd); //TODO: 多个客户端，验证这是否为广播
         }
 
@@ -82,6 +82,9 @@ namespace TcpChatServer
                 case PacketType.C2S_GameStart:
                     OnStartGame(body);
                     break;
+                case PacketType.C2S_GamePlay:
+                    OnPlayCard(body);
+                    break;
                 default:
                     Debug.Print($"无法识别的消息: {type}");
                     break;
@@ -123,7 +126,7 @@ namespace TcpChatServer
 
             TCPChatServer.m_PlayerManager.AddPlayer(p);
 
-            S2C_Login packet = new S2C_Login { Code = 0, Nickname = result.nickname };
+            S2C_Login packet = new S2C_Login { Code = 0, Username = request.Username, Nickname = result.nickname };
             p.SendAsync(PacketType.S2C_LoginResult, packet);
 
             WinFormsApp1.MainForm.Instance.RefreshPlayerNum();
@@ -238,7 +241,8 @@ namespace TcpChatServer
             }
             else
             {
-                p.SendAsync(PacketType.S2C_LeaveRoom, new Empty());
+                EmptyPacket packet = new EmptyPacket();
+                p.SendAsync(PacketType.S2C_LeaveRoom, packet);
                 Debug.Print("房间内其他人员广播，更新房间信息");
 
                 // 房间内其他人员广播，更新房间信息
@@ -262,8 +266,20 @@ namespace TcpChatServer
             Debug.Print($"{p.UserName}当前在房间#{p.RoomId}，座位#{p.SeatId}，请求开始比赛");
 
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
-            //var packet = new XXX(); //组织开局所需数据
-            serverRoom.SendAsync(PacketType.S2C_GameStart, new Empty()); //给所有成员发送开始
+            EmptyPacket packet = new EmptyPacket(); //TODO: 组织开局所需数据
+            serverRoom.SendAsync(PacketType.S2C_GameStart, packet); //给所有成员发送开始
+        }
+        protected void OnPlayCard(byte[] body)
+        {
+            MemoryStream ms = new MemoryStream(body, 0, body.Length);
+            var request = ProtobufHelper.FromStream(typeof(C2S_PlayCard), ms) as C2S_PlayCard; //解包
+
+            ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
+            Debug.Print($"{p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}");
+
+            ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
+            S2C_PlayCard packet = new S2C_PlayCard { SeatID = p.SeatId, CardID = request.CardID };
+            serverRoom.SendAsync(PacketType.S2C_GamePlay, packet); //给所有成员发送开始
         }
     }
 

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using ET;
 
@@ -54,13 +53,17 @@ namespace HotFix
             m_RegisterBtn = null;
         }
 
-        public void OnNetCallback(PacketType type, object packet)
+        public void OnNetCallback(PacketType type, object reader)
         {
             switch (type)
             {
                 case PacketType.S2C_LoginResult:
                     {
-                        UIManager.Get().Push<UI_Main>(); //成功回调中执行
+                        S2C_Login packet = (S2C_Login)reader;
+                        var p = new ClientPlayer(packet.Username, System.Guid.Empty);
+                        TcpChatClient.m_PlayerManager.AddClientPlayer(p, true);
+                        UIManager.Get().Push<UI_Main>();
+                        //Debug.Log($"LocalPlayer: {TcpChatClient.m_PlayerManager.LocalPlayer.UserName}");
                         break;
                     }
             }
@@ -68,7 +71,7 @@ namespace HotFix
 
         void OnHelpBtnClick()
         {
-            UIManager.Get().Push<UI_Main>();
+            //UIManager.Get().Push<UI_Main>();
             //TcpChatClient.Disconnect();
         }
 

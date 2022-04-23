@@ -139,15 +139,15 @@ namespace HotFix
         #endregion
 
         #region 网络事件
-        public void OnNetCallback(PacketType type, object packet)
+        public void OnNetCallback(PacketType type, object reader)
         {
             switch (type)
             {
                 case PacketType.S2C_RoomInfo:
-                    OnGetRoomInfo(type, packet);
+                    OnGetRoomInfo(type, reader);
                     break;
                 case PacketType.S2C_RoomList:
-                    OnGetRoomList(type, packet);
+                    OnGetRoomList(type, reader);
                     break;
             }
         }

@@ -9,7 +9,7 @@ message ErrorPacket
 	string Message = 2;
 }
 //message Empty {} //注意括号不能写在一行，工具不认。
-message Empty
+message EmptyPacket
 {
 }
 
@@ -34,7 +34,8 @@ message C2S_Login
 message S2C_Login
 {
 	int32 Code = 1;
-	string Nickname = 2;
+	string Username = 2;
+	string Nickname = 3;
 }
 
 // 房间

@@ -65,8 +65,7 @@ namespace HotFix
     public class TcpChatClient
     {
         protected static ChatClient client;
-        //const string address = "127.0.0.1";
-        const string address = "110.42.198.150";
+        const string address = "127.0.0.1";
         const int port = 1111;
 
         public static ClientPlayerManager m_PlayerManager;
@@ -134,7 +133,7 @@ namespace HotFix
             byte[] buffer = new byte[header.Length + body.Length];
             System.Array.Copy(header, 0, buffer, 0, header.Length);
             System.Array.Copy(body, 0, buffer, header.Length, body.Length);
-            Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
+            //Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
             client.SendAsync(buffer);
         }
 
@@ -168,7 +167,7 @@ namespace HotFix
         }
         public static void SendGetRoomList()
         {
-            Empty cmd = new Empty();
+            EmptyPacket cmd = new EmptyPacket();
             SendAsync(PacketType.C2S_RoomList, cmd);
         }
         public static bool SendCreateRoom(string name, string pwd, int num)
@@ -190,7 +189,7 @@ namespace HotFix
         }
         public static void SendLeaveRoom()
         {
-            Empty cmd = new Empty();
+            EmptyPacket cmd = new EmptyPacket();
             SendAsync(PacketType.C2S_LeaveRoom, cmd);
         }
         public static void SendPlayCard(int cardId)

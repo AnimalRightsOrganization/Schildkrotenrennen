@@ -40,6 +40,7 @@ namespace HotFix
             Array.Copy(buffer, 1, body, 0, buffer.Length - 1);
 
             PacketType type = (PacketType)msgId;
+            MemoryStream stream = new MemoryStream(body, 0, body.Length);
             //Debug.Log($"PacketType={type}");
             switch (type)
             {
@@ -55,20 +56,24 @@ namespace HotFix
                     }
                 case PacketType.S2C_LoginResult:
                     {
-                        MemoryStream stream = new MemoryStream(body, 0, body.Length); //解包
-                        S2C_Login packet = ProtobufHelper.FromStream(typeof(S2C_Login), stream) as S2C_Login;
-                        Debug.Log($"[Handle:{type}] Code={packet.Code}, Nickname={packet.Nickname}");
-                        NetPacketManager.Trigger(type, packet); //派发（为什么在这创建UI，会堵塞接收线程？？）
-                        //ClientPlayer p = new ClientPlayer(packet.Nickname, p.PeerId);
-                        //TcpChatClient.m_PlayerManager.AddClientPlayer(p, true);
+                        //MemoryStream stream = new MemoryStream(body, 0, body.Length);
+                        //S2C_Login packet = ProtobufHelper.FromStream(typeof(S2C_Login), stream) as S2C_Login;
+                        var packet = ProtobufHelper.Deserialize<S2C_Login>(stream); //解包
+                        NetPacketManager.Trigger(type, packet); //派发
+                        break;
+                    }
+                case PacketType.S2C_LogoutResult:
+                    {
+                        EmptyPacket packet = new EmptyPacket();
+                        NetPacketManager.Trigger(type, packet); //派发
+                        OnLogoutResult(packet);
                         break;
                     }
                 case PacketType.S2C_RoomList:
                     {
-                        Debug.Log($"[Handle:{type}]");
-                        MemoryStream stream = new MemoryStream(body, 0, body.Length); //解包
-                        S2C_GetRoomList packet = ProtobufHelper.FromStream(typeof(S2C_GetRoomList), stream) as S2C_GetRoomList;
-                        Debug.Log($"[Handle:{type}] RoomCount={packet.Rooms.Count}");
+                        //MemoryStream stream = new MemoryStream(body, 0, body.Length);
+                        //S2C_GetRoomList packet = ProtobufHelper.FromStream(typeof(S2C_GetRoomList), stream) as S2C_GetRoomList;
+                        var packet = ProtobufHelper.Deserialize<S2C_GetRoomList>(stream); //解包
                         if (packet.Rooms.Count > 0)
                         {
                             Debug.Log($"Room.0={packet.Rooms[0].RoomID}");
@@ -78,38 +83,37 @@ namespace HotFix
                     }
                 case PacketType.S2C_RoomInfo:
                     {
-                        MemoryStream stream = new MemoryStream(body, 0, body.Length); //解包
-                        S2C_RoomInfo packet = ProtobufHelper.FromStream(typeof(S2C_RoomInfo), stream) as S2C_RoomInfo;
-                        Debug.Log($"[Handle:{type}] 房间#{packet.Room.RoomID}，Name={packet.Room.RoomName}，人数{packet.Room.Players.Count}/{packet.Room.LimitNum}");
+                        //MemoryStream stream = new MemoryStream(body, 0, body.Length);
+                        //S2C_RoomInfo packet = ProtobufHelper.FromStream(typeof(S2C_RoomInfo), stream) as S2C_RoomInfo;
+                        var packet = ProtobufHelper.Deserialize<S2C_RoomInfo>(stream); //解包
                         NetPacketManager.Trigger(type, packet); //派发
                         break;
                     }
                 case PacketType.S2C_LeaveRoom:
                     {
-                        Empty packet = new Empty();
-                        Debug.Log($"[Handle:{type}]");
+                        EmptyPacket packet = new EmptyPacket();
                         NetPacketManager.Trigger(type, packet); //派发
                         break;
                     }
                 case PacketType.S2C_Chat:
                     {
-                        MemoryStream stream = new MemoryStream(body, 0, body.Length); //解包
-                        TheMsg packet = ProtobufHelper.FromStream(typeof(TheMsg), stream) as TheMsg;
-                        Debug.Log($"[Handle:{type}] {packet.Name}说: {packet.Content}");
+                        //MemoryStream stream = new MemoryStream(body, 0, body.Length);
+                        //TheMsg packet = ProtobufHelper.FromStream(typeof(TheMsg), stream) as TheMsg;
+                        var packet = ProtobufHelper.Deserialize<TheMsg>(stream); //解包
                         NetPacketManager.Trigger(type, packet); //派发
                         break;
                     }
                 case PacketType.S2C_GameStart:
                     {
-                        Debug.Log($"[Handle:{type}]");
-                        NetPacketManager.Trigger(type, new Empty()); //派发
+                        EmptyPacket packet = new EmptyPacket();
+                        NetPacketManager.Trigger(type, packet); //派发
                         break;
                     }
                 case PacketType.S2C_GamePlay:
                     {
-                        MemoryStream stream = new MemoryStream(body, 0, body.Length); //解包
-                        S2C_PlayCard packet = ProtobufHelper.FromStream(typeof(S2C_PlayCard), stream) as S2C_PlayCard;
-                        Debug.Log($"[Handle:{type}] 座位#{packet.SeatID}出牌{packet.CardID}");
+                        //MemoryStream stream = new MemoryStream(body, 0, body.Length);
+                        //S2C_PlayCard packet = ProtobufHelper.FromStream(typeof(S2C_PlayCard), stream) as S2C_PlayCard;
+                        var packet = ProtobufHelper.Deserialize<S2C_PlayCard>(stream); //解包
                         NetPacketManager.Trigger(type, packet); //派发
                         break;
                     }
@@ -117,6 +121,55 @@ namespace HotFix
                     Debug.LogError($"Handle:无法识别的消息: {type}");
                     break;
             }
+        }
+
+        // 统一处理用户状态变化，并派发出去
+        void OnUserStatusChanged(PacketType type, object reader)
+        {
+            switch (type)
+            {
+                case PacketType.S2C_LoginResult:
+                    {
+                        var packet = (S2C_Login)reader;
+                        if (packet.Code == 0)
+                        {
+                            //ReconnectTimes = 2; //登录成功，补充重连次数
+                            TcpChatClient.m_PlayerManager.LocalPlayer.ResetToLobby();
+                        }
+                        break;
+                    }
+                case PacketType.S2C_GameReady:
+                    {
+                        break;
+                    }
+                case PacketType.S2C_GameStart:
+                    {
+                        TcpChatClient.m_PlayerManager.LocalPlayer.SetStatus(PlayerStatus.AtBattle);
+                        break;
+                    }
+                case PacketType.S2C_GameResult:
+                    {
+                        TcpChatClient.m_PlayerManager.LocalPlayer.ResetToLobby();
+                        break;
+                    }
+            }
+            UserEventManager.Trigger(TcpChatClient.m_PlayerManager.LocalPlayer.Status); //通知给UI
+        }
+
+        // 自己登出
+        void OnLogoutResult(object reader)
+        {
+            Debug.Log($"<color=red>[C] {TcpChatClient.m_PlayerManager.LocalPlayer.UserName}登出重置</color>");
+            TcpChatClient.m_PlayerManager.Reset();
+        }
+
+        void OnErrorOperate(object reader)
+        {
+            ErrorPacket packet = (ErrorPacket)reader;
+            Debug.Log($"错误操作：{(ErrorCode)packet.Code}");
+
+            //var toast = UIManager.Get().Push<UI_Toast>();
+            //toast.Show($"{(ErrorCode)packet.ErrorCode}");
         }
     }
 
@@ -138,9 +191,9 @@ namespace HotFix
         }
     }
 
-    public class NetStateManager
+    public class UserEventManager
     {
-        public delegate void EventHandler(int t);
+        public delegate void EventHandler(PlayerStatus t);
         public static event EventHandler Event;
         public static void RegisterEvent(EventHandler action)
         {
@@ -150,7 +203,7 @@ namespace HotFix
         {
             Event -= action;
         }
-        public static void Trigger(int type)
+        public static void Trigger(PlayerStatus type)
         {
             Event?.Invoke(type);
         }

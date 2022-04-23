@@ -3,7 +3,7 @@ namespace ET
 	public static partial class OuterOpcode
 	{
 		 public const ushort ErrorPacket = 10001;
-		 public const ushort Empty = 10002;
+		 public const ushort EmptyPacket = 10002;
 		 public const ushort TheMsg = 10003;
 		 public const ushort TheMsgList = 10004;
 		 public const ushort C2S_Login = 10005;
