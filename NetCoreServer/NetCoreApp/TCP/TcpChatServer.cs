@@ -123,14 +123,21 @@ namespace TcpChatServer
                 Debug.Print($"用户名或密码错误");
                 return;
             }
-            //Debug.Print($"昵称: {result.nickname}");
-            ServerPlayer p = new ServerPlayer(request.Username, Id, false);
-            p.NickName = result.nickname;
-
-            TCPChatServer.m_PlayerManager.AddPlayer(p);
+            var playerData = new BasePlayerData
+            {
+                IsBot = false,
+                PeerId = Id,
+                UserName = request.Username,
+                NickName = result.nickname,
+                RoomId = -1,
+                SeatId = -1,
+                Status = PlayerStatus.AtLobby,
+            };
+            var serverPlayer = new ServerPlayer(playerData);
+            TCPChatServer.m_PlayerManager.AddPlayer(serverPlayer);
 
             var packet = new S2C_LoginResultPacket { Code = 0, Username = request.Username, Nickname = result.nickname };
-            p.SendAsync(PacketType.S2C_LoginResult, packet);
+            serverPlayer.SendAsync(PacketType.S2C_LoginResult, packet);
 
             WinFormsApp1.MainForm.Instance.RefreshPlayerNum();
         }
@@ -282,18 +289,15 @@ namespace TcpChatServer
                             return;
                         }
                         // 创建机器人
-                        Guid botID = Guid.Empty;
-                        BasePlayerData basePlayerData = new BasePlayerData
+                        BasePlayerData playerData = new BasePlayerData
                         {
-                            PeerId = botID,
-                            UserName = "",
-                            NickName = "",
-                            SeatId = -1,
+                            IsBot = true,
+                            UserName = "_BOT_",
+                            NickName = "_BOT_",
                         };
-                        ServerPlayer bot = new ServerPlayer("_BOT_", botID, true);
-                        bot.NickName = "_BOT_";
-                        TCPChatServer.m_PlayerManager.AddPlayer(bot);
-                        serverRoom.AddPlayer(bot);
+                        ServerPlayer robot = new ServerPlayer(playerData);
+                        TCPChatServer.m_PlayerManager.AddPlayer(robot);
+                        serverRoom.AddPlayer(robot);
                         break;
                     }
                 case SeatOperate.KICK_PLAYER:
@@ -315,23 +319,23 @@ namespace TcpChatServer
             var players = new List<PlayerInfo>();
             foreach (var item in serverRoom.m_PlayerList)
             {
-                BasePlayer player = item.Value;
-                PlayerInfo info = new PlayerInfo
+                var _player = item.Value;
+                var _playerInfo = new PlayerInfo
                 {
                     SeatID = item.Key,
-                    UserName = player.UserName,
-                    NickName = player.NickName,
+                    UserName = _player.UserName,
+                    NickName = _player.NickName,
                 };
-                players.Add(info);
+                players.Add(_playerInfo);
             }
-            RoomInfo roomInfo = new RoomInfo
+            var roomInfo = new RoomInfo
             {
                 RoomID = roomData.RoomID,
                 RoomName = roomData.RoomName,
                 LimitNum = roomData.RoomLimit,
                 Players = players,
             };
-            S2C_RoomInfo packet1 = new S2C_RoomInfo { Room = roomInfo };
+            var packet1 = new S2C_RoomInfo { Room = roomInfo };
             // 房间内广播，更新房间信息
             serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet1);
         }

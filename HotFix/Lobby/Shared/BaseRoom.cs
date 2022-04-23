@@ -5,15 +5,7 @@ namespace HotFix
 {
     public class BaseRoomData : System.Object
     {
-        public const int MIN_PLAYERS = 2;   //最少人数
-        public const int MAX_PLAYERS = 5;   //最多人数
-
-        public int RoomID;                  //房间ID
-        public string RoomName;             //房间名
-        public string RoomPwd;              //密码
-        public int RoomLimit;               //限定人数
-        public List<BasePlayerData> Players;//成员
-
+        // 初值
         public BaseRoomData()
         {
             RoomID = -1;
@@ -22,6 +14,13 @@ namespace HotFix
             RoomLimit = MIN_PLAYERS;
             Players = new List<BasePlayerData>();
         }
+        public int RoomID;                  //房间ID
+        public string RoomName;             //房间名
+        public string RoomPwd;              //密码
+        public int RoomLimit;               //限定人数
+        public List<BasePlayerData> Players;//成员
+        public const int MIN_PLAYERS = 2;   //最少人数
+        public const int MAX_PLAYERS = 5;   //最多人数
 
         public override string ToString()
         {

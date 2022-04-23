@@ -88,6 +88,7 @@ message RoomInfo
 //房间内玩家信息
 message PlayerInfo
 {
+	//string PeerId 	= 1; //连接号
 	string UserName = 1; //用户名
 	string NickName = 2; //昵称
 	int32 SeatID 	= 3; //座位号

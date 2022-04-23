@@ -142,7 +142,7 @@ namespace HotFix
         {
             switch (type)
             {
-                case PacketType.S2C_RoomInfo:
+                case PacketType.S2C_RoomInfo: //自己创建/加入
                     OnGetRoomInfo(type, reader);
                     break;
                 case PacketType.S2C_RoomList:
@@ -152,27 +152,26 @@ namespace HotFix
         }
         void OnGetRoomInfo(PacketType type, object reader)
         {
-            S2C_RoomInfo response = (S2C_RoomInfo)reader;
+            var response = (S2C_RoomInfo)reader;
             Debug.Log($"S2C_RoomInfo: [{response.Room.RoomName}#{response.Room.RoomID}]，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
 
-            BaseRoomData roomData = new BaseRoomData
+            var roomData = new BaseRoomData
             {
                 RoomID = response.Room.RoomID,
                 RoomName = response.Room.RoomName,
-                //RoomPwd = "",
                 RoomLimit = response.Room.LimitNum,
                 Players = new List<BasePlayerData>(),
             };
             for (int i = 0; i < response.Room.Players.Count; i++)
             {
-                PlayerInfo playerInfo = response.Room.Players[i];
-                BasePlayerData bp = new BasePlayerData
+                var playerInfo = response.Room.Players[i];
+                var playerData = new BasePlayerData
                 { 
                     UserName = playerInfo.UserName,
                     NickName = playerInfo.NickName, 
                     SeatId = playerInfo.SeatID,
                 };
-                roomData.Players.Add(bp);
+                roomData.Players.Add(playerData);
             }
             var ui_room = UIManager.Get().Push<UI_Room>();
             ui_room.InitUI(roomData);

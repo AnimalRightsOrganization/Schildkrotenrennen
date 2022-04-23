@@ -118,7 +118,7 @@ namespace HotFix
                 case PacketType.S2C_LeaveRoom:
                     OnLeaveRoom(type, reader);
                     break;
-                case PacketType.S2C_RoomInfo:
+                case PacketType.S2C_RoomInfo: //别人加入/离开
                     OnGetRoomInfo(type, reader);
                     break;
                 case PacketType.S2C_GameStart:

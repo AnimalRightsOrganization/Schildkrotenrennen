@@ -9,14 +9,14 @@ namespace NetCoreServer
     {
         public readonly TcpSession Session; //用来直接Send消息
 
-        public ServerPlayer(string userName, System.Guid peerid, bool bot = false) : base(userName, peerid, bot)
+        public ServerPlayer(BasePlayerData data) : base(data)
         {
-            Session = TCPChatServer.server.FindSession(PeerId);
+            Session = TCPChatServer.server.FindSession(data.PeerId);
         }
 
         public void SendAsync(PacketType msgId, object cmd)
         {
-            if (IsBot)
+            if (m_Data.IsBot)
                 return; //对机器人不发送
             byte[] header = new byte[1] { (byte)msgId };
             byte[] body = ProtobufHelper.ToBytes(cmd);

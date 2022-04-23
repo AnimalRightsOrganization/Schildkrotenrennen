@@ -18,9 +18,9 @@
         public void AddClientPlayer(ClientPlayer player, bool isSelf)
         {
             if (isSelf)
+            {
                 _localPlayer = player;
-
-            player.ResetToLobby();
+            }
         }
     }
 }

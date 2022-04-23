@@ -299,6 +299,13 @@ namespace WinFormsApp1
             });
         }
 
+        // 重启
+        void Restart()
+        {
+            Application.Restart();
+            Environment.Exit(0);
+        }
+
         #endregion
 
         private Label title;

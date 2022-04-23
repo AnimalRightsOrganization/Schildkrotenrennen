@@ -93,11 +93,12 @@ namespace HotFix
         }
         void OnLoginResult(PacketType type, object reader)
         {
-            S2C_LoginResultPacket packet = (S2C_LoginResultPacket)reader;
-            var p = new ClientPlayer(packet.Username, System.Guid.Empty);
-            TcpChatClient.m_PlayerManager.AddClientPlayer(p, true);
+            var packet = (S2C_LoginResultPacket)reader;
+            var playerData = new BasePlayerData { UserName = packet.Username }; //没填的都是默认值
+            var clientPlayer = new ClientPlayer(playerData);
+            clientPlayer.ResetToLobby();
+            TcpChatClient.m_PlayerManager.AddClientPlayer(clientPlayer, true);
             UIManager.Get().Push<UI_Main>();
-            //Debug.Log($"LocalPlayer: {TcpChatClient.m_PlayerManager.LocalPlayer.UserName}");
         }
         #endregion
     }
