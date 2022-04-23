@@ -1,11 +1,17 @@
 ﻿namespace HotFix
 {
-    public class BasePlayerData
+    public class BasePlayerData : System.Object
     {
         public System.Guid PeerId;  //房间ID
         public string UserName;     //登录名
         public string NickName;     //昵称
         public int SeatId;          //座位号
+
+        public override string ToString()
+        {
+            string dataStr = $"PeerId={PeerId}, UserName={UserName}, NickName={NickName}, SeatId={SeatId}";
+            return dataStr;
+        }
     }
     public abstract class BasePlayer
     {

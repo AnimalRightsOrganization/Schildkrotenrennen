@@ -42,70 +42,60 @@ public partial class BundleTools : Editor
 
     #region 测试
 
-    [MenuItem("Tools/测试/同步共享代码", false, 11)]
-    static void SyncSharedCode()
+    const string hotfixShared = @"HotFix\Lobby\Shared";
+    const string serverShared = @"NetCoreServer\NetCoreApp\Lobby\Shared";
+
+    [MenuItem("Tools/测试/HotFix >> Server", false, 11)]
+    static void Sync_H2S()
     {
-        //string sourceDir = @"c:\current";
-        //string backupDir = @"c:\archives\2008";
-        string sourceDir = @"C:\Users\Administrator\Desktop\Turtle\HotFix\Lobby\Shared";
-        string backupDir = @"C:\Users\Administrator\Desktop\Turtle\NetCoreServer\NetCoreApp\Lobby\Shared";
+        Sync_SharedCode(hotfixShared, serverShared);
+    }
+    [MenuItem("Tools/测试/HotFix << Server", false, 12)]
+    static void Sync_S2H()
+    {
+        Sync_SharedCode(serverShared, hotfixShared);
+    }
+    static void Sync_SharedCode(string srcPath, string outPath)
+    {
+        string root_unity = System.Environment.CurrentDirectory;
+        string root = Directory.GetParent(root_unity).ToString();
+
+        string hotfixDir = Path.Combine(root, hotfixShared);
+        string serverDir = Path.Combine(root, serverShared);
 
         try
         {
-            string[] picList = Directory.GetFiles(sourceDir, "*.jpg");
-            string[] txtList = Directory.GetFiles(sourceDir, "*.txt");
+            string[] csList = Directory.GetFiles(srcPath, "*.cs");
 
-            // Copy picture files.
-            foreach (string f in picList)
+            // 拷贝cs文件
+            foreach (string f in csList)
             {
                 // Remove path from the file name.
-                string fName = f.Substring(sourceDir.Length + 1);
+                string fName = f.Substring(srcPath.Length + 1);
+                Debug.Log($"fName={fName}");
 
-                // Use the Path.Combine method to safely append the file name to the path.
-                // Will overwrite if the destination file already exists.
-                File.Copy(Path.Combine(sourceDir, fName), Path.Combine(backupDir, fName), true);
+                // 会覆盖目标文件夹的文件
+                File.Copy(Path.Combine(srcPath, fName), Path.Combine(outPath, fName), true);
             }
 
-            // Copy text files.
-            foreach (string f in txtList)
-            {
-                // Remove path from the file name.
-                string fName = f.Substring(sourceDir.Length + 1);
-
-                try
-                {
-                    // Will not overwrite if the destination file already exists.
-                    File.Copy(Path.Combine(sourceDir, fName), Path.Combine(backupDir, fName));
-                }
-                catch (IOException copyError)
-                {
-                    // Catch exception if the file was already copied.
-                    Debug.Log(copyError.Message);
-                }
-            }
-
-            // Delete source files that were copied.
-            foreach (string f in txtList)
-            {
-                File.Delete(f);
-            }
-            foreach (string f in picList)
-            {
-                File.Delete(f);
-            }
+            // 删除源文件
+            //foreach (string f in csList)
+            //{
+            //    File.Delete(f);
+            //}
         }
         catch (DirectoryNotFoundException dirNotFound)
         {
             Debug.Log(dirNotFound.Message);
         }
     }
-    [MenuItem("Tools/测试/CMD", false, 12)]
+    [MenuItem("Tools/测试/CMD", false, 13)]
     static void TestCMD()
     {
         ExecuteCommand(@"ipconfig /flushdns");
         //ExecuteCommand(@"ping www.baidu.com");
     }
-    [MenuItem("Tools/测试/清理临时文件夹", false, 13)]
+    [MenuItem("Tools/测试/清理临时文件夹", false, 14)]
     static void ClearTmpFolders()
     {
         // 两个需要清理的目录
@@ -124,7 +114,7 @@ public partial class BundleTools : Editor
         }
         Debug.Log("清理完成");
     }
-    [MenuItem("Tools/测试/取消读条", false, 14)]
+    [MenuItem("Tools/测试/取消读条", false, 15)]
     static void CancelableProgressBar()
     {
         EditorUtility.ClearProgressBar();

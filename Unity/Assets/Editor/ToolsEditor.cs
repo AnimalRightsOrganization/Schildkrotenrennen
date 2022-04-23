@@ -31,8 +31,8 @@ public static class InnerProto2CS
 
     public static void Proto2CS()
     {
-        string unityPath = System.Environment.CurrentDirectory;
-        string projPath = Directory.GetParent(unityPath).ToString();
+        string root_unity = System.Environment.CurrentDirectory;
+        string projPath = Directory.GetParent(root_unity).ToString();
         string protoSrc = $"{projPath}/Protoc/OuterMessage.proto";
         string clientMessagePath = $"{projPath}/HotFix/Message/";
         string serverMessagePath = $"{projPath}/NetCoreServer/NetCoreApp/Message/";

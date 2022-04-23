@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HotFix
 {
-    public class BaseRoomData
+    public class BaseRoomData : System.Object
     {
         public const int MIN_PLAYERS = 2;   //最少人数
         public const int MAX_PLAYERS = 5;   //最多人数
@@ -21,6 +21,18 @@ namespace HotFix
             RoomPwd = string.Empty;
             RoomLimit = MIN_PLAYERS;
             Players = new List<BasePlayerData>();
+        }
+
+        public override string ToString()
+        {
+            string playerStr = string.Empty;
+            for (int i = 0; i < Players.Count; i++)
+            {
+                var player = Players[i];
+                playerStr += $"\n[{i}]---{player.ToString()}";
+            }
+            string dataStr = $"RoomID={RoomID}, RoomName={RoomName}, RoomPwd={RoomPwd}, RoomLimit={RoomLimit}, Players={playerStr}";
+            return dataStr;
         }
     }
     public abstract class BaseRoom

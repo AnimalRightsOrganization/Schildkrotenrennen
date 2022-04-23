@@ -5,7 +5,7 @@ namespace HotFix
         LobbyIsFull,        //大厅爆满
         RoomIsFull,         //房间爆满
         UserNameUsed,       //账号已经注册
-        Be_Kicked,          //被踢了（顶号/GM）
+        BE_KICKED,          //被踢了（顶号/GM）
     }
 
     public enum PlayerStatus : byte
