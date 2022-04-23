@@ -45,53 +45,73 @@ public partial class BundleTools : Editor
 
     const string hotfixShared = @"HotFix\Lobby\Shared";
     const string serverShared = @"NetCoreServer\NetCoreApp\Lobby\Shared";
+    const string hotfixCore = @"HotFix\Core";
+    const string serverCore = @"NetCoreServer\NetCoreApp\Core";
+    const int SLEEP_TIME = 1;
 
     [MenuItem("Tools/测试/HotFix >> Server", false, 11)]
     static async void Sync_H2S()
     {
-        await Sync_SharedCode(hotfixShared, serverShared);
+        string[] srcPaths = new string[] { hotfixCore, hotfixShared };
+        string[] outPaths = new string[] { serverCore, serverShared };
+        await Sync_SharedCode(srcPaths, outPaths);
     }
     [MenuItem("Tools/测试/HotFix << Server", false, 12)]
     static async void Sync_S2H()
     {
-        await Sync_SharedCode(serverShared, hotfixShared);
+        string[] srcPaths = new string[] { serverCore, serverShared };
+        string[] outPaths = new string[] { hotfixCore, hotfixShared };
+        await Sync_SharedCode(srcPaths, outPaths);
     }
-    static async Task Sync_SharedCode(string srcPath, string outPath)
+    static async Task Sync_SharedCode(string[] sourceDirs, string[] destDirs)
     {
         string root_unity = System.Environment.CurrentDirectory;
         string root = Directory.GetParent(root_unity).ToString();
-        string hotfixDir = Path.Combine(root, hotfixShared);
-        string serverDir = Path.Combine(root, serverShared);
 
-        try
+        int loopIndex = 0;
+        int loopCount = 0;
+        for (int i = 0; i < sourceDirs.Length; i++)
         {
-            string[] csList = Directory.GetFiles(hotfixDir, "*.cs");
+            string sourceDir = Path.Combine(root, sourceDirs[i]);
+            string[] csList = Directory.GetFileSystemEntries(sourceDir, "*.cs", SearchOption.AllDirectories); //包含子目录
+            loopCount += csList.Length; //计算总文件数
+        }
+        Debug.Log($"文件夹数={sourceDirs.Length}，总文件数={loopCount}");
 
-            int loopCount = csList.Length;
-            int fileIndex = 0;
+        for (int i = 0; i < sourceDirs.Length; i++)
+        {
+            string sourceDir = Path.Combine(root, sourceDirs[i]);
+            string destDir = Path.Combine(root, destDirs[i]);
 
-            // 拷贝cs文件
-            foreach (string f in csList)
+            try
             {
-                // 无路径的文件名
-                string fName = f.Substring(hotfixDir.Length + 1);
-                Debug.Log($"fName={fName}");
+                string[] csList = Directory.GetFileSystemEntries(sourceDir, "*.cs", SearchOption.AllDirectories);
 
-                // 会覆盖目标文件夹的文件
-                File.Copy(Path.Combine(hotfixDir, fName), Path.Combine(serverDir, fName), true);
+                // 拷贝cs文件
+                foreach (string f in csList)
+                {
+                    // 无路径的文件名
+                    string fName = f.Substring(sourceDir.Length + 1);
+                    Debug.Log($"fName={fName}");
 
-                fileIndex++;
-                float progress = (float)fileIndex / loopCount;
-                EditorUtility.DisplayProgressBar("同步中", fileIndex.ToString() + "进度(" + (progress * 100).ToString("F2") + "%)", progress);
-                await Task.Delay(10);
+                    // 会覆盖目标文件夹的文件
+                    File.Copy(Path.Combine(sourceDir, fName), Path.Combine(destDir, fName), true);
+
+                    loopIndex++;
+                    float progress = (float)loopIndex / loopCount;
+                    string info = $"{loopIndex}/{loopCount}，进度({(progress * 100).ToString("F2")}%)";
+                    EditorUtility.DisplayProgressBar("同步中", info, progress);
+
+                    await Task.Delay(SLEEP_TIME);
+                }
+            }
+            catch (DirectoryNotFoundException dirNotFound)
+            {
+                Debug.Log(dirNotFound.Message);
             }
         }
-        catch (DirectoryNotFoundException dirNotFound)
-        {
-            Debug.Log(dirNotFound.Message);
-        }
 
-        await Task.Delay(10);
+        await Task.Delay(SLEEP_TIME);
         EditorUtility.ClearProgressBar();
     }
     [MenuItem("Tools/测试/CMD", false, 13)]
