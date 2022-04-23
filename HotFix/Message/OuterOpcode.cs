@@ -12,11 +12,12 @@ namespace ET
 		 public const ushort C2S_JoinRoomPacket = 10008;
 		 public const ushort S2C_RoomInfo = 10009;
 		 public const ushort S2C_GetRoomList = 10010;
-		 public const ushort RoomInfo = 10011;
-		 public const ushort PlayerInfo = 10012;
-		 public const ushort C2S_PlayCard = 10013;
-		 public const ushort S2C_PlayCard = 10014;
-		 public const ushort S2C_Deal = 10015;
-		 public const ushort S2C_GameResult = 10016;
+		 public const ushort C2S_OperateSeatPacket = 10011;
+		 public const ushort RoomInfo = 10012;
+		 public const ushort PlayerInfo = 10013;
+		 public const ushort C2S_PlayCard = 10014;
+		 public const ushort S2C_PlayCard = 10015;
+		 public const ushort S2C_Deal = 10016;
+		 public const ushort S2C_GameResult = 10017;
 	}
 }

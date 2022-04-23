@@ -138,7 +138,7 @@ namespace HotFix
         #endregion
 
         #region 网络事件
-        public void OnNetCallback(PacketType type, object reader)
+        void OnNetCallback(PacketType type, object reader)
         {
             switch (type)
             {

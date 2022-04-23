@@ -192,6 +192,13 @@ namespace HotFix
             EmptyPacket cmd = new EmptyPacket();
             SendAsync(PacketType.C2S_LeaveRoom, cmd);
         }
+        public static void SendOperateSeat(int seatId, SeatOperate op)
+        {
+            Debug.Log($"¶Ô×ùÎ»{seatId}£¬{op}");
+
+            var cmd = new C2S_OperateSeatPacket { SeatID = seatId, Operate = (int)op };
+            SendAsync(PacketType.C2S_OperateSeat, cmd);
+        }
         public static void SendPlayCard(int cardId)
         {
             C2S_PlayCard cmd = new C2S_PlayCard { CardID = cardId };

@@ -115,7 +115,6 @@ namespace ET
 
 	}
 
-//message C2S_GetRoomList {} //传Empty就行
 	[Message(OuterOpcode.S2C_GetRoomList)]
 	[ProtoContract]
 	public partial class S2C_GetRoomList: Object
@@ -125,8 +124,25 @@ namespace ET
 
 	}
 
-//message C2S_LeaveRoom {} //传Empty就行
-//message S2C_LeaveRoom {}
+	[Message(OuterOpcode.C2S_OperateSeatPacket)]
+	[ProtoContract]
+	public partial class C2S_OperateSeatPacket: Object
+	{
+		[ProtoMember(1)]
+		public int SeatID { get; set; }
+
+		[ProtoMember(2)]
+		public int Operate { get; set; }
+
+//int32 Level 	= 3; //操作内容（0.机器人难度，1.给房主）
+	}
+
+//工具不支持使用enum
+//enum OperateType
+//{
+//	ADD_BOT 		= 0; //Proto3中，首成员必须是0。
+//	KICK_PLAYER 	= 1;
+//}
 //房间信息
 	[Message(OuterOpcode.RoomInfo)]
 	[ProtoContract]

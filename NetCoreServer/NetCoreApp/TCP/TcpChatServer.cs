@@ -77,6 +77,9 @@ namespace TcpChatServer
                 case PacketType.C2S_LeaveRoom:
                     OnLeaveRoom();
                     break;
+                case PacketType.C2S_OperateSeat:
+                    OnOperateSeat(ms);
+                    break;
                 case PacketType.C2S_Chat:
                     OnChat(ms);
                     break;
@@ -251,6 +254,21 @@ namespace TcpChatServer
             }
 
             WinFormsApp1.MainForm.Instance.RefreshRoomNum();
+        }
+        protected void OnOperateSeat(MemoryStream ms)
+        {
+            var request = ProtobufHelper.Deserialize<C2S_OperateSeatPacket>(ms); //解包
+            ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
+            Debug.Print($"{p.UserName}在房间#{p.RoomId}给座位#{request.SeatID}添加操作：{(SeatOperate)request.Operate}");
+
+            // 校验合法性
+            ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
+            //serverRoom.AddPlayer();
+
+            // 房间内广播，更新房间信息
+            RoomInfo roomInfo = new RoomInfo { RoomID = serverRoom.m_RoomData.RoomID, RoomName = serverRoom.m_RoomData.RoomName, LimitNum = serverRoom.m_RoomData.RoomLimit };
+            S2C_RoomInfo packet1 = new S2C_RoomInfo { Room = roomInfo };
+            serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet1);
         }
         protected void OnChat(MemoryStream ms)
         {

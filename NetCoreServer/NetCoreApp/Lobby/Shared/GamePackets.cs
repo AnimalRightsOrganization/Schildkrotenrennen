@@ -26,6 +26,12 @@ namespace HotFix
         GUEST       = 1,    //客位
     }
 
+    public enum SeatOperate : short
+    {
+        ADD_BOT     = 0, //添加机器人（Proto3中，首成员必须是0）
+        KICK_PLAYER = 1, //踢人
+    }
+
     public enum PacketType : byte
     {
         Connected = 0   ,   //连接成功（本地消息）
@@ -42,7 +48,8 @@ namespace HotFix
         C2S_CreateRoom  ,   //创建房间
         C2S_JoinRoom    ,   //加入房间
         C2S_LeaveRoom   ,   //离开房间
-
+        C2S_OperateSeat ,   //添加机器人，踢人
+        
         C2S_GameReady   ,   //请求准备（成员）
         C2S_GameStart   ,   //请求开始战斗（房主）
         C2S_GamePlay    ,   //出牌

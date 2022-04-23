@@ -70,7 +70,8 @@ namespace HotFix
             NetPacketManager.UnRegisterEvent(OnNetCallback);
         }
 
-        public void OnNetCallback(PacketType type, object reader)
+        #region 网络事件
+        void OnNetCallback(PacketType type, object reader)
         {
             switch (type)
             {
@@ -81,36 +82,16 @@ namespace HotFix
             }
         }
 
-        #region 网络消息
         // 颜色消息
-        void OnAllotColor()
-        {
-
-        }
-
+        void OnAllotColor() { }
         // 洗牌消息
-        void OnShuffe()
-        {
-
-        }
-
+        void OnShuffe() { }
         // 发牌消息
-        void OnDeal()
-        {
-
-        }
-
+        void OnDeal() { }
         // 出牌消息
-        void OnPlay()
-        {
-
-        }
-
+        void OnPlay() { }
         // 结算消息
-        void OnMatchResult()
-        {
-
-        }
+        void OnMatchResult() { }
         #endregion
     }
 }

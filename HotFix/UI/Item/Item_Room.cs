@@ -7,6 +7,7 @@ namespace HotFix
     public class Item_Room : UIBase
     {
         public BasePlayerData playerData;
+        protected int SeatID;
 
         public Text m_NameText;
         public Button m_SelfBtn;
@@ -18,9 +19,10 @@ namespace HotFix
             m_SelfBtn.onClick.AddListener(OnSelfClick);
         }
 
-        public void InitUI(BasePlayerData data)
+        public void InitUI(BasePlayerData data, int seatId)
         {
-            playerData = data;
+            this.playerData = data;
+            this.SeatID = seatId;
             m_NameText.text = playerData == null ? "空" : playerData.NickName;
         }
 
@@ -34,7 +36,11 @@ namespace HotFix
                 var ui_dialog = UIManager.Get().Push<UI_Dialog>();
                 ui_dialog.Show("是否加入机器人？",
                     () => { ui_dialog.Hide(); }, "取消",
-                    () => { Debug.Log("点击确定"); ui_dialog.Hide(); }, "确定");
+                    () =>
+                    {
+                        TcpChatClient.SendOperateSeat(SeatID, SeatOperate.ADD_BOT);
+                        ui_dialog.Hide();
+                    }, "确定");
             }
             else
             {
@@ -49,7 +55,11 @@ namespace HotFix
                     var ui_dialog = UIManager.Get().Push<UI_Dialog>();
                     ui_dialog.Show("是否移除该用户？",
                         () => { ui_dialog.Hide(); }, "取消",
-                        () => { Debug.Log("点击确定"); ui_dialog.Hide(); }, "确定");
+                        () =>
+                        {
+                            TcpChatClient.SendOperateSeat(SeatID, SeatOperate.KICK_PLAYER);
+                            ui_dialog.Hide();
+                        }, "确定");
                 }
             }
         }

@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
             Screen.fullScreen = false;
             //Screen.SetResolution(540, 960);
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
-            Application.targetFrameRate = 30;
+            Application.targetFrameRate = 60; //30帧Dotween看起来卡
             QualitySettings.vSyncCount = 0;
 
             // 绑定组件

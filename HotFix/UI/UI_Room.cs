@@ -75,8 +75,10 @@ namespace HotFix
             // 控制座位总数显示
             for (int i = 0; i < SeatList.Count; i++)
             {
-                var scriptItem = SeatList[i];
-                if (i >= roomData.RoomLimit)
+                int index = i;
+
+                var scriptItem = SeatList[index];
+                if (index >= roomData.RoomLimit)
                 {
                     scriptItem.gameObject.SetActive(false);
                 }
@@ -87,7 +89,7 @@ namespace HotFix
                     BasePlayerData playerData = null;
                     foreach (var data in roomData.Players)
                     {
-                        if (data.SeatId == i)
+                        if (data.SeatId == index)
                         {
                             playerData = data;
                             break;
@@ -96,28 +98,43 @@ namespace HotFix
                     if (playerData != null)
                     {
                         Debug.Log($"InitUI: {playerData.ToString()}");
-                        scriptItem.InitUI(playerData);
+                        scriptItem.InitUI(playerData, index);
                     }
                     else
                     {
-                        scriptItem.InitUI(null);
+                        scriptItem.InitUI(null, index);
                     }
                 }
             }
         }
-        public void OnNetCallback(PacketType type, object reader)
+        void OnNetCallback(PacketType type, object reader)
         {
             switch (type)
             {
                 case PacketType.S2C_LeaveRoom:
-                    UIManager.Get().Pop(this);
+                    OnLeaveRoom(type, reader);
+                    break;
+                case PacketType.S2C_RoomInfo:
+                    OnGetRoomInfo(type, reader);
                     break;
                 case PacketType.S2C_GameStart:
-                    //TODO: 解包，获取完整比赛信息，座位号和颜色。重连也下发这个消息。
-                    UIManager.Get().Pop(this);
-                    UIManager.Get().Push<UI_Game>();
+                    OnGameStart(type, reader);
                     break;
             }
+        }
+        void OnLeaveRoom(PacketType type, object reader)
+        {
+            UIManager.Get().Pop(this);
+        }
+        void OnGetRoomInfo(PacketType type, object reader)
+        {
+            //更新房间内信息，更新UI
+        }
+        void OnGameStart(PacketType type, object reader)
+        {
+            //TODO: 解包，获取完整比赛信息，座位号和颜色。重连也下发这个消息。
+            UIManager.Get().Pop(this);
+            UIManager.Get().Push<UI_Game>();
         }
         #endregion
     }

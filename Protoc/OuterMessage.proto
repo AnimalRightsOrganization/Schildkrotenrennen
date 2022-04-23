@@ -55,13 +55,22 @@ message S2C_RoomInfo
 {
 	RoomInfo Room = 1;
 }
-//message C2S_GetRoomList {} //传Empty就行
 message S2C_GetRoomList
 {
 	repeated RoomInfo Rooms = 1; //房间列表
 }
-//message C2S_LeaveRoom {} //传Empty就行
-//message S2C_LeaveRoom {}
+message C2S_OperateSeatPacket
+{
+	int32 SeatID 	= 1; //被操作的座位
+	int32 Operate 	= 2; //操作类型（0.添加机器人，1.踢人）
+	//int32 Level 	= 3; //操作内容（0.机器人难度，1.给房主）
+}
+//工具不支持使用enum
+//enum OperateType
+//{
+//	ADD_BOT 		= 0; //Proto3中，首成员必须是0。
+//	KICK_PLAYER 	= 1;
+//}
 //房间信息
 message RoomInfo
 {
