@@ -124,7 +124,7 @@ namespace TcpChatServer
                 return;
             }
             //Debug.Print($"昵称: {result.nickname}");
-            ServerPlayer p = new ServerPlayer(request.Username, Id);
+            ServerPlayer p = new ServerPlayer(request.Username, Id, false);
             p.NickName = result.nickname;
 
             TCPChatServer.m_PlayerManager.AddPlayer(p);
@@ -282,8 +282,16 @@ namespace TcpChatServer
                             return;
                         }
                         // 创建机器人
-                        Guid botID = new Guid();
-                        ServerPlayer bot = new ServerPlayer("_BOT_", botID);
+                        Guid botID = Guid.Empty;
+                        BasePlayerData basePlayerData = new BasePlayerData
+                        {
+                            PeerId = botID,
+                            UserName = "",
+                            NickName = "",
+                            SeatId = -1,
+                        };
+                        ServerPlayer bot = new ServerPlayer("_BOT_", botID, true);
+                        bot.NickName = "_BOT_";
                         TCPChatServer.m_PlayerManager.AddPlayer(bot);
                         serverRoom.AddPlayer(bot);
                         break;
@@ -334,18 +342,17 @@ namespace TcpChatServer
         }
         protected void OnStartGame()
         {
-            //空消息
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
             Debug.Print($"{p.UserName}请求开始比赛，房间#{p.RoomId}({serverRoom.m_PlayerList.Count}/{serverRoom.m_RoomData.RoomLimit})");
 
-            //TODO: 校验房间人数。
+            // 校验房间人数。
             if (serverRoom.m_PlayerList.Count < serverRoom.m_RoomData.RoomLimit)
             {
                 Debug.Print("ERROR: 房间未满员");
                 //ErrorPacket response = new ErrorPacket { Code = 0, Message = "ERROR: 房间未满员" };
                 //p.SendAsync(PacketType.S2C_ErrorOperate, response);
-                //return;
+                return;
             }
             //TODO: 校验所有成员状态。
 
