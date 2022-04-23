@@ -90,10 +90,6 @@ namespace HotFix
         }
         void OnCreateBtnClick()
         {
-            // 弹出创建游戏选项，人数、人机、是否公开
-            //var obj = new GameObject("TEMP_Local");
-            //var script = obj.AddComponent<TEMP_Local>();
-            //UIManager.Get().Push<UI_Game>();
             m_CreatePanel.SetActive(true);
         }
         void OnSettingsBtnClick()
@@ -102,7 +98,11 @@ namespace HotFix
         }
         void OnExitBtnClick()
         {
-            UIManager.Get().Pop(this);
+            //UIManager.Get().Pop(this);
+            var dialog = UIManager.Get().Push<UI_Dialog>();
+            dialog.Show("确定退出吗？",
+                () => { UIManager.Get().Pop(this); }, "确定",
+                () => { UIManager.Get().Pop(dialog); }, "取消");
         }
 
         void OnLeftBtnClick()
@@ -151,9 +151,9 @@ namespace HotFix
                     break;
             }
         }
-        void OnGetRoomInfo(PacketType type, object packet)
+        void OnGetRoomInfo(PacketType type, object reader)
         {
-            S2C_RoomInfo response = (S2C_RoomInfo)packet;
+            S2C_RoomInfo response = (S2C_RoomInfo)reader;
             Debug.Log($"房间信息: #{response.Room.RoomID}-{response.Room.RoomName}，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
 
             BaseRoomData roomData = new BaseRoomData
@@ -172,9 +172,9 @@ namespace HotFix
             var room = UIManager.Get().Push<UI_Room>();
             room.InitUI(roomData);
         }
-        void OnGetRoomList(PacketType type, object packet)
+        void OnGetRoomList(PacketType type, object reader)
         {
-            S2C_GetRoomList data = (S2C_GetRoomList)packet;
+            S2C_GetRoomList data = (S2C_GetRoomList)reader;
             Debug.Log($"派发房间列表: count={data.Rooms.Count}");
         }
         #endregion

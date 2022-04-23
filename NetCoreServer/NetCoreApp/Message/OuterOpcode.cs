@@ -17,5 +17,6 @@ namespace ET
 		 public const ushort C2S_PlayCard = 10013;
 		 public const ushort S2C_PlayCard = 10014;
 		 public const ushort S2C_Deal = 10015;
+		 public const ushort S2C_GameResult = 10016;
 	}
 }

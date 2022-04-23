@@ -51,5 +51,16 @@ namespace ET
 	        }
 	        return o;
         }
-    }
+
+		public static T Deserialize<T>(MemoryStream stream)
+		{
+			Type type = typeof(T);
+			object o = RuntimeTypeModel.Default.Deserialize(stream, null, type);
+			if (o is ISupportInitialize supportInitialize)
+			{
+				supportInitialize.EndInit();
+			}
+			return (T)o;
+		}
+	}
 }

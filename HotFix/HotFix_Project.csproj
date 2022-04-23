@@ -108,6 +108,7 @@
     <Compile Include="Message\OuterOpcode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Item\Item_Room.cs" />
+    <Compile Include="UI\UI_Dialog.cs" />
     <Compile Include="UI\UI_Game.cs" />
     <Compile Include="UI\UI_Main.cs" />
     <Compile Include="UI\UI_Room.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="UI\UI_Login.cs" />
     <Compile Include="UI\UI_Settings.cs" />
     <Compile Include="UI\UI_Register.cs" />
+    <Compile Include="UI\UI_Toast.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

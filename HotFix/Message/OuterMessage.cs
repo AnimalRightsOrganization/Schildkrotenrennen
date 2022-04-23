@@ -193,4 +193,11 @@ namespace ET
 
 	}
 
+//比赛结果
+	[Message(OuterOpcode.S2C_GameResult)]
+	[ProtoContract]
+	public partial class S2C_GameResult: Object
+	{
+	}
+
 }

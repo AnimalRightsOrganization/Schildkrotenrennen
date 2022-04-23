@@ -116,17 +116,7 @@ namespace HotFix
             client?.DisconnectAndStop();
         }
 
-        public static void Send(PacketType msgId, object cmd)
-        {
-            byte[] header = new byte[1] { (byte)msgId };
-            byte[] body = ProtobufHelper.ToBytes(cmd);
-            byte[] buffer = new byte[header.Length + body.Length];
-            System.Array.Copy(header, 0, buffer, 0, header.Length);
-            System.Array.Copy(body, 0, buffer, header.Length, body.Length);
-            //Debug.Log($"[Send] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
-            client.Send(buffer);
-        }
-        public static void SendAsync(PacketType msgId, object cmd)
+        private static byte[] MakeBuffer(PacketType msgId, object cmd)
         {
             byte[] header = new byte[1] { (byte)msgId };
             byte[] body = ProtobufHelper.ToBytes(cmd);
@@ -134,6 +124,16 @@ namespace HotFix
             System.Array.Copy(header, 0, buffer, 0, header.Length);
             System.Array.Copy(body, 0, buffer, header.Length, body.Length);
             //Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
+            return buffer;
+        }
+        public static void Send(PacketType msgId, object cmd)
+        {
+            byte[] buffer = MakeBuffer(msgId, cmd);
+            client.Send(buffer);
+        }
+        public static void SendAsync(PacketType msgId, object cmd)
+        {
+            byte[] buffer = MakeBuffer(msgId, cmd);
             client.SendAsync(buffer);
         }
 

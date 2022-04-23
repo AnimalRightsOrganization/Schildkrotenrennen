@@ -49,15 +49,12 @@ namespace HotFix
                 case PacketType.Disconnect:
                     {
                         // 销毁所有UI，返回登录页
-                        //Debug.Log($"[Handle:{type}]");
                         //UIManager.Get().PopAll();
                         //UIManager.Get().Push<UI_Login>();
                         break;
                     }
                 case PacketType.S2C_LoginResult:
                     {
-                        //MemoryStream stream = new MemoryStream(body, 0, body.Length);
-                        //S2C_Login packet = ProtobufHelper.FromStream(typeof(S2C_Login), stream) as S2C_Login;
                         var packet = ProtobufHelper.Deserialize<S2C_Login>(stream); //解包
                         NetPacketManager.Trigger(type, packet); //派发
                         break;
@@ -71,8 +68,6 @@ namespace HotFix
                     }
                 case PacketType.S2C_RoomList:
                     {
-                        //MemoryStream stream = new MemoryStream(body, 0, body.Length);
-                        //S2C_GetRoomList packet = ProtobufHelper.FromStream(typeof(S2C_GetRoomList), stream) as S2C_GetRoomList;
                         var packet = ProtobufHelper.Deserialize<S2C_GetRoomList>(stream); //解包
                         if (packet.Rooms.Count > 0)
                         {
@@ -83,8 +78,6 @@ namespace HotFix
                     }
                 case PacketType.S2C_RoomInfo:
                     {
-                        //MemoryStream stream = new MemoryStream(body, 0, body.Length);
-                        //S2C_RoomInfo packet = ProtobufHelper.FromStream(typeof(S2C_RoomInfo), stream) as S2C_RoomInfo;
                         var packet = ProtobufHelper.Deserialize<S2C_RoomInfo>(stream); //解包
                         NetPacketManager.Trigger(type, packet); //派发
                         break;
@@ -97,8 +90,6 @@ namespace HotFix
                     }
                 case PacketType.S2C_Chat:
                     {
-                        //MemoryStream stream = new MemoryStream(body, 0, body.Length);
-                        //TheMsg packet = ProtobufHelper.FromStream(typeof(TheMsg), stream) as TheMsg;
                         var packet = ProtobufHelper.Deserialize<TheMsg>(stream); //解包
                         NetPacketManager.Trigger(type, packet); //派发
                         break;
@@ -111,8 +102,6 @@ namespace HotFix
                     }
                 case PacketType.S2C_GamePlay:
                     {
-                        //MemoryStream stream = new MemoryStream(body, 0, body.Length);
-                        //S2C_PlayCard packet = ProtobufHelper.FromStream(typeof(S2C_PlayCard), stream) as S2C_PlayCard;
                         var packet = ProtobufHelper.Deserialize<S2C_PlayCard>(stream); //解包
                         NetPacketManager.Trigger(type, packet); //派发
                         break;
@@ -168,8 +157,8 @@ namespace HotFix
             ErrorPacket packet = (ErrorPacket)reader;
             Debug.Log($"错误操作：{(ErrorCode)packet.Code}");
 
-            //var toast = UIManager.Get().Push<UI_Toast>();
-            //toast.Show($"{(ErrorCode)packet.ErrorCode}");
+            var toast = UIManager.Get().Push<UI_Toast>();
+            toast.Show($"{(ErrorCode)packet.Code}");
         }
     }
 

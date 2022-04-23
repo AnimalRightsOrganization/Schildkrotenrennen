@@ -8,12 +8,15 @@ namespace HotFix
     // 如果没有Token，则留在本页面，让用户手动登录。
     public class UI_Login : UIBase
     {
+        #region 界面组件
         public Button m_HelpBtn;
         public Button m_QQBtn;
         public Button m_WXBtn;
         public Button m_LoginBtn;
         public Button m_RegisterBtn;
+        #endregion
 
+        #region 内置方法
         void Awake()
         {
             m_HelpBtn = transform.Find("HelpButton").GetComponent<Button>();
@@ -52,47 +55,50 @@ namespace HotFix
             m_LoginBtn = null;
             m_RegisterBtn = null;
         }
+        #endregion
 
-        public void OnNetCallback(PacketType type, object reader)
-        {
-            switch (type)
-            {
-                case PacketType.S2C_LoginResult:
-                    {
-                        S2C_Login packet = (S2C_Login)reader;
-                        var p = new ClientPlayer(packet.Username, System.Guid.Empty);
-                        TcpChatClient.m_PlayerManager.AddClientPlayer(p, true);
-                        UIManager.Get().Push<UI_Main>();
-                        //Debug.Log($"LocalPlayer: {TcpChatClient.m_PlayerManager.LocalPlayer.UserName}");
-                        break;
-                    }
-            }
-        }
-
+        #region 按钮事件
         void OnHelpBtnClick()
         {
             //UIManager.Get().Push<UI_Main>();
             //TcpChatClient.Disconnect();
         }
-
         void OnQQBtnClick()
         {
             Debug.Log("[Hotfix] QQ登录");
         }
-
         void OnWXBtnClick()
         {
             Debug.Log("[Hotfix] 微信登录");
         }
-
         void OnLoginBtnClick()
         {
             TcpChatClient.SendLogin("lala", "123456");
         }
-
         void OnRegisterBtnClick()
         {
             UIManager.Get().Push<UI_Register>();
         }
+        #endregion
+
+        #region 网络事件
+        public void OnNetCallback(PacketType type, object reader)
+        {
+            switch (type)
+            {
+                case PacketType.S2C_LoginResult:
+                    OnLoginResult(type, reader);
+                    break;
+            }
+        }
+        void OnLoginResult(PacketType type, object reader)
+        {
+            S2C_Login packet = (S2C_Login)reader;
+            var p = new ClientPlayer(packet.Username, System.Guid.Empty);
+            TcpChatClient.m_PlayerManager.AddClientPlayer(p, true);
+            UIManager.Get().Push<UI_Main>();
+            //Debug.Log($"LocalPlayer: {TcpChatClient.m_PlayerManager.LocalPlayer.UserName}");
+        }
+        #endregion
     }
 }

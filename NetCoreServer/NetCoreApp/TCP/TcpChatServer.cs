@@ -54,6 +54,7 @@ namespace TcpChatServer
             byte msgId = buffer[0];
             byte[] body = new byte[size - 1];
             Array.Copy(buffer, 1, body, 0, size - 1);
+            MemoryStream ms = new MemoryStream(body, 0, body.Length);
             PacketType type = (PacketType)msgId;
             Debug.Print($"msgType={type}, from {Id}");
 
@@ -62,28 +63,28 @@ namespace TcpChatServer
                 case PacketType.Connected:
                     break;
                 case PacketType.C2S_LoginReq:
-                    OnLoginReq(body);
+                    OnLoginReq(ms);
                     break;
                 case PacketType.C2S_RoomList:
-                    OnRoomList(body);
+                    OnRoomList();
                     break;
                 case PacketType.C2S_CreateRoom:
-                    OnCreateRoom(body);
+                    OnCreateRoom(ms);
                     break;
                 case PacketType.C2S_JoinRoom:
-                    OnJoinRoom(body);
+                    OnJoinRoom(ms);
                     break;
                 case PacketType.C2S_LeaveRoom:
-                    OnLeaveRoom(body);
+                    OnLeaveRoom();
                     break;
                 case PacketType.C2S_Chat:
-                    OnChat(body);
+                    OnChat(ms);
                     break;
                 case PacketType.C2S_GameStart:
-                    OnStartGame(body);
+                    OnStartGame();
                     break;
                 case PacketType.C2S_GamePlay:
-                    OnPlayCard(body);
+                    OnPlayCard(ms);
                     break;
                 default:
                     Debug.Print($"无法识别的消息: {type}");
@@ -107,10 +108,9 @@ namespace TcpChatServer
             SendAsync(buffer);
         }
 
-        protected async void OnLoginReq(byte[] body)
+        protected async void OnLoginReq(MemoryStream ms)
         {
-            MemoryStream ms = new MemoryStream(body, 0, body.Length);
-            var request = ProtobufHelper.FromStream(typeof(C2S_Login), ms) as C2S_Login; //解包
+            var request = ProtobufHelper.Deserialize<C2S_Login>(ms); //解包
             Debug.Print($"Username={request.Username}, Password={request.Password} by {Id}");
 
             //UserInfo result = await MySQLTool.GetUserInfo(request.Username, request.Password);
@@ -131,7 +131,7 @@ namespace TcpChatServer
 
             WinFormsApp1.MainForm.Instance.RefreshPlayerNum();
         }
-        protected void OnRoomList(byte[] body)
+        protected void OnRoomList()
         {
             // 空消息，不用解析
             S2C_GetRoomList packet = new S2C_GetRoomList();
@@ -151,10 +151,10 @@ namespace TcpChatServer
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             p.SendAsync(PacketType.S2C_RoomList, packet);
         }
-        protected void OnCreateRoom(byte[] body)
+        protected void OnCreateRoom(MemoryStream ms)
         {
-            MemoryStream ms = new MemoryStream(body, 0, body.Length);
-            var request = ProtobufHelper.FromStream(typeof(C2S_CreateRoom), ms) as C2S_CreateRoom; //解包
+            //var request = ProtobufHelper.FromStream(typeof(C2S_CreateRoom), ms) as C2S_CreateRoom;
+            var request = ProtobufHelper.Deserialize<C2S_CreateRoom>(ms); //解包
             Debug.Print($"Name={request.RoomName}, Pwd={request.RoomPwd}, playerNum={request.LimitNum} by {Id}");
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
@@ -194,10 +194,11 @@ namespace TcpChatServer
 
             WinFormsApp1.MainForm.Instance.RefreshRoomNum();
         }
-        protected void OnJoinRoom(byte[] body)
+        protected void OnJoinRoom(MemoryStream ms)
         {
-            MemoryStream ms = new MemoryStream(body, 0, body.Length);
-            var request = ProtobufHelper.FromStream(typeof(C2S_JoinRoom), ms) as C2S_JoinRoom; //解包
+            //MemoryStream ms = new MemoryStream(body, 0, body.Length);
+            //var request = ProtobufHelper.FromStream(typeof(C2S_JoinRoom), ms) as C2S_JoinRoom;
+            var request = ProtobufHelper.Deserialize<C2S_JoinRoom>(ms); //解包
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             Debug.Print($"{p.UserName}请求加入房间#{request.RoomID}");
 
@@ -219,7 +220,7 @@ namespace TcpChatServer
             S2C_RoomInfo packet = new S2C_RoomInfo { Room = roomInfo };
             p.SendAsync(PacketType.S2C_RoomInfo, packet);
         }
-        protected void OnLeaveRoom(byte[] body)
+        protected void OnLeaveRoom()
         {
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             Debug.Print($"{p.UserName}当前在房间#{p.RoomId}，座位#{p.SeatId}，请求离开");
@@ -253,13 +254,12 @@ namespace TcpChatServer
 
             WinFormsApp1.MainForm.Instance.RefreshRoomNum();
         }
-        protected void OnChat(byte[] body)
+        protected void OnChat(MemoryStream ms)
         {
-            MemoryStream ms = new MemoryStream(body, 0, body.Length);
-            var request = ProtobufHelper.FromStream(typeof(TheMsg), ms) as TheMsg; //解包
+            var request = ProtobufHelper.Deserialize<TheMsg>(ms); //解包
             Debug.Print($"{request.Name}说: {request.Content}");
         }
-        protected void OnStartGame(byte[] body)
+        protected void OnStartGame()
         {
             //空消息
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
@@ -269,10 +269,11 @@ namespace TcpChatServer
             EmptyPacket packet = new EmptyPacket(); //TODO: 组织开局所需数据
             serverRoom.SendAsync(PacketType.S2C_GameStart, packet); //给所有成员发送开始
         }
-        protected void OnPlayCard(byte[] body)
+        protected void OnPlayCard(MemoryStream ms)
         {
-            MemoryStream ms = new MemoryStream(body, 0, body.Length);
-            var request = ProtobufHelper.FromStream(typeof(C2S_PlayCard), ms) as C2S_PlayCard; //解包
+            //MemoryStream ms = new MemoryStream(body, 0, body.Length);
+            //var request = ProtobufHelper.FromStream(typeof(C2S_PlayCard), ms) as C2S_PlayCard;
+            var request = ProtobufHelper.Deserialize<C2S_PlayCard>(ms); //解包
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             Debug.Print($"{p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}");
@@ -280,6 +281,13 @@ namespace TcpChatServer
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
             S2C_PlayCard packet = new S2C_PlayCard { SeatID = p.SeatId, CardID = request.CardID };
             serverRoom.SendAsync(PacketType.S2C_GamePlay, packet); //给所有成员发送开始
+        }
+        protected void OnGameResult()
+        {
+            ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
+            ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
+            S2C_GameResult packet = new S2C_GameResult { };
+            serverRoom.SendAsync(PacketType.S2C_GameResult, packet);
         }
     }
 
