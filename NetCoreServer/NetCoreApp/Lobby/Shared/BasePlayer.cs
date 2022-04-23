@@ -2,9 +2,9 @@
 {
     public class BasePlayerData : System.Object
     {
+        // 初值
         public BasePlayerData()
         {
-            // 初值
             IsBot = false;
             PeerId = System.Guid.Empty;
             UserName = string.Empty;

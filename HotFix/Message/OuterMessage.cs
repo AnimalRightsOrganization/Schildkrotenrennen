@@ -182,6 +182,7 @@ namespace ET
 	[ProtoContract]
 	public partial class PlayerInfo: Object
 	{
+//string PeerId 	= 1; //连接号
 		[ProtoMember(1)]
 		public string UserName { get; set; }
 

@@ -10,8 +10,6 @@ namespace NetCoreServer
         public ServerRoom(ServerPlayer host, BaseRoomData data) : base(host, data)
         {
             // 被override的才需要在这里赋值
-            //RoomID = roomId;
-            //RoomLimit = limit;
             m_PlayerList = new Dictionary<int, BasePlayer>();
             m_PlayerList.Add(0, host); //房主座位号0
             host.SetRoomID(data.RoomID)
@@ -31,7 +29,7 @@ namespace NetCoreServer
 
             int SeatId = GetAvailableRoomID();
             m_PlayerList.Add(SeatId, p);
-            p.SetRoomID(m_RoomData.RoomID)
+            p.SetRoomID(RoomID)
                 .SetSeatID(SeatId)
                 .SetStatus(PlayerStatus.AtRoomWait);
 
@@ -96,7 +94,7 @@ namespace NetCoreServer
 
         const int MIN_INDEX = 0;
         const int MAX_INDEX = 4;
-        private int GetAvailableRoomID()
+        int GetAvailableRoomID()
         {
             int id = MIN_INDEX;
 

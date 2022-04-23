@@ -31,7 +31,7 @@ namespace NetCoreServer
                 Debug.Print("大厅爆满，无法创建新房间");
                 return null;
             }
-            ServerRoom serverRoom = new ServerRoom(hostPlayer, roomData);
+            var serverRoom = new ServerRoom(hostPlayer, roomData);
             dic_rooms.Add(roomId, serverRoom);
             return serverRoom;
         }
@@ -41,7 +41,7 @@ namespace NetCoreServer
             ServerRoom serverRoom = null;
             if (dic_rooms.TryGetValue(roomId, out serverRoom))
             {
-                var packet = new S2C_LeaveRoomPacket { RoomID = roomId, RoomName = serverRoom.m_RoomData.RoomName, LeaveBy = (int)LeaveRoomType.DISSOLVE };
+                var packet = new S2C_LeaveRoomPacket { RoomID = roomId, RoomName = serverRoom.m_Data.RoomName, LeaveBy = (int)LeaveRoomType.DISSOLVE };
                 serverRoom.SendAsync(PacketType.S2C_LeaveRoom, packet); //房间解散，群发离开
                 serverRoom.RemoveAll();
                 dic_rooms.Remove(roomId);

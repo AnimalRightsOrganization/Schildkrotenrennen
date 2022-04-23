@@ -155,6 +155,9 @@ namespace HotFix
             var response = (S2C_RoomInfo)reader;
             Debug.Log($"S2C_RoomInfo: [{response.Room.RoomName}#{response.Room.RoomID}]，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
 
+            //自己创建/加入
+            //var clientRoom = new ClientRoom();
+
             var roomData = new BaseRoomData
             {
                 RoomID = response.Room.RoomID,

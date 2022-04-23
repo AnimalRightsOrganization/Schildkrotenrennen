@@ -71,7 +71,7 @@
         S2C_Settings    ,   //设置选项
         
         S2C_RoomList    ,   //房间列表（分页）
-        S2C_RoomInfo    ,   //单个房间（创建、加入、离开、准备，后获得）
+        S2C_RoomInfo    ,   //单个房间（自己创建/加入，别人加入/离开）
         S2C_LeaveRoom   ,   //离开房间
 
         S2C_GameReady   ,   //准备结果（成员）
