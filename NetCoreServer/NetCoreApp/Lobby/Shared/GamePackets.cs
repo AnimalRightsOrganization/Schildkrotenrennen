@@ -10,13 +10,11 @@
 
     public enum PlayerStatus : byte
     {
-        Offline     = 0,    //离线
-        AtLobby     = 1,    //在大厅
-        Matching    = 2,    //匹配中
-        AtRoomWait  = 3,    //在房间
-        AtRoomReady = 4,    //在房间
-        AtBattle    = 5,    //在战场
-        Reconnect   = 6,    //异常掉线，等待重连
+        OFFLINE     = 0,    //离线
+        LOBBY       = 1,    //在大厅
+        ROOM        = 2,    //在房间
+        GAME        = 3,    //在战场
+        RECONNECT   = 4,    //异常掉线，等待重连
     }
 
     public enum SeatInfo : short

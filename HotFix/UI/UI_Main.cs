@@ -156,26 +156,29 @@ namespace HotFix
             Debug.Log($"S2C_RoomInfo: [{response.Room.RoomName}#{response.Room.RoomID}]，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
 
             //自己创建/加入
-            //var clientRoom = new ClientRoom();
-
             var roomData = new BaseRoomData
             {
                 RoomID = response.Room.RoomID,
                 RoomName = response.Room.RoomName,
                 RoomLimit = response.Room.LimitNum,
-                Players = new List<BasePlayerData>(),
             };
+            var clientRoom = new ClientRoom(roomData);
             for (int i = 0; i < response.Room.Players.Count; i++)
             {
                 var playerInfo = response.Room.Players[i];
                 var playerData = new BasePlayerData
                 { 
                     UserName = playerInfo.UserName,
-                    NickName = playerInfo.NickName, 
+                    NickName = playerInfo.NickName,
+                    RoomId = response.Room.RoomID,
                     SeatId = playerInfo.SeatID,
                 };
                 roomData.Players.Add(playerData);
+                ClientPlayer clientPlayer = new ClientPlayer(playerData);
+                clientRoom.Join(clientPlayer, playerData.SeatId);
             }
+
+
             var ui_room = UIManager.Get().Push<UI_Room>();
             ui_room.InitUI(roomData);
         }

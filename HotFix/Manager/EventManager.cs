@@ -139,7 +139,7 @@ namespace HotFix
                     }
                 case PacketType.S2C_GameStart:
                     {
-                        TcpChatClient.m_PlayerManager.LocalPlayer.SetStatus(PlayerStatus.AtBattle);
+                        TcpChatClient.m_PlayerManager.LocalPlayer.SetStatus(PlayerStatus.GAME);
                         break;
                     }
                 case PacketType.S2C_GameResult:

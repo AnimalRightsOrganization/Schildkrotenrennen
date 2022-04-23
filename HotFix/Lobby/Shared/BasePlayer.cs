@@ -11,7 +11,7 @@
             NickName = string.Empty;
             RoomId = -1;
             SeatId = -1;
-            Status = PlayerStatus.AtLobby;
+            Status = PlayerStatus.LOBBY;
         }
         public bool IsBot;          //机器人标识
         public System.Guid PeerId;  //房间ID
@@ -62,7 +62,7 @@
         {
             this.SetRoomID(-1)
                 .SetSeatID(-1)
-                .SetStatus(PlayerStatus.AtLobby);
+                .SetStatus(PlayerStatus.LOBBY);
         }
         
         public override string ToString()

@@ -7,14 +7,14 @@ namespace NetCoreServer
     /* 远程房间 */
     public class ServerRoom : BaseRoom
     {
-        public ServerRoom(ServerPlayer host, BaseRoomData data) : base(host, data)
+        public ServerRoom(ServerPlayer host, BaseRoomData data) : base(data)
         {
             // 被override的才需要在这里赋值
             m_PlayerList = new Dictionary<int, BasePlayer>();
             m_PlayerList.Add(0, host); //房主座位号0
             host.SetRoomID(data.RoomID)
                 .SetSeatID(0)
-                .SetStatus(PlayerStatus.AtRoomWait);
+                .SetStatus(PlayerStatus.ROOM);
         }
 
         public override Dictionary<int, BasePlayer> m_PlayerList { get; protected set; }
@@ -31,7 +31,7 @@ namespace NetCoreServer
             m_PlayerList.Add(SeatId, p);
             p.SetRoomID(RoomID)
                 .SetSeatID(SeatId)
-                .SetStatus(PlayerStatus.AtRoomWait);
+                .SetStatus(PlayerStatus.ROOM);
 
             return true;
         }

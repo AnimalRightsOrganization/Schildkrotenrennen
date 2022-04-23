@@ -131,7 +131,7 @@ namespace TcpChatServer
                 NickName = result.nickname,
                 RoomId = -1,
                 SeatId = -1,
-                Status = PlayerStatus.AtLobby,
+                Status = PlayerStatus.LOBBY,
             };
             var serverPlayer = new ServerPlayer(playerData);
             TCPChatServer.m_PlayerManager.AddPlayer(serverPlayer);

@@ -36,19 +36,17 @@ namespace HotFix
     }
     public abstract class BaseRoom
     {
+        // 房主离开房间解散（简单做法）
+        public BaseRoom(BaseRoomData roomData)
+        {
+            m_Data = roomData;
+        }
         public BaseRoomData m_Data;
-
         public int RoomID => m_Data.RoomID;         //房间ID
         public string RoomName => m_Data.RoomName;  //房间名
         public string RoomPwd => m_Data.RoomPwd;    //密码
         public int RoomLimit => m_Data.RoomLimit;   //限定人数
         public List<BasePlayerData> Players => m_Data.Players; //成员
-
-        // 房主离开房间解散（简单做法）
-        public BaseRoom(BasePlayer host, BaseRoomData roomData)
-        {
-            m_Data = roomData;
-        }
 
         public virtual Dictionary<int, BasePlayer> m_PlayerList { get; protected set; } //int是座位号
         public virtual BasePlayer hostPlayer => m_PlayerList[0];

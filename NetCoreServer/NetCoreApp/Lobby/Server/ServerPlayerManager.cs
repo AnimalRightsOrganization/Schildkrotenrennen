@@ -50,7 +50,7 @@ namespace NetCoreServer
         // 获取大厅内玩家
         public ServerPlayer[] GetPlayersByLobby()
         {
-            return playerList.FindAll(x => x.Status == PlayerStatus.AtLobby).ToArray();
+            return playerList.FindAll(x => x.Status == PlayerStatus.LOBBY).ToArray();
         }
     }
 }

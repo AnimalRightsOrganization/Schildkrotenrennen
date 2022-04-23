@@ -6,19 +6,23 @@ namespace HotFix
     public class ClientRoom : BaseRoom
     {
         #region 房间数据
-        public ClientRoom(ClientPlayer host, BaseRoomData data) : base(host, data)
+        public ClientRoom(BaseRoomData data) : base(data)
         {
-            // 被override的才需要在这里赋值
-            //RoomID = roomId;
-            //RoomLimit = limit;
             m_PlayerList = new Dictionary<int, BasePlayer>();
-            m_PlayerList.Add(0, host); //房主座位号0
-            host.SetRoomID(data.RoomID)
-                .SetSeatID(0)
-                .SetStatus(PlayerStatus.AtRoomWait);
         }
 
         public override Dictionary<int, BasePlayer> m_PlayerList { get; protected set; }
+        public void Join(ClientPlayer player, int seatId)
+        {
+            m_PlayerList.Add(seatId, player); //房主座位号0
+            player.SetRoomID(RoomID)
+                .SetSeatID(seatId)
+                .SetStatus(PlayerStatus.ROOM);
+        }
+        public void Leave(int seatId)
+        {
+        
+        }
         #endregion
     }
 }
