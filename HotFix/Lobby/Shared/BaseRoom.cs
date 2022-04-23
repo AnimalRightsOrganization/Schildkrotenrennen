@@ -18,8 +18,6 @@ namespace HotFix
         public string RoomPwd;                      //密码（仅用于创建房间）
         public int RoomLimit;                       //限定人数
         public List<BasePlayerData> Players;        //成员
-        //public const int MIN_PLAYERS = 2;           //最少人数
-        //public const int MAX_PLAYERS = 5;           //最多人数
 
         public override string ToString()
         {
@@ -43,7 +41,7 @@ namespace HotFix
         public BaseRoomData m_Data;
         public int RoomID => m_Data.RoomID;         //房间ID
         public string RoomName => m_Data.RoomName;  //房间名
-        //public string RoomPwd => m_Data.RoomPwd;    //密码
+        public string RoomPwd => m_Data.RoomPwd;    //密码
         public int RoomLimit => m_Data.RoomLimit;   //限定人数
         public List<BasePlayerData> Players => m_Data.Players; //成员
 

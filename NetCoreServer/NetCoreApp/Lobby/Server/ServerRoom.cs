@@ -19,7 +19,7 @@ namespace NetCoreServer
 
         public override Dictionary<int, BasePlayer> m_PlayerList { get; protected set; }
 
-        public bool AddPlayer(BasePlayer p)
+        public bool AddPlayer(BasePlayer p, int seatId = -1)
         {
             if (ContainsPlayer(p))
             {
@@ -27,10 +27,15 @@ namespace NetCoreServer
                 return false;
             }
 
-            int SeatId = GetAvailableRoomID();
-            m_PlayerList.Add(SeatId, p);
+            int SeatID = 0;
+            if (seatId == -1)
+                SeatID = GetAvailableRoomID(); //真实玩家，没有赋值，自动选取空座位
+            else
+                SeatID = seatId; //机器人是指定的座位
+
+            m_PlayerList.Add(SeatID, p);
             p.SetRoomID(RoomID)
-                .SetSeatID(SeatId)
+                .SetSeatID(SeatID)
                 .SetStatus(PlayerStatus.ROOM);
 
             return true;

@@ -45,9 +45,6 @@ namespace HotFix
 
         protected override void OnReceived(byte[] buffer, long offset, long size)
         {
-            //string message = System.Text.Encoding.UTF8.GetString(buffer, (int)offset, (int)size);
-            //Debug.Log($"S2C: {message}({size})");
-
             // 这里是异步线程中，需要通过Update推送到主线程。
             System.Array.Resize<byte>(ref buffer, (int)size); //8192裁剪
             EventManager.Get().queue.Enqueue(buffer);
@@ -70,6 +67,7 @@ namespace HotFix
         const int port = 1111;
 
         public static ClientPlayerManager m_PlayerManager;
+        public static ClientRoom m_ClientRoom;
 
         public static void Dispose()
         {

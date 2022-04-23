@@ -59,6 +59,13 @@ namespace HotFix
         }
         void OnSendStartGame()
         {
+            if (TcpChatClient.m_ClientRoom.m_PlayerList.Count < TcpChatClient.m_ClientRoom.RoomLimit)
+            {
+                Debug.LogError($"人数不足，请等待：{TcpChatClient.m_ClientRoom.m_PlayerList.Count} < {TcpChatClient.m_ClientRoom.RoomLimit}");
+                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                ui_toast.Show("人数不足，请等待");
+                return;
+            }
             Debug.Log("请求开始比赛");
             EmptyPacket cmd = new EmptyPacket();
             TcpChatClient.SendAsync(PacketType.C2S_GameStart, cmd);
@@ -66,12 +73,8 @@ namespace HotFix
         #endregion
 
         #region 网络事件
-        public void InitUI(BaseRoomData roomData)
+        public void UpdateUI(BaseRoomData roomData)
         {
-            //var hostID = roomData.Players[0].UserName;
-            //TcpChatClient.m_PlayerManager.
-            //ClientRoom room = new ClientRoom(, roomData);
-
             Debug.Log($"房间初始化：ID={roomData.RoomID}，人数={roomData.Players.Count}/{roomData.RoomLimit}");
 
             m_NameText.text = roomData.RoomName;
@@ -102,11 +105,11 @@ namespace HotFix
                     if (playerData != null)
                     {
                         Debug.Log($"InitUI: {playerData.ToString()}");
-                        scriptItem.InitUI(playerData, index);
+                        scriptItem.UpdateUI(playerData, index);
                     }
                     else
                     {
-                        scriptItem.InitUI(null, index);
+                        scriptItem.UpdateUI(null, index);
                     }
                 }
             }
@@ -116,17 +119,17 @@ namespace HotFix
             switch (type)
             {
                 case PacketType.S2C_LeaveRoom:
-                    OnLeaveRoom(type, reader);
+                    OnLeaveRoom(reader);
                     break;
                 case PacketType.S2C_RoomInfo: //别人加入/离开
-                    OnGetRoomInfo(type, reader);
+                    OnGetRoomInfo(reader);
                     break;
                 case PacketType.S2C_GameStart:
-                    OnGameStart(type, reader);
+                    OnGameStart(reader);
                     break;
             }
         }
-        void OnLeaveRoom(PacketType type, object reader)
+        void OnLeaveRoom(object reader)
         {
             UIManager.Get().Pop(this);
 
@@ -152,11 +155,35 @@ namespace HotFix
 
             TcpChatClient.m_PlayerManager.LocalPlayer.ResetToLobby();
         }
-        void OnGetRoomInfo(PacketType type, object reader)
+        void OnGetRoomInfo(object reader)
         {
-            //更新房间内信息，更新UI
+            var response = (S2C_RoomInfo)reader;
+            Debug.Log($"S2C_RoomInfo: [{response.Room.RoomName}#{response.Room.RoomID}]，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
+
+            //别人加入/离开
+            var roomData = new BaseRoomData
+            {
+                RoomID = response.Room.RoomID,
+                RoomName = response.Room.RoomName,
+                RoomLimit = response.Room.LimitNum,
+            };
+            for (int i = 0; i < response.Room.Players.Count; i++)
+            {
+                var playerInfo = response.Room.Players[i];
+                var playerData = new BasePlayerData
+                {
+                    UserName = playerInfo.UserName,
+                    NickName = playerInfo.NickName,
+                    RoomId = response.Room.RoomID,
+                    SeatId = playerInfo.SeatID,
+                };
+                roomData.Players.Add(playerData);
+            }
+            TcpChatClient.m_ClientRoom.UpdateData(roomData);
+
+            UpdateUI(roomData);
         }
-        void OnGameStart(PacketType type, object reader)
+        void OnGameStart(object reader)
         {
             //TODO: 解包，获取完整比赛信息，座位号和颜色。重连也下发这个消息。
             var packet = (S2C_GameStartPacket)reader;

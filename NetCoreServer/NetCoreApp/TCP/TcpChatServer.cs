@@ -150,9 +150,9 @@ namespace TcpChatServer
             {
                 var roomInfo = new RoomInfo
                 {
-                    RoomID = room.m_Data.RoomID,
-                    RoomName = room.m_Data.RoomName,
-                    LimitNum = room.m_Data.RoomLimit,
+                    RoomID = room.RoomID,
+                    RoomName = room.RoomName,
+                    LimitNum = room.RoomLimit,
                     Players = players,
                 };
                 packet.Rooms.Add(roomInfo);
@@ -294,10 +294,13 @@ namespace TcpChatServer
                             IsBot = true,
                             UserName = "_BOT_",
                             NickName = "_BOT_",
+                            RoomId = roomData.RoomID,
+                            SeatId = request.SeatID,
+                            Status = PlayerStatus.ROOM,
                         };
                         ServerPlayer robot = new ServerPlayer(playerData);
                         TCPChatServer.m_PlayerManager.AddPlayer(robot);
-                        serverRoom.AddPlayer(robot);
+                        serverRoom.AddPlayer(robot, request.SeatID);
                         break;
                     }
                 case SeatOperate.KICK_PLAYER:
@@ -348,10 +351,10 @@ namespace TcpChatServer
         {
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
-            Debug.Print($"{p.UserName}请求开始比赛，房间#{p.RoomId}({serverRoom.m_PlayerList.Count}/{serverRoom.m_Data.RoomLimit})");
+            Debug.Print($"{p.UserName}请求开始比赛，房间#{p.RoomId}({serverRoom.m_PlayerList.Count}/{serverRoom.RoomLimit})");
 
             // 校验房间人数。
-            if (serverRoom.m_PlayerList.Count < serverRoom.m_Data.RoomLimit)
+            if (serverRoom.m_PlayerList.Count < serverRoom.RoomLimit)
             {
                 Debug.Print("ERROR: 房间未满员");
                 //ErrorPacket response = new ErrorPacket { Code = 0, Message = "ERROR: 房间未满员" };
@@ -434,6 +437,8 @@ namespace TcpChatServer
             // Stop the server
             Debug.Print("Server stopping...");
             server?.Stop();
+            //server?.Dispose();
+            //server = null;
             Debug.Print("Done!");
         }
         public static void Restart()

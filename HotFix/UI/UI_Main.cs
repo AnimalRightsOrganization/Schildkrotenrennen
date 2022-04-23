@@ -143,14 +143,14 @@ namespace HotFix
             switch (type)
             {
                 case PacketType.S2C_RoomInfo: //自己创建/加入
-                    OnGetRoomInfo(type, reader);
+                    OnGetRoomInfo(reader);
                     break;
                 case PacketType.S2C_RoomList:
-                    OnGetRoomList(type, reader);
+                    OnGetRoomList(reader);
                     break;
             }
         }
-        void OnGetRoomInfo(PacketType type, object reader)
+        void OnGetRoomInfo(object reader)
         {
             var response = (S2C_RoomInfo)reader;
             Debug.Log($"S2C_RoomInfo: [{response.Room.RoomName}#{response.Room.RoomID}]，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
@@ -162,7 +162,6 @@ namespace HotFix
                 RoomName = response.Room.RoomName,
                 RoomLimit = response.Room.LimitNum,
             };
-            var clientRoom = new ClientRoom(roomData);
             for (int i = 0; i < response.Room.Players.Count; i++)
             {
                 var playerInfo = response.Room.Players[i];
@@ -174,15 +173,13 @@ namespace HotFix
                     SeatId = playerInfo.SeatID,
                 };
                 roomData.Players.Add(playerData);
-                ClientPlayer clientPlayer = new ClientPlayer(playerData);
-                clientRoom.Join(clientPlayer, playerData.SeatId);
             }
-
+            TcpChatClient.m_ClientRoom = new ClientRoom(roomData);
 
             var ui_room = UIManager.Get().Push<UI_Room>();
-            ui_room.InitUI(roomData);
+            ui_room.UpdateUI(roomData);
         }
-        void OnGetRoomList(PacketType type, object reader)
+        void OnGetRoomList(object reader)
         {
             S2C_GetRoomList data = (S2C_GetRoomList)reader;
             Debug.Log($"派发房间列表: count={data.Rooms.Count}");

@@ -2,27 +2,27 @@
 
 namespace HotFix
 {
-    /* 本地房间 */
     public class ClientRoom : BaseRoom
     {
-        #region 房间数据
         public ClientRoom(BaseRoomData data) : base(data)
         {
             m_PlayerList = new Dictionary<int, BasePlayer>();
+            for (int i = 0; i < data.Players.Count; i++)
+            {
+                var playerData = data.Players[i];
+                var clientPlayer = new ClientPlayer(playerData);
+                m_PlayerList.Add(playerData.SeatId, clientPlayer);
+            }
         }
 
-        public override Dictionary<int, BasePlayer> m_PlayerList { get; protected set; }
-        public void Join(ClientPlayer player, int seatId)
+        public void UpdateData(BaseRoomData data)
         {
-            m_PlayerList.Add(seatId, player); //房主座位号0
-            player.SetRoomID(RoomID)
-                .SetSeatID(seatId)
-                .SetStatus(PlayerStatus.ROOM);
+            for (int i = 0; i < data.Players.Count; i++)
+            {
+                var playerData = data.Players[i];
+                var clientPlayer = new ClientPlayer(playerData);
+                m_PlayerList[playerData.SeatId] = clientPlayer;
+            }
         }
-        public void Leave(int seatId)
-        {
-        
-        }
-        #endregion
     }
 }

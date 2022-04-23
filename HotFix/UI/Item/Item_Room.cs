@@ -19,7 +19,7 @@ namespace HotFix
             m_SelfBtn.onClick.AddListener(OnSelfClick);
         }
 
-        public void InitUI(BasePlayerData data, int seatId)
+        public void UpdateUI(BasePlayerData data, int seatId)
         {
             this.playerData = data;
             this.SeatID = seatId;
@@ -32,7 +32,7 @@ namespace HotFix
 
             if (playerData == null)
             {
-                Debug.Log("空座位，加入机器人");
+                Debug.Log($"#{SeatID}是空座位，加入机器人");
                 var ui_dialog = UIManager.Get().Push<UI_Dialog>();
                 ui_dialog.Show("是否加入机器人？",
                     () => { ui_dialog.Hide(); }, "取消",
@@ -47,11 +47,11 @@ namespace HotFix
                 Debug.Log($"{playerData.UserName}\n{TcpChatClient.m_PlayerManager.LocalPlayer.UserName}");
                 if (playerData.UserName == TcpChatClient.m_PlayerManager.LocalPlayer.UserName)
                 {
-                    Debug.Log("是自己，没效果");
+                    Debug.Log($"#{SeatID}是自己，没效果");
                 }
                 else
                 {
-                    Debug.Log("是别人，踢人");
+                    Debug.Log($"#{SeatID}是别人，踢人");
                     var ui_dialog = UIManager.Get().Push<UI_Dialog>();
                     ui_dialog.Show("是否移除该用户？",
                         () => { ui_dialog.Hide(); }, "取消",
