@@ -41,8 +41,8 @@ namespace NetCoreServer
             ServerRoom serverRoom = null;
             if (dic_rooms.TryGetValue(roomId, out serverRoom))
             {
-                EmptyPacket packet = new EmptyPacket();
-                serverRoom.SendAsync(PacketType.S2C_LeaveRoom, packet); //群发离开
+                var packet = new S2C_LeaveRoomPacket { RoomID = roomId, RoomName = serverRoom.m_RoomData.RoomName, LeaveBy = (int)LeaveRoomType.DISSOLVE };
+                serverRoom.SendAsync(PacketType.S2C_LeaveRoom, packet); //房间解散，群发离开
                 serverRoom.RemoveAll();
                 dic_rooms.Remove(roomId);
             }

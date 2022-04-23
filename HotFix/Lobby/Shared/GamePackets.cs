@@ -32,6 +32,14 @@ namespace HotFix
         KICK_PLAYER = 1, //踢人
     }
 
+    public enum LeaveRoomType : short
+    {
+        SELF        = 0, //主动离开
+        KICK        = 1, //被房主移除
+        DISSOLVE    = 2, //房间解散
+        GAME_END    = 3, //游戏结束？
+    }
+
     public enum PacketType : byte
     {
         Connected = 0   ,   //连接成功（本地消息）

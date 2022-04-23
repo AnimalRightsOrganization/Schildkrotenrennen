@@ -59,6 +59,12 @@ message S2C_GetRoomList
 {
 	repeated RoomInfo Rooms = 1; //房间列表
 }
+message S2C_LeaveRoomPacket
+{
+	int32 RoomID 	= 1; //房间Id
+	string RoomName = 2; //房间名
+	int32 LeaveBy 	= 3; //0.自己离开，1.被房主移除，2.房间解散，3.游戏结束？
+}
 message C2S_OperateSeatPacket
 {
 	int32 SeatID 	= 1; //被操作的座位

@@ -124,6 +124,21 @@ namespace ET
 
 	}
 
+	[Message(OuterOpcode.S2C_LeaveRoomPacket)]
+	[ProtoContract]
+	public partial class S2C_LeaveRoomPacket: Object
+	{
+		[ProtoMember(1)]
+		public int RoomID { get; set; }
+
+		[ProtoMember(2)]
+		public string RoomName { get; set; }
+
+		[ProtoMember(3)]
+		public int LeaveBy { get; set; }
+
+	}
+
 	[Message(OuterOpcode.C2S_OperateSeatPacket)]
 	[ProtoContract]
 	public partial class C2S_OperateSeatPacket: Object

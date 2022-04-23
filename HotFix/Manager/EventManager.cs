@@ -84,7 +84,7 @@ namespace HotFix
                     }
                 case PacketType.S2C_LeaveRoom:
                     {
-                        EmptyPacket packet = new EmptyPacket();
+                        var packet = ProtobufHelper.Deserialize<S2C_LeaveRoomPacket>(stream);
                         NetPacketManager.Trigger(type, packet); //派发
                         break;
                     }

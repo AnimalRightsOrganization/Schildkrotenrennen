@@ -228,6 +228,7 @@ namespace TcpChatServer
 
             // 验证合法性
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
+            BaseRoomData roomData = serverRoom.m_RoomData;
             bool verify = serverRoom.ContainsPlayer(p);
             if (verify == false)
             {
@@ -238,17 +239,17 @@ namespace TcpChatServer
             if (p.SeatId == 0)
             {
                 // 如果是房主，解散房间
-                TCPChatServer.m_RoomManager.RemoveServerRoom(serverRoom.m_RoomData.RoomID);
+                TCPChatServer.m_RoomManager.RemoveServerRoom(roomData.RoomID);
                 Debug.Print("是房主，解散房间");
             }
             else
             {
-                EmptyPacket packet = new EmptyPacket();
-                p.SendAsync(PacketType.S2C_LeaveRoom, packet);
+                var packet = new S2C_LeaveRoomPacket { RoomID = roomData.RoomID, RoomName = roomData.RoomName, LeaveBy = (int)LeaveRoomType.SELF };
+                p.SendAsync(PacketType.S2C_LeaveRoom, packet); //主动离开
                 Debug.Print("房间内其他人员广播，更新房间信息");
 
                 // 房间内其他人员广播，更新房间信息
-                RoomInfo roomInfo = new RoomInfo { RoomID = serverRoom.m_RoomData.RoomID, RoomName = serverRoom.m_RoomData.RoomName, LimitNum = serverRoom.m_RoomData.RoomLimit };
+                RoomInfo roomInfo = new RoomInfo { RoomID = roomData.RoomID, RoomName = roomData.RoomName, LimitNum = roomData.RoomLimit };
                 S2C_RoomInfo packet1 = new S2C_RoomInfo { Room = roomInfo };
                 serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet1);
             }
@@ -259,15 +260,71 @@ namespace TcpChatServer
         {
             var request = ProtobufHelper.Deserialize<C2S_OperateSeatPacket>(ms); //解包
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            Debug.Print($"{p.UserName}在房间#{p.RoomId}给座位#{request.SeatID}添加操作：{(SeatOperate)request.Operate}");
-
-            // 校验合法性
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
-            //serverRoom.AddPlayer();
+            BaseRoomData roomData = serverRoom.m_RoomData;
+            Debug.Print($"{p.UserName}在房间#{p.RoomId}对座位#{request.SeatID}添加操作：{(SeatOperate)request.Operate}");
 
-            // 房间内广播，更新房间信息
-            RoomInfo roomInfo = new RoomInfo { RoomID = serverRoom.m_RoomData.RoomID, RoomName = serverRoom.m_RoomData.RoomName, LimitNum = serverRoom.m_RoomData.RoomLimit };
+            // 都要房主权限
+            if (p.SeatId != 0)
+            {
+                Debug.Print($"只有房主可以操作");
+                return;
+            }
+            // 校验操作合法性，操作修改房间信息
+            switch ((SeatOperate)request.Operate)
+            {
+                case SeatOperate.ADD_BOT:
+                    {
+                        bool available = serverRoom.IsAvailableSeat(request.SeatID);
+                        if (available == false)
+                        {
+                            Debug.Print($"无法对座位#{request.SeatID}，操作：{(SeatOperate)request.Operate}");
+                            return;
+                        }
+                        // 创建机器人
+                        Guid botID = new Guid();
+                        ServerPlayer bot = new ServerPlayer("_BOT_", botID);
+                        TCPChatServer.m_PlayerManager.AddPlayer(bot);
+                        serverRoom.AddPlayer(bot);
+                        break;
+                    }
+                case SeatOperate.KICK_PLAYER:
+                    {
+                        var targetPlayer = serverRoom.GetPlayer(request.SeatID);
+                        if (targetPlayer == null)
+                        {
+                            Debug.Print($"座位上没人");
+                            return;
+                        }
+                        serverRoom.RemovePlayer(targetPlayer);
+                        var packet = new S2C_LeaveRoomPacket { RoomID = roomData.RoomID, RoomName = roomData.RoomName, LeaveBy = (int)LeaveRoomType.KICK };
+                        targetPlayer.SendAsync(PacketType.S2C_LeaveRoom, packet); //被房主移除
+                        break;
+                    }
+            }
+
+            // 重新组装房间内信息
+            var players = new List<PlayerInfo>();
+            foreach (var item in serverRoom.m_PlayerList)
+            {
+                BasePlayer player = item.Value;
+                PlayerInfo info = new PlayerInfo
+                {
+                    SeatID = item.Key,
+                    UserName = player.UserName,
+                    NickName = player.NickName,
+                };
+                players.Add(info);
+            }
+            RoomInfo roomInfo = new RoomInfo
+            {
+                RoomID = roomData.RoomID,
+                RoomName = roomData.RoomName,
+                LimitNum = roomData.RoomLimit,
+                Players = players,
+            };
             S2C_RoomInfo packet1 = new S2C_RoomInfo { Room = roomInfo };
+            // 房间内广播，更新房间信息
             serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet1);
         }
         protected void OnChat(MemoryStream ms)

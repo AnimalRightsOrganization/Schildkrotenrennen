@@ -73,6 +73,27 @@ namespace NetCoreServer
         }
         public int CurCount => m_PlayerList.Count;
 
+        public ServerPlayer GetPlayer(int seatId)
+        {
+            BasePlayer basePlayer = null;
+            if (m_PlayerList.TryGetValue(seatId, out basePlayer))
+            {
+                return (ServerPlayer)basePlayer;
+            }
+            return null;
+        }
+
+        // 检查空座位
+        public bool IsAvailableSeat(int seatId)
+        {
+            foreach (var p in m_PlayerList)
+            {
+                if (p.Key == seatId)
+                    return false;
+            }
+            return true;
+        }
+
         const int MIN_INDEX = 0;
         const int MAX_INDEX = 4;
         private int GetAvailableRoomID()

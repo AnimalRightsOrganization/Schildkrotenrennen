@@ -125,6 +125,28 @@ namespace HotFix
         void OnLeaveRoom(PacketType type, object reader)
         {
             UIManager.Get().Pop(this);
+
+            var packet = (S2C_LeaveRoomPacket)reader;
+            string message = string.Empty;
+            switch ((LeaveRoomType)packet.LeaveBy)
+            {
+                case LeaveRoomType.SELF:
+                    message = $"离开了房间{packet.RoomName}";
+                    break;
+                case LeaveRoomType.KICK:
+                    message = "被房主移除房间";
+                    break;
+                case LeaveRoomType.DISSOLVE:
+                    message = "房间已解散";
+                    break;
+                case LeaveRoomType.GAME_END:
+                    message = "游戏结束";
+                    break;
+            }
+            var ui_toast = UIManager.Get().Push<UI_Toast>();
+            ui_toast.Show(message);
+
+            TcpChatClient.m_PlayerManager.LocalPlayer.ResetToLobby();
         }
         void OnGetRoomInfo(PacketType type, object reader)
         {
