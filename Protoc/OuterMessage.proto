@@ -72,8 +72,9 @@ message RoomInfo
 //房间内玩家信息
 message PlayerInfo
 {
-	string NickName = 1; //房间名
-	int32 SeatID 	= 2; //座位号
+	string UserName = 1; //用户名
+	string NickName = 2; //昵称
+	int32 SeatID 	= 3; //座位号
 }
 
 //出牌

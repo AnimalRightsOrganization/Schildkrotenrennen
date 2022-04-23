@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-//using DG.Tweening;
+using DG.Tweening;
 
 namespace HotFix
 {
@@ -17,7 +17,7 @@ namespace HotFix
         public Button m_YesBtn;
         public Text m_YesBtnDesc;
 
-        //private Tweener tw2;
+        private Tweener tw2;
 
         void Awake()
         {
@@ -43,21 +43,17 @@ namespace HotFix
 
         public void Show(string message, Action action1 = null, string btnStr1 = "", Action action2 = null, string btnStr2 = "")
         {
-            /*
             if (tw2 != null && (tw2.IsActive() || tw2.IsPlaying()))
             {
                 Debug.LogError("动画播放中。。。");
                 return;
             }
-            */
 
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
             m_Content.text = message;
             m_CanvasGroup.alpha = 1;
-            /*
             m_Panel.DOLocalMoveY(0, 0.3f);
-            */
 
             m_NoBtn.gameObject.SetActive(false);
             m_YesBtn.gameObject.SetActive(false);
@@ -81,11 +77,9 @@ namespace HotFix
 
         public void Hide()
         {
-            /*
             tw2 = m_CanvasGroup.DOFade(0, 0.2f);
             tw2.Play();
             tw2.OnComplete(Reset);
-            */
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using ET;
 
 namespace HotFix
 {
@@ -32,6 +31,10 @@ namespace HotFix
             if (playerData == null)
             {
                 Debug.Log("空座位，加入机器人");
+                var ui_dialog = UIManager.Get().Push<UI_Dialog>();
+                ui_dialog.Show("是否加入机器人？",
+                    () => { }, "是",
+                    () => { ui_dialog.Pop(); }, "否");
             }
             else
             {
@@ -43,6 +46,10 @@ namespace HotFix
                 else
                 {
                     Debug.Log("是别人，踢人");
+                    var ui_dialog = UIManager.Get().Push<UI_Dialog>();
+                    ui_dialog.Show("是否移除该用户？",
+                    () => { }, "是",
+                    () => { ui_dialog.Pop(); }, "否");
                 }
             }
         }

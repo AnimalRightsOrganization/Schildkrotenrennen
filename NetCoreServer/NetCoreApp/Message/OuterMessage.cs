@@ -151,9 +151,12 @@ namespace ET
 	public partial class PlayerInfo: Object
 	{
 		[ProtoMember(1)]
-		public string NickName { get; set; }
+		public string UserName { get; set; }
 
 		[ProtoMember(2)]
+		public string NickName { get; set; }
+
+		[ProtoMember(3)]
 		public int SeatID { get; set; }
 
 	}

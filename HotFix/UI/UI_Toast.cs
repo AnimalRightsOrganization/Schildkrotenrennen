@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 namespace HotFix
 {
@@ -9,7 +10,7 @@ namespace HotFix
         public CanvasGroup m_CanvasGroup;
         public Text m_Content;
 
-        //private Tweener tw2;
+        private Tweener tw2;
 
         void Awake()
         {
@@ -31,7 +32,6 @@ namespace HotFix
 
         public void Show(string message)
         {
-            /*
             if (tw2 != null && (tw2.IsActive() || tw2.IsPlaying()))
             {
                 Debug.LogError("动画播放中。。。");
@@ -51,7 +51,6 @@ namespace HotFix
             tw2.Play();
 
             tw2.OnComplete(Reset);
-            */
         }
     }
 }

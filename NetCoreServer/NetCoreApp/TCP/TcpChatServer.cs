@@ -153,13 +153,13 @@ namespace TcpChatServer
         }
         protected void OnCreateRoom(MemoryStream ms)
         {
-            //var request = ProtobufHelper.FromStream(typeof(C2S_CreateRoom), ms) as C2S_CreateRoom;
             var request = ProtobufHelper.Deserialize<C2S_CreateRoom>(ms); //解包
             Debug.Print($"Name={request.RoomName}, Pwd={request.RoomPwd}, playerNum={request.LimitNum} by {Id}");
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            PlayerInfo hostPlayer = new PlayerInfo { NickName = p.NickName, SeatID = 0 };
-            Debug.Print($"host={hostPlayer.NickName}");
+            PlayerInfo hostPlayer = new PlayerInfo { UserName = p.UserName, NickName = p.NickName, SeatID = 0 };
+            //Debug.Print($"host={hostPlayer.NickName}");
+
             List<PlayerInfo> players = new List<PlayerInfo>();
             players.Add(hostPlayer);
             RoomInfo roomInfo = new RoomInfo
@@ -263,9 +263,19 @@ namespace TcpChatServer
         {
             //空消息
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            Debug.Print($"{p.UserName}当前在房间#{p.RoomId}，座位#{p.SeatId}，请求开始比赛");
-
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
+            Debug.Print($"{p.UserName}请求开始比赛，房间#{p.RoomId}({serverRoom.m_PlayerList.Count}/{serverRoom.m_RoomData.RoomLimit})");
+
+            //TODO: 校验房间人数。
+            if (serverRoom.m_PlayerList.Count < serverRoom.m_RoomData.RoomLimit)
+            {
+                Debug.Print("ERROR: 房间未满员");
+                //ErrorPacket response = new ErrorPacket { Code = 0, Message = "ERROR: 房间未满员" };
+                //p.SendAsync(PacketType.S2C_ErrorOperate, response);
+                //return;
+            }
+            //TODO: 校验所有成员状态。
+
             EmptyPacket packet = new EmptyPacket(); //TODO: 组织开局所需数据
             serverRoom.SendAsync(PacketType.S2C_GameStart, packet); //给所有成员发送开始
         }
