@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -46,48 +47,52 @@ public partial class BundleTools : Editor
     const string serverShared = @"NetCoreServer\NetCoreApp\Lobby\Shared";
 
     [MenuItem("Tools/测试/HotFix >> Server", false, 11)]
-    static void Sync_H2S()
+    static async void Sync_H2S()
     {
-        Sync_SharedCode(hotfixShared, serverShared);
+        await Sync_SharedCode(hotfixShared, serverShared);
     }
     [MenuItem("Tools/测试/HotFix << Server", false, 12)]
-    static void Sync_S2H()
+    static async void Sync_S2H()
     {
-        Sync_SharedCode(serverShared, hotfixShared);
+        await Sync_SharedCode(serverShared, hotfixShared);
     }
-    static void Sync_SharedCode(string srcPath, string outPath)
+    static async Task Sync_SharedCode(string srcPath, string outPath)
     {
         string root_unity = System.Environment.CurrentDirectory;
         string root = Directory.GetParent(root_unity).ToString();
-
         string hotfixDir = Path.Combine(root, hotfixShared);
         string serverDir = Path.Combine(root, serverShared);
 
         try
         {
-            string[] csList = Directory.GetFiles(srcPath, "*.cs");
+            string[] csList = Directory.GetFiles(hotfixDir, "*.cs");
+
+            int loopCount = csList.Length;
+            int fileIndex = 0;
 
             // 拷贝cs文件
             foreach (string f in csList)
             {
-                // Remove path from the file name.
-                string fName = f.Substring(srcPath.Length + 1);
+                // 无路径的文件名
+                string fName = f.Substring(hotfixDir.Length + 1);
                 Debug.Log($"fName={fName}");
 
                 // 会覆盖目标文件夹的文件
-                File.Copy(Path.Combine(srcPath, fName), Path.Combine(outPath, fName), true);
-            }
+                File.Copy(Path.Combine(hotfixDir, fName), Path.Combine(serverDir, fName), true);
 
-            // 删除源文件
-            //foreach (string f in csList)
-            //{
-            //    File.Delete(f);
-            //}
+                fileIndex++;
+                float progress = (float)fileIndex / loopCount;
+                EditorUtility.DisplayProgressBar("同步中", fileIndex.ToString() + "进度(" + (progress * 100).ToString("F2") + "%)", progress);
+                await Task.Delay(10);
+            }
         }
         catch (DirectoryNotFoundException dirNotFound)
         {
             Debug.Log(dirNotFound.Message);
         }
+
+        await Task.Delay(10);
+        EditorUtility.ClearProgressBar();
     }
     [MenuItem("Tools/测试/CMD", false, 13)]
     static void TestCMD()

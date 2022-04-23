@@ -2,7 +2,7 @@ namespace HotFix
 {
     public enum ErrorCode : byte
     {
-        LobbyIsFull,        //大厅爆满
+        LOBBY_IS_FULL,      //大厅爆满
         RoomIsFull,         //房间爆满
         UserNameUsed,       //账号已经注册
         BE_KICKED,          //被踢了（顶号/GM）
