@@ -1,20 +1,20 @@
-namespace HotFix
+ï»¿namespace HotFix
 {
-    // Ö»¹ÜÀí·¿¼äÄÚµÄÍæ¼Ò
+    // åªç®¡ç†æˆ¿é—´å†…çš„ç©å®¶
     public class ClientPlayerManager
     {
         public ClientPlayerManager() { }
 
-        private ClientPlayer _localPlayer; //×Ô¼º
+        private ClientPlayer _localPlayer; //è‡ªå·±
         public ClientPlayer LocalPlayer => _localPlayer;
 
-        // ÖØÖÃ
+        // é‡ç½®
         public void Reset()
         {
             _localPlayer = null;
         }
 
-        // Ôö£¬µÇÂ¼³É¹¦£¬Æ¥Åä³É¹¦£¬µ÷ÓÃ
+        // å¢ï¼Œç™»å½•æˆåŠŸï¼ŒåŒ¹é…æˆåŠŸï¼Œè°ƒç”¨
         public void AddClientPlayer(ClientPlayer player, bool isSelf)
         {
             if (isSelf)

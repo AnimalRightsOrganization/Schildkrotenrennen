@@ -1,4 +1,4 @@
-namespace HotFix
+﻿namespace HotFix
 {
     public class C2S_GameStart
     {

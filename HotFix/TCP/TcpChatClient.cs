@@ -1,4 +1,4 @@
-using System.Net;
+ï»¿using System.Net;
 using System.Threading;
 using System.Net.Sockets;
 using Debug = UnityEngine.Debug;
@@ -36,8 +36,8 @@ namespace HotFix
             if (!_stop)
                 ConnectAsync();
 
-            //TODO: Ö»Ö´ĞĞÒ»´Î£¡£¡£¡
-            // ÕâÀïÊÇÒì²½Ïß³ÌÖĞ£¬ĞèÒªÍ¨¹ıUpdateÍÆËÍµ½Ö÷Ïß³Ì¡£
+            //TODO: åªæ‰§è¡Œä¸€æ¬¡ï¼ï¼ï¼
+            // è¿™é‡Œæ˜¯å¼‚æ­¥çº¿ç¨‹ä¸­ï¼Œéœ€è¦é€šè¿‡Updateæ¨é€åˆ°ä¸»çº¿ç¨‹ã€‚
             PacketType msgId = PacketType.Disconnect;
             byte[] buffer = new byte[1] { (byte)msgId };
             EventManager.Get().queue.Enqueue(buffer);
@@ -48,8 +48,8 @@ namespace HotFix
             //string message = System.Text.Encoding.UTF8.GetString(buffer, (int)offset, (int)size);
             //Debug.Log($"S2C: {message}({size})");
 
-            // ÕâÀïÊÇÒì²½Ïß³ÌÖĞ£¬ĞèÒªÍ¨¹ıUpdateÍÆËÍµ½Ö÷Ïß³Ì¡£
-            System.Array.Resize<byte>(ref buffer, (int)size); //8192²Ã¼ô
+            // è¿™é‡Œæ˜¯å¼‚æ­¥çº¿ç¨‹ä¸­ï¼Œéœ€è¦é€šè¿‡Updateæ¨é€åˆ°ä¸»çº¿ç¨‹ã€‚
+            System.Array.Resize<byte>(ref buffer, (int)size); //8192è£å‰ª
             EventManager.Get().queue.Enqueue(buffer);
         }
 
@@ -60,7 +60,7 @@ namespace HotFix
 
         private bool _stop;
 
-        //private const int RETRY = 5; //TODO:¸ù¾İ¶Ï¿ªĞÎÊ½£¬·şÎñÆ÷Ö÷¶¯¶Ï¿ªÔò²»ÔÙÖØÁ¬
+        //private const int RETRY = 5; //TODO:æ ¹æ®æ–­å¼€å½¢å¼ï¼ŒæœåŠ¡å™¨ä¸»åŠ¨æ–­å¼€åˆ™ä¸å†é‡è¿
     }
 
     public class TcpChatClient
@@ -75,7 +75,7 @@ namespace HotFix
         {
             m_PlayerManager = null;
 
-            Debug.Log("¹Ø±ÕÍøÂç");
+            Debug.Log("å…³é—­ç½‘ç»œ");
 
             //Debug.Log($"IsExist:{client != null}"); //True
             if (client != null)
@@ -117,7 +117,7 @@ namespace HotFix
             client?.DisconnectAndStop();
         }
 
-        // ¸ù¾İÓòÃû½âÎö³öIP
+        // æ ¹æ®åŸŸåè§£æå‡ºIP
         private static IPAddress GetHostEntry(string domian)
         {
             IPHostEntry ipHostInfo = Dns.GetHostEntry(domian);
@@ -149,15 +149,15 @@ namespace HotFix
         {
             if (string.IsNullOrEmpty(usr) || string.IsNullOrEmpty(pwd))
             {
-                Debug.LogError($"ÓÃ»§Ãû»òÃÜÂë²»ÄÜÎª¿Õ"); //TODO: Toast
+                Debug.LogError($"ç”¨æˆ·åæˆ–å¯†ç ä¸èƒ½ä¸ºç©º"); //TODO: Toast
                 return;
             }
             if (pwd.Length < 6)
             {
-                Debug.LogError($"ÃÜÂë³¤¶È¹ı¶Ì"); //TODO: Toast
+                Debug.LogError($"å¯†ç é•¿åº¦è¿‡çŸ­"); //TODO: Toast
                 return;
             }
-            //TODO: ·şÎñÆ÷/¿Í»§¶Ë¹²ÓÃ¹æÔò£¬Ë«±ßÑéÖ¤...
+            //TODO: æœåŠ¡å™¨/å®¢æˆ·ç«¯å…±ç”¨è§„åˆ™ï¼ŒåŒè¾¹éªŒè¯...
 
             var cmd = new C2S_LoginPacket { Username = usr, Password = pwd };
             SendAsync(PacketType.C2S_LoginReq, cmd);
@@ -166,7 +166,7 @@ namespace HotFix
         {
             if (message.Length <= 0)
             {
-                Debug.LogError($"ÄÚÈİÎª¿Õ"); //TODO: Toast
+                Debug.LogError($"å†…å®¹ä¸ºç©º"); //TODO: Toast
                 return;
             }
 
@@ -182,7 +182,7 @@ namespace HotFix
         {
             if (name.Length < 3)
             {
-                Debug.LogError($"·¿¼äÃû³ÆÖÁÉÙ3¸ö×Ö:{name.Length}"); //TODO: Toast
+                Debug.LogError($"æˆ¿é—´åç§°è‡³å°‘3ä¸ªå­—:{name.Length}"); //TODO: Toast
                 return false;
             }
 
@@ -202,14 +202,14 @@ namespace HotFix
         }
         public static void SendOperateSeat(int seatId, SeatOperate op)
         {
-            Debug.Log($"¶Ô×ùÎ»{seatId}£¬{op}");
+            Debug.Log($"å¯¹åº§ä½{seatId}ï¼Œ{op}");
 
             var cmd = new C2S_OperateSeatPacket { SeatID = seatId, Operate = (int)op };
             SendAsync(PacketType.C2S_OperateSeat, cmd);
         }
-        public static void SendPlayCard(int cardId)
+        public static void SendPlayCard(int cardId, int color = -1)
         {
-            C2S_PlayCard cmd = new C2S_PlayCard { CardID = cardId };
+            var cmd = new C2S_PlayCardPacket { CardID = cardId, Color = color };
             SendAsync(PacketType.C2S_GamePlay, cmd);
         }
     }

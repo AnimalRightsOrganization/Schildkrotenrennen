@@ -361,20 +361,20 @@ namespace TcpChatServer
         }
         protected void OnPlayCard(MemoryStream ms)
         {
-            var request = ProtobufHelper.Deserialize<C2S_PlayCard>(ms); //解包
+            var request = ProtobufHelper.Deserialize<C2S_PlayCardPacket>(ms); //解包
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             Debug.Print($"{p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}");
 
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
-            S2C_PlayCard packet = new S2C_PlayCard { SeatID = p.SeatId, CardID = request.CardID };
+            var packet = new S2C_PlayCardPacket { SeatID = p.SeatId, CardID = request.CardID };
             serverRoom.SendAsync(PacketType.S2C_GamePlay, packet); //给所有成员发送开始
         }
         protected void OnGameResult()
         {
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
-            S2C_GameResult packet = new S2C_GameResult { };
+            var packet = new S2C_GameResultPacket { Rank = new List<int>(), };
             serverRoom.SendAsync(PacketType.S2C_GameResult, packet);
         }
     }

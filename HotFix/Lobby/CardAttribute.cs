@@ -34,12 +34,13 @@ namespace HotFix
     }
     public enum CardColor
     {
-        Red = 0,
-        Yellow = 1,
-        Green = 2,
-        Blue = 3,
-        Purple = 4,
-        Color = 5,
+        NONE    = -1, //未指定的
+        Red     = 0,
+        Yellow  = 1,
+        Green   = 2,
+        Blue    = 3,
+        Purple  = 4,
+        Color   = 5,
         Slowest = 6,
     }
     public enum CardNum

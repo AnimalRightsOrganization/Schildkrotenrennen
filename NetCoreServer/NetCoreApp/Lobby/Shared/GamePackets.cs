@@ -1,83 +1,84 @@
-namespace HotFix
+ï»¿namespace HotFix
 {
     public enum ErrorCode : byte
     {
-        LOBBY_IS_FULL,      //´óÌü±¬Âú
-        RoomIsFull,         //·¿¼ä±¬Âú
-        UserNameUsed,       //ÕËºÅÒÑ¾­×¢²á
-        BE_KICKED,          //±»ÌßÁË£¨¶¥ºÅ/GM£©
+        LOBBY_IS_FULL,      //å¤§å…çˆ†æ»¡
+        RoomIsFull,         //æˆ¿é—´çˆ†æ»¡
+        UserNameUsed,       //è´¦å·å·²ç»æ³¨å†Œ
+        BE_KICKED,          //è¢«è¸¢äº†ï¼ˆé¡¶å·/GMï¼‰
     }
 
     public enum PlayerStatus : byte
     {
-        Offline     = 0,    //ÀëÏß
-        AtLobby     = 1,    //ÔÚ´óÌü
-        Matching    = 2,    //Æ¥ÅäÖĞ
-        AtRoomWait  = 3,    //ÔÚ·¿¼ä
-        AtRoomReady = 4,    //ÔÚ·¿¼ä
-        AtBattle    = 5,    //ÔÚÕ½³¡
-        Reconnect   = 6,    //Òì³£µôÏß£¬µÈ´ıÖØÁ¬
+        Offline     = 0,    //ç¦»çº¿
+        AtLobby     = 1,    //åœ¨å¤§å…
+        Matching    = 2,    //åŒ¹é…ä¸­
+        AtRoomWait  = 3,    //åœ¨æˆ¿é—´
+        AtRoomReady = 4,    //åœ¨æˆ¿é—´
+        AtBattle    = 5,    //åœ¨æˆ˜åœº
+        Reconnect   = 6,    //å¼‚å¸¸æ‰çº¿ï¼Œç­‰å¾…é‡è¿
     }
 
     public enum SeatInfo : short
     {
-        NONE        = -1,   //Ã»ÈË»ò²»ÔÚ·¿¼ä
-        HOST        = 0,    //Ö÷Î»
-        GUEST       = 1,    //¿ÍÎ»
+        NONE        = -1,   //æ²¡äººæˆ–ä¸åœ¨æˆ¿é—´
+        HOST        = 0,    //ä¸»ä½
+        GUEST       = 1,    //å®¢ä½
     }
 
     public enum SeatOperate : short
     {
-        ADD_BOT     = 0, //Ìí¼Ó»úÆ÷ÈË£¨Proto3ÖĞ£¬Ê×³ÉÔ±±ØĞëÊÇ0£©
-        KICK_PLAYER = 1, //ÌßÈË
+        ADD_BOT     = 0, //æ·»åŠ æœºå™¨äººï¼ˆProto3ä¸­ï¼Œé¦–æˆå‘˜å¿…é¡»æ˜¯0ï¼‰
+        KICK_PLAYER = 1, //è¸¢äºº
     }
 
     public enum LeaveRoomType : short
     {
-        SELF        = 0, //Ö÷¶¯Àë¿ª
-        KICK        = 1, //±»·¿Ö÷ÒÆ³ı
-        DISSOLVE    = 2, //·¿¼ä½âÉ¢
-        GAME_END    = 3, //ÓÎÏ·½áÊø£¿
+        SELF        = 0, //ä¸»åŠ¨ç¦»å¼€
+        KICK        = 1, //è¢«æˆ¿ä¸»ç§»é™¤
+        DISSOLVE    = 2, //æˆ¿é—´è§£æ•£
+        GAME_END    = 3, //æ¸¸æˆç»“æŸï¼Ÿ
     }
 
     public enum PacketType : byte
     {
-        Connected = 0   ,   //Á¬½Ó³É¹¦£¨±¾µØÏûÏ¢£©
-        Disconnect      ,   //Á¬½Ó¶Ï¿ª£¨±¾µØÏûÏ¢£©
+        Connected = 0   ,   //è¿æ¥æˆåŠŸï¼ˆæœ¬åœ°æ¶ˆæ¯ï¼‰
+        Disconnect      ,   //è¿æ¥æ–­å¼€ï¼ˆæœ¬åœ°æ¶ˆæ¯ï¼‰
         ///////////////////////////////////////////////
-        C2S_RegisterReq ,   //×¢²áÇëÇó
-        C2S_LoginReq    ,   //µÇÂ¼ÇëÇó
-        C2S_LogoutReq   ,   //µÇ³öÇëÇó
-        C2S_UserInfo    ,   //ÇëÇóÓÃ»§ĞÅÏ¢
-        C2S_Chat        ,   //ÁÄÌìÏûÏ¢
-        C2S_Settings    ,   //ÉèÖÃÑ¡Ïî
+        C2S_RegisterReq ,   //æ³¨å†Œè¯·æ±‚
+        C2S_LoginReq    ,   //ç™»å½•è¯·æ±‚
+        C2S_LogoutReq   ,   //ç™»å‡ºè¯·æ±‚
+        C2S_UserInfo    ,   //è¯·æ±‚ç”¨æˆ·ä¿¡æ¯
+        C2S_Chat        ,   //èŠå¤©æ¶ˆæ¯
+        C2S_Settings    ,   //è®¾ç½®é€‰é¡¹
         
-        C2S_RoomList    ,   //·¿¼äÁĞ±í
-        C2S_CreateRoom  ,   //´´½¨·¿¼ä
-        C2S_JoinRoom    ,   //¼ÓÈë·¿¼ä
-        C2S_LeaveRoom   ,   //Àë¿ª·¿¼ä
-        C2S_OperateSeat ,   //Ìí¼Ó»úÆ÷ÈË£¬ÌßÈË
+        C2S_RoomList    ,   //æˆ¿é—´åˆ—è¡¨
+        C2S_CreateRoom  ,   //åˆ›å»ºæˆ¿é—´
+        C2S_JoinRoom    ,   //åŠ å…¥æˆ¿é—´
+        C2S_LeaveRoom   ,   //ç¦»å¼€æˆ¿é—´
+        C2S_OperateSeat ,   //æ·»åŠ æœºå™¨äººï¼Œè¸¢äºº
         
-        C2S_GameReady   ,   //ÇëÇó×¼±¸£¨³ÉÔ±£©
-        C2S_GameStart   ,   //ÇëÇó¿ªÊ¼Õ½¶·£¨·¿Ö÷£©
-        C2S_GamePlay    ,   //³öÅÆ
-        C2S_GameQuit    ,   //Àë¿ª±ÈÈü£¨ÈÏÊä£© =>·µ»Ø´óÌü
+        C2S_GameReady   ,   //è¯·æ±‚å‡†å¤‡ï¼ˆæˆå‘˜ï¼‰
+        C2S_GameStart   ,   //è¯·æ±‚å¼€å§‹æˆ˜æ–—ï¼ˆæˆ¿ä¸»ï¼‰
+        C2S_GamePlay    ,   //å‡ºç‰Œ
+        C2S_GameQuit    ,   //ç¦»å¼€æ¯”èµ›ï¼ˆè®¤è¾“ï¼‰ =>è¿”å›å¤§å…
         ///////////////////////////////////////////////
-        S2C_ErrorOperate,   //´íÎó´úÂë
-        S2C_LoginResult ,   //µÇÂ¼¡¢×¢²á½á¹û
-        S2C_LogoutResult,   //µÇ³ö½á¹û
-        S2C_UserInfo    ,   //ÏÂ·¢ÓÃ»§ĞÅÏ¢
-        S2C_Chat        ,   //ÁÄÌìÏûÏ¢¹ã²¥
-        S2C_Settings    ,   //ÉèÖÃÑ¡Ïî
+        S2C_ErrorOperate,   //é”™è¯¯ä»£ç 
+        S2C_LoginResult ,   //ç™»å½•ã€æ³¨å†Œç»“æœ
+        S2C_LogoutResult,   //ç™»å‡ºç»“æœ
+        S2C_UserInfo    ,   //ä¸‹å‘ç”¨æˆ·ä¿¡æ¯
+        S2C_Chat        ,   //èŠå¤©æ¶ˆæ¯å¹¿æ’­
+        S2C_Settings    ,   //è®¾ç½®é€‰é¡¹
         
-        S2C_RoomList    ,   //·¿¼äÁĞ±í£¨·ÖÒ³£©
-        S2C_RoomInfo    ,   //µ¥¸ö·¿¼ä£¨´´½¨¡¢¼ÓÈë¡¢Àë¿ª¡¢×¼±¸£¬ºó»ñµÃ£©
-        S2C_LeaveRoom   ,   //Àë¿ª·¿¼ä
+        S2C_RoomList    ,   //æˆ¿é—´åˆ—è¡¨ï¼ˆåˆ†é¡µï¼‰
+        S2C_RoomInfo    ,   //å•ä¸ªæˆ¿é—´ï¼ˆåˆ›å»ºã€åŠ å…¥ã€ç¦»å¼€ã€å‡†å¤‡ï¼Œåè·å¾—ï¼‰
+        S2C_LeaveRoom   ,   //ç¦»å¼€æˆ¿é—´
 
-        S2C_GameReady   ,   //×¼±¸½á¹û£¨³ÉÔ±£©
-        S2C_GameStart   ,   //±ÈÈü¿ªÊ¼£¬Ìø×ª³¡¾°
-        S2C_GameDeal    ,   //·¢ÅÆĞÅÏ¢
-        S2C_GamePlay    ,   //³öÅÆĞÅÏ¢
-        S2C_GameResult  ,   //±ÈÈü½áËã
+        S2C_GameReady   ,   //å‡†å¤‡ç»“æœï¼ˆæˆå‘˜ï¼‰
+        S2C_GameStart   ,   //æ¯”èµ›å¼€å§‹ï¼Œè·³è½¬åœºæ™¯
+        S2C_GameDeal    ,   //å‘ç‰Œä¿¡æ¯
+        S2C_YourTurn    ,   //é€šçŸ¥è½®åˆ°å‡ºç‰Œçš„ç©å®¶
+        S2C_GamePlay    ,   //å‡ºç‰Œä¿¡æ¯
+        S2C_GameResult  ,   //æ¯”èµ›ç»“ç®—
     }
 }

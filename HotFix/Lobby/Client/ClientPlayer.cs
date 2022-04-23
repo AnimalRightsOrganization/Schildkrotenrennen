@@ -1,6 +1,6 @@
-namespace HotFix
+锘縩amespace HotFix
 {
-    /* 本地用户 */
+    /* 鏈湴鐢ㄦ埛 */
     [System.Serializable]
     public class ClientPlayer : BasePlayer
     {

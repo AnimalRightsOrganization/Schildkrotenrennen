@@ -68,9 +68,13 @@ namespace HotFix
         #region 网络事件
         public void InitUI(BaseRoomData roomData)
         {
-            m_NameText.text = roomData.RoomName;
+            //var hostID = roomData.Players[0].UserName;
+            //TcpChatClient.m_PlayerManager.
+            //ClientRoom room = new ClientRoom(, roomData);
 
             Debug.Log($"房间初始化：ID={roomData.RoomID}，人数={roomData.Players.Count}/{roomData.RoomLimit}");
+
+            m_NameText.text = roomData.RoomName;
 
             // 控制座位总数显示
             for (int i = 0; i < SeatList.Count; i++)

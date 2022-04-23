@@ -21,14 +21,14 @@
         public string NickName;             //昵称（查SQL获得，缓存在类中）
         public short RoomId;                //-1是在大厅
         public short SeatId;                //-1是不在房间，0是主位
-        public PlayerStatus Status;         //相当于Page，定位玩家页面
+        public PlayerStatus Status;
 
         protected BasePlayer(string userName, System.Guid peerid, bool bot = false)
         {
-            IsBot = bot;
             PeerId = peerid;
             UserName = userName;
             ResetToLobby(); //登录成功创建的，已经在大厅
+            IsBot = bot;
         }
         public virtual BasePlayer SetRoomID(int roomId)
         {
