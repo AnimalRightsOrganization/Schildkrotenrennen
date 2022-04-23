@@ -1,3 +1,4 @@
+using System.Net;
 using System.Threading;
 using System.Net.Sockets;
 using Debug = UnityEngine.Debug;
@@ -116,6 +117,13 @@ namespace HotFix
             client?.DisconnectAndStop();
         }
 
+        // 根据域名解析出IP
+        private static IPAddress GetHostEntry(string domian)
+        {
+            IPHostEntry ipHostInfo = Dns.GetHostEntry(domian);
+            IPAddress myip = ipHostInfo.AddressList[0];
+            return myip;
+        }
         private static byte[] MakeBuffer(PacketType msgId, object cmd)
         {
             byte[] header = new byte[1] { (byte)msgId };

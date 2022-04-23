@@ -6,6 +6,7 @@ using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 public partial class BundleTools : Editor
 {
+    // 执行命令提示符
     protected static void ExecuteCommand(string command)
     {
         /* cmd /c dir 是执行完dir命令后关闭命令窗口。
@@ -23,12 +24,9 @@ public partial class BundleTools : Editor
         p.Start();
         //p.WaitForExit(); //等待一定时间（ms）退出
     }
-    // 批处理文件统一放在同一个目录里管理，执行也统一在这里调用
-    protected static void RunBatch(string batFileName)
+    // 执行批处理文件
+    protected static void ExecuteBatch(string batFileName)
     {
-        //DirectoryInfo unityFolder = new DirectoryInfo("Assets");
-        //string projRoot2 = unityFolder.Parent.Parent.ToString();
-        //Debug.Log(projRoot2);
         string currDir = Directory.GetCurrentDirectory();
         DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
         string projRoot = currDirInfo.Parent.ToString();
@@ -44,29 +42,71 @@ public partial class BundleTools : Editor
 
     #region 测试
 
-    [MenuItem("Tools/测试/同步共享代码")]
+    [MenuItem("Tools/测试/同步共享代码", false, 11)]
     static void SyncSharedCode()
     {
+        //string sourceDir = @"c:\current";
+        //string backupDir = @"c:\archives\2008";
+        string sourceDir = @"C:\Users\Administrator\Desktop\Turtle\HotFix\Lobby\Shared";
+        string backupDir = @"C:\Users\Administrator\Desktop\Turtle\NetCoreServer\NetCoreApp\Lobby\Shared";
 
+        try
+        {
+            string[] picList = Directory.GetFiles(sourceDir, "*.jpg");
+            string[] txtList = Directory.GetFiles(sourceDir, "*.txt");
+
+            // Copy picture files.
+            foreach (string f in picList)
+            {
+                // Remove path from the file name.
+                string fName = f.Substring(sourceDir.Length + 1);
+
+                // Use the Path.Combine method to safely append the file name to the path.
+                // Will overwrite if the destination file already exists.
+                File.Copy(Path.Combine(sourceDir, fName), Path.Combine(backupDir, fName), true);
+            }
+
+            // Copy text files.
+            foreach (string f in txtList)
+            {
+                // Remove path from the file name.
+                string fName = f.Substring(sourceDir.Length + 1);
+
+                try
+                {
+                    // Will not overwrite if the destination file already exists.
+                    File.Copy(Path.Combine(sourceDir, fName), Path.Combine(backupDir, fName));
+                }
+                catch (IOException copyError)
+                {
+                    // Catch exception if the file was already copied.
+                    Debug.Log(copyError.Message);
+                }
+            }
+
+            // Delete source files that were copied.
+            foreach (string f in txtList)
+            {
+                File.Delete(f);
+            }
+            foreach (string f in picList)
+            {
+                File.Delete(f);
+            }
+        }
+        catch (DirectoryNotFoundException dirNotFound)
+        {
+            Debug.Log(dirNotFound.Message);
+        }
     }
-    [MenuItem("Tools/测试/CMD")]
-    private static void TestCMD()
+    [MenuItem("Tools/测试/CMD", false, 12)]
+    static void TestCMD()
     {
         ExecuteCommand(@"ipconfig /flushdns");
         //ExecuteCommand(@"ping www.baidu.com");
     }
-    [MenuItem("Tools/测试/打包目标平台")]
-    private static void GetCurrentTarget()
-    {
-        Debug.Log(BuildTarget.StandaloneWindows64);
-    }
-    private static void Clean_Cookies()
-    {
-        PlayerPrefs.DeleteAll();
-        Debug.Log("清理完成");
-    }
-    [MenuItem("Tools/测试/清理临时文件夹")]
-    private static void ClearTmpFolders()
+    [MenuItem("Tools/测试/清理临时文件夹", false, 13)]
+    static void ClearTmpFolders()
     {
         // 两个需要清理的目录
         // ./Assets/StreamingAssets/Bundles
@@ -84,7 +124,7 @@ public partial class BundleTools : Editor
         }
         Debug.Log("清理完成");
     }
-    [MenuItem("Tools/取消读条")]
+    [MenuItem("Tools/测试/取消读条", false, 14)]
     static void CancelableProgressBar()
     {
         EditorUtility.ClearProgressBar();
@@ -95,17 +135,18 @@ public partial class BundleTools : Editor
     #region 热更新
 
     [MenuItem("Tools/热更新/生成Proto", false, 21)]
-    private static void ConvertProto()
+    static void ConvertProto()
     {
-        RunBatch("convert_proto.bat");
+        //RunBatch("convert_proto.bat");
+        InnerProto2CS.Proto2CS();
     }
     [MenuItem("Tools/热更新/编译热更工程", false, 22)]
-    private static void CompileHotFix()
+    static void CompileHotFix()
     {
-        RunBatch("compile_hotfix.bat");
+        ExecuteBatch("compile_hotfix.bat");
     }
     [MenuItem("Tools/热更新/MoveDLL", false, 23)]
-    private static void MoveDLL()
+    static void MoveDLL()
     {
         string dllPath = Path.Combine(Application.streamingAssetsPath, "HotFix.dll");
         if (!File.Exists(dllPath))
@@ -127,48 +168,45 @@ public partial class BundleTools : Editor
         Debug.Log("移动完成");
     }
 
-    [MenuItem("Tools/Shader/重置IncludedShaders")]
-    private static void ResetIncludedShaders() { }
-    [MenuItem("Tools/Shader/设置IncludedShaders")]
-    private static void SetIncludedShaders() { }
+    [MenuItem("Tools/Shader/重置IncludedShaders", false, 31)]
+    static void ResetIncludedShaders() { }
+    [MenuItem("Tools/Shader/设置IncludedShaders", false, 31)]
+    static void SetIncludedShaders() { }
 
     [MenuItem("Assets/Open Server Project", false)]
-    private static void OpenServerProject()
+    static void OpenServerProject()
     {
         string currDir = Directory.GetCurrentDirectory();
         DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
         string projPath = $@"{currDirInfo.Parent}\NetCoreServer\NetCoreApp.sln";
-        //Debug.Log(projPath);
-        Process proc = new Process
-        {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = projPath,
-                CreateNoWindow = true,
-            },
-        };
+
+        Process proc = new Process();
+        proc.StartInfo.FileName = projPath;
+        proc.StartInfo.CreateNoWindow = true;
         proc.Start();
     }
-    [MenuItem("Tools/服务器/打开服务器AB资源存放目录", false)]
-    private static void OpenBundleServer()
+    [MenuItem("Tools/服务器/服务器AB资源存放目录", false, 41)]
+    static void OpenServerAB()
     {
         Process.Start("explorer.exe", GetServerDir());
     }
-    [MenuItem("Tools/服务器/打开运行时AB资源下载目录", false)]
-    private static void OpenBundleLocal()
+    [MenuItem("Tools/服务器/运行时AB资源下载目录", false, 42)]
+    static void OpenAppAB()
     {
-        //string path = Path.Combine(ConstValue.DataPath, string.Empty).Replace("/", @"\");
-        string path = Path.Combine(Application.persistentDataPath, string.Empty).Replace("/", @"\");
+        string path = Application.persistentDataPath.Replace("/", @"\"); //向左的[/]无法打开，要转成[\]
         Process.Start("explorer.exe", path);
     }
-    [MenuItem("Tools/服务器/启动服务器", false)]
-    private static void StartServer()
+    [MenuItem("Tools/服务器/启动服务器", false, 43)]
+    static void StartServer()
     {
         string currDir = Directory.GetCurrentDirectory();
         DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
-        string exePath = $@"{currDirInfo.Parent}\NetCoreServer\NetCoreApp\bin\Debug\netcoreapp3.1\NetCoreServer.exe";
-        Debug.Log(exePath);
-        ExecuteCommand(exePath);
+        string exePath = $@"{currDirInfo.Parent}\NetCoreServer\NetCoreApp\bin\Debug\netcoreapp3.1\";
+
+        Process proc = new Process();
+        proc.StartInfo.WorkingDirectory = exePath; //在文件所在位置执行
+        proc.StartInfo.FileName = "NetCoreServer.exe"; //初始化可执行文件名
+        proc.Start();
     }
 
     #endregion

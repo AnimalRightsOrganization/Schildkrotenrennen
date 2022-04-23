@@ -62,48 +62,54 @@ namespace HotFix
                 case PacketType.S2C_LogoutResult:
                     {
                         EmptyPacket packet = new EmptyPacket();
-                        NetPacketManager.Trigger(type, packet); //派发
+                        NetPacketManager.Trigger(type, packet);
                         OnLogoutResult(packet);
                         break;
                     }
                 case PacketType.S2C_RoomList:
                     {
-                        var packet = ProtobufHelper.Deserialize<S2C_GetRoomList>(stream); //解包
+                        var packet = ProtobufHelper.Deserialize<S2C_GetRoomList>(stream);
                         if (packet.Rooms.Count > 0)
                         {
                             Debug.Log($"Room.0={packet.Rooms[0].RoomID}");
                         }
-                        NetPacketManager.Trigger(type, packet); //派发
+                        NetPacketManager.Trigger(type, packet);
                         break;
                     }
                 case PacketType.S2C_RoomInfo:
                     {
-                        var packet = ProtobufHelper.Deserialize<S2C_RoomInfo>(stream); //解包
-                        NetPacketManager.Trigger(type, packet); //派发
+                        var packet = ProtobufHelper.Deserialize<S2C_RoomInfo>(stream);
+                        NetPacketManager.Trigger(type, packet);
                         break;
                     }
                 case PacketType.S2C_LeaveRoom:
                     {
                         var packet = ProtobufHelper.Deserialize<S2C_LeaveRoomPacket>(stream);
-                        NetPacketManager.Trigger(type, packet); //派发
+                        NetPacketManager.Trigger(type, packet);
                         break;
                     }
                 case PacketType.S2C_Chat:
                     {
-                        var packet = ProtobufHelper.Deserialize<TheMsg>(stream); //解包
-                        NetPacketManager.Trigger(type, packet); //派发
+                        var packet = ProtobufHelper.Deserialize<TheMsg>(stream);
+                        NetPacketManager.Trigger(type, packet);
                         break;
                     }
                 case PacketType.S2C_GameStart:
                     {
                         EmptyPacket packet = new EmptyPacket();
-                        NetPacketManager.Trigger(type, packet); //派发
+                        NetPacketManager.Trigger(type, packet);
                         break;
                     }
                 case PacketType.S2C_GamePlay:
                     {
-                        var packet = ProtobufHelper.Deserialize<S2C_PlayCard>(stream); //解包
-                        NetPacketManager.Trigger(type, packet); //派发
+                        var packet = ProtobufHelper.Deserialize<S2C_PlayCard>(stream);
+                        NetPacketManager.Trigger(type, packet);
+                        break;
+                    }
+                case PacketType.S2C_GameResult:
+                    {
+                        var packet = ProtobufHelper.Deserialize<S2C_GameResult>(stream);
+                        NetPacketManager.Trigger(type, packet);
                         break;
                     }
                 default:
