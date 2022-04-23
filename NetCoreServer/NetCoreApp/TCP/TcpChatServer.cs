@@ -110,7 +110,7 @@ namespace TcpChatServer
 
         protected async void OnLoginReq(MemoryStream ms)
         {
-            var request = ProtobufHelper.Deserialize<C2S_Login>(ms); //解包
+            var request = ProtobufHelper.Deserialize<C2S_LoginPacket>(ms); //解包
             Debug.Print($"Username={request.Username}, Password={request.Password} by {Id}");
 
             //UserInfo result = await MySQLTool.GetUserInfo(request.Username, request.Password);
@@ -126,7 +126,7 @@ namespace TcpChatServer
 
             TCPChatServer.m_PlayerManager.AddPlayer(p);
 
-            S2C_Login packet = new S2C_Login { Code = 0, Username = request.Username, Nickname = result.nickname };
+            var packet = new S2C_LoginResultPacket { Code = 0, Username = request.Username, Nickname = result.nickname };
             p.SendAsync(PacketType.S2C_LoginResult, packet);
 
             WinFormsApp1.MainForm.Instance.RefreshPlayerNum();
@@ -153,7 +153,7 @@ namespace TcpChatServer
         }
         protected void OnCreateRoom(MemoryStream ms)
         {
-            var request = ProtobufHelper.Deserialize<C2S_CreateRoom>(ms); //解包
+            var request = ProtobufHelper.Deserialize<C2S_CreateRoomPacket>(ms); //解包
             Debug.Print($"Name={request.RoomName}, Pwd={request.RoomPwd}, playerNum={request.LimitNum} by {Id}");
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
@@ -196,9 +196,7 @@ namespace TcpChatServer
         }
         protected void OnJoinRoom(MemoryStream ms)
         {
-            //MemoryStream ms = new MemoryStream(body, 0, body.Length);
-            //var request = ProtobufHelper.FromStream(typeof(C2S_JoinRoom), ms) as C2S_JoinRoom;
-            var request = ProtobufHelper.Deserialize<C2S_JoinRoom>(ms); //解包
+            var request = ProtobufHelper.Deserialize<C2S_JoinRoomPacket>(ms); //解包
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             Debug.Print($"{p.UserName}请求加入房间#{request.RoomID}");
 
@@ -281,8 +279,6 @@ namespace TcpChatServer
         }
         protected void OnPlayCard(MemoryStream ms)
         {
-            //MemoryStream ms = new MemoryStream(body, 0, body.Length);
-            //var request = ProtobufHelper.FromStream(typeof(C2S_PlayCard), ms) as C2S_PlayCard;
             var request = ProtobufHelper.Deserialize<C2S_PlayCard>(ms); //解包
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);

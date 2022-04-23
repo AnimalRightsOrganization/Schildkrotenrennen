@@ -26,26 +26,27 @@ message TheMsgList
 }
 
 // 登录
-message C2S_Login
+message C2S_LoginPacket
 {
 	string Username = 1;
 	string Password = 2;
 }
-message S2C_Login
+message S2C_LoginResultPacket
 {
 	int32 Code = 1;
+    //string PeerId;
 	string Username = 2;
 	string Nickname = 3;
 }
 
 // 房间
-message C2S_CreateRoom
+message C2S_CreateRoomPacket
 {
 	string RoomName = 1; //房间名
 	string RoomPwd 	= 2; //房间密码
 	int32 LimitNum 	= 3; //玩家数
 }
-message C2S_JoinRoom
+message C2S_JoinRoomPacket
 {
 	int32 RoomID 	= 1; //房间Id
 	string RoomPwd 	= 2; //房间密码

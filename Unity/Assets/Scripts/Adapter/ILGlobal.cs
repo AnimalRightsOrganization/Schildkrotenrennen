@@ -73,6 +73,15 @@ namespace Client
                     ((System.Action<System.Object, System.Net.Sockets.SocketAsyncEventArgs>)act)(sender, e);
                 });
             });
+            // 注册Dotween委托
+            appdomain.DelegateManager.RegisterDelegateConvertor<DG.Tweening.TweenCallback>((act) =>
+            {
+                return new DG.Tweening.TweenCallback(() =>
+                {
+                    ((System.Action)act)();
+                });
+            });
+
 
             LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(appdomain);
             ET.ILHelper.InitILRuntime(appdomain); //好像没啥用

@@ -98,11 +98,10 @@ namespace HotFix
         }
         void OnExitBtnClick()
         {
-            //UIManager.Get().Pop(this);
-            var dialog = UIManager.Get().Push<UI_Dialog>();
-            dialog.Show("确定退出吗？",
-                () => { UIManager.Get().Pop(this); }, "确定",
-                () => { UIManager.Get().Pop(dialog); }, "取消");
+            var ui_dialog = UIManager.Get().Push<UI_Dialog>();
+            ui_dialog.Show("确定退出吗？",
+                () => { ui_dialog.Hide(); }, "取消",
+                () => { this.Pop(); ui_dialog.Hide(); }, "确定");
         }
 
         void OnLeftBtnClick()

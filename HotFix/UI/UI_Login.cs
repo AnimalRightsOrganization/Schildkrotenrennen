@@ -93,7 +93,7 @@ namespace HotFix
         }
         void OnLoginResult(PacketType type, object reader)
         {
-            S2C_Login packet = (S2C_Login)reader;
+            S2C_LoginResultPacket packet = (S2C_LoginResultPacket)reader;
             var p = new ClientPlayer(packet.Username, System.Guid.Empty);
             TcpChatClient.m_PlayerManager.AddClientPlayer(p, true);
             UIManager.Get().Push<UI_Main>();

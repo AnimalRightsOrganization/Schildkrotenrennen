@@ -50,9 +50,9 @@ namespace ET
 	}
 
 // 登录
-	[Message(OuterOpcode.C2S_Login)]
+	[Message(OuterOpcode.C2S_LoginPacket)]
 	[ProtoContract]
-	public partial class C2S_Login: Object
+	public partial class C2S_LoginPacket: Object
 	{
 		[ProtoMember(1)]
 		public string Username { get; set; }
@@ -62,13 +62,14 @@ namespace ET
 
 	}
 
-	[Message(OuterOpcode.S2C_Login)]
+	[Message(OuterOpcode.S2C_LoginResultPacket)]
 	[ProtoContract]
-	public partial class S2C_Login: Object
+	public partial class S2C_LoginResultPacket: Object
 	{
 		[ProtoMember(1)]
 		public int Code { get; set; }
 
+//string PeerId;
 		[ProtoMember(2)]
 		public string Username { get; set; }
 
@@ -78,9 +79,9 @@ namespace ET
 	}
 
 // 房间
-	[Message(OuterOpcode.C2S_CreateRoom)]
+	[Message(OuterOpcode.C2S_CreateRoomPacket)]
 	[ProtoContract]
-	public partial class C2S_CreateRoom: Object
+	public partial class C2S_CreateRoomPacket: Object
 	{
 		[ProtoMember(1)]
 		public string RoomName { get; set; }
@@ -93,9 +94,9 @@ namespace ET
 
 	}
 
-	[Message(OuterOpcode.C2S_JoinRoom)]
+	[Message(OuterOpcode.C2S_JoinRoomPacket)]
 	[ProtoContract]
-	public partial class C2S_JoinRoom: Object
+	public partial class C2S_JoinRoomPacket: Object
 	{
 		[ProtoMember(1)]
 		public int RoomID { get; set; }

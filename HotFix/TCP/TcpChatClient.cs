@@ -151,7 +151,7 @@ namespace HotFix
             }
             //TODO: 服务器/客户端共用规则，双边验证...
 
-            C2S_Login cmd = new C2S_Login { Username = usr, Password = pwd };
+            var cmd = new C2S_LoginPacket { Username = usr, Password = pwd };
             SendAsync(PacketType.C2S_LoginReq, cmd);
         }
         public static void SendChat(string message)
@@ -178,13 +178,13 @@ namespace HotFix
                 return false;
             }
 
-            C2S_CreateRoom cmd = new C2S_CreateRoom { RoomName = name, RoomPwd = pwd, LimitNum = num };
+            var cmd = new C2S_CreateRoomPacket { RoomName = name, RoomPwd = pwd, LimitNum = num };
             SendAsync(PacketType.C2S_CreateRoom, cmd);
             return true;
         }
         public static void SendJoinRoom(int roomId, string pwd)
         {
-            C2S_JoinRoom cmd = new C2S_JoinRoom { RoomID = roomId, RoomPwd = pwd };
+            var cmd = new C2S_JoinRoomPacket { RoomID = roomId, RoomPwd = pwd };
             SendAsync(PacketType.C2S_LeaveRoom, cmd);
         }
         public static void SendLeaveRoom()

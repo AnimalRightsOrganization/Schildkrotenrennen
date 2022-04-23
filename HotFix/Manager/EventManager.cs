@@ -55,7 +55,7 @@ namespace HotFix
                     }
                 case PacketType.S2C_LoginResult:
                     {
-                        var packet = ProtobufHelper.Deserialize<S2C_Login>(stream); //解包
+                        var packet = ProtobufHelper.Deserialize<S2C_LoginResultPacket>(stream); //解包
                         NetPacketManager.Trigger(type, packet); //派发
                         break;
                     }
@@ -119,7 +119,7 @@ namespace HotFix
             {
                 case PacketType.S2C_LoginResult:
                     {
-                        var packet = (S2C_Login)reader;
+                        var packet = (S2C_LoginResultPacket)reader;
                         if (packet.Code == 0)
                         {
                             //ReconnectTimes = 2; //登录成功，补充重连次数

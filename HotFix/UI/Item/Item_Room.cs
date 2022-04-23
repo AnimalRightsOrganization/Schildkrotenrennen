@@ -33,8 +33,8 @@ namespace HotFix
                 Debug.Log("空座位，加入机器人");
                 var ui_dialog = UIManager.Get().Push<UI_Dialog>();
                 ui_dialog.Show("是否加入机器人？",
-                    () => { }, "是",
-                    () => { ui_dialog.Pop(); }, "否");
+                    () => { ui_dialog.Hide(); }, "取消",
+                    () => { Debug.Log("点击确定"); ui_dialog.Hide(); }, "确定");
             }
             else
             {
@@ -48,8 +48,8 @@ namespace HotFix
                     Debug.Log("是别人，踢人");
                     var ui_dialog = UIManager.Get().Push<UI_Dialog>();
                     ui_dialog.Show("是否移除该用户？",
-                    () => { }, "是",
-                    () => { ui_dialog.Pop(); }, "否");
+                        () => { ui_dialog.Hide(); }, "取消",
+                        () => { Debug.Log("点击确定"); ui_dialog.Hide(); }, "确定");
                 }
             }
         }
