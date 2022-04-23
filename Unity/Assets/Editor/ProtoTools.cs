@@ -194,7 +194,10 @@ public partial class BundleTools : Editor
         string currDir = Directory.GetCurrentDirectory();
         DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
         string projPath = $@"{currDirInfo.Parent}\NetCoreServer\NetCoreApp.sln";
-
+#if UNITY_STANDALONE_OSX
+        //MacOS只认[/]。但不能编译winform。
+        projPath = projPath.Replace(@"\", "/");
+#endif
         Process proc = new Process();
         proc.StartInfo.FileName = projPath;
         proc.StartInfo.CreateNoWindow = true;

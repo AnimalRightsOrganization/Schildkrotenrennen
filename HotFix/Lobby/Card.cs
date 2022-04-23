@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-//using DG.Tweening;
+using DG.Tweening;
 
 namespace HotFix
 {
@@ -35,7 +35,7 @@ namespace HotFix
 
         public void UnSelect()
         {
-            //transform.DOScale(1f, 0.2f);
+            transform.DOScale(1f, 0.2f);
         }
     }
 }

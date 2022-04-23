@@ -5,18 +5,24 @@ namespace HotFix
 {
     public class UI_Game : UIBase
     {
-        [SerializeField] Transform[] startPoints; //棋子
-        [SerializeField] Transform[] wayPoints; //路径
-        [SerializeField] Transform[] handPoints; //手牌
+        #region 界面组件
+        public Button m_CloseBtn;
 
-        [SerializeField] Transform m_PlayerRoot; //玩家
-        [SerializeField] Transform m_RunnerRoot; //棋子
-        [SerializeField] Transform m_HandRoot; //手牌
+        public Transform[] startPoints; //棋子
+        public Transform[] wayPoints; //路径
+        public Transform[] handPoints; //手牌
 
-        //[SerializeField] Button m_SettingsBtn;
+        public Transform m_PlayerRoot; //玩家
+        public Transform m_RunnerRoot; //棋子
+        public Transform m_HandRoot; //手牌
+        #endregion
 
+        #region 内置方法
         void Awake()
         {
+            m_CloseBtn = transform.Find("closeButton").GetComponent<Button>();
+            m_CloseBtn.onClick.AddListener(OnCloseBtnClick);
+
             var startPointsRoot = transform.Find("background/startPoints");
             startPoints = new Transform[startPointsRoot.childCount];
             for (int i = 0; i < startPointsRoot.childCount; i++)
@@ -69,6 +75,14 @@ namespace HotFix
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
         }
+        #endregion
+
+        #region 按钮事件
+        void OnCloseBtnClick()
+        {
+            Debug.Log("退出游戏");
+        }
+        #endregion
 
         #region 网络事件
         void OnNetCallback(PacketType type, object reader)
@@ -76,22 +90,23 @@ namespace HotFix
             switch (type)
             {
                 case PacketType.S2C_GameDeal:
+                    OnDeal(type, reader);
                     break;
                 case PacketType.S2C_GamePlay:
+                    OnPlay(type, reader);
+                    break;
+                case PacketType.S2C_GameResult:
+                    OnMatchResult(type, reader);
                     break;
             }
         }
 
-        // 颜色消息
-        void OnAllotColor() { }
-        // 洗牌消息
-        void OnShuffe() { }
         // 发牌消息
-        void OnDeal() { }
+        void OnDeal(PacketType type, object reader) { }
         // 出牌消息
-        void OnPlay() { }
+        void OnPlay(PacketType type, object reader) { }
         // 结算消息
-        void OnMatchResult() { }
+        void OnMatchResult(PacketType type, object reader) { }
         #endregion
     }
 }

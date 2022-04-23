@@ -93,25 +93,33 @@ message PlayerInfo
 	int32 SeatID 	= 3; //座位号
 }
 
+//颜色和手牌（游戏开始、重连）
+message S2C_GameStartPacket
+{
+	int32 Color 		= 1; //颜色
+	repeated int32 Cards 	= 2; //5张手牌的ID
+}
+
 //出牌
-message C2S_PlayCard
+message C2S_PlayCardPacket
 {
 	int32 CardID = 1; //唯一识别号
+	int32 Color  = 2; //彩色牌指定颜色，根据颜色enum。
 }
-message S2C_PlayCard
+message S2C_PlayCardPacket
 {
 	int32 CardID = 1; //唯一识别号
 	int32 SeatID = 2; //出牌人的座位
 }
 //发牌
-message S2C_Deal
+message S2C_DealPacket
 {
 	int32 CardID = 1; //唯一识别号
 	int32 SeatID = 2; //发给的座位
 }
 //比赛结果
-message S2C_GameResult
+message S2C_GameResultPacket
 {
-	
+	repeated int32 Rank = 1; //索引是座位号
 }
 

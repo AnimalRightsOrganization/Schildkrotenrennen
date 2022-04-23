@@ -155,6 +155,10 @@ namespace HotFix
         void OnGameStart(PacketType type, object reader)
         {
             //TODO: 解包，获取完整比赛信息，座位号和颜色。重连也下发这个消息。
+            var packet = (S2C_GameStartPacket)reader;
+            //packet.Color; //自己的颜色
+            //packet.Cards; //自己的手牌
+
             UIManager.Get().Pop(this);
             UIManager.Get().Push<UI_Game>();
         }

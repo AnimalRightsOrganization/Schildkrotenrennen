@@ -193,19 +193,35 @@ namespace ET
 
 	}
 
-//出牌
-	[Message(OuterOpcode.C2S_PlayCard)]
+//颜色和手牌（游戏开始、重连）
+	[Message(OuterOpcode.S2C_GameStartPacket)]
 	[ProtoContract]
-	public partial class C2S_PlayCard: Object
+	public partial class S2C_GameStartPacket: Object
+	{
+		[ProtoMember(1)]
+		public int Color { get; set; }
+
+		[ProtoMember(2)]
+		public List<int> Cards = new List<int>();
+
+	}
+
+//出牌
+	[Message(OuterOpcode.C2S_PlayCardPacket)]
+	[ProtoContract]
+	public partial class C2S_PlayCardPacket: Object
 	{
 		[ProtoMember(1)]
 		public int CardID { get; set; }
 
+		[ProtoMember(2)]
+		public int Color { get; set; }
+
 	}
 
-	[Message(OuterOpcode.S2C_PlayCard)]
+	[Message(OuterOpcode.S2C_PlayCardPacket)]
 	[ProtoContract]
-	public partial class S2C_PlayCard: Object
+	public partial class S2C_PlayCardPacket: Object
 	{
 		[ProtoMember(1)]
 		public int CardID { get; set; }
@@ -216,9 +232,9 @@ namespace ET
 	}
 
 //发牌
-	[Message(OuterOpcode.S2C_Deal)]
+	[Message(OuterOpcode.S2C_DealPacket)]
 	[ProtoContract]
-	public partial class S2C_Deal: Object
+	public partial class S2C_DealPacket: Object
 	{
 		[ProtoMember(1)]
 		public int CardID { get; set; }
@@ -229,10 +245,13 @@ namespace ET
 	}
 
 //比赛结果
-	[Message(OuterOpcode.S2C_GameResult)]
+	[Message(OuterOpcode.S2C_GameResultPacket)]
 	[ProtoContract]
-	public partial class S2C_GameResult: Object
+	public partial class S2C_GameResultPacket: Object
 	{
+		[ProtoMember(1)]
+		public List<int> Rank = new List<int>();
+
 	}
 
 }

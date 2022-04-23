@@ -16,9 +16,10 @@ namespace ET
 		 public const ushort C2S_OperateSeatPacket = 10012;
 		 public const ushort RoomInfo = 10013;
 		 public const ushort PlayerInfo = 10014;
-		 public const ushort C2S_PlayCard = 10015;
-		 public const ushort S2C_PlayCard = 10016;
-		 public const ushort S2C_Deal = 10017;
-		 public const ushort S2C_GameResult = 10018;
+		 public const ushort S2C_GameStartPacket = 10015;
+		 public const ushort C2S_PlayCardPacket = 10016;
+		 public const ushort S2C_PlayCardPacket = 10017;
+		 public const ushort S2C_DealPacket = 10018;
+		 public const ushort S2C_GameResultPacket = 10019;
 	}
 }
