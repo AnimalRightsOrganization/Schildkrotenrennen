@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace HotFix
 {
-    public class RunnerView : MonoBehaviour
+    public class Item_Chess : UIBase
     {
         public ChessColor mColor;
         public Dictionary<string, Sprite> mColorSp;

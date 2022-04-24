@@ -15,7 +15,7 @@ namespace HotFix
         static Random rd;
 
         public int playerCount; //本局玩家数，开房间时确定
-        public List<GamePlayer> playerList; //玩家列表
+        //public List<GamePlayer> playerList; //玩家列表
 
         List<Card> libraryList; //所有牌
         //List<Card> deskList; //桌上的牌
@@ -95,18 +95,6 @@ namespace HotFix
             rd = new Random();
             playerCount = 2;
             int roomId = rd.Next(1000, 10000); //服务器分配，单机填0
-
-            playerList = new List<GamePlayer>();
-            for (int i = 0; i < playerCount; i++)
-            {
-                GamePlayer player = new GamePlayer()
-                {
-                    seatId = i,
-                    user_id = "wx_" + rd.Next(10000, 99999),
-                };
-                playerList.Add(player);
-                Debug.Log($"添加玩家{i}");
-            }
         }
 
         // 初始化棋盘（仅单机）
@@ -151,7 +139,7 @@ namespace HotFix
                     Card card = libraryList[index];
 
                     // 把牌放入玩家手中
-                    playerList[nextTurn].handCardsList.Add(card);
+                    //playerList[nextTurn].handCardsList.Add(card);
 
                     // 把牌从牌库中移除
                     libraryList.Remove(card);

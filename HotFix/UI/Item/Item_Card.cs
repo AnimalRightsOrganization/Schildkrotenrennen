@@ -1,16 +1,20 @@
 ﻿using System.Linq;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
 namespace HotFix
 {
-    public class CardView : MonoBehaviour
+    public class Item_Card : UIBase
     {
-        [HideInInspector] public Sprite[] cardArray;
-        [SerializeField] Image mMainSP;
-        [SerializeField] Card card;
+        public Sprite[] cardArray;
+        public Image mMainSP;
+        public Card card;
+
+        void Awake()
+        {
+
+        }
 
         public void InitData(Card data)
         {
