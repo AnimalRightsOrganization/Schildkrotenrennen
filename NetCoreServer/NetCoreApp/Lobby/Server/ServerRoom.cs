@@ -251,7 +251,8 @@ namespace NetCoreServer
         // 结算
         public void OnGameResult()
         {
-            
+            //S2C_GameResultPacket packet = new S2C_GameResultPacket { };
+            //SendAsync(PacketType.S2C_GameResult, packet);
         }
     }
 }

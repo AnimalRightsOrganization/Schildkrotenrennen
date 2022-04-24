@@ -36,11 +36,14 @@ namespace HotFix
             var ui_game = UIManager.Get().GetUI<UI_Game>();
             //Vector3 src = ui_game.m_MapPoints[CurrentIndex].position;
             Vector3 dst = ui_game.m_MapPoints[TargetIndex].position;
-            transform.DOMove(dst, 0.5f);
+            Tweener tw = transform.DOMove(dst, 0.5f);
 
             CurrentIndex = TargetIndex;
 
-            transform.SetParent(ui_game.m_MapPoints[TargetIndex]);
+            tw.OnComplete(()=>
+            {
+                transform.SetParent(ui_game.m_MapPoints[TargetIndex]);
+            });
         }
     }
 }

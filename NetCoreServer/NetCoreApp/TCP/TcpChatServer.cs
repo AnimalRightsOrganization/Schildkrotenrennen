@@ -374,7 +374,7 @@ namespace TcpChatServer
             serverRoom.TurnNext(p, request);
             // 给出牌者发送新发的牌
             var card = serverRoom.OnGameDeal(p);
-            var packet1 = new S2C_DealPacket { SeatID = p.SeatId, CardID = card.id };
+            var packet1 = new S2C_DealPacket { CardID = card.id, SeatID = p.SeatId };
             p.SendAsync(PacketType.S2C_GameDeal, packet1);
 
             // 房间内广播出牌结果
