@@ -35,12 +35,23 @@ namespace HotFix
         void OnSelect()
         {
             Debug.Log($"选中：[{card.id}]{card.cardColor}-{card.cardNum}");
-            Tweener tw1 = transform.DOScale(1.1f, 0.2f);
 
+            Vector3 src = transform.position;
+            Vector3 dst = src + Vector3.up * 100; //相对位置
+            Tweener tw_show = transform.DOMove(dst, 0.3f);
+
+            var ui_game = UIManager.Get().GetUI<UI_Game>();
+            ui_game.ShowPlayPanel(()=>
+            {
+                Tweener tw_hide = transform.DOMove(src, 0.3f);
+            });
+        }
+        void PlayCardAnime()
+        {
+            Tweener tw1 = transform.DOScale(1.1f, 0.2f);
             tw1.OnComplete(() =>
             {
-                Vector3 src = transform.position;
-                Vector3 dst = src + Vector3.up * 720; //与本身size对应
+                Vector3 dst = new Vector3(Screen.width, Screen.height) / 2; //固定到屏幕中心
                 Tweener tw2 = transform.DOMove(dst, 0.3f);
                 tw2.OnComplete(() =>
                 {

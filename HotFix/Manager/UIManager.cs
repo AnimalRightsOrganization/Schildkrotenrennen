@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace HotFix
@@ -25,8 +26,18 @@ namespace HotFix
             recyclePool = new Dictionary<string, UIBase>();
         }
 
-        public void GetActivePanel() { }
-        public void GetPanel(string className) { }
+        public T GetUI<T>() where T : UIBase
+        {
+            string scriptName = typeof(T).ToString().Replace("HotFix.", "");
+            Debug.Log($"GetUI: {scriptName}");
+            UIBase ui = null;
+            if (stack.TryGetValue(scriptName, out ui) == false)
+            {
+                Debug.LogError($"还没有创建：{scriptName}");
+                return null;
+            }
+            return ui.GetComponent<T>();
+        }
 
         public T Push<T>() where T : UIBase
         {
