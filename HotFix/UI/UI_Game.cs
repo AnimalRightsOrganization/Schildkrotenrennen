@@ -186,11 +186,13 @@ namespace HotFix
         // 发牌消息
         void OnDeal(object reader)
         {
-            
+            Debug.Log("收到发牌消息");
         }
         // 出牌消息
         void OnPlay(object reader)
         {
+            Debug.Log("收到出牌消息");
+
             var packet = (S2C_PlayCardPacket)reader;
             Debug.Log($"[S2C_GamePlay] 座位#{packet.SeatID}出牌{packet.CardID}-{packet.Color}");
 

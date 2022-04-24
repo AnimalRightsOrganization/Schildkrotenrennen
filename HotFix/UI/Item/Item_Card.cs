@@ -36,7 +36,7 @@ namespace HotFix
 
         void OnSelect()
         {
-            Debug.Log($"选中：{card.Log()}");
+            //Debug.Log($"选中：{card.Log()}");
 
             // 实例化创建出来的，要在创建完成后获取坐标
             src = transform.position;

@@ -56,10 +56,8 @@
         C2S_LeaveRoom   ,   //离开房间
         C2S_OperateSeat ,   //添加机器人，踢人
         
-        C2S_GameReady   ,   //请求准备（成员）
         C2S_GameStart   ,   //请求开始战斗（房主）
         C2S_GamePlay    ,   //出牌
-        C2S_GameQuit    ,   //离开比赛（认输） =>返回大厅
         ///////////////////////////////////////////////
         S2C_ErrorOperate,   //错误代码
         S2C_LoginResult ,   //登录、注册结果
@@ -72,7 +70,6 @@
         S2C_RoomInfo    ,   //单个房间（自己创建/加入，别人加入/离开）
         S2C_LeaveRoom   ,   //离开房间
 
-        S2C_GameReady   ,   //准备结果（成员）
         S2C_GameStart   ,   //比赛开始，跳转场景
         S2C_GameDeal    ,   //发牌信息
         S2C_YourTurn    ,   //通知轮到出牌的玩家

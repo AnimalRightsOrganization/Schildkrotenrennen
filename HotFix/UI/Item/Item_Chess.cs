@@ -34,7 +34,6 @@ namespace HotFix
             int TargetIndex = Mathf.Clamp(CurrentIndex + step, 0, 9);
 
             var ui_game = UIManager.Get().GetUI<UI_Game>();
-            //Vector3 src = ui_game.m_MapPoints[CurrentIndex].position;
             Vector3 dst = ui_game.m_MapPoints[TargetIndex].position;
             Tweener tw = transform.DOMove(dst, 0.5f);
 

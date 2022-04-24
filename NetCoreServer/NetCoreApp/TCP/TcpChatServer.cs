@@ -372,14 +372,16 @@ namespace TcpChatServer
 
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
             serverRoom.TurnNext(p, request);
+            // 房间内广播出牌结果
+            var packet1 = new S2C_PlayCardPacket { CardID = request.CardID, Color = request.Color, SeatID = p.SeatId };
+            serverRoom.SendAsync(PacketType.S2C_GamePlay, packet1);
+            Debug.Print($"广播出牌消息：{packet1.SeatID}出{packet1.CardID}");
+
             // 给出牌者发送新发的牌
             var card = serverRoom.OnGameDeal(p);
-            var packet1 = new S2C_DealPacket { CardID = card.id, SeatID = p.SeatId };
-            p.SendAsync(PacketType.S2C_GameDeal, packet1);
-
-            // 房间内广播出牌结果
-            var packet2 = new S2C_PlayCardPacket { CardID = request.CardID, Color = request.Color, SeatID = p.SeatId };
-            serverRoom.SendAsync(PacketType.S2C_GamePlay, packet2);
+            var packet2 = new S2C_DealPacket { CardID = card.id, SeatID = p.SeatId };
+            p.SendAsync(PacketType.S2C_GameDeal, packet2);
+            Debug.Print($"单发发牌消息：{packet2.CardID}给{packet2.SeatID}");
 
             // 给下一个出牌的人提示出牌？
             //serverRoom.S2C_YourTurn

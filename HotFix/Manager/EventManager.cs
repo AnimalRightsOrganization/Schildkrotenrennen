@@ -41,7 +41,7 @@ namespace HotFix
 
             PacketType type = (PacketType)msgId;
             MemoryStream stream = new MemoryStream(body, 0, body.Length);
-            //Debug.Log($"PacketType={type}");
+            Debug.Log($"PacketType={type}");
             switch (type)
             {
                 case PacketType.Connected:
@@ -137,10 +137,6 @@ namespace HotFix
                             //ReconnectTimes = 2; //登录成功，补充重连次数
                             TcpChatClient.m_PlayerManager.LocalPlayer.ResetToLobby();
                         }
-                        break;
-                    }
-                case PacketType.S2C_GameReady:
-                    {
                         break;
                     }
                 case PacketType.S2C_GameStart:
