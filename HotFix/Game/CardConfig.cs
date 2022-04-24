@@ -132,5 +132,9 @@ namespace HotFix
         public int id; //索引号0-51
         public CardColor cardColor;
         public CardNum cardNum;
+        public string Log()
+        {
+            return $"[{id}]{cardColor}-{cardNum}";
+        }
     }
 }

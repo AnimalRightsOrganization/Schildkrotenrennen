@@ -15,10 +15,13 @@ namespace HotFix
         public Transform[] m_MapPoints; //地图
         public Item_Card[] myCards;
         public Item_Chess[] gameChess;
+        public int selectedCardId;
         public GameObject m_PlayPanel;
         public Button m_PlayBtn;
         public Button m_CancelBtn;
         System.Action CancelAction;
+        public GameObject m_ColorPanel;
+        public Button[] m_ColorBtns;
         #endregion
 
         #region 内置方法
@@ -54,7 +57,6 @@ namespace HotFix
             var chessPrefab = ResManager.LoadPrefab("Prefabs/Chess");
             for (int i = 0; i < 5; i++)
             {
-                //var chessObj = Instantiate(chessPrefab, startPoints[i]);
                 var chessObj = Instantiate(chessPrefab, m_MapPoints[0]);
                 var chessScript = chessObj.AddComponent<Item_Chess>();
                 gameChess[i] = chessScript;
@@ -62,10 +64,20 @@ namespace HotFix
             }
 
             m_PlayPanel = transform.Find("PlayPanel").gameObject;
+            m_PlayPanel.SetActive(false);
             m_PlayBtn = transform.Find("PlayPanel/PlayBtn").GetComponent<Button>();
             m_CancelBtn = m_PlayPanel.GetComponent<Button>();
             m_CancelBtn.onClick.AddListener(HidePlayPanel);
-            //m_PlayBtn.onClick.AddListener();
+            m_PlayBtn.onClick.AddListener(OnPlayBtnClick);
+            m_ColorPanel = transform.Find("PlayPanel/ColorPanel").gameObject;
+            m_ColorPanel.SetActive(false);
+            m_ColorBtns = transform.Find("PlayPanel/ColorPanel").GetComponentsInChildren<Button>();
+            for (int i = 0; i < m_ColorBtns.Length; i++)
+            {
+                int index = i;
+                Button btn = m_ColorBtns[i];
+                btn.onClick.AddListener(() => { Debug.Log(index); });
+            }
         }
 
         void Start()
@@ -111,15 +123,33 @@ namespace HotFix
         {
             Debug.Log("退出游戏");
         }
-        public void ShowPlayPanel(System.Action act)
+        public void ShowPlayPanel(int id, System.Action act)
         {
-            m_PlayPanel.SetActive(true);
+            selectedCardId = id;
             CancelAction = act;
+            m_PlayPanel.SetActive(true);
+            Card card = ClientRoom.lib.library[selectedCardId];
+            //Debug.Log($"显示：{card.Log()}");
+            if (card.cardColor == CardColor.COLOR ||
+                card.cardColor == CardColor.SLOWEST)
+            {
+                Debug.Log($"<color=yellow>显示颜色选择</color>");
+                m_ColorPanel.SetActive(true);
+            }
+            else
+            {
+                m_ColorPanel.SetActive(false);
+            }
         }
         public void HidePlayPanel()
         {
             CancelAction?.Invoke();
             m_PlayPanel.SetActive(false);
+        }
+        void OnPlayBtnClick()
+        {
+            Card card = ClientRoom.lib.library[selectedCardId];
+            Debug.Log($"出牌：{card.Log()}");
         }
         #endregion
 

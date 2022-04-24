@@ -34,14 +34,14 @@ namespace HotFix
 
         void OnSelect()
         {
-            Debug.Log($"选中：[{card.id}]{card.cardColor}-{card.cardNum}");
+            Debug.Log($"选中：{card.Log()}");
 
             Vector3 src = transform.position;
             Vector3 dst = src + Vector3.up * 100; //相对位置
             Tweener tw_show = transform.DOMove(dst, 0.3f);
 
             var ui_game = UIManager.Get().GetUI<UI_Game>();
-            ui_game.ShowPlayPanel(()=>
+            ui_game.ShowPlayPanel(card.id, () =>
             {
                 Tweener tw_hide = transform.DOMove(src, 0.3f);
             });

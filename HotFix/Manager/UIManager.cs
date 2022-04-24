@@ -29,7 +29,7 @@ namespace HotFix
         public T GetUI<T>() where T : UIBase
         {
             string scriptName = typeof(T).ToString().Replace("HotFix.", "");
-            Debug.Log($"GetUI: {scriptName}");
+            //Debug.Log($"GetUI: {scriptName}");
             UIBase ui = null;
             if (stack.TryGetValue(scriptName, out ui) == false)
             {
