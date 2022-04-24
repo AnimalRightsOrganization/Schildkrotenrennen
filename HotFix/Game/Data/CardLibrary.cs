@@ -12,11 +12,11 @@ namespace HotFix
      * 最慢+1，3
      * 最慢+2，2
      * */
-    public class CardData
+    public class CardLibrary
     {
         public List<CardAttribute> libraryList;
 
-        public CardData()
+        public CardLibrary()
         {
             libraryList = new List<CardAttribute>()
         {

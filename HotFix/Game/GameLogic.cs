@@ -143,7 +143,7 @@ namespace HotFix
         // 初始化卡牌配置
         public void InitOption()
         {
-            CardData cards = new CardData();
+            var cards = new CardLibrary();
             libraryList = cards.libraryList;
             Shuffle(libraryList);
         }

@@ -4,12 +4,12 @@ using UnityEngine.UI;
 
 namespace HotFix
 {
-    public class Runner : MonoBehaviour
+    public class RunnerView : MonoBehaviour
     {
         public RunnerColor mColor;
-        [SerializeField] Sprite[] mColorSp = new Sprite[5];
-        [SerializeField] Image mColorImage;
-        [SerializeField] int CurrentWayPoint;
+        public Sprite[] mColorSp = new Sprite[5];
+        public Image mColorImage;
+        public int CurrentWayPoint;
 
         void Awake()
         {

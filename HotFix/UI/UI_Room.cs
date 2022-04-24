@@ -189,6 +189,8 @@ namespace HotFix
             var packet = (S2C_GameStartPacket)reader;
             //packet.Color; //自己的颜色
             //packet.Cards; //自己的手牌
+            TcpChatClient.m_ClientRoom.runnerColor = (RunnerColor)packet.Color;
+
 
             UIManager.Get().Pop(this);
             UIManager.Get().Push<UI_Game>();

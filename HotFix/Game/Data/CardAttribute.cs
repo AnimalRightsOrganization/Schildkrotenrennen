@@ -25,12 +25,12 @@ namespace HotFix
      * */
     public enum RunnerColor : byte
     {
-        Red = 0,
-        Yellow = 1,
-        Green = 2,
-        Blue = 3,
-        Purple = 4,
-        COUNT = 5,
+        Red     = 0,
+        Yellow  = 1,
+        Green   = 2,
+        Blue    = 3,
+        Purple  = 4,
+        COUNT   = 5,
     }
     public enum CardColor
     {

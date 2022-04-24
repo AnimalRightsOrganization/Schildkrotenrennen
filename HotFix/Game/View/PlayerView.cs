@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace HotFix
 {
-    public class PlayerItem : MonoBehaviour
+    public class PlayerView : MonoBehaviour
     {
         [SerializeField] Image mIdImage;
         [HideInInspector] public Sprite[] mIdArray;
@@ -14,7 +14,7 @@ namespace HotFix
         // 本地用户
         [Header("----- 本地用户 -----")]
         public bool isLocalPlayer;
-        public List<Card> handCards;
+        public List<CardView> handCards;
 
         public void InitData(int chair_id)
         {

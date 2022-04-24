@@ -6,7 +6,7 @@ using DG.Tweening;
 
 namespace HotFix
 {
-    public class Card : MonoBehaviour
+    public class CardView : MonoBehaviour
     {
         [HideInInspector] public Sprite[] cardArray;
         [SerializeField] Image mMainSP;

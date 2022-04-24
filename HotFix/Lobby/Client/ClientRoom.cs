@@ -13,6 +13,9 @@ namespace HotFix
                 var clientPlayer = new ClientPlayer(playerData);
                 m_PlayerList.Add(playerData.SeatId, clientPlayer);
             }
+
+            //handCards = new List<CardAttribute>();
+            //runnerPos = new Dictionary<RunnerColor, int>(5);
         }
 
         public void UpdateData(BaseRoomData data)
@@ -24,5 +27,11 @@ namespace HotFix
                 m_PlayerList[playerData.SeatId] = clientPlayer;
             }
         }
+
+        // 保存自己的颜色和手牌
+        public RunnerColor runnerColor;
+        public List<CardAttribute> handCards; //length=5
+        // 保存乌龟棋子位置
+        public Dictionary<RunnerColor, int> runnerPos; //length=5
     }
 }
