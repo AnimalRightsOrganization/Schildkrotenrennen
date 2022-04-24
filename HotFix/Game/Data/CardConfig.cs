@@ -96,8 +96,9 @@ namespace HotFix
      * 同时到达，越上面的排名靠前 */
 
     // 5身份牌，5棋子
-    public enum ChessColor : byte
+    public enum ChessColor
     {
+        NONE    = -1, //未指定的
         RED     = 0,
         YELLOW  = 1,
         GREEN   = 2,

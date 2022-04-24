@@ -13,7 +13,7 @@ namespace HotFix
         public Transform[] handPoints; //手牌
 
         public Transform m_PlayerRoot; //玩家
-        public Transform m_RunnerRoot; //棋子
+        public Transform m_ChessRoot; //棋子
         public Transform m_HandRoot; //手牌
         #endregion
 
@@ -45,7 +45,7 @@ namespace HotFix
             }
 
             m_PlayerRoot = transform.Find("playerRoot");
-            m_RunnerRoot = transform.Find("runnerRoot");
+            m_ChessRoot = transform.Find("runnerRoot");
             m_HandRoot = transform.Find("handRoot");
 
             var obj2 = ResManager.LoadPrefab("Prefabs/player");
@@ -78,6 +78,10 @@ namespace HotFix
         #endregion
 
         #region 按钮事件
+        void UpdateUI()
+        {
+
+        }
         void OnCloseBtnClick()
         {
             Debug.Log("退出游戏");
@@ -100,7 +104,6 @@ namespace HotFix
                     break;
             }
         }
-
         // 发牌消息
         void OnDeal(PacketType type, object reader) { }
         // 出牌消息

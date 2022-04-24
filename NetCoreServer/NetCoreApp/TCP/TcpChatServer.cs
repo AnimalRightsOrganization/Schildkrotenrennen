@@ -363,7 +363,11 @@ namespace TcpChatServer
             }
             //TODO: 校验所有成员状态。
 
-            EmptyPacket packet = new EmptyPacket(); //TODO: 组织开局所需数据
+            var packet = new S2C_GameStartPacket
+            {
+                Color = 1,
+                Cards = new List<int> { 1, 2, 3, 4, 5 },
+            };
             serverRoom.SendAsync(PacketType.S2C_GameStart, packet); //给所有成员发送开始
         }
         protected void OnPlayCard(MemoryStream ms)

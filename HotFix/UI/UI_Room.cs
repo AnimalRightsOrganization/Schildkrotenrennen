@@ -185,12 +185,15 @@ namespace HotFix
         }
         void OnGameStart(object reader)
         {
-            //TODO: 解包，获取完整比赛信息，座位号和颜色。重连也下发这个消息。
             var packet = (S2C_GameStartPacket)reader;
-            //packet.Color; //自己的颜色
-            //packet.Cards; //自己的手牌
             TcpChatClient.m_ClientRoom.chessColor = (ChessColor)packet.Color;
-
+            TcpChatClient.m_ClientRoom.handCards = new List<Card>();
+            for (int i = 0; i < packet.Cards.Count; i++)
+            {
+                int cardid = packet.Cards[i];
+                Card card = ClientRoom.lib.library[cardid];
+                TcpChatClient.m_ClientRoom.handCards.Add(card);
+            }
 
             UIManager.Get().Pop(this);
             UIManager.Get().Push<UI_Game>();

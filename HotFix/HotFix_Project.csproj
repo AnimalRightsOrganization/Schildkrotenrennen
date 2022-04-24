@@ -35,18 +35,23 @@
   <ItemGroup>
     <Reference Include="DemiLib">
       <HintPath>..\Unity\Assets\ThirdParty\Demigiant\DemiLib\DemiLib.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DOTween">
       <HintPath>..\Unity\Assets\ThirdParty\Demigiant\DOTween\DOTween.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DOTween43">
       <HintPath>..\Unity\Assets\ThirdParty\Demigiant\DOTween\DOTween43.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DOTween46">
       <HintPath>..\Unity\Assets\ThirdParty\Demigiant\DOTween\DOTween46.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DOTween50">
       <HintPath>..\Unity\Assets\ThirdParty\Demigiant\DOTween\DOTween50.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -70,6 +75,7 @@
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
       <HintPath>.\UnityEngine.AudioModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>.\UnityEngine.CoreModule.dll</HintPath>

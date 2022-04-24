@@ -14,8 +14,16 @@ namespace HotFix
                 m_PlayerList.Add(playerData.SeatId, clientPlayer);
             }
 
-            //handCards = new List<Card>();
-            //runnerPos = new Dictionary<ChessColor, int>(5);
+            // 初始化
+            lib = new CardLib();
+            chessColor = ChessColor.NONE; //空，等待指定
+            handCards = new List<Card>(); //空，等待发牌
+            runnerPos = new Dictionary<ChessColor, int>();
+            runnerPos.Add(ChessColor.RED, 0);
+            runnerPos.Add(ChessColor.YELLOW, 0);
+            runnerPos.Add(ChessColor.GREEN, 0);
+            runnerPos.Add(ChessColor.BLUE, 0);
+            runnerPos.Add(ChessColor.PURPLE, 0);
         }
 
         public void UpdateData(BaseRoomData data)
@@ -28,10 +36,11 @@ namespace HotFix
             }
         }
 
+        public static CardLib lib;
         // 保存自己的颜色和手牌
         public ChessColor chessColor;
-        public List<Card> handCards; //length=5
+        public List<Card> handCards; //长度永远是5
         // 保存乌龟棋子位置
-        public Dictionary<ChessColor, int> runnerPos; //length=5
+        public Dictionary<ChessColor, int> runnerPos; //长度永远是5
     }
 }
