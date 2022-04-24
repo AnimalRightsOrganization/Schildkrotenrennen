@@ -362,12 +362,6 @@ namespace TcpChatServer
                 return;
             }
 
-            //var packet = new S2C_GameStartPacket
-            //{
-            //    Color = 1,
-            //    Cards = new List<int> { 1, 2, 3, 4, 5 },
-            //};
-            //serverRoom.SendAsync(PacketType.S2C_GameStart, packet);
             serverRoom.OnGameStart_Server();
         }
         protected void OnPlayCard(MemoryStream ms)
@@ -375,11 +369,20 @@ namespace TcpChatServer
             var request = ProtobufHelper.Deserialize<C2S_PlayCardPacket>(ms); //解包
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            Debug.Print($"{p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}");
+            Debug.Print($"{p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}-{request.Color}");
 
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
+            //TODO: 服务器处理逻辑
+
+            // 房间内广播出牌结果
             var packet = new S2C_PlayCardPacket { SeatID = p.SeatId, CardID = request.CardID };
-            serverRoom.SendAsync(PacketType.S2C_GamePlay, packet); //给所有成员发送开始
+            serverRoom.SendAsync(PacketType.S2C_GamePlay, packet);
+
+            // 给出牌者发送新发的牌
+            //var packet2 = new S2C_DealPacket { SeatID = p.SeatId, CardID =  };
+            //p.SendAsync(PacketType.S2C_GameDeal, packet2);
+
+            // 给下一个出牌的人提示出牌？
         }
         protected void OnGameResult()
         {

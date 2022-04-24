@@ -87,11 +87,11 @@ namespace HotFix
             switch (type)
             {
                 case PacketType.S2C_LoginResult:
-                    OnLoginResult(type, reader);
+                    OnLoginResult(reader);
                     break;
             }
         }
-        void OnLoginResult(PacketType type, object reader)
+        void OnLoginResult(object reader)
         {
             var packet = (S2C_LoginResultPacket)reader;
             var playerData = new BasePlayerData { UserName = packet.Username }; //没填的都是默认值

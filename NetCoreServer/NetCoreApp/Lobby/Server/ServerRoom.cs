@@ -161,10 +161,10 @@ namespace NetCoreServer
 
             // 准备颜色随机数
             var colors = GameLogic.AllotColor();
-            for (int i = 0; i < colors.Length; i++)
-            {
-                Debug.Print($"打印随机数：{i}---{colors[i]}");
-            }
+            //for (int i = 0; i < colors.Length; i++)
+            //{
+            //    Debug.Print($"打印随机数：{i}---{colors[i]}");
+            //}
             // 遍历分配颜色
             for (int i = 0; i < CurCount; i++)
             {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
+using ET;
 
 namespace HotFix
 {
@@ -16,10 +16,12 @@ namespace HotFix
         public Item_Card[] myCards;
         public Item_Chess[] gameChess;
         public int selectedCardId;
+        public int selectedCardColor;
         public GameObject m_PlayPanel;
         public Button m_PlayBtn;
         public Button m_CancelBtn;
         System.Action CancelAction;
+        System.Action PlayAction;
         public GameObject m_ColorPanel;
         public Button[] m_ColorBtns;
         #endregion
@@ -76,7 +78,11 @@ namespace HotFix
             {
                 int index = i;
                 Button btn = m_ColorBtns[i];
-                btn.onClick.AddListener(() => { Debug.Log(index); });
+                btn.onClick.AddListener(() =>
+                {
+                    selectedCardColor = index;
+                    Debug.Log(index);
+                });
             }
         }
 
@@ -123,10 +129,11 @@ namespace HotFix
         {
             Debug.Log("退出游戏");
         }
-        public void ShowPlayPanel(int id, System.Action act)
+        public void ShowPlayPanel(int id, System.Action noAction, System.Action yesAction)
         {
             selectedCardId = id;
-            CancelAction = act;
+            CancelAction = noAction;
+            PlayAction = yesAction;
             m_PlayPanel.SetActive(true);
             Card card = ClientRoom.lib.library[selectedCardId];
             //Debug.Log($"显示：{card.Log()}");
@@ -150,6 +157,13 @@ namespace HotFix
         {
             Card card = ClientRoom.lib.library[selectedCardId];
             Debug.Log($"出牌：{card.Log()}");
+
+            var cmd = new C2S_PlayCardPacket
+            {
+                CardID = card.id,
+                Color = selectedCardColor,
+            };
+            TcpChatClient.SendAsync(PacketType.C2S_GamePlay, cmd);
         }
         #endregion
 
@@ -159,22 +173,30 @@ namespace HotFix
             switch (type)
             {
                 case PacketType.S2C_GameDeal:
-                    OnDeal(type, reader);
+                    OnDeal(reader);
                     break;
                 case PacketType.S2C_GamePlay:
-                    OnPlay(type, reader);
+                    OnPlay(reader);
                     break;
                 case PacketType.S2C_GameResult:
-                    OnMatchResult(type, reader);
+                    OnMatchResult(reader);
                     break;
             }
         }
         // 发牌消息
-        void OnDeal(PacketType type, object reader) { }
+        void OnDeal(object reader) { }
         // 出牌消息
-        void OnPlay(PacketType type, object reader) { }
+        void OnPlay(object reader)
+        {
+            var packet = (S2C_PlayCardPacket)reader;
+            Debug.Log($"[S2C_GamePlay] 座位#{packet.SeatID}出牌{packet.CardID}");
+
+            PlayAction?.Invoke();
+            m_PlayPanel.SetActive(false);
+            //TODO: 动画控制棋子走动
+        }
         // 结算消息
-        void OnMatchResult(PacketType type, object reader) { }
+        void OnMatchResult(object reader) { }
         #endregion
     }
 }

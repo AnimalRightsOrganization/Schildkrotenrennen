@@ -13,6 +13,8 @@ namespace HotFix
         public Button m_SelfBtn;
 
         public Card card;
+        private Vector3 src;
+        private Vector3 dst;
 
         void Awake()
         {
@@ -36,15 +38,17 @@ namespace HotFix
         {
             Debug.Log($"选中：{card.Log()}");
 
-            Vector3 src = transform.position;
-            Vector3 dst = src + Vector3.up * 100; //相对位置
+            // 实例化创建出来的，要在创建完成后获取坐标
+            src = transform.position;
+            dst = src + Vector3.up * 100;
             Tweener tw_show = transform.DOMove(dst, 0.3f);
 
             var ui_game = UIManager.Get().GetUI<UI_Game>();
-            ui_game.ShowPlayPanel(card.id, () =>
-            {
-                Tweener tw_hide = transform.DOMove(src, 0.3f);
-            });
+            ui_game.ShowPlayPanel(card.id, CancelCardAnime, PlayCardAnime);
+        }
+        void CancelCardAnime()
+        {
+            Tweener tw_hide = transform.DOMove(src, 0.3f);
         }
         void PlayCardAnime()
         {
