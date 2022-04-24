@@ -304,6 +304,23 @@ namespace WinFormsApp1
         {
             Application.Restart();
             Environment.Exit(0);
+
+            //AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            //AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
+            //AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+        private void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+        private void CurrentDomain_ProcessExit(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
