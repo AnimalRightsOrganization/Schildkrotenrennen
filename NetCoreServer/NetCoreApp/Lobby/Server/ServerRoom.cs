@@ -232,7 +232,7 @@ namespace NetCoreServer
         }
 
         // 收到出牌，发一张新牌
-        public void OnGameDeal(ServerPlayer player)
+        public Card OnGameDeal(ServerPlayer player)
         {
             var card = cardList[nextIndex];
             player.handCards.Add(card);
@@ -244,6 +244,8 @@ namespace NetCoreServer
                 nextIndex = 0;
                 GameLogic.Shuffle(cardList);
             }
+
+            return card;
         }
 
         // 结算

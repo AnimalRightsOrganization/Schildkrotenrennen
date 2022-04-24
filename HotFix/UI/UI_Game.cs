@@ -13,8 +13,8 @@ namespace HotFix
         public Image m_PlayerImage; //本人
         public Image[] m_Seats; //基础座位
         public Transform[] m_MapPoints; //地图
-        public Item_Card[] myCards;
-        public Item_Chess[] gameChess;
+        public Item_Card[] myCards; //手牌
+        public Item_Chess[] gameChess; //棋子
         public int selectedCardId;
         public int selectedCardColor;
         public GameObject m_PlayPanel;
@@ -184,16 +184,30 @@ namespace HotFix
             }
         }
         // 发牌消息
-        void OnDeal(object reader) { }
+        void OnDeal(object reader)
+        {
+            
+        }
         // 出牌消息
         void OnPlay(object reader)
         {
             var packet = (S2C_PlayCardPacket)reader;
-            Debug.Log($"[S2C_GamePlay] 座位#{packet.SeatID}出牌{packet.CardID}");
+            Debug.Log($"[S2C_GamePlay] 座位#{packet.SeatID}出牌{packet.CardID}-{packet.Color}");
 
             PlayAction?.Invoke();
             m_PlayPanel.SetActive(false);
-            //TODO: 动画控制棋子走动
+
+            // 解析牌型
+            int colorId = packet.Color;
+            Card card = ClientRoom.lib.library[packet.CardID];
+            // 如果是彩色，转成实际的颜色
+            bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;
+            ChessColor colorKey = colorful ? (ChessColor)colorId : (ChessColor)card.cardColor; //哪只乌龟
+            int step = (int)card.cardNum; //走几步
+
+            // 动画控制走棋子
+            var chess = gameChess[(int)card.cardColor];
+            chess.Move(colorKey, step);
         }
         // 结算消息
         void OnMatchResult(object reader) { }

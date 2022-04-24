@@ -106,6 +106,12 @@ namespace HotFix
                         NetPacketManager.Trigger(type, packet);
                         break;
                     }
+                case PacketType.S2C_GameDeal:
+                    {
+                        var packet = ProtobufHelper.Deserialize<S2C_DealPacket>(stream);
+                        NetPacketManager.Trigger(type, packet);
+                        break;
+                    }
                 case PacketType.S2C_GameResult:
                     {
                         var packet = ProtobufHelper.Deserialize<S2C_GameResultPacket>(stream);

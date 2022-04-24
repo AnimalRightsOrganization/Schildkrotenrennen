@@ -10,26 +10,28 @@ namespace HotFix
     {
         #region 界面组件
         public Button m_HelpBtn;
-        public Button m_QQBtn;
-        public Button m_WXBtn;
+        public InputField m_UserInput;
         public Button m_LoginBtn;
         public Button m_RegisterBtn;
+        public Button m_QQBtn;
+        public Button m_WXBtn;
         #endregion
 
         #region 内置方法
         void Awake()
         {
-            m_HelpBtn = transform.Find("HelpButton").GetComponent<Button>();
-            m_QQBtn = transform.Find("QQButton").GetComponent<Button>();
-            m_WXBtn = transform.Find("WXButton").GetComponent<Button>();
+            m_UserInput = transform.Find("UserInput").GetComponent<InputField>();
             m_LoginBtn = transform.Find("LoginBtn").GetComponent<Button>();
             m_RegisterBtn = transform.Find("RegisterBtn").GetComponent<Button>();
+            m_QQBtn = transform.Find("QQButton").GetComponent<Button>();
+            m_WXBtn = transform.Find("WXButton").GetComponent<Button>();
+            m_HelpBtn = transform.Find("HelpButton").GetComponent<Button>();
 
-            m_HelpBtn.onClick.AddListener(OnHelpBtnClick);
-            m_QQBtn.onClick.AddListener(OnQQBtnClick);
-            m_WXBtn.onClick.AddListener(OnWXBtnClick);
             m_LoginBtn.onClick.AddListener(OnLoginBtnClick);
             m_RegisterBtn.onClick.AddListener(OnRegisterBtnClick);
+            m_QQBtn.onClick.AddListener(OnQQBtnClick);
+            m_WXBtn.onClick.AddListener(OnWXBtnClick);
+            m_HelpBtn.onClick.AddListener(OnHelpBtnClick);
         }
 
         void Start()
@@ -42,26 +44,33 @@ namespace HotFix
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
 
-            m_HelpBtn.onClick.RemoveListener(OnHelpBtnClick);
-            m_QQBtn.onClick.RemoveListener(OnQQBtnClick);
-            m_WXBtn.onClick.RemoveListener(OnWXBtnClick);
             m_LoginBtn.onClick.RemoveListener(OnLoginBtnClick);
             m_RegisterBtn.onClick.RemoveListener(OnRegisterBtnClick);
+            m_QQBtn.onClick.RemoveListener(OnQQBtnClick);
+            m_WXBtn.onClick.RemoveListener(OnWXBtnClick);
+            m_HelpBtn.onClick.RemoveListener(OnHelpBtnClick);
 
             Debug.Log("释放临时变量");
-            m_HelpBtn = null;
-            m_QQBtn = null;
-            m_WXBtn = null;
+            m_UserInput = null;
             m_LoginBtn = null;
             m_RegisterBtn = null;
+            m_QQBtn = null;
+            m_WXBtn = null;
+            m_HelpBtn = null;
         }
         #endregion
 
         #region 按钮事件
-        void OnHelpBtnClick()
+        void OnLoginBtnClick()
         {
-            //UIManager.Get().Push<UI_Main>();
-            //TcpChatClient.Disconnect();
+            string username = m_UserInput.text;
+            if (string.IsNullOrEmpty(username))
+                username = "lala";
+            TcpChatClient.SendLogin(username, "123456");
+        }
+        void OnRegisterBtnClick()
+        {
+            UIManager.Get().Push<UI_Register>();
         }
         void OnQQBtnClick()
         {
@@ -71,13 +80,10 @@ namespace HotFix
         {
             Debug.Log("[Hotfix] 微信登录");
         }
-        void OnLoginBtnClick()
+        void OnHelpBtnClick()
         {
-            TcpChatClient.SendLogin("lala", "123456");
-        }
-        void OnRegisterBtnClick()
-        {
-            UIManager.Get().Push<UI_Register>();
+            //UIManager.Get().Push<UI_Main>();
+            //TcpChatClient.Disconnect();
         }
         #endregion
 

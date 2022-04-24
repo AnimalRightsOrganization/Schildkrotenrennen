@@ -63,7 +63,8 @@ namespace HotFix
     public class TcpChatClient
     {
         protected static ChatClient client;
-        const string address = "127.0.0.1";
+        //const string address = "127.0.0.1";
+        const string address = "192.168.1.101";
         const int port = 1111;
 
         public static ClientPlayerManager m_PlayerManager;

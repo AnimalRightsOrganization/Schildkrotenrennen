@@ -228,6 +228,9 @@ namespace ET
 		public int CardID { get; set; }
 
 		[ProtoMember(2)]
+		public int Color { get; set; }
+
+		[ProtoMember(3)]
 		public int SeatID { get; set; }
 
 	}

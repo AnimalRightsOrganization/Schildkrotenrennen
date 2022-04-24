@@ -116,8 +116,7 @@ namespace TcpChatServer
             var request = ProtobufHelper.Deserialize<C2S_LoginPacket>(ms); //解包
             Debug.Print($"Username={request.Username}, Password={request.Password} by {Id}");
 
-            //UserInfo result = await MySQLTool.GetUserInfo(request.Username, request.Password);
-            UserInfo result = await MySQLTool.GetUserInfo("test3", "123456");
+            UserInfo result = await MySQLTool.GetUserInfo(request.Username, request.Password);
             if (result == null)
             {
                 Debug.Print($"用户名或密码错误");
@@ -374,13 +373,13 @@ namespace TcpChatServer
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
             serverRoom.TurnNext(p, request);
             // 给出牌者发送新发的牌
-            //var packet2 = new S2C_DealPacket { SeatID = p.SeatId, CardID =  };
-            //p.SendAsync(PacketType.S2C_GameDeal, packet2);
-            serverRoom.OnGameDeal(p);
+            var card = serverRoom.OnGameDeal(p);
+            var packet1 = new S2C_DealPacket { SeatID = p.SeatId, CardID = card.id };
+            p.SendAsync(PacketType.S2C_GameDeal, packet1);
 
             // 房间内广播出牌结果
-            var packet = new S2C_PlayCardPacket { SeatID = p.SeatId, CardID = request.CardID };
-            serverRoom.SendAsync(PacketType.S2C_GamePlay, packet);
+            var packet2 = new S2C_PlayCardPacket { CardID = request.CardID, Color = request.Color, SeatID = p.SeatId };
+            serverRoom.SendAsync(PacketType.S2C_GamePlay, packet2);
 
             // 给下一个出牌的人提示出牌？
             //serverRoom.S2C_YourTurn
