@@ -81,6 +81,14 @@
       <HintPath>.\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.Physics2DModule">
+      <HintPath>.\UnityEngine.Physics2DModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>.\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>.\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
@@ -103,13 +111,13 @@
     <Compile Include="Core\Object\ProtoObject.cs" />
     <Compile Include="Core\PoolHelper.cs" />
     <Compile Include="Core\ProtobufHelper.cs" />
-    <Compile Include="Game\View\CardView.cs" />
-    <Compile Include="Game\Data\CardConfig.cs" />
+    <Compile Include="UI\Item\Item_Card.cs" />
+    <Compile Include="Game\CardConfig.cs" />
     <Compile Include="Lobby\Client\ClientPlayer.cs" />
     <Compile Include="Lobby\Client\ClientPlayerManager.cs" />
     <Compile Include="Lobby\Client\ClientRoom.cs" />
     <Compile Include="Game\GameLogic.cs" />
-    <Compile Include="Game\View\ChessView.cs" />
+    <Compile Include="UI\Item\Item_Chess.cs" />
     <Compile Include="Lobby\Shared\BasePlayer.cs" />
     <Compile Include="Lobby\Shared\BaseRoom.cs" />
     <Compile Include="Lobby\Shared\GamePackets.cs" />
@@ -120,7 +128,6 @@
     <Compile Include="Message\OuterMessage.cs" />
     <Compile Include="Message\OuterOpcode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\Item\Item_Card.cs" />
     <Compile Include="UI\Item\Item_Room.cs" />
     <Compile Include="UI\UI_Dialog.cs" />
     <Compile Include="UI\UI_Game.cs" />

@@ -55,10 +55,10 @@ TextureImporter:
     second: color+1
   - first:
       213: 21300034
-    second: slow+1
+    second: slowest+1
   - first:
       213: 21300036
-    second: slow+2
+    second: slowest+2
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -529,7 +529,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: slow+1
+      name: slowest+1
       rect:
         serializedVersion: 2
         x: 331
@@ -550,7 +550,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: slow+2
+      name: slowest+2
       rect:
         serializedVersion: 2
         x: 499
@@ -584,5 +584,5 @@ TextureImporter:
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
   userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+  assetBundleName: sprites/cards
+  assetBundleVariant: unity3d

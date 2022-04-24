@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -7,13 +7,20 @@ namespace HotFix
 {
     public class Item_Card : UIBase
     {
-        public Sprite[] cardArray;
-        public Image mMainSP;
+        public RectTransform m_Rect;
+        public CanvasGroup m_Group;
+        public Dictionary<string, Sprite> cardArray;
+        public Button m_SelfBtn;
+
         public Card card;
 
         void Awake()
         {
-
+            m_Rect = transform.GetComponent<RectTransform>();
+            m_Group = transform.GetComponent<CanvasGroup>();
+            cardArray = ResManager.LoadSprite("Sprites/cards");
+            m_SelfBtn = transform.Find("Image").GetComponent<Button>();
+            m_SelfBtn.onClick.AddListener(OnSelect);
         }
 
         public void InitData(Card data)
@@ -21,25 +28,27 @@ namespace HotFix
             card = data;
 
             string combName = (data.cardColor.ToString().ToLower() + "" + (data.cardNum > 0 ? "+" : "") + (int)data.cardNum);
-            //Debug.Log(combName);
-
-            //var array = cardArray.Where(x => x.name == combName).ToList();
-            //Debug.Log(array.Count);
-            var sp = cardArray.First(x => x.name == combName);
-            mMainSP.sprite = sp;
+            Debug.Log(combName);
+            m_SelfBtn.image.sprite = cardArray[combName];
         }
 
-        public void Select()
+        void OnSelect()
         {
-            //Debug.Log("选中");
-            //transform.DOScale(1.1f, 0.2f);
+            Debug.Log($"选中：[{card.id}]{card.cardColor}-{card.cardNum}");
+            Tweener tw1 = transform.DOScale(1.1f, 0.2f);
 
-            //wMainGame.playCardEvent.Invoke(card); //通知方式执行事件
-        }
-
-        public void UnSelect()
-        {
-            transform.DOScale(1f, 0.2f);
+            tw1.OnComplete(() =>
+            {
+                Vector3 src = transform.position;
+                Vector3 dst = src + Vector3.up * 720; //与本身size对应
+                Tweener tw2 = transform.DOMove(dst, 0.3f);
+                tw2.OnComplete(() =>
+                {
+                    Tweener tw3 = m_Group.DOFade(0, 0.3f);
+                    tw3.SetDelay(0.5f);
+                    tw3.Play();
+                });
+            });
         }
     }
 }

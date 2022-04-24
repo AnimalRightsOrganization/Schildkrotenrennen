@@ -14,9 +14,9 @@ namespace HotFix
         public Transform[] wayPoints; //路径
         public Transform[] handPoints; //手牌
 
-        public Image m_PlayerImage; //玩家
-        public Transform m_ChessRoot; //棋子
-        public Transform m_HandRoot; //手牌
+        public Image[] m_Seats; //房间内所有玩家
+        public Image m_PlayerImage; //本人
+        public Item_Card[] myCards;
         #endregion
 
         #region 内置方法
@@ -47,21 +47,22 @@ namespace HotFix
             }
 
             m_PlayerImage = transform.Find("chessColor").GetComponent<Image>();
-            m_ChessRoot = transform.Find("runnerRoot");
-            m_HandRoot = transform.Find("handRoot");
 
-            var obj1 = ResManager.LoadPrefab("Prefabs/card");
+            myCards = new Item_Card[5];
+            var cardPrefab = ResManager.LoadPrefab("Prefabs/Card");
             for (int i = 0; i < 5; i++)
             {
-                var handObj = Instantiate(obj1, handPoints[i]);
+                var handObj = Instantiate(cardPrefab, handPoints[i]);
+                var handScript = handObj.AddComponent<Item_Card>();
+                myCards[i] = handScript;
             }
 
-            var runnerPrefab = ResManager.LoadPrefab("Prefabs/runner");
+            var chessPrefab = ResManager.LoadPrefab("Prefabs/Chess");
             for (int i = 0; i < 5; i++)
             {
-                var runnerObj = Instantiate(runnerPrefab, startPoints[i]);
-                //var runnerScript = runnerObj.AddComponent<Runner>();
-                //runnerScript.InitData(i);
+                var chessObj = Instantiate(chessPrefab, startPoints[i]);
+                var chessScript = chessObj.AddComponent<Item_Chess>();
+                chessScript.InitData(i);
             }
         }
 
@@ -84,6 +85,12 @@ namespace HotFix
             int colorId = (int)TcpChatClient.m_ClientRoom.chessColor;
             m_PlayerImage.sprite = dic_sp[$"identify_{colorId}"]; //红0黄1绿2蓝3紫4
             Debug.Log($"Color={TcpChatClient.m_ClientRoom.chessColor}");
+
+            for (int i = 0; i < 5; i++)
+            {
+                var card = TcpChatClient.m_ClientRoom.handCards[i];
+                myCards[i].InitData(card);
+            }
         }
         void OnCloseBtnClick()
         {

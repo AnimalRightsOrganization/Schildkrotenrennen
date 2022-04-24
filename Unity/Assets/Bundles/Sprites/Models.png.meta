@@ -13,10 +13,10 @@ TextureImporter:
     second: models_2
   - first:
       213: 21300006
-    second: models_3
+    second: models_1
   - first:
       213: 21300008
-    second: models_4
+    second: models_0
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -130,7 +130,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: models_0
+      name: models_4
       rect:
         serializedVersion: 2
         x: 0
@@ -151,7 +151,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: models_1
+      name: models_3
       rect:
         serializedVersion: 2
         x: 278
@@ -193,7 +193,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: models_3
+      name: models_1
       rect:
         serializedVersion: 2
         x: 790
@@ -214,7 +214,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: models_4
+      name: models_0
       rect:
         serializedVersion: 2
         x: 1040
@@ -248,5 +248,5 @@ TextureImporter:
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
   userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+  assetBundleName: sprites/models
+  assetBundleVariant: unity3d

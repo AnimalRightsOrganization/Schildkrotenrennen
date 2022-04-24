@@ -6,10 +6,11 @@ namespace HotFix
 {
     public class Item_Chess : UIBase
     {
-        public ChessColor mColor;
-        public Dictionary<string, Sprite> mColorSp;
         public Image mColorImage;
-        public int CurrentWayPoint;
+        public Dictionary<string, Sprite> mColorSp;
+
+        public ChessColor mColor;
+        public int CurrentWayPoint; //当前在的格子
 
         void Awake()
         {
@@ -21,11 +22,10 @@ namespace HotFix
 
         public void InitData(int id)
         {
-            //Debug.Log($"棋子：{id}");
+            mColorImage.sprite = mColorSp[$"models_{id}"];
 
-            CurrentWayPoint = 0;
             mColor = (ChessColor)id;
-            mColorImage.sprite = mColorSp[""];
+            CurrentWayPoint = 0;
         }
     }
 }
