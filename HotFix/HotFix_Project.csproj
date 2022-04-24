@@ -98,8 +98,7 @@
     <Compile Include="Core\PoolHelper.cs" />
     <Compile Include="Core\ProtobufHelper.cs" />
     <Compile Include="Game\View\CardView.cs" />
-    <Compile Include="Game\Data\CardAttribute.cs" />
-    <Compile Include="Game\Data\CardLibrary.cs" />
+    <Compile Include="Game\Data\CardConfig.cs" />
     <Compile Include="Lobby\Client\ClientPlayer.cs" />
     <Compile Include="Lobby\Client\ClientPlayerManager.cs" />
     <Compile Include="Lobby\Client\ClientRoom.cs" />

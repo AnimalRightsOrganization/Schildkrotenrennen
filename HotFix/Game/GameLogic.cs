@@ -13,32 +13,22 @@ namespace HotFix
         public int playerCount; //本局玩家数，开房间时确定
         public List<GamePlayer> playerList; //玩家列表
 
-        List<CardAttribute> libraryList; //所有牌
-        List<CardAttribute> deskList = new List<CardAttribute>(); //桌上的牌
+        List<Card> libraryList; //所有牌
+        //List<Card> deskList; //桌上的牌
 
         // 开局，分配玩家颜色
         public byte[] AllotColor()
         {
             // 5色，不重复
-            //List<RunnerColor> colors = new List<RunnerColor>()
-            //{
-            //    (RunnerColor)0,
-            //    (RunnerColor)1,
-            //    (RunnerColor)2,
-            //    (RunnerColor)3,
-            //    (RunnerColor)4,
-            //};
-            int count = (int)RunnerColor.COUNT;
+            int count = (int)ChessColor.COUNT;
             byte[] colors = new byte[] { 0, 1, 2, 3, 4 };
 
             // 打乱排序
             Random _rd = new Random();
-            int index = 0;
-            //RunnerColor temp;
             byte temp;
             for (int i = 0; i < count; i++)
             {
-                index = _rd.Next(0, count - 1);
+                int index = _rd.Next(0, count - 1);
                 if (index != i)
                 {
                     temp = colors[i];
@@ -46,13 +36,6 @@ namespace HotFix
                     colors[index] = temp;
                 }
             }
-
-            //for (int i = playerList.Count - 1; i >= 0; i--)
-            //{
-            //    var player = playerList[i];
-            //    var color = colors[i];
-            //    Debug.Log($"玩家{i}---颜色{color}");
-            //}
             return colors;
         }
     }
@@ -114,7 +97,7 @@ namespace HotFix
             {
                 GamePlayer player = new GamePlayer()
                 {
-                    gameid = i,
+                    seatId = i,
                     user_id = "wx_" + rd.Next(10000, 99999),
                 };
                 playerList.Add(player);
@@ -143,8 +126,7 @@ namespace HotFix
         // 初始化卡牌配置
         public void InitOption()
         {
-            var cards = new CardLibrary();
-            libraryList = cards.libraryList;
+            libraryList = new CardLib().library;
             Shuffle(libraryList);
         }
 
@@ -162,7 +144,7 @@ namespace HotFix
                     // 从牌库抽一张牌
                     int index = rd.Next(1, libraryList.Count);
 
-                    CardAttribute card = libraryList[index];
+                    Card card = libraryList[index];
 
                     // 把牌放入玩家手中
                     playerList[nextTurn].handCardsList.Add(card);

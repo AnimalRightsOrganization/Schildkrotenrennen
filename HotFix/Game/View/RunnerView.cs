@@ -6,7 +6,7 @@ namespace HotFix
 {
     public class RunnerView : MonoBehaviour
     {
-        public RunnerColor mColor;
+        public ChessColor mColor;
         public Sprite[] mColorSp = new Sprite[5];
         public Image mColorImage;
         public int CurrentWayPoint;
@@ -24,7 +24,7 @@ namespace HotFix
             //Debug.Log($"棋子：{id}");
 
             CurrentWayPoint = 0;
-            mColor = (RunnerColor)id;
+            mColor = (ChessColor)id;
             mColorImage.sprite = mColorSp[id];
         }
     }

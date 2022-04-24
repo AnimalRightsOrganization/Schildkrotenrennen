@@ -10,11 +10,11 @@ namespace HotFix
     {
         [HideInInspector] public Sprite[] cardArray;
         [SerializeField] Image mMainSP;
-        [SerializeField] CardAttribute cardAttribute;
+        [SerializeField] Card card;
 
-        public void InitData(CardAttribute data)
+        public void InitData(Card data)
         {
-            cardAttribute = data;
+            card = data;
 
             string combName = (data.cardColor.ToString().ToLower() + "" + (data.cardNum > 0 ? "+" : "") + (int)data.cardNum);
             //Debug.Log(combName);
@@ -30,7 +30,7 @@ namespace HotFix
             //Debug.Log("选中");
             //transform.DOScale(1.1f, 0.2f);
 
-            //wMainGame.playCardEvent.Invoke(cardAttribute); //通知方式执行事件
+            //wMainGame.playCardEvent.Invoke(card); //通知方式执行事件
         }
 
         public void UnSelect()
