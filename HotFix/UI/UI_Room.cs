@@ -132,6 +132,7 @@ namespace HotFix
         void OnLeaveRoom(object reader)
         {
             UIManager.Get().Pop(this);
+            UIManager.Get().Push<UI_Main>();
 
             var packet = (S2C_LeaveRoomPacket)reader;
             string message = string.Empty;
@@ -158,7 +159,7 @@ namespace HotFix
         void OnGetRoomInfo(object reader)
         {
             var response = (S2C_RoomInfo)reader;
-            Debug.Log($"S2C_RoomInfo: [{response.Room.RoomName}#{response.Room.RoomID}]，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
+            //Debug.Log($"S2C_RoomInfo: [{response.Room.RoomName}#{response.Room.RoomID}]，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
 
             //别人加入/离开
             var roomData = new BaseRoomData
@@ -166,6 +167,7 @@ namespace HotFix
                 RoomID = response.Room.RoomID,
                 RoomName = response.Room.RoomName,
                 RoomLimit = response.Room.LimitNum,
+                Players = new List<BasePlayerData>(),
             };
             for (int i = 0; i < response.Room.Players.Count; i++)
             {
@@ -177,6 +179,7 @@ namespace HotFix
                     RoomId = response.Room.RoomID,
                     SeatId = playerInfo.SeatID,
                 };
+                //if (roomData.Players.Contains(playerData) == false)
                 roomData.Players.Add(playerData);
             }
             TcpChatClient.m_ClientRoom.UpdateData(roomData);

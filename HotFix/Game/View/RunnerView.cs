@@ -7,7 +7,7 @@ namespace HotFix
     public class RunnerView : MonoBehaviour
     {
         public ChessColor mColor;
-        public Sprite[] mColorSp = new Sprite[5];
+        public Dictionary<string, Sprite> mColorSp;
         public Image mColorImage;
         public int CurrentWayPoint;
 
@@ -25,7 +25,7 @@ namespace HotFix
 
             CurrentWayPoint = 0;
             mColor = (ChessColor)id;
-            mColorImage.sprite = mColorSp[id];
+            mColorImage.sprite = mColorSp[""];
         }
     }
 }

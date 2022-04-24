@@ -116,9 +116,9 @@ public class ResManager
         return textAsset.bytes;
     }
 
-    public static Sprite[] LoadSprite(string configName)
+    public static Dictionary<string, Sprite> LoadSprite(string configName)
     {
-        Sprite[] sp;
+        Dictionary<string, Sprite> sp;
 #if UNITY_EDITOR && !USE_ASSETBUNDLE
         string filePath = $"Assets/Bundles/{configName}.png";
         var assets = AssetDatabase.LoadAllAssetsAtPath(filePath);
@@ -131,14 +131,17 @@ public class ResManager
         int count = assets.Count();
         //Debug.Log($"子物体：{count}个");
 
-        sp = new Sprite[count - 1];
-        for (int i = 1; i < count; i++)
+        sp = new Dictionary<string, Sprite>();
+        for (int i = 0; i < count; i++)
         {
-            var subAsset = assets[i];
-            //Debug.Log($"{i}---{asset.name}");
-            sp[i - 1] = subAsset as Sprite;
+            var subAsset = assets[i] as Sprite;
+            if (subAsset != null)
+            {
+                //Debug.Log($"{i}---{subAsset?.name}");
+                sp.Add(subAsset.name, subAsset);
+            }
         }
-
+        //Debug.Log($"字典：{sp.Count}个");
         return sp;
     }
 

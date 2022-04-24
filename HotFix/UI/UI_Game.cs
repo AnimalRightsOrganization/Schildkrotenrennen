@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace HotFix
@@ -6,13 +7,14 @@ namespace HotFix
     public class UI_Game : UIBase
     {
         #region 界面组件
+        public Dictionary<string, Sprite> dic_sp; //手牌
         public Button m_CloseBtn;
 
         public Transform[] startPoints; //棋子
         public Transform[] wayPoints; //路径
         public Transform[] handPoints; //手牌
 
-        public Transform m_PlayerRoot; //玩家
+        public Image m_PlayerImage; //玩家
         public Transform m_ChessRoot; //棋子
         public Transform m_HandRoot; //手牌
         #endregion
@@ -44,12 +46,9 @@ namespace HotFix
                 handPoints[i] = handPointsRoot.GetChild(i);
             }
 
-            m_PlayerRoot = transform.Find("playerRoot");
+            m_PlayerImage = transform.Find("chessColor").GetComponent<Image>();
             m_ChessRoot = transform.Find("runnerRoot");
             m_HandRoot = transform.Find("handRoot");
-
-            var obj2 = ResManager.LoadPrefab("Prefabs/player");
-            Instantiate(obj2, m_PlayerRoot);
 
             var obj1 = ResManager.LoadPrefab("Prefabs/card");
             for (int i = 0; i < 5; i++)
@@ -81,6 +80,10 @@ namespace HotFix
         public void UpdateUI()
         {
             TcpChatClient.m_ClientRoom.PrintRoom();
+            dic_sp = ResManager.LoadSprite("Sprites/identify");
+            int colorId = (int)TcpChatClient.m_ClientRoom.chessColor;
+            m_PlayerImage.sprite = dic_sp[$"identify_{colorId}"]; //红0黄1绿2蓝3紫4
+            Debug.Log($"Color={TcpChatClient.m_ClientRoom.chessColor}");
         }
         void OnCloseBtnClick()
         {
