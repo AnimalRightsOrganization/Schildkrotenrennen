@@ -112,7 +112,7 @@ namespace HotFix
         // 初始化棋盘（仅单机）
         public void InitMap()
         {
-            //var obj = ResManager.LoadPrefab("Prefabs/runner");
+
         }
 
         // 洗牌

@@ -11,11 +11,9 @@ namespace HotFix
     // 公共算法黑盒
     public partial class GameLogic
     {
-        //protected int seed;
         static Random rd;
 
         public int playerCount; //本局玩家数，开房间时确定
-        //public List<GamePlayer> playerList; //玩家列表
 
         List<Card> libraryList; //所有牌
         //List<Card> deskList; //桌上的牌

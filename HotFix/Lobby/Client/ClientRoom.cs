@@ -28,7 +28,7 @@ namespace HotFix
 
         public static CardLib lib;
         // 保存乌龟棋子位置
-        public Dictionary<ChessColor, int> runnerPos; //长度永远是5
+        public Dictionary<ChessColor, int> chessPos; //长度永远是5
         // 保存自己的颜色和手牌
         public ChessColor chessColor;
         public List<Card> handCards; //长度永远是5
@@ -39,12 +39,12 @@ namespace HotFix
             lib = new CardLib();
             chessColor = ChessColor.NONE; //空，等待指定
             handCards = new List<Card>(); //空，等待发牌
-            runnerPos = new Dictionary<ChessColor, int>();
-            runnerPos.Add(ChessColor.RED, 0);
-            runnerPos.Add(ChessColor.YELLOW, 0);
-            runnerPos.Add(ChessColor.GREEN, 0);
-            runnerPos.Add(ChessColor.BLUE, 0);
-            runnerPos.Add(ChessColor.PURPLE, 0);
+            chessPos = new Dictionary<ChessColor, int>();
+            chessPos.Add(ChessColor.RED, 0);
+            chessPos.Add(ChessColor.YELLOW, 0);
+            chessPos.Add(ChessColor.GREEN, 0);
+            chessPos.Add(ChessColor.BLUE, 0);
+            chessPos.Add(ChessColor.PURPLE, 0);
         }
         public void PrintRoom()
         {

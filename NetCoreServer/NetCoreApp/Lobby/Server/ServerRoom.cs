@@ -5,7 +5,6 @@ using ET;
 
 namespace NetCoreServer
 {
-    /* 远程房间 */
     public class ServerRoom : BaseRoom
     {
         public ServerRoom(ServerPlayer host, BaseRoomData data) : base(data)
@@ -129,25 +128,25 @@ namespace NetCoreServer
         #region 游戏逻辑
         #endregion
 
-        // 所有牌
-        public static CardLib lib;
+        
+        public static CardLib lib; //所有牌
         List<Card> cardList;
-        // 下一张下发的牌
-        int nextIndex = 0;
-        // 保存乌龟棋子位置
-        public Dictionary<ChessColor, int> runnerPos; //长度永远是5
+        int nextIndex = 0; // 下一张下发的牌
+        int nextPlayerIndex = 0; //下一个出牌的座位号
+        public Dictionary<ChessColor, int> chessPos; //棋子位置 //长度永远是5，值范围是[0~9]
+        // TODO: 保存每步操作。
 
         void Init()
         {
             lib = new CardLib();
-            runnerPos = new Dictionary<ChessColor, int>();
-            runnerPos.Add(ChessColor.RED, 0);
-            runnerPos.Add(ChessColor.YELLOW, 0);
-            runnerPos.Add(ChessColor.GREEN, 0);
-            runnerPos.Add(ChessColor.BLUE, 0);
-            runnerPos.Add(ChessColor.PURPLE, 0);
-            //chessColor = ChessColor.NONE; //空，等待指定
-            //handCards = new List<Card>(); //空，等待发牌
+            nextIndex = 0;
+            nextPlayerIndex = 0;
+            chessPos = new Dictionary<ChessColor, int>();
+            chessPos.Add(ChessColor.RED, 0);
+            chessPos.Add(ChessColor.YELLOW, 0);
+            chessPos.Add(ChessColor.GREEN, 0);
+            chessPos.Add(ChessColor.BLUE, 0);
+            chessPos.Add(ChessColor.PURPLE, 0);
         }
 
         // 开局消息
@@ -161,10 +160,6 @@ namespace NetCoreServer
 
             // 准备颜色随机数
             var colors = GameLogic.AllotColor();
-            //for (int i = 0; i < colors.Length; i++)
-            //{
-            //    Debug.Print($"打印随机数：{i}---{colors[i]}");
-            //}
             // 遍历分配颜色
             for (int i = 0; i < CurCount; i++)
             {
@@ -177,17 +172,8 @@ namespace NetCoreServer
             {
                 for (int i = 0; i < CurCount; i++)
                 {
-                    var card = cardList[nextIndex];
                     var player = (ServerPlayer)m_PlayerList[i];
-                    player.handCards.Add(card);
-                    nextIndex++;
-
-                    // 牌发完了，洗牌
-                    if (nextIndex >= cardList.Count)
-                    {
-                        nextIndex = 0;
-                        GameLogic.Shuffle(cardList);
-                    }
+                    OnGameDeal(player);
                 }
             }
 
@@ -212,6 +198,58 @@ namespace NetCoreServer
                 list.Add(card.id);
             }
             return list;
+        }
+
+        // 收到出牌，处理棋子
+        public void TurnNext(ServerPlayer p, C2S_PlayCardPacket request)
+        {
+            int seatId = p.SeatId;
+            int cardId = request.CardID;
+            int colorId = request.Color; //彩色时才有效
+
+            // 解析牌型
+            Card card = lib.library[cardId];
+            // 如果是彩色，转成实际的颜色
+            bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;
+            ChessColor colorKey = colorful ? (ChessColor)colorId : (ChessColor)card.cardColor; //哪只乌龟
+            int step = (int)card.cardNum; //走几步
+
+            // 走棋子
+            int curPos = chessPos[colorKey];
+            int dstPos = curPos + step;
+            chessPos[colorKey] = dstPos;
+
+            // 下个出牌人
+            nextPlayerIndex++;
+            if (nextPlayerIndex >= CurCount)
+                nextPlayerIndex = 0;
+
+            // 检查是否到终点
+            if (dstPos >= 9)
+            {
+                OnGameResult();
+            }
+        }
+
+        // 收到出牌，发一张新牌
+        public void OnGameDeal(ServerPlayer player)
+        {
+            var card = cardList[nextIndex];
+            player.handCards.Add(card);
+            nextIndex++;
+
+            // 牌发完了，洗牌
+            if (nextIndex >= cardList.Count)
+            {
+                nextIndex = 0;
+                GameLogic.Shuffle(cardList);
+            }
+        }
+
+        // 结算
+        public void OnGameResult()
+        {
+            
         }
     }
 }
