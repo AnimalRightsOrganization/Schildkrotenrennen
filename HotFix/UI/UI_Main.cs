@@ -26,6 +26,9 @@ namespace HotFix
 
         public GameObject m_ListPanel;
         public Button m_CloseListPanel;
+        public Item_Lobby[] m_Rooms;
+        public Button m_PrevPageBtn;
+        public Button m_NextPageBtn;
         #endregion
 
         #region 内置方法
@@ -44,6 +47,7 @@ namespace HotFix
 
             var createTrans = transform.Find("CreatePanel");
             m_CreatePanel = createTrans.gameObject;
+            m_CreatePanel.SetActive(true);
             m_CloseCreatePanel = createTrans.Find("CloseBtn").GetComponent<Button>();
             m_NameInput = createTrans.Find("NamePanel/NameInput").GetComponent<InputField>();
             m_KeyInput = createTrans.Find("KeyPanel/KeyInput").GetComponent<InputField>();
@@ -59,9 +63,22 @@ namespace HotFix
             m_CreatePanel.SetActive(false);
 
             m_ListPanel = transform.Find("ListPanel").gameObject;
+            m_ListPanel.SetActive(true); //Prefab中开始是关闭的，导致Awake执行了两次？
             m_CloseListPanel = transform.Find("ListPanel/CloseBtn").GetComponent<Button>();
             m_CloseListPanel.onClick.AddListener(() => { m_ListPanel.SetActive(false); });
-            m_ListPanel.SetActive(false);
+            m_PrevPageBtn = transform.Find("ListPanel/PrevBtn").GetComponent<Button>();
+            m_NextPageBtn = transform.Find("ListPanel/NextBtn").GetComponent<Button>();
+            m_PrevPageBtn.onClick.AddListener(OnPrevBtnClick);
+            m_NextPageBtn.onClick.AddListener(OnNextBtnClick);
+
+            m_Rooms = new Item_Lobby[10];
+            var roomPanel = transform.Find("ListPanel/Root");
+            for (int i = 0; i < 10; i++)
+            {
+                var roomObj = roomPanel.GetChild(i).gameObject;
+                var item_room = roomObj.AddComponent<Item_Lobby>();
+                m_Rooms[i] = item_room;
+            }
         }
 
         void Start()
@@ -83,7 +100,7 @@ namespace HotFix
         #region 按钮事件
         void OnListBtnClick()
         {
-            TcpChatClient.SendGetRoomList();
+            TcpChatClient.SendGetRoomList(0);
 
             //弹出大厅列表
             m_ListPanel.SetActive(true);
@@ -135,6 +152,12 @@ namespace HotFix
 
             m_CreatePanel.SetActive(false);
         }
+
+        void OnPrevBtnClick()
+        {
+            //TcpChatClient.SendGetRoomList(0);
+        }
+        void OnNextBtnClick() { }
         #endregion
 
         #region 网络事件
@@ -167,7 +190,7 @@ namespace HotFix
             {
                 var playerInfo = response.Room.Players[i];
                 var playerData = new BasePlayerData
-                { 
+                {
                     UserName = playerInfo.UserName,
                     NickName = playerInfo.NickName,
                     RoomId = response.Room.RoomID,
@@ -186,8 +209,23 @@ namespace HotFix
         }
         void OnGetRoomList(object reader)
         {
-            S2C_GetRoomList data = (S2C_GetRoomList)reader;
-            Debug.Log($"派发房间列表: count={data.Rooms.Count}");
+            var data = (S2C_GetRoomList)reader;
+            Debug.Log($"获得房间列表: count={data.Rooms.Count}");
+
+            for (int i = 0; i < m_Rooms.Length; i++)
+            {
+                var item_room = m_Rooms[i];
+                if (i >= data.Rooms.Count)
+                {
+                    item_room.gameObject.SetActive(false);
+                }
+                else
+                {
+                    var roomData = data.Rooms[i];
+                    item_room.gameObject.SetActive(true);
+                    item_room.UpdateUI(roomData);
+                }
+            }
         }
         #endregion
     }

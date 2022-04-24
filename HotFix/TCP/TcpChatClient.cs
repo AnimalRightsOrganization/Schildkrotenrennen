@@ -172,7 +172,7 @@ namespace HotFix
             TheMsg cmd = new TheMsg { Name = "lala", Content = message };
             SendAsync(PacketType.C2S_Chat, cmd);
         }
-        public static void SendGetRoomList()
+        public static void SendGetRoomList(int page)
         {
             EmptyPacket cmd = new EmptyPacket();
             SendAsync(PacketType.C2S_RoomList, cmd);

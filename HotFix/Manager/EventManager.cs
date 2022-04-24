@@ -69,10 +69,6 @@ namespace HotFix
                 case PacketType.S2C_RoomList:
                     {
                         var packet = ProtobufHelper.Deserialize<S2C_GetRoomList>(stream);
-                        if (packet.Rooms.Count > 0)
-                        {
-                            Debug.Log($"Room.0={packet.Rooms[0].RoomID}");
-                        }
                         NetPacketManager.Trigger(type, packet);
                         break;
                     }
