@@ -361,14 +361,14 @@ namespace TcpChatServer
                 //p.SendAsync(PacketType.S2C_ErrorOperate, response);
                 return;
             }
-            //TODO: 校验所有成员状态。
 
-            var packet = new S2C_GameStartPacket
-            {
-                Color = 1,
-                Cards = new List<int> { 1, 2, 3, 4, 5 },
-            };
-            serverRoom.SendAsync(PacketType.S2C_GameStart, packet); //给所有成员发送开始
+            //var packet = new S2C_GameStartPacket
+            //{
+            //    Color = 1,
+            //    Cards = new List<int> { 1, 2, 3, 4, 5 },
+            //};
+            //serverRoom.SendAsync(PacketType.S2C_GameStart, packet);
+            serverRoom.OnGameStart_Server();
         }
         protected void OnPlayCard(MemoryStream ms)
         {

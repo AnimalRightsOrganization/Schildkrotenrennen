@@ -196,7 +196,8 @@ namespace HotFix
             }
 
             UIManager.Get().Pop(this);
-            UIManager.Get().Push<UI_Game>();
+            var ui_game = UIManager.Get().Push<UI_Game>();
+            ui_game.UpdateUI();
         }
         #endregion
     }

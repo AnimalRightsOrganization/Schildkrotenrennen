@@ -78,9 +78,9 @@ namespace HotFix
         #endregion
 
         #region 按钮事件
-        void UpdateUI()
+        public void UpdateUI()
         {
-
+            TcpChatClient.m_ClientRoom.PrintRoom();
         }
         void OnCloseBtnClick()
         {

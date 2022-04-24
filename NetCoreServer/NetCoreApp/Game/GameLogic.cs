@@ -21,7 +21,7 @@ namespace HotFix
         //List<Card> deskList; //桌上的牌
 
         // 开局，分配玩家颜色
-        public byte[] AllotColor()
+        public static byte[] AllotColor()
         {
             // 5色，不重复
             int count = (int)ChessColor.COUNT;
@@ -105,7 +105,7 @@ namespace HotFix
                     user_id = "wx_" + rd.Next(10000, 99999),
                 };
                 playerList.Add(player);
-                Debug.Log($"添加玩家{i}");
+                Debug.Print($"添加玩家{i}");
             }
         }
 
@@ -118,6 +118,7 @@ namespace HotFix
         // 洗牌
         public static void Shuffle<T>(IList<T> deck)
         {
+            Random rd = new Random();
             for (int n = deck.Count - 1; n > 0; --n)
             {
                 int k = rd.Next(n + 1);
@@ -130,7 +131,8 @@ namespace HotFix
         // 初始化卡牌配置
         public void InitOption()
         {
-            libraryList = new CardLib().library;
+            var lib = new CardLib();
+            libraryList = lib.Clone().library;
             Shuffle(libraryList);
         }
 

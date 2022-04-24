@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TcpChatServer;
 using HotFix;
 using ET;
@@ -25,6 +26,15 @@ namespace NetCoreServer
             System.Array.Copy(body, 0, buffer, header.Length, body.Length);
             //Debug.Print($"header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
             Session.SendAsync(buffer);
+        }
+
+        // 保存自己的颜色和手牌
+        public ChessColor chessColor;
+        public List<Card> handCards; //长度永远是5
+        public void Init()
+        {
+            chessColor = ChessColor.NONE; //空，等待指定
+            handCards = new List<Card>(); //空，等待发牌
         }
     }
 }
