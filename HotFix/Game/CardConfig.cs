@@ -134,7 +134,7 @@ namespace HotFix
         public CardNum cardNum;
         public string Log()
         {
-            return $"[{id}] {cardColor}: {(int)cardNum}";
+            return $"解析牌型: [{id}] {cardColor}: {(int)cardNum}";
         }
     }
 }

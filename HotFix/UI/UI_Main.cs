@@ -123,6 +123,9 @@ namespace HotFix
 
         void OnLeftBtnClick()
         {
+            //m_LeftBtn.transform.position = m_NumText.transform.position;
+            //return;
+
             playerNum--;
             if (playerNum < 2)
             {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -12,6 +13,7 @@ namespace HotFix
         public Dictionary<string, Sprite> cardArray;
         public Button m_SelfBtn;
 
+        public int Index;
         public Card card;
         private Vector3 src;
         private Vector3 dst;
@@ -58,25 +60,30 @@ namespace HotFix
 
             var ui_game = UIManager.Get().GetUI<UI_Game>();
             ui_game.ShowPlayPanel(card.id, CancelCardAnime, PlayCardAnime);
+            ui_game.handIndex = Index;
         }
         void CancelCardAnime()
         {
-            Tweener tw_hide = transform.DOMove(src, 0.3f);
+            transform.DOMove(src, 0.3f);
         }
-        void PlayCardAnime()
+        public async void PlayCardAnime()
         {
+            transform.localScale = Vector3.one;
             Tweener tw1 = transform.DOScale(1.1f, 0.2f);
-            tw1.OnComplete(() =>
-            {
-                Vector3 dst = new Vector3(Screen.width, Screen.height) / 2; //固定到屏幕中心
-                Tweener tw2 = transform.DOMove(dst, 0.3f);
-                tw2.OnComplete(() =>
-                {
-                    Tweener tw3 = m_Group.DOFade(0, 0.3f);
-                    tw3.SetDelay(0.5f);
-                    tw3.Play();
-                });
-            });
+            await Task.Delay(200);
+            //Debug.Log("tw1.等待0.2秒");
+
+            Vector3 dst = new Vector3(Screen.width, Screen.height) / 2; //固定到屏幕中心
+            Tweener tw2 = transform.DOMove(dst, 0.3f);
+            await Task.Delay(1300);
+            //Debug.Log("tw2.等待1.3秒");
+
+            Tweener tw3 = m_Group.DOFade(0, 0.5f);
+            await Task.Delay(500);
+            //Debug.Log("tw3.等待0.5秒");
+            transform.localScale = Vector3.one;
+            //m_Group.alpha = 1;
+            gameObject.SetActive(false);
         }
     }
 }

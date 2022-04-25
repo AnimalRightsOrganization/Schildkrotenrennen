@@ -96,6 +96,12 @@ namespace HotFix
                         NetPacketManager.Trigger(type, packet);
                         break;
                     }
+                case PacketType.S2C_YourTurn:
+                    {
+                        EmptyPacket packet = new EmptyPacket();
+                        NetPacketManager.Trigger(type, packet);
+                        break;
+                    }
                 case PacketType.S2C_GamePlay:
                     {
                         var packet = ProtobufHelper.Deserialize<S2C_PlayCardPacket>(stream);

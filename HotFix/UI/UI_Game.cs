@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -17,6 +18,7 @@ namespace HotFix
         public Item_Card[] myCards; //手牌
         public Item_Card otherCard; //动画牌（别人出牌，我收到的新牌）
         public Item_Chess[] gameChess; //棋子
+        public int handIndex; //选中手牌，数组Id
         public int selectedCardId; //选中手牌，出列
         public int selectedCardColor; //彩色龟，所选颜色
         public GameObject m_PlayPanel; //选中手牌，出牌或选颜色
@@ -137,8 +139,10 @@ namespace HotFix
 
             for (int i = 0; i < 5; i++)
             {
+                int index = i;
                 var card = TcpChatClient.m_ClientRoom.handCards[i];
                 myCards[i].InitData(card);
+                myCards[i].Index = index;
             }
         }
         void OnCloseBtnClick()
@@ -146,10 +150,10 @@ namespace HotFix
             Debug.Log("退出游戏");
             TcpChatClient.SendLeaveRoom();
         }
-        public void ShowPlayPanel(int id, System.Action noAction, System.Action yesAction)
+        public void ShowPlayPanel(int carcdid, System.Action noAction, System.Action yesAction)
         {
-            Debug.Log($"ShowPlayPanel: id={id}");
-            selectedCardId = id;
+            //Debug.Log($"ShowPlayPanel: id={carcdid}");
+            selectedCardId = carcdid;
             CancelAction = noAction;
             PlayAction = yesAction;
             m_PlayPanel.SetActive(true);
@@ -174,8 +178,7 @@ namespace HotFix
         }
         void OnPlayBtnClick()
         {
-            Debug.Log($"点击出牌？？？");
-            //Debug.Log($"selectedCardId={selectedCardId}");
+            Debug.Log($"点击出牌：{selectedCardId}");
             Card card = ClientRoom.lib.library[selectedCardId];
             //Debug.Log($"出牌：{card.Log()}");
             TcpChatClient.SendPlayCard(card.id, selectedCardColor);
@@ -187,37 +190,40 @@ namespace HotFix
         {
             switch (type)
             {
-                case PacketType.S2C_GameDeal:
-                    OnDeal(reader);
+                case PacketType.S2C_YourTurn:
+                    OnYourTurn();
                     break;
                 case PacketType.S2C_GamePlay:
                     OnPlay(reader);
                     break;
+                case PacketType.S2C_GameDeal:
+                    OnDeal(reader);
+                    break;
                 case PacketType.S2C_GameResult:
-                    OnMatchResult(reader);
+                    OnGameResult(reader);
                     break;
             }
         }
-        // 发牌消息
-        void OnDeal(object reader)
+        // 提示出牌
+        void OnYourTurn()
         {
-            Debug.Log("[S2C_GameDeal] 收到发牌消息");
+            Debug.Log("[S2C_YourTurn] 收到提示出牌");
+
         }
         // 出牌消息
-        void OnPlay(object reader)
+        async void OnPlay(object reader)
         {
             var packet = (S2C_PlayCardPacket)reader;
             Debug.Log($"[S2C_GamePlay] 收到出牌消息，座位#{packet.SeatID}出牌{packet.CardID}-{packet.Color}");
 
-            // 解析牌型
+            // ①解析牌型
             int colorId = packet.Color;
             Card card = ClientRoom.lib.library[packet.CardID];
-            //Debug.Log($"Card: {card.id}--{card.cardColor}({(int)card.cardColor})--{card.cardNum}");
+            //Debug.Log(card.Log());
+            //TcpChatClient.m_ClientRoom.handCards.RemoveAt(handIndex);
 
-            //别人出牌时，没有委托。但是要播放一下出牌动画。
-            Debug.Log($"PlayAction: {PlayAction != null}");
-            Debug.Log($"LocalPlayer: {TcpChatClient.m_PlayerManager.LocalPlayer.ToString()}");
-            //if (PlayAction == null)
+            // ②出牌动画
+            // 放大0.2f，移动0.3f，停留1.0f，消失0.5f => 2.0f
             if (packet.SeatID != TcpChatClient.m_PlayerManager.LocalPlayer.SeatId)
             {
                 Debug.Log($"是别人出牌，座位#{packet.SeatID}");
@@ -227,40 +233,66 @@ namespace HotFix
                 otherCard.transform.position = src;
                 otherCard.m_Group.alpha = 1;
                 otherCard.InitData(card);
-
-                Vector3 dst = new Vector3(Screen.width, Screen.height) / 2; //固定到屏幕中心
-                Tweener tw_show = otherCard.transform.DOMove(dst, 0.3f);
-                tw_show.SetDelay(2);
-                tw_show.OnComplete(()=>
-                {
-                    Tweener tw3 = otherCard.m_Group.DOFade(0, 0.3f);
-                    tw3.SetDelay(0.5f);
-                    tw3.Play();
-                });
+                otherCard.PlayCardAnime();
             }
             else
             {
+                Debug.Log("是自己出牌，执行委托Item_Card.PlayCardAnime()");
                 PlayAction?.Invoke();
                 //PlayAction = null;
                 m_PlayPanel.SetActive(false);
             }
+
+            await Task.Delay(2000);
 
             // 如果是彩色，转成实际的颜色
             bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;
             ChessColor colorKey = colorful ? (ChessColor)colorId : (ChessColor)card.cardColor; //哪只乌龟
             int step = (int)card.cardNum; //走几步
 
-            // 动画控制走棋子
-            //Debug.Log($"数组检查: {gameChess.Length} : {(int)colorKey}");
+            // ③动画控制走棋子
             var chess = gameChess[(int)colorKey];
             chess.Move(colorKey, step);
         }
-        // 结算消息
-        void OnMatchResult(object reader)
+        // 发牌消息
+        async void OnDeal(object reader)
         {
+            var packet = (S2C_DealPacket)reader;
+            Debug.Log($"[S2C_GameDeal] 收到新的牌: Card:{packet.CardID}, to#{packet.SeatID}");
+
+            // 解析牌型
+            Card card = ClientRoom.lib.library[packet.CardID];
+            Debug.Log(card.Log());
+            //TcpChatClient.m_ClientRoom.handCards.Add(card);
+
+            // 发牌动画
+            await Task.Delay(3000); //等待出牌和走棋动画
+            Debug.Log("START........发牌动画");
+            myCards[handIndex].transform.SetAsLastSibling();
+            myCards[handIndex].gameObject.SetActive(true);
+
+            otherCard.transform.position = new Vector3(Screen.width, Screen.height) / 2;
+            //otherCard.m_Rect.anchoredPosition3D = new Vector3(-320, 555, 0);
+            otherCard.m_Group.alpha = 1;
+            //Debug.Log($"[检查数组] {handIndex} : {myCards.Length}");
+
+            //Vector3 dst = myCards[handIndex].m_Rect.anchoredPosition;
+            Vector3 dst = myCards[myCards.Length - 1].transform.position; //该位置放一堆牌
+            Debug.Log($"移动到：{dst}");
+            Tweener tw1 = otherCard.transform.DOMove(dst, 0.3f);
+            await Task.Delay(1000);
+
+            otherCard.m_Group.DOFade(0, 0.5f);
+            myCards[handIndex].m_Group.alpha = 1;
+            Debug.Log("发牌动画.........END");
+        }
+        // 结算消息
+        void OnGameResult(object reader)
+        {
+            Debug.Log("[S2C_GameResult] 结算消息");
             var packet = (S2C_GameResultPacket)reader;
-            //var ui_result = UIManager.Get().Push<UI_GameResult>();
-            //ui_result.UpdateUI(packet.Rank);
+            var ui_result = UIManager.Get().Push<UI_GameResult>();
+            ui_result.UpdateUI(packet.Rank);
         }
         #endregion
     }

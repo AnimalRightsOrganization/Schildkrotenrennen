@@ -44,10 +44,10 @@ namespace HotFix
             }
             else
             {
-                Debug.Log($"{playerData.UserName}\n{TcpChatClient.m_PlayerManager.LocalPlayer.UserName}");
+                //Debug.Log($"{playerData.UserName}\n{TcpChatClient.m_PlayerManager.LocalPlayer.UserName}");
                 if (playerData.UserName == TcpChatClient.m_PlayerManager.LocalPlayer.UserName)
                 {
-                    Debug.Log($"#{SeatID}是自己，没效果");
+                    //Debug.Log($"#{SeatID}是自己，没效果");
                 }
                 else
                 {

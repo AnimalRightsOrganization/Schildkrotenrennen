@@ -71,9 +71,9 @@
         S2C_LeaveRoom   ,   //离开房间
 
         S2C_GameStart   ,   //比赛开始，跳转场景
-        S2C_GameDeal    ,   //发牌信息
         S2C_YourTurn    ,   //通知轮到出牌的玩家
         S2C_GamePlay    ,   //出牌信息
+        S2C_GameDeal    ,   //发牌信息
         S2C_GameResult  ,   //比赛结算
     }
 }

@@ -130,6 +130,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Item\Item_Lobby.cs" />
     <Compile Include="UI\Item\Item_Room.cs" />
+    <Compile Include="UI\UI_GameResult.cs" />
     <Compile Include="UI\UI_Dialog.cs" />
     <Compile Include="UI\UI_Game.cs" />
     <Compile Include="UI\UI_Main.cs" />

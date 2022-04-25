@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -47,6 +48,7 @@ namespace HotFix
             tw.OnComplete(()=>
             {
                 transform.SetParent(ui_game.m_MapPoints[TargetIndex]);
+                Debug.Log("<color=green>棋子动画完成</color>");
             });
         }
     }
