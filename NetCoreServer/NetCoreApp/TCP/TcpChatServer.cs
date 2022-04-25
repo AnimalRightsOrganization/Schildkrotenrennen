@@ -430,7 +430,8 @@ namespace TcpChatServer
         {
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
-            var packet = new S2C_GameResultPacket { Rank = new List<int>(), };
+            var rankList = serverRoom.OnGameResult();
+            var packet = new S2C_GameResultPacket { Rank = rankList };
             serverRoom.SendAsync(PacketType.S2C_GameResult, packet);
         }
     }

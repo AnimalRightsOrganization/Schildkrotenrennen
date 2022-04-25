@@ -7,6 +7,7 @@ namespace NetCoreServer
 {
     public class ServerRoom : BaseRoom
     {
+        #region 房间管理
         public ServerRoom(ServerPlayer host, BaseRoomData data) : base(data)
         {
             // 被override的才需要在这里赋值
@@ -135,6 +136,7 @@ namespace NetCoreServer
             }
             return $"#{RoomID}[{RoomName}:{RoomPwd}] {CurCount}/{RoomLimit}: {playerStr}";
         }
+        #endregion
 
         #region 游戏逻辑
 
@@ -145,6 +147,7 @@ namespace NetCoreServer
         public Dictionary<ChessColor, int> chessPos; //棋子位置（key=棋子, value=位置）
         public Dictionary<int, List<ChessColor>> mapChess; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
         // TODO: 保存每步操作。
+        // TODO: 机器人随机出牌。优先选自己的+。优先选玩家的颜色-。
 
         void Init()
         {
@@ -281,11 +284,20 @@ namespace NetCoreServer
         }
 
         // 结算
-        public void OnGameResult()
+        public List<int> OnGameResult()
         {
             Debug.Print("给出结算");
-            //S2C_GameResultPacket packet = new S2C_GameResultPacket { };
-            //SendAsync(PacketType.S2C_GameResult, packet);
+            var list = new List<int>();
+            for (int i = mapChess.Count - 1; i > 0; i--)
+            {
+                var grid = mapChess[i];
+                for (int t = 0; t < grid.Count - 1; t++)
+                {
+                    var chess = grid[t];
+                    list.Add((int)chess);
+                }
+            }
+            return list;
         }
 
         #endregion
