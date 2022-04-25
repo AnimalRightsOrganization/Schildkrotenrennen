@@ -17,7 +17,7 @@ namespace HotFix
             //Debug.Log($"{gameObject.name}.Awake"); //Prefab中开始是关闭的，导致Awake执行了两次？
             m_Name = transform.Find("Text").GetComponent<Text>();
             m_SelfBtn = transform.GetComponent<Button>();
-            m_SelfBtn.onClick.RemoveAllListeners();
+            //m_SelfBtn.onClick.RemoveAllListeners();
             m_SelfBtn.onClick.AddListener(OnSelfClick);
         }
 

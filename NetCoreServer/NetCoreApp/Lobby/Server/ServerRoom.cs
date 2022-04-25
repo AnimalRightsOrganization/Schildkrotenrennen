@@ -126,8 +126,6 @@ namespace NetCoreServer
         }
 
         #region 游戏逻辑
-        #endregion
-
         
         public static CardLib lib; //所有牌
         List<Card> cardList;
@@ -254,5 +252,7 @@ namespace NetCoreServer
             //S2C_GameResultPacket packet = new S2C_GameResultPacket { };
             //SendAsync(PacketType.S2C_GameResult, packet);
         }
+
+        #endregion
     }
 }
