@@ -20,10 +20,6 @@ namespace TcpChatServer
         {
             Debug.Print($"Chat TCP session with Id {Id} connected!");
 
-            // Send invite message
-            //string message = "Hello from TCP chat! Please send a message or '!' to disconnect the client!";
-            //SendAsync(message);
-
             // 这里是异步线程中。
             EmptyPacket cmd = new EmptyPacket();
             SendAsync(PacketType.Connected, cmd); //TODO: 多个客户端，验证这是否为广播
@@ -65,8 +61,11 @@ namespace TcpChatServer
                 case PacketType.C2S_LoginReq:
                     OnLoginReq(ms);
                     break;
+                case PacketType.C2S_Chat:
+                    OnChat(ms);
+                    break;
                 case PacketType.C2S_RoomList:
-                    OnRoomList(ms);
+                    OnGetRoomList(ms);
                     break;
                 case PacketType.C2S_CreateRoom:
                     OnCreateRoom(ms);
@@ -80,14 +79,11 @@ namespace TcpChatServer
                 case PacketType.C2S_OperateSeat:
                     OnOperateSeat(ms);
                     break;
-                case PacketType.C2S_Chat:
-                    OnChat(ms);
-                    break;
                 case PacketType.C2S_GameStart:
-                    OnStartGame();
+                    OnGameStart();
                     break;
                 case PacketType.C2S_GamePlay:
-                    OnPlayCard(ms);
+                    OnGamePlay(ms);
                     break;
                 default:
                     Debug.Print($"无法识别的消息: {type}");
@@ -140,7 +136,12 @@ namespace TcpChatServer
 
             WinFormsApp1.MainForm.Instance.RefreshPlayerNum();
         }
-        protected void OnRoomList(MemoryStream ms)
+        protected void OnChat(MemoryStream ms)
+        {
+            var request = ProtobufHelper.Deserialize<TheMsg>(ms);
+            Debug.Print($"{request.Name}说: {request.Content}");
+        }
+        protected void OnGetRoomList(MemoryStream ms)
         {
             var request = ProtobufHelper.Deserialize<C2S_RoomListPacket>(ms); //解包
             Debug.Print($"Room List Page={request.Page} by {Id}");
@@ -370,12 +371,7 @@ namespace TcpChatServer
             // 房间内广播，更新房间信息
             serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet1);
         }
-        protected void OnChat(MemoryStream ms)
-        {
-            var request = ProtobufHelper.Deserialize<TheMsg>(ms); //解包
-            Debug.Print($"{request.Name}说: {request.Content}");
-        }
-        protected void OnStartGame()
+        protected void OnGameStart()
         {
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
@@ -392,15 +388,15 @@ namespace TcpChatServer
 
             serverRoom.OnGameStart_Server();
         }
-        protected void OnPlayCard(MemoryStream ms)
+        protected void OnGamePlay(MemoryStream ms)
         {
             var request = ProtobufHelper.Deserialize<C2S_PlayCardPacket>(ms); //解包
-
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
+            ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
             Debug.Print($"[C2S] {p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}-{request.Color}");
 
-            ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
-            bool end = serverRoom.TurnNext(p, request);
+            bool end = serverRoom.OnGamePlay(p, request);
+
             // 房间内广播出牌结果
             var packet1 = new S2C_PlayCardPacket { CardID = request.CardID, Color = request.Color, SeatID = p.SeatId };
             serverRoom.SendAsync(PacketType.S2C_GamePlay, packet1);

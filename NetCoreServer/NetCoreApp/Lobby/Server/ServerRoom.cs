@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Random = System.Random;
 using Debug = System.Diagnostics.Debug;
 using HotFix;
 using ET;
@@ -17,9 +18,18 @@ namespace NetCoreServer
                 .SetSeatID(0)
                 .SetStatus(PlayerStatus.ROOM);
         }
-
-        public override Dictionary<int, BasePlayer> m_PlayerList { get; protected set; }
         public int CurCount => m_PlayerList.Count;
+        public override Dictionary<int, BasePlayer> m_PlayerList { get; protected set; }
+        public override string ToString()
+        {
+            string playerStr = string.Empty;
+            foreach (var item in m_PlayerList)
+            {
+                var player = item.Value;
+                playerStr += $"\n[{item.Key}]---{player.UserName}({player.NickName})(bot:{player.IsBot}), at{player.SeatId})";
+            }
+            return $"#{RoomID}[{RoomName}:{RoomPwd}] {CurCount}/{RoomLimit}: {playerStr}";
+        }
 
         public bool AddPlayer(BasePlayer p, int seatId = -1)
         {
@@ -85,7 +95,6 @@ namespace NetCoreServer
             }
             return null;
         }
-
         // 检查空座位
         public bool IsAvailableSeat(int seatId)
         {
@@ -98,7 +107,7 @@ namespace NetCoreServer
         }
         const int MIN_INDEX = 0;
         const int MAX_INDEX = 4;
-        int GetAvailableRoomID()
+        private int GetAvailableRoomID()
         {
             int id = MIN_INDEX;
 
@@ -125,29 +134,60 @@ namespace NetCoreServer
                 serverPlayer.SendAsync(msgId, cmd);
             }
         }
-
-        public override string ToString()
-        {
-            string playerStr = string.Empty;
-            foreach (var item in m_PlayerList)
-            {
-                var player = item.Value;
-                playerStr += $"\n[{item.Key}]---{player.UserName}({player.NickName})(bot:{player.IsBot}), at{player.SeatId})";
-            }
-            return $"#{RoomID}[{RoomName}:{RoomPwd}] {CurCount}/{RoomLimit}: {playerStr}";
-        }
         #endregion
 
         #region 游戏逻辑
-
         public static CardLib lib; //所有牌
-        List<Card> cardList;
-        int nextIndex = 0; // 下一张下发的牌
+        private List<Card> cardList;
+        private int nextIndex = 0; // 下一张下发的牌
         public int nextPlayerIndex = 0; //下一个出牌的座位号
-        public Dictionary<ChessColor, int> chessPos; //棋子位置（key=棋子, value=位置）
-        public Dictionary<int, List<ChessColor>> mapChess; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
+        private Dictionary<ChessColor, int> chessPos; //棋子位置（key=棋子, value=位置）
+        private Dictionary<int, List<ChessColor>> mapChess; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
+
         // TODO: 保存每步操作。
         // TODO: 机器人随机出牌。优先选自己的+。优先选玩家的颜色-。
+        private static List<int> CardToInt(List<Card> cards)
+        {
+            var list = new List<int>();
+            for (int i = 0; i < cards.Count; i++)
+            {
+                var card = cards[i];
+                list.Add(card.id);
+            }
+            return list;
+        }
+        private static void Shuffle<T>(IList<T> deck)
+        {
+            Random rd = new Random();
+            for (int n = deck.Count - 1; n > 0; --n)
+            {
+                int k = rd.Next(n + 1);
+                T temp = deck[n];
+                deck[n] = deck[k];
+                deck[k] = temp;
+            }
+        }
+        private static byte[] AllotColor()
+        {
+            // 5色，不重复
+            int count = (int)ChessColor.COUNT;
+            byte[] colors = new byte[] { 0, 1, 2, 3, 4 };
+
+            // 打乱排序
+            Random _rd = new Random();
+            byte temp;
+            for (int i = 0; i < count; i++)
+            {
+                int index = _rd.Next(0, count - 1);
+                if (index != i)
+                {
+                    temp = colors[i];
+                    colors[i] = colors[index];
+                    colors[index] = temp;
+                }
+            }
+            return colors;
+        }
 
         void Init()
         {
@@ -167,18 +207,16 @@ namespace NetCoreServer
                 mapChess.Add(i, new List<ChessColor>());
             }
         }
-
-        // 开局消息
         public void OnGameStart_Server()
         {
             this.Init();
 
             // 洗牌
             cardList = lib.Clone().library;
-            GameLogic.Shuffle(cardList);
+            Shuffle(cardList);
 
             // 准备颜色随机数
-            var colors = GameLogic.AllotColor();
+            var colors = AllotColor();
             // 遍历分配颜色
             for (int i = 0; i < CurCount; i++)
             {
@@ -208,19 +246,7 @@ namespace NetCoreServer
                 player.SendAsync(PacketType.S2C_GameStart, packet);
             }
         }
-        static List<int> CardToInt(List<Card> cards)
-        {
-            var list = new List<int>();
-            for (int i = 0; i < cards.Count; i++)
-            {
-                var card = cards[i];
-                list.Add(card.id);
-            }
-            return list;
-        }
-
-        // 收到出牌，处理棋子
-        public bool TurnNext(ServerPlayer p, C2S_PlayCardPacket request)
+        public bool OnGamePlay(ServerPlayer p, C2S_PlayCardPacket request)
         {
             int seatId = p.SeatId;
             int cardId = request.CardID;
@@ -265,8 +291,6 @@ namespace NetCoreServer
             }
             return false;
         }
-
-        // 收到出牌，发一张新牌
         public Card OnGameDeal(ServerPlayer player)
         {
             var card = cardList[nextIndex];
@@ -277,13 +301,11 @@ namespace NetCoreServer
             if (nextIndex >= cardList.Count)
             {
                 nextIndex = 0;
-                GameLogic.Shuffle(cardList);
+                Shuffle(cardList);
             }
 
             return card;
         }
-
-        // 结算
         public List<int> OnGameResult()
         {
             Debug.Print("给出结算");
@@ -299,7 +321,6 @@ namespace NetCoreServer
             }
             return list;
         }
-
         #endregion
     }
 }

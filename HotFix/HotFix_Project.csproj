@@ -112,11 +112,10 @@
     <Compile Include="Core\PoolHelper.cs" />
     <Compile Include="Core\ProtobufHelper.cs" />
     <Compile Include="UI\Item\Item_Card.cs" />
-    <Compile Include="Game\CardConfig.cs" />
+    <Compile Include="Lobby\Shared\CardConfig.cs" />
     <Compile Include="Lobby\Client\ClientPlayer.cs" />
     <Compile Include="Lobby\Client\ClientPlayerManager.cs" />
     <Compile Include="Lobby\Client\ClientRoom.cs" />
-    <Compile Include="Game\GameLogic.cs" />
     <Compile Include="UI\Item\Item_Chess.cs" />
     <Compile Include="Lobby\Shared\BasePlayer.cs" />
     <Compile Include="Lobby\Shared\BaseRoom.cs" />

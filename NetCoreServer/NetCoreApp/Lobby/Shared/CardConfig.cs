@@ -132,23 +132,9 @@ namespace HotFix
         public int id; //索引号0-51
         public CardColor cardColor;
         public CardNum cardNum;
-    }
-
-    // 数据库玩家信息
-    [System.Serializable]
-    public class Player
-    {
-        public string user_id; //用户名 nn_1234567890
-        public long money;
-        public string nickname;
-        //public ChessColor color;
-    }
-
-    // 牌局玩家属性
-    [System.Serializable]
-    public class GamePlayer : Player
-    {
-        public int seatId; //出牌顺位
-        public List<Card> handCardsList = new List<Card>(); //手牌List
+        public string Log()
+        {
+            return $"解析牌型: [{id}] {cardColor}: {(int)cardNum}";
+        }
     }
 }
