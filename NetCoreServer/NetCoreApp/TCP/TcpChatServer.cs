@@ -400,11 +400,18 @@ namespace TcpChatServer
             Debug.Print($"[C2S] {p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}-{request.Color}");
 
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
-            serverRoom.TurnNext(p, request);
+            bool end = serverRoom.TurnNext(p, request);
             // 房间内广播出牌结果
             var packet1 = new S2C_PlayCardPacket { CardID = request.CardID, Color = request.Color, SeatID = p.SeatId };
             serverRoom.SendAsync(PacketType.S2C_GamePlay, packet1);
             Debug.Print($"广播出牌消息：{packet1.SeatID}出{packet1.CardID}");
+
+            if (end)
+            {
+                Debug.Print("到达终点，不在发牌");
+                OnGameResult();
+                return;
+            }
 
             // 给出牌者发送新发的牌
             var card = serverRoom.OnGameDeal(p);
@@ -413,7 +420,11 @@ namespace TcpChatServer
             Debug.Print($"单发发牌消息：{packet2.CardID}给{packet2.SeatID}");
 
             // 给下一个出牌的人提示出牌？
-            //serverRoom.S2C_YourTurn
+            int seatId = serverRoom.nextPlayerIndex;
+            ServerPlayer nextPlayer = serverRoom.GetPlayer(seatId);
+            var packet3 = new EmptyPacket();
+            nextPlayer.SendAsync(PacketType.S2C_YourTurn, packet3);
+            Debug.Print($"单发下一轮出牌提示，给座位#{nextPlayer.SeatId}上的{nextPlayer.UserName}");
         }
         protected void OnGameResult()
         {

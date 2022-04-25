@@ -141,8 +141,9 @@ namespace NetCoreServer
         public static CardLib lib; //所有牌
         List<Card> cardList;
         int nextIndex = 0; // 下一张下发的牌
-        int nextPlayerIndex = 0; //下一个出牌的座位号
-        public Dictionary<ChessColor, int> chessPos; //棋子位置 //长度永远是5，值范围是[0~9]
+        public int nextPlayerIndex = 0; //下一个出牌的座位号
+        public Dictionary<ChessColor, int> chessPos; //棋子位置（key=棋子, value=位置）
+        public Dictionary<int, List<ChessColor>> mapChess; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
         // TODO: 保存每步操作。
 
         void Init()
@@ -156,6 +157,12 @@ namespace NetCoreServer
             chessPos.Add(ChessColor.GREEN, 0);
             chessPos.Add(ChessColor.BLUE, 0);
             chessPos.Add(ChessColor.PURPLE, 0);
+            mapChess = new Dictionary<int, List<ChessColor>>();
+            mapChess.Add(0, new List<ChessColor> { (ChessColor)0, (ChessColor)1, (ChessColor)2, (ChessColor)3, (ChessColor)4 });
+            for (int i = 1; i < 10; i++)
+            {
+                mapChess.Add(i, new List<ChessColor>());
+            }
         }
 
         // 开局消息
@@ -210,7 +217,7 @@ namespace NetCoreServer
         }
 
         // 收到出牌，处理棋子
-        public void TurnNext(ServerPlayer p, C2S_PlayCardPacket request)
+        public bool TurnNext(ServerPlayer p, C2S_PlayCardPacket request)
         {
             int seatId = p.SeatId;
             int cardId = request.CardID;
@@ -224,9 +231,23 @@ namespace NetCoreServer
             int step = (int)card.cardNum; //走几步
 
             // 走棋子
-            int curPos = chessPos[colorKey];
-            int dstPos = curPos + step;
-            chessPos[colorKey] = dstPos;
+            int curPos = chessPos[colorKey]; //某颜色棋子当前位置
+            int dstPos = curPos + step; //前往位置
+            if (curPos > 0)
+            {
+                // 考虑叠起来的情况。
+                List<ChessColor> origin = mapChess[curPos];
+                int index = origin.IndexOf(colorKey);
+                for (int i = 0; i < origin.Count; i++)
+                {
+                    if (i >= index)
+                        chessPos[(ChessColor)i] = dstPos;
+                }
+            }
+            else
+            {
+                chessPos[colorKey] = dstPos; //起点不堆叠
+            }
 
             // 下个出牌人
             nextPlayerIndex++;
@@ -237,7 +258,9 @@ namespace NetCoreServer
             if (dstPos >= 9)
             {
                 OnGameResult();
+                return true;
             }
+            return false;
         }
 
         // 收到出牌，发一张新牌

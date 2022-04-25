@@ -182,14 +182,7 @@ namespace HotFix
         void OnGameStart(object reader)
         {
             var packet = (S2C_GameStartPacket)reader;
-            TcpChatClient.m_ClientRoom.chessColor = (ChessColor)packet.Color;
-            TcpChatClient.m_ClientRoom.handCards = new List<Card>();
-            for (int i = 0; i < packet.Cards.Count; i++)
-            {
-                int cardid = packet.Cards[i];
-                Card card = ClientRoom.lib.library[cardid];
-                TcpChatClient.m_ClientRoom.handCards.Add(card);
-            }
+            TcpChatClient.m_ClientRoom.OnGameStart_Client(packet);
 
             UIManager.Get().Pop(this);
             var ui_game = UIManager.Get().Push<UI_Game>();

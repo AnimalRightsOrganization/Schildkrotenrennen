@@ -220,7 +220,7 @@ namespace HotFix
             int colorId = packet.Color;
             Card card = ClientRoom.lib.library[packet.CardID];
             //Debug.Log(card.Log());
-            TcpChatClient.m_ClientRoom.handCards.RemoveAt(handIndex);
+            var chessArray = TcpChatClient.m_ClientRoom.OnGamePlay(handIndex, colorId);
 
             // ②出牌动画
             // 放大0.2f，移动0.3f，停留1.0f，消失0.5f => 2.0f
@@ -251,8 +251,13 @@ namespace HotFix
             int step = (int)card.cardNum; //走几步
 
             // ③动画控制走棋子
-            var chess = gameChess[(int)colorKey];
-            chess.Move(colorKey, step);
+            // TODO: 考虑叠起来的情况。
+            for (int i = 0; i < chessArray.Count; i++)
+            {
+                int index = chessArray[i];
+                var chess = gameChess[index];
+                chess.Move(colorKey, step);
+            }
         }
         // 发牌消息
         async void OnDeal(object reader)
@@ -263,7 +268,7 @@ namespace HotFix
             // 解析牌型
             Card card = ClientRoom.lib.library[packet.CardID];
             Debug.Log(card.Log());
-            TcpChatClient.m_ClientRoom.handCards.Add(card);
+            TcpChatClient.m_ClientRoom.OnGameDeal(card);
 
             // 发牌动画
             await Task.Delay(3000); //等待出牌和走棋动画
