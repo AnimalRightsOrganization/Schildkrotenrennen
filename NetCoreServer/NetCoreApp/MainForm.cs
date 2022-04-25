@@ -93,7 +93,11 @@ namespace WinFormsApp1
 
         private void ConnectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Debug.Print("连接MongoDB");
+            var box = MessageBox.Show("更新完成，是否立即重启？", "退出", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+            if (box == DialogResult.OK)
+            {
+                Application.Restart(); //必须是Form
+            }
         }
 
         private void ShowToolStripMenuItem_Click(object sender, EventArgs e)
@@ -103,12 +107,13 @@ namespace WinFormsApp1
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("是否确认退出程序？", "退出", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            var box = MessageBox.Show("是否确认退出程序？", "退出", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+            Debug.Print($"{box}");
+            if (box == DialogResult.OK)
             {
-                // 关闭所有的线程
-                //this.Dispose();
+                //this.Dispose(); //关闭所有的线程
                 //this.Close();
-                Debug.Print("关闭服务器");
+                Application.Exit();
             }
         }
     }

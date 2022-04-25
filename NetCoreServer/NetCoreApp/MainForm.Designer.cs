@@ -206,10 +206,11 @@ namespace WinFormsApp1
 
         }
 
-        private async void DB_Click(object sender, System.EventArgs e)
+        private void DB_Click(object sender, System.EventArgs e)
         {
             //await MySQLTool.MultiSQL();
-            await MySQLTool.TestQuery();
+            //await MySQLTool.TestQuery();
+            Restart();
 
             //var result = await MySQLTool.CheckLogin("lala", "123456");
             //Debug.Print($"lala: {result}");
@@ -311,30 +312,27 @@ namespace WinFormsApp1
         // 重启
         void Restart()
         {
-            Application.Restart();
-            Environment.Exit(0);
+            //关闭应用程序并立即启动一个新实例。
+            //调用Restart最常见的原因是使用或UpdateAsync方法启动通过ClickOnceUpdate下载的应用程序的新版本。
+            //Application.Restart();
+            //终止此进程，并将退出代码返回到操作系统。
+            //exitCode。返回到操作系统的退出代码。 使用 0（零）指示处理已成功完成。
+            //Environment.Exit(0);
+
+            //Environment.Exit(1);
+
+            //Debug.Print($"{Application.ExecutablePath}-------");
+            string path = @"C:\Users\Administrator\Desktop\Turtle\NetCoreServer\NetCoreApp\bin\Debug\netcoreapp3.1\NetCoreServer.exe";
+            System.Diagnostics.Process.Start(path);
+            //System.Diagnostics.Process.Start(Application.ExecutablePath); //是dll
+            Application.Exit();
         }
         void RegisterHandler()
         {
+            Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             //AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
             //AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
-            Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
-        }
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            Exception ex = (Exception)e.ExceptionObject;
-            Console.WriteLine("MyHandler caught : " + ex.Message);
-            Console.WriteLine("trace: {0}", ex.StackTrace);
-            Console.WriteLine("Runtime terminating: {0}", e.IsTerminating);
-        }
-        private void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-        private void CurrentDomain_ProcessExit(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
         }
         static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
@@ -370,6 +368,13 @@ namespace WinFormsApp1
             ex = e.Exception;
             ILog log = LogManager.GetLogger(typeof(Program)); //Log4NET
             log.Error(ex.Message + "\n" + ex.StackTrace);*/
+        }
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = (Exception)e.ExceptionObject;
+            Console.WriteLine("MyHandler caught : " + ex.Message);
+            Console.WriteLine("trace: {0}", ex.StackTrace);
+            Console.WriteLine("Runtime terminating: {0}", e.IsTerminating);
         }
         public static void WriteLog(Exception ex)
         {
