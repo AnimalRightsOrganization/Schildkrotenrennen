@@ -395,12 +395,17 @@ namespace TcpChatServer
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
             Debug.Print($"[C2S] {p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}-{request.Color}");
 
+            if (p.SeatId != serverRoom.nextPlayerIndex)
+            {
+                Debug.Print($"顺序错误，不允许座位#{p.SeatId}出牌，等待座位#{serverRoom.nextPlayerIndex}");
+            }
+
             bool end = serverRoom.OnGamePlay(p, request);
 
             // 房间内广播出牌结果
             var packet1 = new S2C_PlayCardPacket { CardID = request.CardID, Color = request.Color, SeatID = p.SeatId };
             serverRoom.SendAsync(PacketType.S2C_GamePlay, packet1);
-            Debug.Print($"广播出牌消息：{packet1.SeatID}出{packet1.CardID}");
+            Debug.Print($"[S2C] 广播出牌消息：座位#{packet1.SeatID}出{packet1.CardID}");
 
             if (end)
             {
@@ -410,17 +415,22 @@ namespace TcpChatServer
             }
 
             // 给出牌者发送新发的牌
-            var card = serverRoom.OnGameDeal(p);
+            Card card = serverRoom.OnGameDeal(p);
             var packet2 = new S2C_DealPacket { CardID = card.id, SeatID = p.SeatId };
             p.SendAsync(PacketType.S2C_GameDeal, packet2);
-            Debug.Print($"单发发牌消息：{packet2.CardID}给{packet2.SeatID}");
+            Debug.Print($"[S2C] 单发发牌消息：{packet2.CardID}给座位#{packet2.SeatID}");
 
-            // 给下一个出牌的人提示出牌？
+            // 给下一个出牌的人提示出牌
             int seatId = serverRoom.nextPlayerIndex;
             ServerPlayer nextPlayer = serverRoom.GetPlayer(seatId);
+            if (nextPlayer.IsBot)
+            {
+                //TODO: 如果是机器人，计算后发出牌消息
+                return;
+            }
             var packet3 = new EmptyPacket();
             nextPlayer.SendAsync(PacketType.S2C_YourTurn, packet3);
-            Debug.Print($"单发下一轮出牌提示，给座位#{nextPlayer.SeatId}上的{nextPlayer.UserName}");
+            Debug.Print($"[S2C] 单发下一轮出牌提示，给座位#{nextPlayer.SeatId}上的{nextPlayer.UserName}");
         }
         protected void OnGameResult()
         {

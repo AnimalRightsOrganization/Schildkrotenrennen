@@ -208,7 +208,7 @@ namespace HotFix
                 ui_toast.Show("人数不足，请等待");
                 return;
             }
-            Debug.Log("请求开始比赛");
+            Debug.Log("[C2S] 请求开始比赛");
             EmptyPacket cmd = new EmptyPacket();
             SendAsync(PacketType.C2S_GameStart, cmd);
         }

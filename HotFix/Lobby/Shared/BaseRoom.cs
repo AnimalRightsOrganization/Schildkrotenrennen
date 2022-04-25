@@ -17,7 +17,7 @@ namespace HotFix
         public string RoomName;                     //房间名
         public string RoomPwd;                      //密码（仅用于创建房间）
         public int RoomLimit;                       //限定人数
-        public List<BasePlayerData> Players;        //成员
+        public List<BasePlayerData> Players;        //成员（索引是座位号）
         public override string ToString()
         {
             string playerStr = string.Empty;

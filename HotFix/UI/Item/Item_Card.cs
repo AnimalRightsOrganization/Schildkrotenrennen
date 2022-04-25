@@ -40,7 +40,7 @@ namespace HotFix
             card = data;
 
             string combName = (data.cardColor.ToString().ToLower() + "" + (data.cardNum > 0 ? "+" : "") + (int)data.cardNum);
-            Debug.Log(combName);
+            //Debug.Log($"初始化新牌Item_Card: {combName}");
             m_SelfBtn.image.sprite = cardArray[combName];
         }
 

@@ -14,6 +14,7 @@ namespace HotFix
         public Button m_CloseBtn;
         public Image m_PlayerImage; //本人
         public Image[] m_Seats; //所有玩家座位
+        public Text[] m_SeatNames; //所有玩家名字
         public Transform[] m_MapPoints; //地图
         public Item_Card[] myCards; //手牌
         public Item_Card otherCard; //动画牌（别人出牌，我收到的新牌）
@@ -38,7 +39,21 @@ namespace HotFix
             m_CloseBtn = transform.Find("CloseBtn").GetComponent<Button>();
             m_CloseBtn.onClick.AddListener(OnCloseBtnClick);
             m_PlayerImage = transform.Find("ChessColor").GetComponent<Image>();
-            m_Seats = transform.Find("SeatPanel").GetComponentsInChildren<Image>();
+            //m_Seats = transform.Find("SeatPanel").GetComponentsInChildren<Image>();
+            Transform SeatPanel = transform.Find("SeatPanel");
+            int length = SeatPanel.childCount;
+            m_Seats = new Image[length];
+            for (int i = 0; i < length; i++)
+            {
+                m_Seats[i] = SeatPanel.GetChild(i).GetComponent<Image>();
+            }
+            m_SeatNames = new Text[length];
+            for (int i = 0; i < length; i++)
+            {
+                m_SeatNames[i] = m_Seats[i].GetComponentInChildren<Text>();
+            }
+            //Debug.Log($"座位数={m_Seats.Length}");
+            //Debug.Log($"座位名数={m_SeatNames.Length}");
 
             // 地图
             var mapRoot = transform.Find("MapPoints");
@@ -120,22 +135,30 @@ namespace HotFix
         {
             TcpChatClient.m_ClientRoom.PrintRoom();
 
+            var players = TcpChatClient.m_ClientRoom.Players;
             for (int i = 0; i < m_Seats.Length; i++)
             {
-                var seat = m_Seats[i];
-                if (i > TcpChatClient.m_ClientRoom.Players.Count)
+                int index = i;
+                var seat = m_Seats[index];
+                var seatName = m_SeatNames[index];
+                if (index >= players.Count)
                 {
+                    //Debug.Log($"关闭:{index}--{seat.gameObject.name}");
                     seat.gameObject.SetActive(false);
                 }
                 else
                 {
+                    //Debug.Log($"打开:{index}--{seat.gameObject.name}");
+                    var player = players[index];
+                    //Debug.Log($"设置名字:{player.UserName}");
                     seat.gameObject.SetActive(true);
+                    seatName.text = player.NickName;
                 }
             }
 
             int colorId = (int)TcpChatClient.m_ClientRoom.chessColor;
             m_PlayerImage.sprite = dic_sp[$"identify_{colorId}"]; //红0黄1绿2蓝3紫4
-            Debug.Log($"Color={TcpChatClient.m_ClientRoom.chessColor}");
+            //Debug.Log($"本人颜色={TcpChatClient.m_ClientRoom.chessColor}");
 
             for (int i = 0; i < 5; i++)
             {
@@ -178,9 +201,8 @@ namespace HotFix
         }
         void OnPlayBtnClick()
         {
-            Debug.Log($"点击出牌：{selectedCardId}");
             Card card = ClientRoom.lib.library[selectedCardId];
-            //Debug.Log($"出牌：{card.Log()}");
+            Debug.Log($"点击出牌：{card.Log()}");
             TcpChatClient.SendPlayCard(card.id, selectedCardColor);
         }
         #endregion
@@ -207,14 +229,14 @@ namespace HotFix
         // 提示出牌
         void OnYourTurn()
         {
-            Debug.Log("[S2C_YourTurn] 收到提示出牌");
+            //Debug.Log("[S2C_YourTurn] 收到提示出牌");
 
         }
         // 出牌消息
         async void OnPlay(object reader)
         {
             var packet = (S2C_PlayCardPacket)reader;
-            Debug.Log($"[S2C_GamePlay] 收到出牌消息，座位#{packet.SeatID}出牌{packet.CardID}-{packet.Color}");
+            Debug.Log($"[S2C] 收到出牌，座位#{packet.SeatID}出牌{packet.CardID}-{packet.Color}，手牌索引={handIndex}");
 
             // ①解析牌型
             int colorId = packet.Color;
@@ -227,7 +249,6 @@ namespace HotFix
             if (packet.SeatID != TcpChatClient.m_PlayerManager.LocalPlayer.SeatId)
             {
                 Debug.Log($"是别人出牌，座位#{packet.SeatID}");
-
                 var srcSeat = m_Seats[packet.SeatID].transform;
                 Vector3 src = srcSeat.position;
                 otherCard.transform.position = src;
@@ -243,15 +264,16 @@ namespace HotFix
                 m_PlayPanel.SetActive(false);
             }
 
+            Debug.Log("等待2秒......START");
             await Task.Delay(2000);
+            Debug.Log("等待2秒........END");
 
             // 如果是彩色，转成实际的颜色
             bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;
             ChessColor colorKey = colorful ? (ChessColor)colorId : (ChessColor)card.cardColor; //哪只乌龟
             int step = (int)card.cardNum; //走几步
 
-            // ③动画控制走棋子
-            // TODO: 考虑叠起来的情况。
+            // ③动画控制走棋子，考虑叠起来
             for (int i = 0; i < chessArray.Count; i++)
             {
                 int index = chessArray[i];
@@ -267,7 +289,8 @@ namespace HotFix
 
             // 解析牌型
             Card card = ClientRoom.lib.library[packet.CardID];
-            Debug.Log(card.Log());
+            Debug.Log($"发牌：{card.Log()}");
+            //Debug.Log($"发牌：{Card.LogColor((ChessColor)card.cardColor, (int)card.cardNum)}");
             TcpChatClient.m_ClientRoom.OnGameDeal(card);
 
             // 发牌动画

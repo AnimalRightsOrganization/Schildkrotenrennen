@@ -291,6 +291,14 @@ namespace NetCoreServer
             }
             return false;
         }
+        public Card OnGamePlay_Bot(ServerPlayer p)
+        {
+            //TODO: 从机器人手牌中随机
+            //TODO: 走棋子
+            //TODO: 下个出牌人
+            //TODO: 检查是否到终点
+            return null;
+        }
         public Card OnGameDeal(ServerPlayer player)
         {
             var card = cardList[nextIndex];
@@ -320,6 +328,13 @@ namespace NetCoreServer
                 }
             }
             return list;
+        }
+
+        public void RoomPrint()
+        {
+            //输出玩家列表
+            //输出剩余卡牌池
+            //输棋子的位置
         }
         #endregion
     }

@@ -30,7 +30,11 @@ namespace HotFix
 
         public void Move(ChessColor colorKey, int step)
         {
-            Debug.Log($"棋子{mColor}/{colorKey}，走{step}步");
+            //对出牌、发牌的动画牌不影响
+            if (colorKey != mColor)
+                Debug.LogError($"移动错误，颜色不一致{mColor}:{colorKey}");
+
+            Debug.Log($"{Card.LogColor(colorKey, step)} -> 棋子{colorKey}，走{step}步。");
 
             int TargetIndex = Mathf.Clamp(CurrentIndex + step, 0, 9);
             if (TargetIndex == CurrentIndex)
@@ -48,7 +52,7 @@ namespace HotFix
             tw.OnComplete(()=>
             {
                 transform.SetParent(ui_game.m_MapPoints[TargetIndex]);
-                Debug.Log("<color=green>棋子动画完成</color>");
+                //Debug.Log("<color=green>棋子动画完成</color>");
             });
         }
     }

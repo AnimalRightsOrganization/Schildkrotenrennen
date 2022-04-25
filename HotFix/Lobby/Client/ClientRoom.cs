@@ -95,6 +95,7 @@ namespace HotFix
                     {
                         chessPos[(ChessColor)i] = dstPos;
                         chessArray.Add(i);
+                        Debug.Log($"<color=green>叠起来走：{(ChessColor)i}</color>");
                     }
                 }
             }
@@ -102,6 +103,7 @@ namespace HotFix
             {
                 chessPos[colorKey] = dstPos; //起点不堆叠
                 chessArray.Add((int)colorKey);
+                Debug.Log($"<color=green>单个走：{colorKey}</color>");
             }
             return chessArray;
         }
