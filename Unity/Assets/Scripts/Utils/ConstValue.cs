@@ -17,12 +17,12 @@ public class ConstValue
         {
             if (string.IsNullOrEmpty(dataUrl))
             {
-#if UNITY_EDITOR
-                dataUrl = Path.Combine(GameManager.gameConfig.ab_url, "StandaloneWindows64");
-#elif UNITY_ANDROID
+#if UNITY_ANDROID
                 dataUrl = Path.Combine(GameManager.gameConfig.ab_url, "ANDROID");
 #elif UNITY_IOS
                 dataUrl = Path.Combine(GameManager.gameConfig.ab_url, "IOS");
+#else
+                dataUrl = Path.Combine(GameManager.gameConfig.ab_url, "StandaloneWindows64");
 #endif
             }
             return dataUrl;

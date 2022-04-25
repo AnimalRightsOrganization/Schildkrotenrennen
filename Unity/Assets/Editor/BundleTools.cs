@@ -396,7 +396,6 @@ public partial class BundleTools : Editor
     private static void Deploy(BuildTarget target)
     {
         string srcPath = Path.Combine(GetUnityDir(), target.ToString());
-        //Debug.Log($"from: {srcPath}");
         if (!Directory.Exists(srcPath))
         {
             Debug.LogError($"src不存在：{srcPath}");
@@ -404,24 +403,25 @@ public partial class BundleTools : Editor
         }
 
         string dstPath = $@"{Application.persistentDataPath}\{target}"; //本地部署
-        //string dstPath = $@"{GetServerDir()}\{target}"; //远程部署
-        //Debug.Log($"to: {dstPath}");
         if (Directory.Exists(dstPath))
-        {
-            Debug.Log($"dst存在：{dstPath}，先删除");
             Directory.Delete(dstPath, true);
-        }
-
-        //c#不支持跨硬盘移动文件夹
-        //Directory.Move(srcPath, dstPath);
-        //DirectoryInfo dirInfo = new DirectoryInfo(srcPath);
-        //dirInfo.MoveTo(dstPath);
         CopyFolder(srcPath, dstPath);
-        Debug.Log($"部署完成\n{srcPath}--->\n{dstPath}");
+        Debug.Log($"本地部署完成\n{srcPath}--->\n{dstPath}");
+
+        string wwwPath = $@"{GetServerDir()}\{target}"; //远程部署
+        if (Directory.Exists(wwwPath))
+            Directory.Delete(wwwPath, true);
+        CopyFolder(srcPath, wwwPath);
+        Debug.Log($"远程部署完成\n{srcPath}--->\n{wwwPath}");
+
         Directory.Delete(srcPath, true); //删除 ./StandaloneWindows64
     }
     private static void CopyFolder(string strFromPath, string strToPath)
     {
+        //c#不支持跨硬盘移动文件夹
+        //DirectoryInfo dirInfo = new DirectoryInfo(srcPath);
+        //dirInfo.MoveTo(dstPath);
+
         //如果源文件夹不存在，则创建
         if (!Directory.Exists(strFromPath))
         {
