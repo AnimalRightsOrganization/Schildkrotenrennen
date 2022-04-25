@@ -176,7 +176,7 @@ namespace HotFix
         void OnGetRoomInfo(object reader)
         {
             var response = (S2C_RoomInfo)reader;
-            //Debug.Log($"S2C_RoomInfo: [{response.Room.RoomName}#{response.Room.RoomID}]，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
+            Debug.Log($"[UI_Main.获取房间信息(自己创建/加入): [{response.Room.RoomName}#{response.Room.RoomID}]，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
 
             //自己创建/加入
             var roomData = new BaseRoomData
@@ -196,12 +196,20 @@ namespace HotFix
                     RoomId = response.Room.RoomID,
                     SeatId = playerInfo.SeatID,
                 };
-                //if (roomData.Players.Contains(playerData) == false)
+                //Debug.Log($"创建用户数据--{i}--{playerData.SeatId}");
                 roomData.Players.Add(playerData);
+
+                if (playerData.UserName == TcpChatClient.m_PlayerManager.LocalPlayer.UserName)
+                {
+                    TcpChatClient.m_PlayerManager.LocalPlayer.SetRoomID(roomData.RoomID).SetSeatID(playerData.SeatId).SetStatus(PlayerStatus.ROOM);
+                }
             }
+            //Debug.Log("新建ClientRoom");
             TcpChatClient.m_ClientRoom = new ClientRoom(roomData);
 
+            //Debug.Log("Push: UI_Room");
             var ui_room = UIManager.Get().Push<UI_Room>();
+            //Debug.Log("更新: UI_Room.UpdateUI");
             ui_room.UpdateUI(roomData);
 
             //this.Pop();

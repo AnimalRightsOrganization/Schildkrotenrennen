@@ -29,11 +29,12 @@ namespace HotFix
 
         void OnSelfClick()
         {
-            Debug.Log($"加入房间：{data.ToString()}");
+            Debug.Log($"[C2S] 加入房间：{data.ToString()}");
 
             if (data.HasPwd)
             {
                 // 弹出输入框
+                Debug.LogError("TODO: 有密码，弹出输入框");
                 return;
             }
 

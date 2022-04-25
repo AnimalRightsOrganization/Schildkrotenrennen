@@ -144,7 +144,7 @@ public partial class BundleTools : Editor
     {
         EditorUtility.ClearProgressBar();
     }
-    [MenuItem("Tools/测试/启动客户端", false, 100)]
+    [MenuItem("Tools/测试/启动客户端 %_F11", false, 100)]
     static void StartTestApp()
     {
         string currDir = Directory.GetCurrentDirectory();
@@ -156,7 +156,7 @@ public partial class BundleTools : Editor
         proc.StartInfo.FileName = "turtle.exe"; //初始化可执行文件名
         proc.Start();
     }
-    [MenuItem("Tools/测试/启动服务器", false, 100)]
+    [MenuItem("Tools/测试/启动服务器 %_F12", false, 100)]
     static void StartServer()
     {
         string currDir = Directory.GetCurrentDirectory();
@@ -184,7 +184,11 @@ public partial class BundleTools : Editor
     {
         ExecuteBatch("compile_hotfix.bat");
     }
-    [MenuItem("Tools/热更新/MoveDLL", false, 23)]
+    //% (ctrl on Windows and Linux, cmd on macOS),
+    //^ (ctrl on Windows, Linux, and macOS),
+    //# (shift),
+    //& (alt)
+    [MenuItem("Tools/热更新/MoveDLL %_F8", false, 23)]
     static void MoveDLL()
     {
         string dllPath = Path.Combine(Application.streamingAssetsPath, "HotFix.dll");

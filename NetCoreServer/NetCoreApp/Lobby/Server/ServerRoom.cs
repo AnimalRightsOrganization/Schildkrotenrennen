@@ -125,8 +125,19 @@ namespace NetCoreServer
             }
         }
 
+        public override string ToString()
+        {
+            string playerStr = string.Empty;
+            foreach (var item in m_PlayerList)
+            {
+                var player = item.Value;
+                playerStr += $"\n[{item.Key}]---{player.UserName}({player.NickName})(bot:{player.IsBot}), at{player.SeatId})";
+            }
+            return $"#{RoomID}[{RoomName}:{RoomPwd}] {CurCount}/{RoomLimit}: {playerStr}";
+        }
+
         #region 游戏逻辑
-        
+
         public static CardLib lib; //所有牌
         List<Card> cardList;
         int nextIndex = 0; // 下一张下发的牌

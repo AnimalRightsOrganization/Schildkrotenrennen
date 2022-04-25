@@ -41,7 +41,7 @@ namespace HotFix
 
             PacketType type = (PacketType)msgId;
             MemoryStream stream = new MemoryStream(body, 0, body.Length);
-            Debug.Log($"PacketType={type}");
+            Debug.Log($"<color=yellow>PacketType={type}</color>");
             switch (type)
             {
                 case PacketType.Connected:

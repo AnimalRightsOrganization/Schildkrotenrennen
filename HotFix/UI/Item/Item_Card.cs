@@ -25,6 +25,14 @@ namespace HotFix
             m_SelfBtn.onClick.AddListener(OnSelect);
         }
 
+        public void UnBind()
+        {
+            m_Group.interactable = false;
+            m_Group.blocksRaycasts = false;
+            m_SelfBtn.interactable = false;
+            m_SelfBtn.onClick.RemoveAllListeners();
+        }
+
         public void InitData(Card data)
         {
             card = data;
@@ -41,7 +49,12 @@ namespace HotFix
             // 实例化创建出来的，要在创建完成后获取坐标
             src = transform.position;
             dst = src + Vector3.up * 100;
+            m_SelfBtn.interactable = false;
             Tweener tw_show = transform.DOMove(dst, 0.3f);
+            tw_show.OnComplete(()=>
+            {
+                m_SelfBtn.interactable = true;
+            });
 
             var ui_game = UIManager.Get().GetUI<UI_Game>();
             ui_game.ShowPlayPanel(card.id, CancelCardAnime, PlayCardAnime);

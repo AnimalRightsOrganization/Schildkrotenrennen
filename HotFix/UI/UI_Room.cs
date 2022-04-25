@@ -64,9 +64,11 @@ namespace HotFix
         #region 网络事件
         public void UpdateUI(BaseRoomData roomData)
         {
-            Debug.Log($"房间初始化：ID={roomData.RoomID}，人数={roomData.Players.Count}/{roomData.RoomLimit}");
+            Debug.Log($"房间初始化：#{roomData.RoomID}，人数={roomData.Players.Count}/{roomData.RoomLimit}");
 
             m_NameText.text = roomData.RoomName;
+            bool isHost = roomData.Players[0].UserName == TcpChatClient.m_PlayerManager.LocalPlayer.UserName;
+            m_StartBtn.gameObject.SetActive(isHost);
 
             // 控制座位总数显示
             for (int i = 0; i < SeatList.Count; i++)
@@ -93,7 +95,7 @@ namespace HotFix
                     }
                     if (playerData != null)
                     {
-                        Debug.Log($"InitUI: {playerData.ToString()}");
+                        //Debug.Log($"InitUI: {playerData.ToString()}");
                         scriptItem.UpdateUI(playerData, index);
                     }
                     else
@@ -148,7 +150,7 @@ namespace HotFix
         void OnGetRoomInfo(object reader)
         {
             var response = (S2C_RoomInfo)reader;
-            //Debug.Log($"S2C_RoomInfo: [{response.Room.RoomName}#{response.Room.RoomID}]，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
+            Debug.Log($"[UI_Room.获取房间信息(别人加入/离开): [{response.Room.RoomName}#{response.Room.RoomID}]，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
 
             //别人加入/离开
             var roomData = new BaseRoomData
@@ -168,11 +170,13 @@ namespace HotFix
                     RoomId = response.Room.RoomID,
                     SeatId = playerInfo.SeatID,
                 };
-                //if (roomData.Players.Contains(playerData) == false)
+                //Debug.Log($"创建用户数据--{i}--");
                 roomData.Players.Add(playerData);
             }
+            //Debug.Log("更新ClientRoom");
             TcpChatClient.m_ClientRoom.UpdateData(roomData);
 
+            //Debug.Log("更新: UI_Room.UpdateUI");
             UpdateUI(roomData);
         }
         void OnGameStart(object reader)

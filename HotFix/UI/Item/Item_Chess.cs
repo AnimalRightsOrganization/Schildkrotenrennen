@@ -32,6 +32,11 @@ namespace HotFix
             Debug.Log($"棋子{mColor}/{colorKey}，走{step}步");
 
             int TargetIndex = Mathf.Clamp(CurrentIndex + step, 0, 9);
+            if (TargetIndex == CurrentIndex)
+            {
+                Debug.LogError($"原地，不移动：{CurrentIndex} --> {TargetIndex}");
+                return;
+            }
 
             var ui_game = UIManager.Get().GetUI<UI_Game>();
             Vector3 dst = ui_game.m_MapPoints[TargetIndex].position;

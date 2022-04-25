@@ -260,11 +260,18 @@ namespace WinFormsApp1
                 Debug.Print("server is not started!");
                 return;
             }
-            string log1 = $"服务器状态={server.IsStarted}, 连接数={server.ConnectedSessions}";
-            string log2 = $"在线人数={TcpChatServer.TCPChatServer.m_PlayerManager.Count}";
-            string log3 = $"{server.Endpoint.Address}:{server.Endpoint.Port}";
+            //string log1 = $"服务器状态={server.IsStarted}, 连接数={server.ConnectedSessions}";
+            //string log2 = $"在线人数={TcpChatServer.TCPChatServer.m_PlayerManager.Count}";
+            //string log3 = $"{server.Endpoint.Address}:{server.Endpoint.Port}";
+            //this.logText.Text = $"{log1}\n{log2}\n{log3}";
 
-            this.logText.Text = $"{log1}\n{log2}\n{log3}";
+            string content = string.Empty;
+            foreach (var player in TcpChatServer.TCPChatServer.m_PlayerManager.GetPlayersAll())
+            {
+                //content += $"({player.ToString()})\n";
+                content += $"{player.UserName}: #{player.RoomId}, #{player.SeatId}, 状态:{player.Status}\n";
+            }
+            this.logText.Text = content;
         }
 
         #endregion

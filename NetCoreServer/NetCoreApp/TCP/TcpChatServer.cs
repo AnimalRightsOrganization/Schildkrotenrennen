@@ -154,7 +154,7 @@ namespace TcpChatServer
                 {
                     RoomID = room.RoomID,
                     RoomName = room.RoomName,
-                    HasPwd = string.IsNullOrEmpty(room.RoomPwd),
+                    HasPwd = !string.IsNullOrEmpty(room.RoomPwd),
                     LimitNum = room.RoomLimit,
                     Players = players,
                 };
@@ -167,33 +167,22 @@ namespace TcpChatServer
         protected void OnCreateRoom(MemoryStream ms)
         {
             var request = ProtobufHelper.Deserialize<C2S_CreateRoomPacket>(ms); //解包
-            Debug.Print($"Name={request.RoomName}, Pwd={request.RoomPwd}, playerNum={request.LimitNum} by {Id}");
-
+            Debug.Print($"[C2S] Name={request.RoomName}, Pwd={request.RoomPwd}, playerNum={request.LimitNum} by {Id}");
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            PlayerInfo hostPlayer = new PlayerInfo { UserName = p.UserName, NickName = p.NickName, SeatID = 0 };
-            //Debug.Print($"host={hostPlayer.NickName}");
-
-            List<PlayerInfo> players = new List<PlayerInfo>();
-            players.Add(hostPlayer);
-            RoomInfo roomInfo = new RoomInfo
-            {
-                RoomID = 0,
-                RoomName = request.RoomName,
-                LimitNum = request.LimitNum,
-                Players = players,
-            };
 
             // 验证合法性（总数是否超过等），在服务器创建房间
-            BasePlayerData hostPlayerData = new BasePlayerData { PeerId = p.PeerId, UserName = p.UserName, NickName = p.NickName, SeatId = p.SeatId };
-            BaseRoomData baseRoomData = new BaseRoomData
+            var roomData = new BaseRoomData
             {
                 RoomID = -1, //通过Manager创建时会生成。
                 RoomName = request.RoomName,
                 RoomPwd = request.RoomPwd,
                 RoomLimit = request.LimitNum,
-                Players = new List<BasePlayerData>() { hostPlayerData },
+                Players = new List<BasePlayerData>()
+                {
+                    new BasePlayerData { PeerId = p.PeerId, UserName = p.UserName, NickName = p.NickName, SeatId = p.SeatId },
+                },
             };
-            ServerRoom serverRoom = TCPChatServer.m_RoomManager.CreateServerRoom(p, baseRoomData);
+            var serverRoom = TCPChatServer.m_RoomManager.CreateServerRoom(p, roomData);
             if (serverRoom == null)
             {
                 Debug.Print("创建房间出错");
@@ -202,7 +191,19 @@ namespace TcpChatServer
                 return;
             }
 
+            var roomInfo = new RoomInfo
+            {
+                RoomID = serverRoom.RoomID,
+                RoomName = request.RoomName,
+                LimitNum = request.LimitNum,
+                Players = new List<PlayerInfo>
+                {
+                    new PlayerInfo { UserName = p.UserName, NickName = p.NickName, SeatID = 0 },
+                },
+            };
+
             S2C_RoomInfo packet = new S2C_RoomInfo { Room = roomInfo };
+            Debug.Print($"[S2C_RoomInfo] {roomInfo.ToString()}");
             p.SendAsync(PacketType.S2C_RoomInfo, packet);
 
             WinFormsApp1.MainForm.Instance.RefreshRoomNum();
@@ -215,9 +216,9 @@ namespace TcpChatServer
 
             // 验证合法性（座位是否够，房间状态是否在等待，密码，等）
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(request.RoomID);
-            if (serverRoom.RoomPwd == request.RoomPwd)
+            if (serverRoom.RoomPwd != request.RoomPwd)
             {
-                Debug.Print("房间密码错误");
+                Debug.Print($"房间密码错误：[{serverRoom.RoomPwd}]({serverRoom.RoomPwd.Length}) : [{request.RoomPwd}]({request.RoomPwd.Length})");
                 return;
             }
             if (serverRoom.m_PlayerList.Count >= serverRoom.RoomLimit)
@@ -226,10 +227,26 @@ namespace TcpChatServer
                 return;
             }
             serverRoom.AddPlayer(p);
+            Debug.Print($"允许加入，服务器修改{p.UserName}状态，#{p.RoomId},#{p.SeatId},状态:{p.Status}");
 
-            RoomInfo roomInfo = new RoomInfo { RoomID = serverRoom.RoomID, RoomName = serverRoom.RoomName, LimitNum = serverRoom.RoomLimit };
+            Debug.Print(serverRoom.ToString());
+            var players = new List<PlayerInfo>();
+            for (int i = 0; i < serverRoom.CurCount; i++)
+            {
+                var player = serverRoom.m_PlayerList[i];
+                var playerInfo = new PlayerInfo { SeatID = player.SeatId, UserName = player.UserName, NickName = player.NickName };
+                players.Add(playerInfo);
+            }
+            RoomInfo roomInfo = new RoomInfo
+            {
+                RoomID = serverRoom.RoomID,
+                RoomName = serverRoom.RoomName,
+                HasPwd = !string.IsNullOrEmpty(serverRoom.RoomPwd),
+                LimitNum = serverRoom.RoomLimit,
+                Players = players,
+            };
             S2C_RoomInfo packet = new S2C_RoomInfo { Room = roomInfo };
-            p.SendAsync(PacketType.S2C_RoomInfo, packet);
+            serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet);
         }
         protected void OnLeaveRoom()
         {
@@ -243,6 +260,13 @@ namespace TcpChatServer
             if (verify == false)
             {
                 Debug.Print($"错误，用户不在该房间#{p.RoomId}");
+                return;
+            }
+            if (serverRoom.hostPlayer.Status == PlayerStatus.GAME)
+            {
+                Debug.Print("比赛中投降，结算时判负");
+                //接下来比赛会跳过该用户回合
+                //判断剩下几人，如果只剩一个真实玩家，直接弹出结算。
                 return;
             }
             Debug.Print($"验证成功，可以离开房间#{p.RoomId}，座位#{p.SeatId}"); //-1, -1
@@ -272,7 +296,7 @@ namespace TcpChatServer
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
             BaseRoomData roomData = serverRoom.m_Data;
-            Debug.Print($"{p.UserName}在房间#{p.RoomId}对座位#{request.SeatID}添加操作：{(SeatOperate)request.Operate}");
+            Debug.Print($"[C2S] {p.UserName}在房间#{p.RoomId}对座位#{request.SeatID}添加操作：{(SeatOperate)request.Operate}");
 
             // 都要房主权限
             if (p.SeatId != 0)
@@ -342,6 +366,7 @@ namespace TcpChatServer
                 Players = players,
             };
             var packet1 = new S2C_RoomInfo { Room = roomInfo };
+            Debug.Print($"[S2C] {roomInfo.ToString()}");
             // 房间内广播，更新房间信息
             serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet1);
         }
