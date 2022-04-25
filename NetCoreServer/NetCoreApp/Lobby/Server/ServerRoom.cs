@@ -260,6 +260,7 @@ namespace NetCoreServer
         // 结算
         public void OnGameResult()
         {
+            Debug.Print("给出结算");
             //S2C_GameResultPacket packet = new S2C_GameResultPacket { };
             //SendAsync(PacketType.S2C_GameResult, packet);
         }

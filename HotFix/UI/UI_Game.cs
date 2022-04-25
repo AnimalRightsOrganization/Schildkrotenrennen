@@ -220,7 +220,7 @@ namespace HotFix
             int colorId = packet.Color;
             Card card = ClientRoom.lib.library[packet.CardID];
             //Debug.Log(card.Log());
-            //TcpChatClient.m_ClientRoom.handCards.RemoveAt(handIndex);
+            TcpChatClient.m_ClientRoom.handCards.RemoveAt(handIndex);
 
             // ②出牌动画
             // 放大0.2f，移动0.3f，停留1.0f，消失0.5f => 2.0f
@@ -263,28 +263,25 @@ namespace HotFix
             // 解析牌型
             Card card = ClientRoom.lib.library[packet.CardID];
             Debug.Log(card.Log());
-            //TcpChatClient.m_ClientRoom.handCards.Add(card);
+            TcpChatClient.m_ClientRoom.handCards.Add(card);
 
             // 发牌动画
             await Task.Delay(3000); //等待出牌和走棋动画
-            Debug.Log("START........发牌动画");
             myCards[handIndex].transform.SetAsLastSibling();
             myCards[handIndex].gameObject.SetActive(true);
 
+            otherCard.InitData(card);
             otherCard.transform.position = new Vector3(Screen.width, Screen.height) / 2;
-            //otherCard.m_Rect.anchoredPosition3D = new Vector3(-320, 555, 0);
             otherCard.m_Group.alpha = 1;
-            //Debug.Log($"[检查数组] {handIndex} : {myCards.Length}");
 
-            //Vector3 dst = myCards[handIndex].m_Rect.anchoredPosition;
             Vector3 dst = myCards[myCards.Length - 1].transform.position; //该位置放一堆牌
-            Debug.Log($"移动到：{dst}");
+            //Debug.Log($"移动到：{dst}");
             Tweener tw1 = otherCard.transform.DOMove(dst, 0.3f);
             await Task.Delay(1000);
 
             otherCard.m_Group.DOFade(0, 0.5f);
+            myCards[handIndex].InitData(card);
             myCards[handIndex].m_Group.alpha = 1;
-            Debug.Log("发牌动画.........END");
         }
         // 结算消息
         void OnGameResult(object reader)
