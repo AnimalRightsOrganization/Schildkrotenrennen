@@ -66,7 +66,7 @@ namespace TcpChatServer
                     OnLoginReq(ms);
                     break;
                 case PacketType.C2S_RoomList:
-                    OnRoomList();
+                    OnRoomList(ms);
                     break;
                 case PacketType.C2S_CreateRoom:
                     OnCreateRoom(ms);
@@ -140,8 +140,11 @@ namespace TcpChatServer
 
             WinFormsApp1.MainForm.Instance.RefreshPlayerNum();
         }
-        protected void OnRoomList()
+        protected void OnRoomList(MemoryStream ms)
         {
+            var request = ProtobufHelper.Deserialize<C2S_RoomListPacket>(ms); //解包
+            Debug.Print($"Room List Page={request.Page} by {Id}");
+
             // 空消息，不用解析
             S2C_GetRoomList packet = new S2C_GetRoomList();
             List<PlayerInfo> players = new List<PlayerInfo>();

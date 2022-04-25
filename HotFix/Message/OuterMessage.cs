@@ -79,6 +79,15 @@ namespace ET
 	}
 
 // 房间
+	[Message(OuterOpcode.C2S_RoomListPacket)]
+	[ProtoContract]
+	public partial class C2S_RoomListPacket: Object
+	{
+		[ProtoMember(1)]
+		public int Page { get; set; }
+
+	}
+
 	[Message(OuterOpcode.C2S_CreateRoomPacket)]
 	[ProtoContract]
 	public partial class C2S_CreateRoomPacket: Object

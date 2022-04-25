@@ -40,6 +40,10 @@ message S2C_LoginResultPacket
 }
 
 // 房间
+message C2S_RoomListPacket
+{
+	int32 Page 	= 1; //页面
+}
 message C2S_CreateRoomPacket
 {
 	string RoomName = 1; //房间名

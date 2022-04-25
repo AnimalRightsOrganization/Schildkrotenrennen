@@ -174,7 +174,7 @@ namespace HotFix
         }
         public static void SendGetRoomList(int page)
         {
-            EmptyPacket cmd = new EmptyPacket();
+            var cmd = new C2S_RoomListPacket { Page = page };
             SendAsync(PacketType.C2S_RoomList, cmd);
         }
         public static bool SendCreateRoom(string name, string pwd, int num)
