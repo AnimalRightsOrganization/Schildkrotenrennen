@@ -30,6 +30,14 @@ namespace HotFix
         void OnSelfClick()
         {
             Debug.Log($"加入房间：{data.ToString()}");
+
+            if (data.HasPwd)
+            {
+                // 弹出输入框
+                return;
+            }
+
+            TcpChatClient.SendJoinRoom(data.RoomID, "");
         }
     }
 }

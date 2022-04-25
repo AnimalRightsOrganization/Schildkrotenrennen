@@ -157,13 +157,7 @@ namespace HotFix
         {
             Card card = ClientRoom.lib.library[selectedCardId];
             Debug.Log($"出牌：{card.Log()}");
-
-            var cmd = new C2S_PlayCardPacket
-            {
-                CardID = card.id,
-                Color = selectedCardColor,
-            };
-            TcpChatClient.SendAsync(PacketType.C2S_GamePlay, cmd);
+            TcpChatClient.SendPlayCard(card.id, selectedCardColor);
         }
         #endregion
 

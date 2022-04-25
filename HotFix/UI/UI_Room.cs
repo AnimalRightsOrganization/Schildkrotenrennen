@@ -53,22 +53,11 @@ namespace HotFix
         #region 按钮事件
         void OnSendLeaveRoom()
         {
-            Debug.Log("请求离开房间");
-            EmptyPacket cmd = new EmptyPacket();
-            TcpChatClient.SendAsync(PacketType.C2S_LeaveRoom, cmd);
+            TcpChatClient.SendLeaveRoom();
         }
         void OnSendStartGame()
         {
-            if (TcpChatClient.m_ClientRoom.m_PlayerList.Count < TcpChatClient.m_ClientRoom.RoomLimit)
-            {
-                Debug.LogError($"人数不足，请等待：{TcpChatClient.m_ClientRoom.m_PlayerList.Count} < {TcpChatClient.m_ClientRoom.RoomLimit}");
-                var ui_toast = UIManager.Get().Push<UI_Toast>();
-                ui_toast.Show("人数不足，请等待");
-                return;
-            }
-            Debug.Log("请求开始比赛");
-            EmptyPacket cmd = new EmptyPacket();
-            TcpChatClient.SendAsync(PacketType.C2S_GameStart, cmd);
+            TcpChatClient.SendGameStart();
         }
         #endregion
 

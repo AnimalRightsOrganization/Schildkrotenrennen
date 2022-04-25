@@ -179,9 +179,12 @@ namespace ET
 		public string RoomName { get; set; }
 
 		[ProtoMember(3)]
-		public int LimitNum { get; set; }
+		public bool HasPwd { get; set; }
 
 		[ProtoMember(4)]
+		public int LimitNum { get; set; }
+
+		[ProtoMember(5)]
 		public List<PlayerInfo> Players = new List<PlayerInfo>();
 
 	}

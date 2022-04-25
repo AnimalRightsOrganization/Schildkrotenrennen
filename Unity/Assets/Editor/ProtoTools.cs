@@ -49,14 +49,14 @@ public partial class BundleTools : Editor
     const string serverCore = @"NetCoreServer\NetCoreApp\Core";
     const int SLEEP_TIME = 1;
 
-    [MenuItem("Tools/测试/HotFix >> Server", false, 11)]
+    [MenuItem("Tools/测试/HotFix >> Server", false, 0)]
     static async void Sync_H2S()
     {
         string[] srcPaths = new string[] { hotfixCore, hotfixShared };
         string[] outPaths = new string[] { serverCore, serverShared };
         await Sync_SharedCode(srcPaths, outPaths);
     }
-    [MenuItem("Tools/测试/HotFix << Server", false, 12)]
+    [MenuItem("Tools/测试/HotFix << Server", false, 0)]
     static async void Sync_S2H()
     {
         string[] srcPaths = new string[] { serverCore, serverShared };
@@ -114,13 +114,13 @@ public partial class BundleTools : Editor
         await Task.Delay(SLEEP_TIME);
         EditorUtility.ClearProgressBar();
     }
-    [MenuItem("Tools/测试/CMD", false, 13)]
+    [MenuItem("Tools/测试/CMD", false, 11)]
     static void TestCMD()
     {
         ExecuteCommand(@"ipconfig /flushdns");
         //ExecuteCommand(@"ping www.baidu.com");
     }
-    [MenuItem("Tools/测试/清理临时文件夹", false, 14)]
+    [MenuItem("Tools/测试/清理临时文件夹", true, 12)]
     static void ClearTmpFolders()
     {
         // 两个需要清理的目录
@@ -139,10 +139,34 @@ public partial class BundleTools : Editor
         }
         Debug.Log("清理完成");
     }
-    [MenuItem("Tools/测试/取消读条", false, 15)]
+    [MenuItem("Tools/测试/取消读条", false, 13)]
     static void CancelableProgressBar()
     {
         EditorUtility.ClearProgressBar();
+    }
+    [MenuItem("Tools/测试/启动客户端", false, 100)]
+    static void StartTestApp()
+    {
+        string currDir = Directory.GetCurrentDirectory();
+        DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
+        string exePath = $@"{currDirInfo.Parent}\Unity\Build\";
+
+        Process proc = new Process();
+        proc.StartInfo.WorkingDirectory = exePath; //在文件所在位置执行
+        proc.StartInfo.FileName = "turtle.exe"; //初始化可执行文件名
+        proc.Start();
+    }
+    [MenuItem("Tools/测试/启动服务器", false, 100)]
+    static void StartServer()
+    {
+        string currDir = Directory.GetCurrentDirectory();
+        DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
+        string exePath = $@"{currDirInfo.Parent}\NetCoreServer\NetCoreApp\bin\Debug\netcoreapp3.1\";
+
+        Process proc = new Process();
+        proc.StartInfo.WorkingDirectory = exePath; //在文件所在位置执行
+        proc.StartInfo.FileName = "NetCoreServer.exe"; //初始化可执行文件名
+        proc.Start();
     }
 
     #endregion
@@ -183,9 +207,9 @@ public partial class BundleTools : Editor
         Debug.Log("移动完成");
     }
 
-    [MenuItem("Tools/Shader/重置IncludedShaders", false, 31)]
+    [MenuItem("Tools/Shader/重置IncludedShaders", true, 31)]
     static void ResetIncludedShaders() { }
-    [MenuItem("Tools/Shader/设置IncludedShaders", false, 31)]
+    [MenuItem("Tools/Shader/设置IncludedShaders", true, 31)]
     static void SetIncludedShaders() { }
 
     [MenuItem("Assets/Open Server Project", false)]
@@ -203,28 +227,16 @@ public partial class BundleTools : Editor
         proc.StartInfo.CreateNoWindow = true;
         proc.Start();
     }
-    [MenuItem("Tools/服务器/服务器AB资源存放目录", false, 41)]
+    [MenuItem("Tools/打包AB/服务器AB资源存放目录", false, 41)]
     static void OpenServerAB()
     {
         Process.Start("explorer.exe", GetServerDir());
     }
-    [MenuItem("Tools/服务器/运行时AB资源下载目录", false, 42)]
+    [MenuItem("Tools/打包AB/运行时AB资源下载目录", false, 42)]
     static void OpenAppAB()
     {
         string path = Application.persistentDataPath.Replace("/", @"\"); //向左的[/]无法打开，要转成[\]
         Process.Start("explorer.exe", path);
-    }
-    [MenuItem("Tools/服务器/启动服务器", false, 43)]
-    static void StartServer()
-    {
-        string currDir = Directory.GetCurrentDirectory();
-        DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
-        string exePath = $@"{currDirInfo.Parent}\NetCoreServer\NetCoreApp\bin\Debug\netcoreapp3.1\";
-
-        Process proc = new Process();
-        proc.StartInfo.WorkingDirectory = exePath; //在文件所在位置执行
-        proc.StartInfo.FileName = "NetCoreServer.exe"; //初始化可执行文件名
-        proc.Start();
     }
 
     #endregion

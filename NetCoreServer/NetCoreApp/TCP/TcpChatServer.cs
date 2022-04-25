@@ -154,6 +154,7 @@ namespace TcpChatServer
                 {
                     RoomID = room.RoomID,
                     RoomName = room.RoomName,
+                    HasPwd = string.IsNullOrEmpty(room.RoomPwd),
                     LimitNum = room.RoomLimit,
                     Players = players,
                 };

@@ -133,12 +133,12 @@ namespace HotFix
             //Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
             return buffer;
         }
-        public static void Send(PacketType msgId, object cmd)
+        private static void Send(PacketType msgId, object cmd)
         {
             byte[] buffer = MakeBuffer(msgId, cmd);
             client.Send(buffer);
         }
-        public static void SendAsync(PacketType msgId, object cmd)
+        private static void SendAsync(PacketType msgId, object cmd)
         {
             byte[] buffer = MakeBuffer(msgId, cmd);
             client.SendAsync(buffer);
@@ -198,6 +198,19 @@ namespace HotFix
         {
             EmptyPacket cmd = new EmptyPacket();
             SendAsync(PacketType.C2S_LeaveRoom, cmd);
+        }
+        public static void SendGameStart()
+        {
+            if (m_ClientRoom.m_PlayerList.Count < m_ClientRoom.RoomLimit)
+            {
+                Debug.LogError($"人数不足，请等待：{m_ClientRoom.m_PlayerList.Count} < {m_ClientRoom.RoomLimit}");
+                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                ui_toast.Show("人数不足，请等待");
+                return;
+            }
+            Debug.Log("请求开始比赛");
+            EmptyPacket cmd = new EmptyPacket();
+            SendAsync(PacketType.C2S_GameStart, cmd);
         }
         public static void SendOperateSeat(int seatId, SeatOperate op)
         {
