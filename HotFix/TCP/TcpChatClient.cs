@@ -29,14 +29,23 @@ namespace HotFix
             Debug.Log($"Chat TCP client disconnected a session with Id {Id}");
             Debug.Log("<color=red>Disonnected</color>");
 
+            if (tryTime > 3)
+            {
+                _stop = true;
+                Debug.Log("<color=red>重连达到上限</color>");
+            }
+
             // Wait for a while...
             Thread.Sleep(1000);
 
             // Try to connect again
             if (!_stop)
+            {
                 ConnectAsync();
 
-            //TODO: 只执行一次！！！
+                tryTime++;
+            }
+
             // 这里是异步线程中，需要通过Update推送到主线程。
             PacketType msgId = PacketType.Disconnect;
             byte[] buffer = new byte[1] { (byte)msgId };
@@ -57,7 +66,7 @@ namespace HotFix
 
         private bool _stop;
 
-        //private const int RETRY = 5; //TODO:根据断开形式，服务器主动断开则不再重连
+        public int tryTime; //尝试重连计数
     }
 
     public class TcpChatClient
@@ -72,23 +81,12 @@ namespace HotFix
 
         public static void Dispose()
         {
-            m_PlayerManager = null;
-
             Debug.Log("关闭网络");
-
-            //Debug.Log($"IsExist:{client != null}"); //True
             if (client != null)
             {
-                //Debug.Log($"IsConnected:{client.IsConnected}"); //False
-                if (client.IsConnected)
-                {
-                    client.DisconnectAndStop();
-                }
-                //Debug.Log($"IsSocketDisposed:{client.IsDisposed}"); //False
-                if (client.IsDisposed == false)
-                {
-                    client.Dispose();
-                }
+                // 不管有没有停反正执行一次，标记stop，让线程等待释放
+                client.DisconnectAndStop();
+                client.Dispose();
             }
             client = null;
         }
@@ -98,6 +96,7 @@ namespace HotFix
 
             // Create a new TCP chat client
             client = new ChatClient(address, port);
+            client.tryTime = 0;
 
             // Connect the client
             client.ConnectAsync();
@@ -159,6 +158,7 @@ namespace HotFix
             //TODO: 服务器/客户端共用规则，双边验证...
 
             var cmd = new C2S_LoginPacket { Username = usr, Password = pwd };
+            Debug.Log($"[C2S] {cmd.Username}, {cmd.Password}");
             SendAsync(PacketType.C2S_LoginReq, cmd);
         }
         public static void SendChat(string message)

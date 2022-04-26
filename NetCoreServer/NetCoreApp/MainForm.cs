@@ -13,7 +13,10 @@ namespace WinFormsApp1
             get
             {
                 if (_instance == null)
+                {
                     _instance = new MainForm();
+                    RegisterHandler();
+                }
                 return _instance;
             }
         }

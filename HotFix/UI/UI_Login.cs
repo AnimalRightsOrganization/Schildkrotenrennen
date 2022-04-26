@@ -50,7 +50,6 @@ namespace HotFix
             m_WXBtn.onClick.RemoveListener(OnWXBtnClick);
             m_HelpBtn.onClick.RemoveListener(OnHelpBtnClick);
 
-            Debug.Log("释放临时变量");
             m_UserInput = null;
             m_LoginBtn = null;
             m_RegisterBtn = null;

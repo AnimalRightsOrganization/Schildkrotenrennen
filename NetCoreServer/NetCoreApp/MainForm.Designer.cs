@@ -210,7 +210,6 @@ namespace WinFormsApp1
         {
             //await MySQLTool.MultiSQL();
             //await MySQLTool.TestQuery();
-            Restart();
 
             //var result = await MySQLTool.CheckLogin("lala", "123456");
             //Debug.Print($"lala: {result}");
@@ -327,7 +326,7 @@ namespace WinFormsApp1
             //System.Diagnostics.Process.Start(Application.ExecutablePath); //是dll
             Application.Exit();
         }
-        void RegisterHandler()
+        public static void RegisterHandler()
         {
             Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
@@ -336,88 +335,30 @@ namespace WinFormsApp1
         }
         static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
-            /*
-            var fromAddress = new MailAddress("your Gmail address", "Your name");
-            var toAddress = new MailAddress("email address where you want to receive reports", "Your name");
-            const string fromPassword = "your password";
-            const string subject = "exception report";
-            Exception exception = e.Exception;
-            string body = exception.Message + "\n" + exception.Data + "\n" + exception.StackTrace + "\n" + exception.Source;
-
-            var smtp = new SmtpClient
-            {
-                Host = "smtp.gmail.com",
-                Port = 587,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-            };
-            using (var message = new MailMessage(fromAddress, toAddress)
-            {
-                Subject = subject,
-                Body = body
-            })
-            {
-                //You can also use SendAsync method instead of Send so your application begin invoking instead of waiting for send mail to complete. SendAsync(MailMessage, Object) :- Sends the specified e-mail message to an SMTP server for delivery. This method does not block the calling thread and allows the caller to pass an object to the method that is invoked when the operation completes. 
-                smtp.Send(message);
-            }*/
-
-            /*
-            Exception ex = default(Exception);
-            ex = e.Exception;
-            ILog log = LogManager.GetLogger(typeof(Program)); //Log4NET
-            log.Error(ex.Message + "\n" + ex.StackTrace);*/
+            Exception ex = e.Exception;
+            string body = $"ThreadException: Message: {ex.Message}\nData: {ex.Data}\nTrace: {ex.StackTrace}\nSource: {ex.Source}";
+            //Debug.Print(body);
+            WriteLog(body);
         }
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Exception ex = (Exception)e.ExceptionObject;
-            Console.WriteLine("MyHandler caught : " + ex.Message);
-            Console.WriteLine("trace: {0}", ex.StackTrace);
-            Console.WriteLine("Runtime terminating: {0}", e.IsTerminating);
+            string body = $"UnhandledException Message: {ex.Message}\nTrace: {ex.StackTrace}\nRuntime terminating: {e.IsTerminating}";
+            //Debug.Print(body);
+            WriteLog(body);
         }
-        public static void WriteLog(Exception ex)
+        public static void WriteLog(string err_message)
         {
-            /*
-            string errorTime = "异常时间：" + DateTime.Now.ToString();
-            //string errorAddress = "异常地址：" + HttpContext.Current.Request.Url.ToString();
-            string errorInfo = "异常信息：" + ex.Message;
-            string errorSource = "错误源：" + ex.Source;
-            string errorType = "运行类型：" + ex.GetType();
-            string errorFunction = "异常函数：" + ex.TargetSite;
-            string errorTrace = "堆栈信息：" + ex.StackTrace;
-            HttpContext.Current.Server.ClearError();
-            System.IO.StreamWriter writer = null;
-            try
-            {
-                //写入日志
-                string path = string.Empty;
-                path = HttpContext.Current.Server.MapPath("~/ErrorLogs/");
-                //不存在则创建错误日志文件夹
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-                path += string.Format(@"\{0}.txt", DateTime.Now.ToString("yyyy-MM-dd"));
+            //string currDir = Environment.CurrentDirectory;
+            //Debug.Print(currDir);
+            string root = @$"C:\Users\Administrator\Desktop\";
 
-                writer = !System.IO.File.Exists(path) ? System.IO.File.CreateText(path) : System.IO.File.AppendText(path); //判断文件是否存在，如果不存在则创建，存在则添加
-                writer.WriteLine("用户IP:" + HttpContext.Current.Request.UserHostAddress);
-                writer.WriteLine(errorTime);
-                writer.WriteLine(errorAddress);
-                writer.WriteLine(errorInfo);
-                writer.WriteLine(errorSource);
-                writer.WriteLine(errorType);
-                writer.WriteLine(errorFunction);
-                writer.WriteLine(errorTrace);
-                writer.WriteLine("********************************************************************************************");
-            }
-            finally
-            {
-                if (writer != null)
-                {
-                    writer.Close();
-                }
-            }*/
+            //string fileName = System.DateTime.Now.ToString(); //2022/4/27 3:18:34
+            string fileName = $"{System.DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss")}.txt"; //2022_04_27_03_19_40
+            //Debug.Print(fileName);
+
+            string filePath = Path.Combine(root, fileName);
+            File.WriteAllText(filePath, err_message);
         }
 
         #endregion

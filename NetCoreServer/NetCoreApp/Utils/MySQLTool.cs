@@ -23,8 +23,8 @@ namespace NetCoreServer.Utils
                 {
                     Server = "localhost",
                     Database = "turtle",
-                    UserID = "root",
-                    Password = "",
+                    UserID = "seol",
+                    Password = "123456",
                     SslMode = MySqlSslMode.None,
                 };
                 return bd;

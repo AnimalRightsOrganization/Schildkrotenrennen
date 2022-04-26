@@ -110,7 +110,7 @@ namespace TcpChatServer
         protected async void OnLoginReq(MemoryStream ms)
         {
             var request = ProtobufHelper.Deserialize<C2S_LoginPacket>(ms); //解包
-            Debug.Print($"Username={request.Username}, Password={request.Password} by {Id}");
+            Debug.Print($"[C2S] Username={request.Username}, Password={request.Password} by {Id}");
 
             UserInfo result = await MySQLTool.GetUserInfo(request.Username, request.Password);
             if (result == null)
