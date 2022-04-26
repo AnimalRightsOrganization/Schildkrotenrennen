@@ -221,14 +221,16 @@ public partial class BundleTools : Editor
     {
         string currDir = Directory.GetCurrentDirectory();
         DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
-        string projPath = $@"{currDirInfo.Parent}\NetCoreServer\NetCoreApp.sln";
+        //string projPath = $@"{currDirInfo.Parent}\NetCoreServer\NetCoreApp.sln";
+        string projPath = $@"{currDirInfo.Parent}\NetCoreServer";
 #if UNITY_STANDALONE_OSX
         //MacOS只认[/]。但不能编译winform。
         projPath = projPath.Replace(@"\", "/");
 #endif
         Process proc = new Process();
-        proc.StartInfo.FileName = projPath;
-        proc.StartInfo.CreateNoWindow = true;
+        //proc.StartInfo.FileName = projPath;
+        proc.StartInfo.WorkingDirectory = projPath;
+        proc.StartInfo.FileName = "NetCoreApp.sln";
         proc.Start();
     }
     [MenuItem("Tools/打包AB/服务器AB资源存放目录", false, 41)]
