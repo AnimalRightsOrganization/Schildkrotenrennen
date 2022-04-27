@@ -59,7 +59,7 @@ namespace HotFix
                 mapChess.Add(i, new List<ChessColor>());
             }
             List<ChessColor> origin = mapChess[0];
-            Debug.Log($"起点叠了{origin.Count}层");
+            //Debug.Log($"起点叠了{origin.Count}层");
         }
         public void OnGameStart_Client(S2C_GameStartPacket packet)
         {
@@ -167,6 +167,17 @@ namespace HotFix
             for (int i = 0; i < handCards.Count; i++)
                 handStr += $"{i}--[{handCards[i].id}]、";
             Debug.Log(handStr);
+        }
+
+        public List<ChessColor> GetSlowest()
+        {
+            for (int i = 0; i < mapChess.Count; i++)
+            {
+                var grid = mapChess[i];
+                if (grid.Count > 0)
+                    return grid;
+            }
+            return null;
         }
     }
 }

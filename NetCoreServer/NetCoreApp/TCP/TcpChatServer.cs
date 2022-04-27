@@ -466,7 +466,7 @@ namespace TcpChatServer
             {
                 Debug.Print($"顺序错误，不允许座位#{p.SeatId}出牌，等待座位#{serverRoom.nextPlayerIndex}");
             }
-            bool end = serverRoom.OnGamePlay(p, request);
+            bool end = serverRoom.OnGamePlay_Server(p, request);
 
             // 房间内广播出牌结果
             var packet1 = new S2C_PlayCardPacket { CardID = request.CardID, Color = request.Color, SeatID = p.SeatId };
@@ -481,7 +481,7 @@ namespace TcpChatServer
             }
 
             // 给出牌者发送新发的牌
-            Card card = serverRoom.OnGameDeal(p);
+            Card card = serverRoom.OnGameDeal_Server(p);
             var packet2 = new S2C_DealPacket { CardID = card.id, SeatID = p.SeatId };
             p.SendAsync(PacketType.S2C_GameDeal, packet2);
             Debug.Print($"[S2C] 单发发牌消息：{packet2.CardID}给座位#{packet2.SeatID}");

@@ -215,12 +215,11 @@ namespace HotFix
         }
         public static void SendOperateSeat(int seatId, SeatOperate op)
         {
-            Debug.Log($"对座位{seatId}，{op}");
-
+            //Debug.Log($"对座位{seatId}，操作{op}");
             var cmd = new C2S_OperateSeatPacket { SeatID = seatId, Operate = (int)op };
             SendAsync(PacketType.C2S_OperateSeat, cmd);
         }
-        public static void SendPlayCard(int cardId, int color = -1)
+        public static void SendGamePlay(int cardId, int color = -1)
         {
             var cmd = new C2S_PlayCardPacket { CardID = cardId, Color = color };
             SendAsync(PacketType.C2S_GamePlay, cmd);

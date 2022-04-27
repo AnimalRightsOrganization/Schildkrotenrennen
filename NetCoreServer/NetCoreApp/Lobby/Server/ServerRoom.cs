@@ -168,6 +168,11 @@ namespace NetCoreServer
                 deck[k] = temp;
             }
         }
+        private void ShuffleStandard()
+        {
+            cardList = lib.Clone().standard;
+            //Debug.Print($"洗牌：{cardList[0].id}、{cardList[1].id}、{cardList[2].id}、{cardList[3].id}、{cardList[4].id}");
+        }
         private static byte[] AllotColor()
         {
             // 5色，不重复
@@ -188,6 +193,16 @@ namespace NetCoreServer
                 }
             }
             return colors;
+        }
+        private List<ChessColor> GetSlowest()
+        {
+            for (int i = 0; i < mapChess.Count; i++)
+            {
+                var grid = mapChess[i];
+                if (grid.Count > 0)
+                    return grid;
+            }
+            return null;
         }
 
         void Init()
@@ -214,9 +229,10 @@ namespace NetCoreServer
             this.Init();
 
             // 洗牌
-            cardList = lib.Clone().library;
-            Shuffle(cardList);
-
+            //cardList = lib.Clone().library;
+            //Shuffle(cardList);
+            ShuffleStandard();
+            
             // 准备颜色随机数
             var colors = AllotColor();
             // 遍历分配颜色
@@ -232,7 +248,7 @@ namespace NetCoreServer
                 for (int i = 0; i < CurCount; i++)
                 {
                     var player = (ServerPlayer)m_PlayerDic[i];
-                    OnGameDeal(player);
+                    OnGameDeal_Server(player);
                 }
             }
 
@@ -248,7 +264,7 @@ namespace NetCoreServer
                 player.SendAsync(PacketType.S2C_GameStart, packet);
             }
         }
-        public bool OnGamePlay(ServerPlayer p, C2S_PlayCardPacket request)
+        public bool OnGamePlay_Server(ServerPlayer p, C2S_PlayCardPacket request)
         {
             if (IsStarted == false)
             {
@@ -256,7 +272,7 @@ namespace NetCoreServer
                 return true;
             }
 
-            int seatId = p.SeatId;
+            //int seatId = p.SeatId;
             int cardId = request.CardID;
             int colorId = request.Color; //彩色时才有效
 
@@ -266,6 +282,16 @@ namespace NetCoreServer
             bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;
             ChessColor colorKey = colorful ? (ChessColor)colorId : (ChessColor)card.cardColor; //哪只乌龟
             int step = (int)card.cardNum; //走几步
+            // 检测作弊或Bug
+            if (card.cardColor == CardColor.SLOWEST)
+            {
+                var slowestArray = GetSlowest();
+                if (slowestArray.Contains((ChessColor)colorId) == false)
+                {
+                    Debug.Print($"玩家选的颜色{(ChessColor)colorId}，不是最慢的");
+                    return false;
+                }
+            }
 
             // 走棋子
             //List<int> moveChessList = new List<int>();
@@ -321,15 +347,7 @@ namespace NetCoreServer
             }
             return false;
         }
-        public Card OnGamePlay_Bot(ServerPlayer p)
-        {
-            //TODO: 从机器人手牌中随机
-            //TODO: 走棋子
-            //TODO: 下个出牌人
-            //TODO: 检查是否到终点
-            return null;
-        }
-        public Card OnGameDeal(ServerPlayer player)
+        public Card OnGameDeal_Server(ServerPlayer player)
         {
             var card = cardList[nextIndex];
             player.handCards.Add(card);
@@ -339,7 +357,9 @@ namespace NetCoreServer
             if (nextIndex >= cardList.Count)
             {
                 nextIndex = 0;
-                Shuffle(cardList);
+                //Shuffle(cardList);
+                //cardList = lib.Clone().standard;
+                ShuffleStandard();
             }
 
             return card;

@@ -194,10 +194,21 @@ namespace HotFix
             m_PlayPanel.SetActive(true);
             Card card = ClientRoom.lib.library[selectedCardId];
             //Debug.Log($"显示：{card.Log()}");
-            if (card.cardColor == CardColor.COLOR ||
-                card.cardColor == CardColor.SLOWEST)
+            if (card.cardColor == CardColor.COLOR)
             {
-                Debug.Log($"<color=yellow>显示颜色选择</color>");
+                Debug.Log($"显示颜色选择");
+                m_ColorPanel.SetActive(true);
+            }
+            else if (card.cardColor == CardColor.SLOWEST)
+            {
+                Debug.Log($"显示最慢选择");
+                List<ChessColor> slowestArray = m_Room.GetSlowest(); //0~4
+                for (int i = 0; i < m_ColorBtns.Length; i++)
+                {
+                    var btn = m_ColorBtns[i];
+                    bool available = slowestArray.Contains((ChessColor)i);
+                    btn.gameObject.SetActive(available);
+                }
                 m_ColorPanel.SetActive(true);
             }
             else
@@ -215,7 +226,7 @@ namespace HotFix
         {
             Card card = ClientRoom.lib.library[selectedCardId];
             Debug.Log($"点击出牌：{card.Log()}");
-            TcpChatClient.SendPlayCard(card.id, selectedCardColor);
+            TcpChatClient.SendGamePlay(card.id, selectedCardColor);
         }
         #endregion
 
