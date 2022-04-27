@@ -250,7 +250,7 @@ namespace TcpChatServer
                 Debug.Print($"房间密码错误：[{serverRoom.RoomPwd}]({serverRoom.RoomPwd.Length}) : [{request.RoomPwd}]({request.RoomPwd.Length})");
                 return;
             }
-            if (serverRoom.m_PlayerList.Count >= serverRoom.RoomLimit)
+            if (serverRoom.m_PlayerDic.Count >= serverRoom.RoomLimit)
             {
                 Debug.Print("房间爆满");
                 return;
@@ -262,7 +262,7 @@ namespace TcpChatServer
             var players = new List<PlayerInfo>();
             for (int i = 0; i < serverRoom.CurCount; i++)
             {
-                var player = serverRoom.m_PlayerList[i];
+                var player = serverRoom.m_PlayerDic[i];
                 var playerInfo = new PlayerInfo { SeatID = player.SeatId, UserName = player.UserName, NickName = player.NickName };
                 players.Add(playerInfo);
             }
@@ -307,14 +307,35 @@ namespace TcpChatServer
             }
             else
             {
-                var packet = new S2C_LeaveRoomPacket { RoomID = roomData.RoomID, RoomName = roomData.RoomName, LeaveBy = (int)LeaveRoomType.SELF };
-                p.SendAsync(PacketType.S2C_LeaveRoom, packet); //主动离开
-                Debug.Print("房间内其他人员广播，更新房间信息");
+                serverRoom.RemovePlayer(p);
+                var players = new List<PlayerInfo>();
+                foreach (var item in serverRoom.m_PlayerDic)
+                {
+                    ServerPlayer player = serverRoom.GetPlayer(item.Key);
+                    //BasePlayer player = item.Value;
+                    var playerInfo = new PlayerInfo { SeatID = item.Key, UserName = player.UserName, NickName = player.NickName };
+                    players.Add(playerInfo);
+                }
+
+                var packet1 = new S2C_LeaveRoomPacket
+                { 
+                    RoomID = roomData.RoomID, 
+                    RoomName = roomData.RoomName, 
+                    LeaveBy = (int)LeaveRoomType.SELF,
+                };
+                p.SendAsync(PacketType.S2C_LeaveRoom, packet1); //主动离开
+                Debug.Print($"[S2C] 单发给{p.UserName}，离开房间");
 
                 // 房间内其他人员广播，更新房间信息
-                RoomInfo roomInfo = new RoomInfo { RoomID = roomData.RoomID, RoomName = roomData.RoomName, LimitNum = roomData.RoomLimit };
-                S2C_RoomInfo packet1 = new S2C_RoomInfo { Room = roomInfo };
-                serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet1);
+                var roomInfo = new RoomInfo {
+                    RoomID = roomData.RoomID,
+                    RoomName = roomData.RoomName,
+                    LimitNum = roomData.RoomLimit,
+                    Players = players,
+                };
+                var packet2 = new S2C_RoomInfo { Room = roomInfo };
+                serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet2);
+                Debug.Print("[S2C] 广播给房间内剩余人员，更新房间信息");
             }
 
             WinFormsApp1.MainForm.Instance.RefreshRoomNum();
@@ -381,7 +402,7 @@ namespace TcpChatServer
 
             // 重新组装房间内信息
             var players = new List<PlayerInfo>();
-            foreach (var item in serverRoom.m_PlayerList)
+            foreach (var item in serverRoom.m_PlayerDic)
             {
                 var _player = item.Value;
                 var _playerInfo = new PlayerInfo
@@ -408,10 +429,10 @@ namespace TcpChatServer
         {
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
-            Debug.Print($"{p.UserName}请求开始比赛，房间#{p.RoomId}({serverRoom.m_PlayerList.Count}/{serverRoom.RoomLimit})");
+            Debug.Print($"{p.UserName}请求开始比赛，房间#{p.RoomId}({serverRoom.m_PlayerDic.Count}/{serverRoom.RoomLimit})");
 
             // 校验房间人数。
-            if (serverRoom.m_PlayerList.Count < serverRoom.RoomLimit)
+            if (serverRoom.m_PlayerDic.Count < serverRoom.RoomLimit)
             {
                 Debug.Print("ERROR: 房间未满员");
                 //ErrorPacket response = new ErrorPacket { Code = 0, Message = "ERROR: 房间未满员" };

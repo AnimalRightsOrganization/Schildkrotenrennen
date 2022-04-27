@@ -65,7 +65,6 @@ namespace ET
 			{
 				Debug.Print($"error: {e.ToString()}");
 			}
-			//object o = RuntimeTypeModel.Default.Deserialize(stream, null, type);
 			if (o is ISupportInitialize supportInitialize)
 			{
 				supportInitialize.EndInit();

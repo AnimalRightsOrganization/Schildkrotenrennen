@@ -134,7 +134,17 @@ namespace HotFix
         public CardNum cardNum;
         public string Log()
         {
-            return $"解析牌型: [{id}] {cardColor}: {(int)cardNum}";
+            //return $"解析牌型: [{id}] {cardColor}: {step}";
+            int step = (int)cardNum;
+            string op = step > 0 ? "+" : "";
+            string part1 = $"<color={cardColor.ToString().ToLower()}>{cardColor}{op}{step}</color>";
+            return $"解析牌型: [{id}] {part1}";
+        }
+        public static string LogColor(ChessColor color, int step)
+        {
+            string op = step > 0 ? "+" : "";
+            string part1 = $"<color={color.ToString().ToLower()}>{color}{op}{step}</color>";
+            return part1;
         }
     }
 }

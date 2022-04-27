@@ -9,13 +9,13 @@ namespace HotFix
     {
         public ClientRoom(BaseRoomData data) : base(data)
         {
-            m_PlayerList = new Dictionary<int, BasePlayer>();
+            m_PlayerDic = new Dictionary<int, BasePlayer>();
             //Debug.Log($"ClientRoom构造函数");
             for (int i = 0; i < data.Players.Count; i++)
             {
                 var playerData = data.Players[i];
                 var clientPlayer = new ClientPlayer(playerData);
-                m_PlayerList.Add(playerData.SeatId, clientPlayer);
+                m_PlayerDic.Add(playerData.SeatId, clientPlayer);
                 clientPlayer.SetRoomID(RoomID).SetSeatID(i).SetStatus(PlayerStatus.ROOM);
                 //Debug.Log($"{i}---添加用户{clientPlayer.UserName}: 房间#{clientPlayer.RoomId}, 座位#{clientPlayer.SeatId}, 状态:{clientPlayer.Status}");
             }
@@ -27,7 +27,7 @@ namespace HotFix
             {
                 var playerData = data.Players[i];
                 var clientPlayer = new ClientPlayer(playerData);
-                m_PlayerList[playerData.SeatId] = clientPlayer;
+                m_PlayerDic[playerData.SeatId] = clientPlayer;
             }
         }
 

@@ -202,9 +202,9 @@ namespace HotFix
         }
         public static void SendGameStart()
         {
-            if (m_ClientRoom.m_PlayerList.Count < m_ClientRoom.RoomLimit)
+            if (m_ClientRoom.m_PlayerDic.Count < m_ClientRoom.RoomLimit)
             {
-                Debug.LogError($"人数不足，请等待：{m_ClientRoom.m_PlayerList.Count} < {m_ClientRoom.RoomLimit}");
+                Debug.LogError($"人数不足，请等待：{m_ClientRoom.m_PlayerDic.Count} < {m_ClientRoom.RoomLimit}");
                 var ui_toast = UIManager.Get().Push<UI_Toast>();
                 ui_toast.Show("人数不足，请等待");
                 return;

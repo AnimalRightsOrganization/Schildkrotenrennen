@@ -52,7 +52,7 @@ namespace HotFix
             {
                 recyclePool.Remove(scriptName);
                 stack.Add(scriptName, ui);
-                Debug.Log($"<color=yellow>ReUse{stack.Count}/{recyclePool.Count}</color>");
+                //Debug.Log($"<color=yellow>ReUse{stack.Count}/{recyclePool.Count}</color>");
                 ui.gameObject.SetActive(true);
                 ui.transform.SetAsLastSibling();
                 return ui.GetComponent<T>();

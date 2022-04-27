@@ -17,7 +17,7 @@ namespace HotFix
         public string RoomName;                     //房间名
         public string RoomPwd;                      //密码（仅用于创建房间）
         public int RoomLimit;                       //限定人数
-        public List<BasePlayerData> Players;        //成员
+        public List<BasePlayerData> Players;        //成员（索引是座位号）
         public override string ToString()
         {
             string playerStr = string.Empty;
@@ -44,8 +44,8 @@ namespace HotFix
         public int RoomLimit => m_Data.RoomLimit;   //限定人数
         public List<BasePlayerData> Players => m_Data.Players; //成员
 
-        public virtual Dictionary<int, BasePlayer> m_PlayerList { get; protected set; } //int是座位号
-        public virtual BasePlayer hostPlayer => m_PlayerList[0];
+        public virtual Dictionary<int, BasePlayer> m_PlayerDic { get; protected set; } //int是座位号
+        public virtual BasePlayer hostPlayer => m_PlayerDic[0];
 
         public override string ToString()
         {

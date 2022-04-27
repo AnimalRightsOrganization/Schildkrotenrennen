@@ -12,18 +12,18 @@ namespace NetCoreServer
         public ServerRoom(ServerPlayer host, BaseRoomData data) : base(data)
         {
             // 被override的才需要在这里赋值
-            m_PlayerList = new Dictionary<int, BasePlayer>();
-            m_PlayerList.Add(0, host); //房主座位号0
+            m_PlayerDic = new Dictionary<int, BasePlayer>();
+            m_PlayerDic.Add(0, host); //房主座位号0
             host.SetRoomID(data.RoomID)
                 .SetSeatID(0)
                 .SetStatus(PlayerStatus.ROOM);
         }
-        public int CurCount => m_PlayerList.Count;
-        public override Dictionary<int, BasePlayer> m_PlayerList { get; protected set; }
+        public int CurCount => m_PlayerDic.Count;
+        public override Dictionary<int, BasePlayer> m_PlayerDic { get; protected set; }
         public override string ToString()
         {
             string playerStr = string.Empty;
-            foreach (var item in m_PlayerList)
+            foreach (var item in m_PlayerDic)
             {
                 var player = item.Value;
                 playerStr += $"\n[{item.Key}]---{player.UserName}({player.NickName})(bot:{player.IsBot}), at{player.SeatId})";
@@ -45,7 +45,7 @@ namespace NetCoreServer
             else
                 SeatID = seatId; //机器人是指定的座位
 
-            m_PlayerList.Add(SeatID, p);
+            m_PlayerDic.Add(SeatID, p);
             p.SetRoomID(RoomID)
                 .SetSeatID(SeatID)
                 .SetStatus(PlayerStatus.ROOM);
@@ -56,7 +56,7 @@ namespace NetCoreServer
         {
             if (ContainsPlayer(p))
             {
-                m_PlayerList.Remove(p.SeatId);
+                m_PlayerDic.Remove(p.SeatId);
                 p.ResetToLobby();
                 return true;
             }
@@ -65,7 +65,7 @@ namespace NetCoreServer
         }
         public bool RemoveAll()
         {
-            foreach (var p in m_PlayerList)
+            foreach (var p in m_PlayerDic)
             {
                 //ServerPlayer serverPlayer = p.Value as ServerPlayer;
                 RemovePlayer(p.Value);
@@ -75,7 +75,7 @@ namespace NetCoreServer
         public bool ContainsPlayer(BasePlayer p)
         {
             BasePlayer basePlayer = null;
-            if (m_PlayerList.TryGetValue(p.SeatId, out basePlayer))
+            if (m_PlayerDic.TryGetValue(p.SeatId, out basePlayer))
             {
                 if (p.PeerId != basePlayer.PeerId)
                 {
@@ -89,7 +89,7 @@ namespace NetCoreServer
         public ServerPlayer GetPlayer(int seatId)
         {
             BasePlayer basePlayer = null;
-            if (m_PlayerList.TryGetValue(seatId, out basePlayer))
+            if (m_PlayerDic.TryGetValue(seatId, out basePlayer))
             {
                 return (ServerPlayer)basePlayer;
             }
@@ -98,7 +98,7 @@ namespace NetCoreServer
         // 检查空座位
         public bool IsAvailableSeat(int seatId)
         {
-            foreach (var p in m_PlayerList)
+            foreach (var p in m_PlayerDic)
             {
                 if (p.Key == seatId)
                     return false;
@@ -111,13 +111,13 @@ namespace NetCoreServer
         {
             int id = MIN_INDEX;
 
-            if (m_PlayerList.Count == 0)
+            if (m_PlayerDic.Count == 0)
                 return id;
 
             for (int i = MIN_INDEX; i <= MAX_INDEX; i++)
             {
                 BasePlayer player = null;
-                if (m_PlayerList.TryGetValue(i, out player) == false)
+                if (m_PlayerDic.TryGetValue(i, out player) == false)
                 {
                     id = i;
                     break;
@@ -128,7 +128,7 @@ namespace NetCoreServer
 
         public void SendAsync(PacketType msgId, object cmd)
         {
-            foreach(var p in m_PlayerList)
+            foreach(var p in m_PlayerDic)
             {
                 ServerPlayer serverPlayer = p.Value as ServerPlayer;
                 serverPlayer.SendAsync(msgId, cmd);
@@ -222,7 +222,7 @@ namespace NetCoreServer
             // 遍历分配颜色
             for (int i = 0; i < CurCount; i++)
             {
-                var player = (ServerPlayer)m_PlayerList[i];
+                var player = (ServerPlayer)m_PlayerDic[i];
                 player.Init();
                 player.chessColor = (ChessColor)colors[i];
             }
@@ -231,7 +231,7 @@ namespace NetCoreServer
             {
                 for (int i = 0; i < CurCount; i++)
                 {
-                    var player = (ServerPlayer)m_PlayerList[i];
+                    var player = (ServerPlayer)m_PlayerDic[i];
                     OnGameDeal(player);
                 }
             }
@@ -239,7 +239,7 @@ namespace NetCoreServer
             // 发送每个客户端的数据不一样
             for (int i = 0; i < CurCount; i++)
             {
-                var player = (ServerPlayer)m_PlayerList[i];
+                var player = (ServerPlayer)m_PlayerDic[i];
                 S2C_GameStartPacket packet = new S2C_GameStartPacket
                 {
                     Color = (int)player.chessColor,
