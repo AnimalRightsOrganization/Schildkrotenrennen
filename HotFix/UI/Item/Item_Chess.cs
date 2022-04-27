@@ -28,6 +28,7 @@ namespace HotFix
             CurrentIndex = 0;
         }
 
+        //public async Task Move(ChessColor colorKey, int step)
         public void Move(ChessColor colorKey, int step)
         {
             //对出牌、发牌的动画牌不影响
@@ -49,11 +50,12 @@ namespace HotFix
 
             CurrentIndex = TargetIndex;
 
-            tw.OnComplete(()=>
+            tw.OnComplete(() =>
             {
                 transform.SetParent(ui_game.m_MapPoints[TargetIndex]);
-                //Debug.Log("<color=green>棋子动画完成</color>");
             });
+            //await Task.Delay(500);
+            //transform.SetParent(ui_game.m_MapPoints[TargetIndex]);
         }
     }
 }

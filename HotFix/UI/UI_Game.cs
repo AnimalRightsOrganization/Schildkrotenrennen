@@ -317,6 +317,12 @@ namespace HotFix
                 chess.Move((ChessColor)index, step);
             }
 
+            if (m_Room.gameStatus == ChessStatus.End)
+            {
+                await Task.Delay(1500);
+                GameEndAction?.Invoke();
+            }
+
             // ④下一轮出牌者
             m_Room.NextTurn = packet.SeatID + 1;
             if (m_Room.NextTurn >= m_Room.RoomLimit)
@@ -363,12 +369,12 @@ namespace HotFix
             var packet = (S2C_GameResultPacket)reader;
 
             // 等待棋子走完，再弹出。
-            //await Task.Delay(4);
-            GameEndAction += () =>
+            m_Room.OnGameResult_Client();
+            GameEndAction = () =>
             {
+                Debug.Log("结算委托");
                 var ui_result = UIManager.Get().Push<UI_GameResult>();
                 ui_result.UpdateUI(packet.Rank);
-                m_Room.OnGameResult_Client();
             };
         }
         #endregion
