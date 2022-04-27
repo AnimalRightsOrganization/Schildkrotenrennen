@@ -46,10 +46,9 @@ namespace HotFix
             {
                 case PacketType.Connected:
                     break;
-                case PacketType.Disconnect:
+                case PacketType.Disconnect: //被动断开
                     {
-                        // 销毁所有UI，返回登录页
-                        Debug.Log("<color=green>断线消息：断线Code=？？</color>");
+                        Debug.Log("<color=green>与服务器断开连接</color>");
                         UIManager.Get().PopAll();
                         UIManager.Get().Push<UI_Login>();
                         break;

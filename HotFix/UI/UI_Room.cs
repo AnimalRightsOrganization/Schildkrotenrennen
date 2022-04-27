@@ -33,12 +33,10 @@ namespace HotFix
             m_CloseBtn.onClick.AddListener(OnSendLeaveRoom);
             m_StartBtn.onClick.AddListener(OnSendStartGame);
         }
-
         void Start()
         {
             NetPacketManager.RegisterEvent(OnNetCallback);
         }
-
         void OnDestroy()
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
@@ -107,6 +105,11 @@ namespace HotFix
         }
         void OnNetCallback(PacketType type, object reader)
         {
+            if (gameObject.activeInHierarchy == false)
+            {
+                //Debug.Log($"{this.name}处于不活动状态，不处理消息");
+                return;
+            }
             switch (type)
             {
                 case PacketType.S2C_LeaveRoom:

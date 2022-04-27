@@ -32,7 +32,7 @@ namespace HotFix
         {
             //对出牌、发牌的动画牌不影响
             if (colorKey != mColor)
-                Debug.LogError($"移动错误，颜色不一致{mColor}:{colorKey}");
+                Debug.LogError($"{gameObject.name}移动错误，颜色不一致{mColor}:{colorKey}");
 
             Debug.Log($"{Card.LogColor(colorKey, step)} -> 棋子{colorKey}，走{step}步。");
 

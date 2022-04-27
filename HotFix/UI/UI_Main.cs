@@ -80,7 +80,6 @@ namespace HotFix
                 m_Rooms[i] = item_room;
             }
         }
-
         void Start()
         {
             playerNum = 2;
@@ -90,7 +89,6 @@ namespace HotFix
 
             NetPacketManager.RegisterEvent(OnNetCallback);
         }
-
         void OnDestroy()
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
@@ -166,6 +164,11 @@ namespace HotFix
         #region 网络事件
         void OnNetCallback(PacketType type, object reader)
         {
+            if (gameObject.activeInHierarchy == false)
+            {
+                //Debug.Log($"{this.name}处于不活动状态，不处理消息");
+                return;
+            }
             switch (type)
             {
                 case PacketType.S2C_RoomInfo: //自己创建/加入

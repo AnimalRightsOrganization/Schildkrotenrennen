@@ -77,9 +77,9 @@ namespace WinFormsApp1
             this.connectBtn.Name = "connectBtn";
             this.connectBtn.Size = new System.Drawing.Size(120, 30);
             this.connectBtn.TabIndex = 1;
-            this.connectBtn.Text = "连接";
+            this.connectBtn.Text = "测试1";
             this.connectBtn.UseVisualStyleBackColor = true;
-            this.connectBtn.Click += new System.EventHandler(this.DB_Click);
+            this.connectBtn.Click += new System.EventHandler(this.Test_Click);
             // 
             // startServerBtn
             // 
@@ -124,7 +124,7 @@ namespace WinFormsApp1
             // logText
             // 
             this.logText.AutoSize = true;
-            this.logText.Location = new System.Drawing.Point(100, 550);
+            this.logText.Location = new System.Drawing.Point(12, 9);
             this.logText.Name = "logText";
             this.logText.Size = new System.Drawing.Size(48, 20);
             this.logText.TabIndex = 6;
@@ -206,7 +206,7 @@ namespace WinFormsApp1
 
         }
 
-        private void DB_Click(object sender, System.EventArgs e)
+        private void Test_Click(object sender, System.EventArgs e)
         {
             //await MySQLTool.MultiSQL();
             //await MySQLTool.TestQuery();
@@ -228,6 +228,7 @@ namespace WinFormsApp1
             //    return;
             //}
             //Debug.Print($"result6: {result6.nickname}");
+            PrintMap();
         }
 
         private async void StartServer_Click(object sender, System.EventArgs e)
@@ -305,6 +306,23 @@ namespace WinFormsApp1
         {
             InvokeUI(() => {
                 this.logText.Text += $"\n{logs}";
+            });
+        }
+
+        public void PrintMap()
+        {
+            string logText = string.Empty;
+            var roomManager = TcpChatServer.TCPChatServer.m_RoomManager;
+            if (roomManager == null || roomManager.Count == 0)
+            {
+                logText = "未初始化或未创建房间";
+            }
+            else
+            {
+                logText = TcpChatServer.TCPChatServer.m_RoomManager.GetServerRoom(1).PrintMap();
+            }
+            InvokeUI(() => {
+                this.logText.Text = logText;
             });
         }
 

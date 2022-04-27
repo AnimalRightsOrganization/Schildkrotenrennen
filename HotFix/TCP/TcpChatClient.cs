@@ -24,6 +24,7 @@ namespace HotFix
             Debug.Log("<color=green>Connected!</color>");
         }
 
+        // 被动断开（尝试重连）
         protected override void OnDisconnected()
         {
             Debug.Log($"Chat TCP client disconnected a session with Id {Id}");

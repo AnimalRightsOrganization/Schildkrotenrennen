@@ -213,4 +213,12 @@ namespace HotFix
             return part1;
         }
     }
+
+    // 卡牌点数
+    public enum ChessStatus
+    {
+        Wait    = 0, //等待出牌
+        Anime   = 1, //出牌、棋子等动画中
+        End     = 2, //比赛结束
+    }
 }

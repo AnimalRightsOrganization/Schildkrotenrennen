@@ -26,6 +26,21 @@ namespace HotFix
             recyclePool = new Dictionary<string, UIBase>();
         }
 
+        public UIBase GetActiveUI()
+        {
+            var child = Parent.GetChild(Parent.childCount - 1);
+            //Debug.Log($"GetActive: {child.name}");
+            string scriptName = child.name;
+
+            UIBase ui = null;
+            if (stack.TryGetValue(scriptName, out ui) == false)
+            {
+                Debug.LogError($"还没有创建：{scriptName}");
+                return null;
+            }
+            return ui.GetComponent<UIBase>();
+        }
+
         public T GetUI<T>() where T : UIBase
         {
             string scriptName = typeof(T).ToString().Replace("HotFix.", "");

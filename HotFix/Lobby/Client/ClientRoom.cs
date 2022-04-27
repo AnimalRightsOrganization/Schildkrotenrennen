@@ -39,6 +39,7 @@ namespace HotFix
         public ChessColor chessColor;
         public List<Card> handCards; //索引是显示顺序
         public int NextTurn = 0; //下回合谁出牌（座位号）
+        public ChessStatus gameStatus;
 
         // 初始化
         private void Init()
@@ -60,6 +61,7 @@ namespace HotFix
             }
             List<ChessColor> origin = mapChess[0];
             //Debug.Log($"起点叠了{origin.Count}层");
+            gameStatus = ChessStatus.Wait;
         }
         public void OnGameStart_Client(S2C_GameStartPacket packet)
         {
@@ -79,7 +81,6 @@ namespace HotFix
         {
             // 输入卡牌，返回要移动的棋子
             List<int> moveChessList = new List<int>();
-            PrintHandCards();
 
             // 解析牌型
             int colorId = packet.Color;
@@ -91,6 +92,7 @@ namespace HotFix
             // 如果是自己出的，移除手牌
             if (packet.SeatID == TcpChatClient.m_PlayerManager.LocalPlayer.SeatId)
             {
+                PrintHandCards();
                 handCards.Remove(card);
                 PrintHandCards();
             }
@@ -101,6 +103,7 @@ namespace HotFix
             if (curPos > 0)
             {
                 // 考虑叠起来的情况。
+                List<ChessColor> temp = new List<ChessColor>();
                 List<ChessColor> curGrid = mapChess[curPos];
                 Debug.Log($"移动棋子{colorKey}，格子{curPos}上叠了{curGrid.Count}层");
 
@@ -110,23 +113,25 @@ namespace HotFix
                 for (int i = 0; i < curGrid.Count; i++)
                 {
                     ChessColor chess = curGrid[i];
-                    Debug.Log($"{i}---格子{curPos}上，第{i}层是{chess} / {curGrid.Count}");
+                    //Debug.Log($"{i}---格子{curPos}上，第{i}层是{chess} / {curGrid.Count}");
 
                     if (i >= index)
                     {
                         chessPos[chess] = dstPos;
 
                         //mapChess[curPos].Remove(chess); //遍历中不能移除
+                        temp.Add(chess);
                         mapChess[dstPos].Add(chess);
 
                         moveChessList.Add((int)chess);
-                        Debug.Log($"<color=white>叠着走：{chess}</color>");
+                        Debug.Log($"<color=white>移动棋子：格子{curPos}，第{i}层{chess}</color>");
                     }
                 }
-                for (int i = index; i > 0; i--)
+                for (int i = 0; i < temp.Count; i++)
                 {
-                    ChessColor chess = curGrid[i];
+                    ChessColor chess = temp[i];
                     curGrid.Remove(chess);
+                    Debug.Log($"---------从格子{curPos}移除{chess}");
                 }
             }
             else
@@ -139,7 +144,7 @@ namespace HotFix
                 mapChess[dstPos].Add(colorKey);
 
                 moveChessList.Add((int)colorKey);
-                Debug.Log($"<color=white>单个走：{colorKey}。" +
+                Debug.Log($"<color=white>移动棋子：{colorKey}。" +
                     $"\n移动后，上个格子[{curPos}]{mapChess[curPos].Count}层。" +
                     $"这个格子[{dstPos}]{mapChess[dstPos].Count}层。</color>");
             }
@@ -150,6 +155,11 @@ namespace HotFix
             handCards.Add(card);
             PrintHandCards();
         }
+        public void OnGameResult_Client()
+        {
+            gameStatus = ChessStatus.End;
+        }
+
         public void PrintRoom()
         {
             string content = $"颜色={chessColor}，手牌=";

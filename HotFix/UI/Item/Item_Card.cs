@@ -53,6 +53,12 @@ namespace HotFix
                 ui_toast.Show("不是你的回合，请等待");
                 return;
             }
+            if (ui_game.m_Room.gameStatus == ChessStatus.End)
+            {
+                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                ui_toast.Show("已经结束嘞");
+                return;
+            }
             //Debug.Log($"选中：{card.Log()}");
 
             // 实例化创建出来的，要在创建完成后获取坐标

@@ -139,11 +139,12 @@ namespace NetCoreServer
         #region 游戏逻辑
         public static CardLib lib; //所有牌
         private List<Card> cardList;
-        private int nextIndex = 0; // 下一张下发的牌
+        private int nextIndex = 0; //下一张下发的牌
         public int nextPlayerIndex = 0; //下一个出牌的座位号
         private Dictionary<ChessColor, int> chessPos; //棋子位置（key=棋子, value=位置）
         private Dictionary<int, List<ChessColor>> mapChess; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
-        private bool IsStarted;
+        private bool IsShuffleStandard; //洗成固定的顺序
+        private ChessStatus gameStatus;
 
         // TODO: 保存每步操作。
         // TODO: 机器人随机出牌。优先选自己的+。优先选玩家的颜色-。
@@ -222,17 +223,23 @@ namespace NetCoreServer
             {
                 mapChess.Add(i, new List<ChessColor>());
             }
-            IsStarted = true;
+            gameStatus = ChessStatus.Wait;
         }
         public void OnGameStart_Server()
         {
             this.Init();
 
             // 洗牌
-            //cardList = lib.Clone().library;
-            //Shuffle(cardList);
-            ShuffleStandard();
-            
+            if (IsShuffleStandard)
+            {
+                ShuffleStandard();
+            }
+            else
+            {
+                cardList = lib.Clone().library;
+                Shuffle(cardList);
+            }
+
             // 准备颜色随机数
             var colors = AllotColor();
             // 遍历分配颜色
@@ -266,13 +273,12 @@ namespace NetCoreServer
         }
         public bool OnGamePlay_Server(ServerPlayer p, C2S_PlayCardPacket request)
         {
-            if (IsStarted == false)
+            if (gameStatus == ChessStatus.End)
             {
                 Debug.Print("比赛已经结束");
                 return true;
             }
 
-            //int seatId = p.SeatId;
             int cardId = request.CardID;
             int colorId = request.Color; //彩色时才有效
 
@@ -300,6 +306,7 @@ namespace NetCoreServer
             if (curPos > 0)
             {
                 // 考虑叠起来的情况。
+                List<ChessColor> temp = new List<ChessColor>();
                 List<ChessColor> curGrid = mapChess[curPos];
 
                 int index = curGrid.IndexOf(colorKey);
@@ -312,15 +319,18 @@ namespace NetCoreServer
                     {
                         chessPos[chess] = dstPos;
 
+                        temp.Add(chess);
                         mapChess[dstPos].Add(chess);
+                        Debug.Print($"{i}+++++++++将棋子{chess}移到{dstPos}, temp.count={temp.Count}");
 
                         //moveChessList.Add((int)chess);
                     }
                 }
-                for (int i = index; i > 0; i--)
+                for (int i = 0; i < temp.Count; i++)
                 {
-                    ChessColor chess = curGrid[i];
+                    ChessColor chess = temp[i];
                     curGrid.Remove(chess);
+                    Debug.Print($"{i}---------从格子{curPos}移除{chess}, curGrid.count={curGrid.Count}");
                 }
             }
             else
@@ -357,9 +367,15 @@ namespace NetCoreServer
             if (nextIndex >= cardList.Count)
             {
                 nextIndex = 0;
-                //Shuffle(cardList);
-                //cardList = lib.Clone().standard;
-                ShuffleStandard();
+                if (IsShuffleStandard)
+                {
+                    ShuffleStandard();
+                }
+                else
+                {
+                    cardList = lib.Clone().library;
+                    Shuffle(cardList);
+                }
             }
 
             return card;
@@ -367,7 +383,7 @@ namespace NetCoreServer
         public List<int> OnGameResult()
         {
             Debug.Print("给出结算");
-            IsStarted = false;
+            gameStatus = ChessStatus.End;
             var list = new List<int>();
             for (int i = mapChess.Count - 1; i > 0; i--)
             {
@@ -381,11 +397,25 @@ namespace NetCoreServer
             return list;
         }
 
-        public void RoomPrint()
+        public string PrintMap()
         {
             //输出玩家列表
             //输出剩余卡牌池
             //输棋子的位置
+            string posStr = $"棋子的位置：";
+            for (int i = 0; i < mapChess.Count; i++)
+            {
+                var grid = mapChess[i];
+                if (grid.Count > 0)
+                {
+                    posStr += $"\n[第{i}格]";
+                    for (int t = 0; t < grid.Count; t++)
+                    {
+                        posStr += $"{grid[t]}、";
+                    }
+                }
+            }
+            return posStr;
         }
         #endregion
     }

@@ -29,12 +29,13 @@ namespace HotFix
         public Button m_PlayBtn; //出牌
         System.Action CancelAction;
         System.Action PlayAction;
+        System.Action GameEndAction;
         public int selectedCardColor; //彩色龟，所选颜色
         public GameObject m_ColorPanel; //彩色龟，选颜色面板
         public Button[] m_ColorBtns; //彩色龟，选颜色按钮
         public RectTransform m_ColorSelected; //彩色龟，选中框
 
-        private ClientRoom m_Room; //游戏房间（逻辑）
+        public ClientRoom m_Room; //游戏房间（逻辑）
         private ClientPlayer m_LocalPlayer; //缓存数据，方便读取
         public bool IsMyTurn
         {
@@ -105,6 +106,7 @@ namespace HotFix
             selectedCardId = 0;
             CancelAction = null;
             PlayAction = null;
+            GameEndAction = null;
             m_PlayPanel = transform.Find("PlayPanel").gameObject;
             m_PlayPanel.SetActive(false);
             m_CancelBtn = m_PlayPanel.GetComponent<Button>();
@@ -143,8 +145,9 @@ namespace HotFix
         #region 按钮事件
         public void UpdateUI()
         {
+            GameEndAction = null;
             m_Room = TcpChatClient.m_ClientRoom;
-            m_Room.PrintRoom(); //打印本人手牌
+            //m_Room.PrintRoom(); //打印本人手牌
             m_LocalPlayer = TcpChatClient.m_PlayerManager.LocalPlayer;
 
             // 绘制成员头像、昵称
@@ -187,6 +190,8 @@ namespace HotFix
         }
         public void ShowPlayPanel(int carcdid, System.Action noAction, System.Action yesAction)
         {
+            selectedCardColor = -1;
+
             //Debug.Log($"ShowPlayPanel: id={carcdid}");
             selectedCardId = carcdid;
             CancelAction = noAction;
@@ -208,6 +213,12 @@ namespace HotFix
                     var btn = m_ColorBtns[i];
                     bool available = slowestArray.Contains((ChessColor)i);
                     btn.gameObject.SetActive(available);
+                    if (selectedCardColor == -1 && available)
+                    {
+                        selectedCardColor = i;
+                        m_ColorSelected.SetParent(btn.transform);
+                        m_ColorSelected.anchoredPosition = Vector2.zero;
+                    }
                 }
                 m_ColorPanel.SetActive(true);
             }
@@ -219,7 +230,6 @@ namespace HotFix
         public void HidePlayPanel()
         {
             CancelAction?.Invoke();
-            //CancelAction = null;
             m_PlayPanel.SetActive(false);
         }
         void OnPlayBtnClick()
@@ -283,17 +293,19 @@ namespace HotFix
             {
                 //Debug.Log("是自己出牌，执行委托Item_Card.PlayCardAnime()");
                 PlayAction?.Invoke();
-                //PlayAction = null;
                 m_PlayPanel.SetActive(false);
             }
 
             //Debug.Log("等待2秒......START");
             await Task.Delay(2000);
-            //Debug.Log($"等待2秒........END：移动{moveChessList.Count}个");
+            string chessStr = string.Empty;
+            for (int i = 0; i < moveChessList.Count; i++)
+                chessStr += $"{moveChessList[i]}、";
+            Debug.Log($"等待2秒........END：移动{moveChessList.Count}个：{chessStr}");
 
-            // 如果是彩色，转成实际的颜色
-            bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;
-            ChessColor colorKey = colorful ? (ChessColor)colorId : (ChessColor)card.cardColor; //哪只乌龟
+            // 有堆叠，颜色是计算得到的数组
+            //bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;
+            //ChessColor colorKey = colorful ? (ChessColor)colorId : (ChessColor)card.cardColor; //哪只乌龟
             int step = (int)card.cardNum; //走几步
 
             // ③动画控制走棋子，考虑叠起来
@@ -302,7 +314,7 @@ namespace HotFix
                 int index = moveChessList[i];
                 var chess = gameChess[index];
                 Debug.Log($"移动棋子{index}：{(ChessColor)index}---{chess.mColor}");
-                chess.Move(colorKey, step);
+                chess.Move((ChessColor)index, step);
             }
 
             // ④下一轮出牌者
@@ -349,8 +361,15 @@ namespace HotFix
         {
             Debug.Log("[S2C_GameResult] 结算消息");
             var packet = (S2C_GameResultPacket)reader;
-            var ui_result = UIManager.Get().Push<UI_GameResult>();
-            ui_result.UpdateUI(packet.Rank);
+
+            // 等待棋子走完，再弹出。
+            //await Task.Delay(4);
+            GameEndAction += () =>
+            {
+                var ui_result = UIManager.Get().Push<UI_GameResult>();
+                ui_result.UpdateUI(packet.Rank);
+                m_Room.OnGameResult_Client();
+            };
         }
         #endregion
     }
