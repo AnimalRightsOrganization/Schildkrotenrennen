@@ -34,7 +34,8 @@ namespace HotFix
         public Button[] m_ColorBtns; //彩色龟，选颜色按钮
         public RectTransform m_ColorSelected; //彩色龟，选中框
 
-        ClientRoom m_Room; //游戏房间（逻辑）
+        private ClientRoom m_Room; //游戏房间（逻辑）
+        private ClientPlayer m_LocalPlayer; //缓存数据，方便读取
         #endregion
 
         #region 内置方法
@@ -90,6 +91,7 @@ namespace HotFix
             for (int i = 0; i < 5; i++)
             {
                 var chessObj = Instantiate(chessPrefab, m_MapPoints[0]);
+                chessObj.name = $"Chess_{(ChessColor)i}";
                 var chessScript = chessObj.AddComponent<Item_Chess>();
                 gameChess[i] = chessScript;
                 chessScript.InitData(i);
@@ -139,6 +141,7 @@ namespace HotFix
         {
             m_Room = TcpChatClient.m_ClientRoom;
             m_Room.PrintRoom(); //打印本人手牌
+            m_LocalPlayer = TcpChatClient.m_PlayerManager.LocalPlayer;
 
             // 绘制成员头像、昵称
             var players = m_Room.Players;
@@ -235,25 +238,25 @@ namespace HotFix
         void OnYourTurn()
         {
             //Debug.Log("[S2C_YourTurn] 收到提示出牌");
-
+            //m_Room.NextTurn = 0;
         }
         // 出牌消息
         async void OnPlay(object reader)
         {
             var packet = (S2C_PlayCardPacket)reader;
-            Debug.Log($"[S2C] 收到出牌，座位#{packet.SeatID}出牌{packet.CardID}-{packet.Color}，手牌索引={handIndex}");
+            Debug.Log($"[S2C] 收到出牌，座位#{packet.SeatID}出牌{packet.CardID}-{packet.Color}，是第{handIndex}张手牌");
 
             // ①解析牌型
             int colorId = packet.Color;
             Card card = ClientRoom.lib.library[packet.CardID];
             //Debug.Log(card.Log());
-            var chessArray = m_Room.OnGamePlay(handIndex, colorId);
+            var moveChessList = m_Room.OnGamePlay_Client(packet.CardID, colorId);
 
             // ②出牌动画
             // 放大0.2f，移动0.3f，停留1.0f，消失0.5f => 2.0f
-            if (packet.SeatID != TcpChatClient.m_PlayerManager.LocalPlayer.SeatId)
+            if (packet.SeatID != m_LocalPlayer.SeatId)
             {
-                Debug.Log($"是别人出牌，座位#{packet.SeatID}");
+                //Debug.Log($"是别人出牌，座位#{packet.SeatID}");
                 var srcSeat = m_Seats[packet.SeatID].transform;
                 Vector3 src = srcSeat.position;
                 otherCard.transform.position = src;
@@ -263,7 +266,7 @@ namespace HotFix
             }
             else
             {
-                Debug.Log("是自己出牌，执行委托Item_Card.PlayCardAnime()");
+                //Debug.Log("是自己出牌，执行委托Item_Card.PlayCardAnime()");
                 PlayAction?.Invoke();
                 //PlayAction = null;
                 m_PlayPanel.SetActive(false);
@@ -271,7 +274,7 @@ namespace HotFix
 
             Debug.Log("等待2秒......START");
             await Task.Delay(2000);
-            Debug.Log("等待2秒........END");
+            Debug.Log($"等待2秒........END：移动{moveChessList.Count}个");
 
             // 如果是彩色，转成实际的颜色
             bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;
@@ -279,11 +282,21 @@ namespace HotFix
             int step = (int)card.cardNum; //走几步
 
             // ③动画控制走棋子，考虑叠起来
-            for (int i = 0; i < chessArray.Count; i++)
+            for (int i = 0; i < moveChessList.Count; i++)
             {
-                int index = chessArray[i];
+                int index = moveChessList[i];
                 var chess = gameChess[index];
+                Debug.Log($"移动棋子{index}：{(ChessColor)index}---{chess.mColor}");
                 chess.Move(colorKey, step);
+            }
+
+            // ④下一轮出牌者
+            m_Room.NextTurn = packet.SeatID + 1;
+            if (m_Room.NextTurn >= m_Room.RoomLimit)
+                m_Room.NextTurn = 0;
+            if (m_Room.NextTurn == m_LocalPlayer.SeatId)
+            {
+                // 解除手牌锁定
             }
         }
         // 发牌消息
@@ -296,7 +309,7 @@ namespace HotFix
             Card card = ClientRoom.lib.library[packet.CardID];
             Debug.Log($"发牌：{card.Log()}");
             //Debug.Log($"发牌：{Card.LogColor((ChessColor)card.cardColor, (int)card.cardNum)}");
-            m_Room.OnGameDeal(card);
+            m_Room.OnGameDeal_Client(card);
 
             // 发牌动画
             await Task.Delay(3000); //等待出牌和走棋动画

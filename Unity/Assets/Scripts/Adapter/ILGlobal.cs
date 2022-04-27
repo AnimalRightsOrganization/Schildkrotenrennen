@@ -65,6 +65,13 @@ namespace Client
 
             // 注册"空参空返回"型的委托
             appdomain.DelegateManager.RegisterMethodDelegate<ILTypeInstance>();
+            appdomain.DelegateManager.RegisterDelegateConvertor<System.Predicate<ILRuntime.Runtime.Intepreter.ILTypeInstance>>((act) =>
+            {
+                return new System.Predicate<ILTypeInstance>((obj) =>
+                {
+                    return ((System.Func<ILTypeInstance, System.Boolean>)act)(obj);
+                });
+            });
             appdomain.DelegateManager.RegisterDelegateConvertor<UnityAction>((act) => { return new UnityAction(() => { ((System.Action)act)(); }); });
             appdomain.DelegateManager.RegisterMethodDelegate<System.Object, System.Net.Sockets.SocketAsyncEventArgs>();
             appdomain.DelegateManager.RegisterDelegateConvertor<System.EventHandler<System.Net.Sockets.SocketAsyncEventArgs>>((act) =>
@@ -82,7 +89,6 @@ namespace Client
                     ((System.Action)act)();
                 });
             });
-
 
             LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(appdomain);
             ET.ILHelper.InitILRuntime(appdomain); //好像没啥用

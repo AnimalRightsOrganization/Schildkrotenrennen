@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Debug = UnityEngine.Debug;
 using ET;
+using UnityEngine;
 
 namespace HotFix
 {
@@ -36,10 +37,11 @@ namespace HotFix
         public Dictionary<int, List<ChessColor>> mapChess; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
         // 保存自己的颜色和手牌
         public ChessColor chessColor;
-        public List<Card> handCards; //长度永远是5
+        public List<Card> handCards; //索引是显示顺序
+        public int NextTurn = 0; //下回合谁出牌（座位号）
 
         // 初始化
-        public void Init()
+        private void Init()
         {
             lib = new CardLib();
             chessColor = ChessColor.NONE; //空，等待指定
@@ -56,60 +58,91 @@ namespace HotFix
             {
                 mapChess.Add(i, new List<ChessColor>());
             }
+            List<ChessColor> origin = mapChess[0];
+            Debug.Log($"起点叠了{origin.Count}层");
         }
         public void OnGameStart_Client(S2C_GameStartPacket packet)
         {
             this.Init();
 
-            chessColor = (ChessColor)packet.Color;
-            TcpChatClient.m_ClientRoom.handCards = new List<Card>();
+            this.chessColor = (ChessColor)packet.Color;
+            this.handCards = new List<Card>();
             for (int i = 0; i < packet.Cards.Count; i++)
             {
                 int cardid = packet.Cards[i];
                 Card card = lib.library[cardid];
-                TcpChatClient.m_ClientRoom.handCards.Add(card);
+                this.handCards.Add(card);
             }
+            this.NextTurn = 0;
         }
-        public List<int> OnGamePlay(int handIndex, int colorId)
+        public List<int> OnGamePlay_Client(int cardid, int colorId)
         {
-            List<int> chessArray = new List<int>(); 
+            // 输入卡牌，返回要移动的棋子
+            List<int> moveChessList = new List<int>();
+            PrintHandCards();
 
-            Card card = handCards[handIndex];
+            Card card = handCards.Find(x => x.id == cardid);
             bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;
             ChessColor colorKey = colorful ? (ChessColor)colorId : (ChessColor)card.cardColor; //哪只乌龟
             int step = (int)card.cardNum; //走几步
 
-            handCards.RemoveAt(handIndex);
+            handCards.Remove(card);
+            PrintHandCards();
 
             // 走棋子
             int curPos = chessPos[colorKey]; //某颜色棋子当前位置
-            int dstPos = curPos + step; //前往位置
+            int dstPos = Mathf.Clamp(curPos + step, 0, 9); //前往位置
             if (curPos > 0)
             {
                 // 考虑叠起来的情况。
-                List<ChessColor> origin = mapChess[curPos];
-                int index = origin.IndexOf(colorKey);
-                for (int i = 0; i < origin.Count; i++)
+                List<ChessColor> curGrid = mapChess[curPos];
+                Debug.Log($"移动棋子{colorKey}，格子{curPos}上叠了{curGrid.Count}层");
+
+                int index = curGrid.IndexOf(colorKey);
+                Debug.Log($"目标棋子{colorKey}在格子{curPos}的第{index}层");
+
+                for (int i = 0; i < curGrid.Count; i++)
                 {
+                    ChessColor chess = curGrid[i];
+                    Debug.Log($"{i}---格子{curPos}上，第{i}层是{chess} / {curGrid.Count}");
+
                     if (i >= index)
                     {
-                        chessPos[(ChessColor)i] = dstPos;
-                        chessArray.Add(i);
-                        Debug.Log($"<color=green>叠起来走：{(ChessColor)i}</color>");
+                        chessPos[chess] = dstPos;
+
+                        //mapChess[curPos].Remove(chess); //遍历中不能移除
+                        mapChess[dstPos].Add(chess);
+
+                        moveChessList.Add((int)chess);
+                        Debug.Log($"<color=white>叠着走：{chess}</color>");
                     }
+                }
+                for (int i = index; i > 0; i--)
+                {
+                    ChessColor chess = curGrid[i];
+                    curGrid.Remove(chess);
                 }
             }
             else
             {
                 chessPos[colorKey] = dstPos; //起点不堆叠
-                chessArray.Add((int)colorKey);
-                Debug.Log($"<color=green>单个走：{colorKey}</color>");
+
+                Debug.Log($"起点不堆叠，从{curPos}移除{colorKey}");
+                mapChess[curPos].Remove(colorKey);
+                Debug.Log($"把{colorKey}添加到{dstPos}");
+                mapChess[dstPos].Add(colorKey);
+
+                moveChessList.Add((int)colorKey);
+                Debug.Log($"<color=white>单个走：{colorKey}。" +
+                    $"\n移动后，上个格子[{curPos}]{mapChess[curPos].Count}层。" +
+                    $"这个格子[{dstPos}]{mapChess[dstPos].Count}层。</color>");
             }
-            return chessArray;
+            return moveChessList;
         }
-        public void OnGameDeal(Card card)
+        public void OnGameDeal_Client(Card card)
         {
             handCards.Add(card);
+            PrintHandCards();
         }
         public void PrintRoom()
         {
@@ -121,6 +154,13 @@ namespace HotFix
             }
             content += $"棋子：";
             UnityEngine.Debug.Log(content);
+        }
+        public void PrintHandCards()
+        {
+            string handStr = $"{handCards.Count}张：";
+            for (int i = 0; i < handCards.Count; i++)
+                handStr += $"{i}--[{handCards[i].id}]、";
+            Debug.Log(handStr);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace HotFix
         public Dictionary<string, Sprite> cardArray;
         public Button m_SelfBtn;
 
-        public int Index;
+        public int Index; //界面中的摆放顺序
         public Card card;
         private Vector3 src;
         private Vector3 dst;
