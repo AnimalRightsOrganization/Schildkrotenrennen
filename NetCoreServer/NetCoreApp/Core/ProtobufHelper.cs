@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 #if NOT_UNITY
 using System.ComponentModel;
@@ -55,7 +56,16 @@ namespace ET
 		public static T Deserialize<T>(MemoryStream stream)
 		{
 			Type type = typeof(T);
-			object o = RuntimeTypeModel.Default.Deserialize(stream, null, type);
+			object o = null;
+			try
+			{
+				o = RuntimeTypeModel.Default.Deserialize(stream, null, type);
+			}
+			catch (Exception e)
+			{
+				Debug.Print($"error: {e.ToString()}");
+			}
+			//object o = RuntimeTypeModel.Default.Deserialize(stream, null, type);
 			if (o is ISupportInitialize supportInitialize)
 			{
 				supportInitialize.EndInit();

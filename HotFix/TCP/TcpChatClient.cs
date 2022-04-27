@@ -224,5 +224,15 @@ namespace HotFix
             var cmd = new C2S_PlayCardPacket { CardID = cardId, Color = color };
             SendAsync(PacketType.C2S_GamePlay, cmd);
         }
+        public static void SendTestMessage1()
+        {
+            byte[] buffer = new byte[1] { 3 };
+            client.SendAsync(buffer);
+        }
+        public static void SendTestMessage2()
+        {
+            byte[] buffer = new byte[2] { 3, 1 };
+            client.SendAsync(buffer);
+        }
     }
 }

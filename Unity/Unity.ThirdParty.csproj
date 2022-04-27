@@ -543,9 +543,6 @@
     <Reference Include="DOTween50">
       <HintPath>Assets\ThirdParty\Demigiant\DOTween\DOTween50.dll</HintPath>
     </Reference>
-    <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
-      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Editor\SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
-    </Reference>
     <Reference Include="mscorlib">
       <HintPath>D:\Program Files\2020.3.33f1c2\Editor\Data\MonoBleedingEdge\lib\mono\4.7.1-api\mscorlib.dll</HintPath>
     </Reference>

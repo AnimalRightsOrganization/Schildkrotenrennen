@@ -13,10 +13,7 @@ namespace WinFormsApp1
             get
             {
                 if (_instance == null)
-                {
                     _instance = new MainForm();
-                    RegisterHandler();
-                }
                 return _instance;
             }
         }
@@ -32,6 +29,7 @@ namespace WinFormsApp1
             //Debug.Print("count---" + this.notifyIcon1.ContextMenuStrip.Items.Count);
             //Debug.Print("0---" + this.notifyIcon1.ContextMenuStrip.Items[0].Name);
             //Debug.Print("1---" + this.notifyIcon1.ContextMenuStrip.Items[1].Name);
+            RegisterHandler();
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)

@@ -88,7 +88,7 @@ namespace NetCoreServer.Utils
                 }
 
                 // connection will be closed by the 'using' block
-                Debug.Print("Closing connection");
+                //Debug.Print("Closing connection");
             }
         }
         public static async Task TestQuery()
@@ -115,7 +115,7 @@ namespace NetCoreServer.Utils
                     }
                 }
 
-                Debug.Print("Closing connection");
+                //Debug.Print("Closing connection");
             }
         }
 
@@ -192,7 +192,7 @@ namespace NetCoreServer.Utils
                         }
                     }
                 }
-                Debug.Print("Closing connection");
+                //Debug.Print("Closing connection");
                 return null;
             }
         }

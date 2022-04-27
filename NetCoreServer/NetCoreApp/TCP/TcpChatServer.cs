@@ -14,7 +14,7 @@ namespace TcpChatServer
     /* 一个客户端连接单位 */
     public class ChatSession : TcpSession
     {
-        public ChatSession(TcpServer server) : base(server) {}
+        public ChatSession(TcpServer server) : base(server) { }
 
         protected override void OnConnected()
         {
@@ -57,6 +57,8 @@ namespace TcpChatServer
             switch (type)
             {
                 case PacketType.Connected:
+                    break;
+                case PacketType.Disconnect:
                     break;
                 case PacketType.C2S_LoginReq:
                     OnLoginReq(ms);
@@ -110,6 +112,11 @@ namespace TcpChatServer
         protected async void OnLoginReq(MemoryStream ms)
         {
             var request = ProtobufHelper.Deserialize<C2S_LoginPacket>(ms); //解包
+            if (request == null)
+            {
+                Debug.Print("OnLoginReq.空数据");
+                return;
+            }
             Debug.Print($"[C2S] Username={request.Username}, Password={request.Password} by {Id}");
 
             UserInfo result = await MySQLTool.GetUserInfo(request.Username, request.Password);
@@ -139,11 +146,21 @@ namespace TcpChatServer
         protected void OnChat(MemoryStream ms)
         {
             var request = ProtobufHelper.Deserialize<TheMsg>(ms);
+            if (request == null)
+            {
+                Debug.Print("OnChat.空数据");
+                return;
+            }
             Debug.Print($"{request.Name}说: {request.Content}");
         }
         protected void OnGetRoomList(MemoryStream ms)
         {
-            var request = ProtobufHelper.Deserialize<C2S_RoomListPacket>(ms); //解包
+            var request = ProtobufHelper.Deserialize<C2S_RoomListPacket>(ms);
+            if (request == null)
+            {
+                Debug.Print("OnGetRoomList.空数据");
+                return;
+            }
             Debug.Print($"Room List Page={request.Page} by {Id}");
 
             // 空消息，不用解析
@@ -167,7 +184,12 @@ namespace TcpChatServer
         }
         protected void OnCreateRoom(MemoryStream ms)
         {
-            var request = ProtobufHelper.Deserialize<C2S_CreateRoomPacket>(ms); //解包
+            var request = ProtobufHelper.Deserialize<C2S_CreateRoomPacket>(ms);
+            if (request == null)
+            {
+                Debug.Print("OnCreateRoom.空数据");
+                return;
+            }
             Debug.Print($"[C2S] Name={request.RoomName}, Pwd={request.RoomPwd}, playerNum={request.LimitNum} by {Id}");
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
 
@@ -211,7 +233,12 @@ namespace TcpChatServer
         }
         protected void OnJoinRoom(MemoryStream ms)
         {
-            var request = ProtobufHelper.Deserialize<C2S_JoinRoomPacket>(ms); //解包
+            var request = ProtobufHelper.Deserialize<C2S_JoinRoomPacket>(ms);
+            if (request == null)
+            {
+                Debug.Print("OnJoinRoom.空数据");
+                return;
+            }
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             Debug.Print($"{p.UserName}请求加入房间#{request.RoomID}");
 
@@ -293,7 +320,12 @@ namespace TcpChatServer
         }
         protected void OnOperateSeat(MemoryStream ms)
         {
-            var request = ProtobufHelper.Deserialize<C2S_OperateSeatPacket>(ms); //解包
+            var request = ProtobufHelper.Deserialize<C2S_OperateSeatPacket>(ms);
+            if (request == null)
+            {
+                Debug.Print("OnOperateSeat.空数据");
+                return;
+            }
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
             BaseRoomData roomData = serverRoom.m_Data;
@@ -390,7 +422,12 @@ namespace TcpChatServer
         }
         protected void OnGamePlay(MemoryStream ms)
         {
-            var request = ProtobufHelper.Deserialize<C2S_PlayCardPacket>(ms); //解包
+            var request = ProtobufHelper.Deserialize<C2S_PlayCardPacket>(ms);
+            if (request == null)
+            {
+                Debug.Print("OnGamePlay.空数据");
+                return;
+            }
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
             Debug.Print($"[C2S] {p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}-{request.Color}");

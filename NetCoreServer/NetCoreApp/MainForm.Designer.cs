@@ -309,7 +309,7 @@ namespace WinFormsApp1
         }
 
         // 重启
-        void Restart()
+        static void Restart()
         {
             //关闭应用程序并立即启动一个新实例。
             //调用Restart最常见的原因是使用或UpdateAsync方法启动通过ClickOnceUpdate下载的应用程序的新版本。
@@ -326,7 +326,7 @@ namespace WinFormsApp1
             //System.Diagnostics.Process.Start(Application.ExecutablePath); //是dll
             Application.Exit();
         }
-        public static void RegisterHandler()
+        static void RegisterHandler()
         {
             Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);

@@ -74,10 +74,12 @@ namespace HotFix
         void OnQQBtnClick()
         {
             Debug.Log("[Hotfix] QQ登录");
+            TcpChatClient.SendTestMessage1();
         }
         void OnWXBtnClick()
         {
             Debug.Log("[Hotfix] 微信登录");
+            TcpChatClient.SendTestMessage2();
         }
         void OnHelpBtnClick()
         {
