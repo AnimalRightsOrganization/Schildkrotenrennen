@@ -250,7 +250,7 @@ namespace HotFix
             int colorId = packet.Color;
             Card card = ClientRoom.lib.library[packet.CardID];
             //Debug.Log(card.Log());
-            var moveChessList = m_Room.OnGamePlay_Client(packet.CardID, colorId);
+            var moveChessList = m_Room.OnGamePlay_Client(packet);
 
             // ②出牌动画
             // 放大0.2f，移动0.3f，停留1.0f，消失0.5f => 2.0f

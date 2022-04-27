@@ -75,19 +75,25 @@ namespace HotFix
             }
             this.NextTurn = 0;
         }
-        public List<int> OnGamePlay_Client(int cardid, int colorId)
+        public List<int> OnGamePlay_Client(S2C_PlayCardPacket packet)
         {
             // 输入卡牌，返回要移动的棋子
             List<int> moveChessList = new List<int>();
             PrintHandCards();
 
-            Card card = handCards.Find(x => x.id == cardid);
+            // 解析卡牌
+            int colorId = packet.Color;
+            Card card = lib.library[packet.CardID];
             bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;
             ChessColor colorKey = colorful ? (ChessColor)colorId : (ChessColor)card.cardColor; //哪只乌龟
             int step = (int)card.cardNum; //走几步
 
-            handCards.Remove(card);
-            PrintHandCards();
+            // 如果是自己出的，移除手牌
+            if (packet.SeatID == TcpChatClient.m_PlayerManager.LocalPlayer.SeatId)
+            {
+                handCards.Remove(card);
+                PrintHandCards();
+            }
 
             // 走棋子
             int curPos = chessPos[colorKey]; //某颜色棋子当前位置
