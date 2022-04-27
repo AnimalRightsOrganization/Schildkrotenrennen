@@ -143,6 +143,7 @@ namespace NetCoreServer
         public int nextPlayerIndex = 0; //下一个出牌的座位号
         private Dictionary<ChessColor, int> chessPos; //棋子位置（key=棋子, value=位置）
         private Dictionary<int, List<ChessColor>> mapChess; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
+        private bool IsStarted;
 
         // TODO: 保存每步操作。
         // TODO: 机器人随机出牌。优先选自己的+。优先选玩家的颜色-。
@@ -206,6 +207,7 @@ namespace NetCoreServer
             {
                 mapChess.Add(i, new List<ChessColor>());
             }
+            IsStarted = true;
         }
         public void OnGameStart_Server()
         {
@@ -248,6 +250,12 @@ namespace NetCoreServer
         }
         public bool OnGamePlay(ServerPlayer p, C2S_PlayCardPacket request)
         {
+            if (IsStarted == false)
+            {
+                Debug.Print("比赛已经结束");
+                return true;
+            }
+
             int seatId = p.SeatId;
             int cardId = request.CardID;
             int colorId = request.Color; //彩色时才有效
@@ -260,22 +268,43 @@ namespace NetCoreServer
             int step = (int)card.cardNum; //走几步
 
             // 走棋子
+            //List<int> moveChessList = new List<int>();
             int curPos = chessPos[colorKey]; //某颜色棋子当前位置
-            int dstPos = curPos + step; //前往位置
+            int dstPos = System.Math.Clamp(curPos + step, 0, 9); //前往位置
             if (curPos > 0)
             {
                 // 考虑叠起来的情况。
-                List<ChessColor> origin = mapChess[curPos];
-                int index = origin.IndexOf(colorKey);
-                for (int i = 0; i < origin.Count; i++)
+                List<ChessColor> curGrid = mapChess[curPos];
+
+                int index = curGrid.IndexOf(colorKey);
+
+                for (int i = 0; i < curGrid.Count; i++)
                 {
+                    ChessColor chess = curGrid[i];
+
                     if (i >= index)
-                        chessPos[(ChessColor)i] = dstPos;
+                    {
+                        chessPos[chess] = dstPos;
+
+                        mapChess[dstPos].Add(chess);
+
+                        //moveChessList.Add((int)chess);
+                    }
+                }
+                for (int i = index; i > 0; i--)
+                {
+                    ChessColor chess = curGrid[i];
+                    curGrid.Remove(chess);
                 }
             }
             else
             {
                 chessPos[colorKey] = dstPos; //起点不堆叠
+
+                mapChess[curPos].Remove(colorKey);
+                mapChess[dstPos].Add(colorKey);
+
+                //moveChessList.Add((int)colorKey);
             }
 
             // 下个出牌人
@@ -284,6 +313,7 @@ namespace NetCoreServer
                 nextPlayerIndex = 0;
 
             // 检查是否到终点
+            Debug.Print($"检查是否到终点: {dstPos}");
             if (dstPos >= 9)
             {
                 OnGameResult();
@@ -317,6 +347,7 @@ namespace NetCoreServer
         public List<int> OnGameResult()
         {
             Debug.Print("给出结算");
+            IsStarted = false;
             var list = new List<int>();
             for (int i = mapChess.Count - 1; i > 0; i--)
             {

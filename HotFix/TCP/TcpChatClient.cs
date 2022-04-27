@@ -82,6 +82,8 @@ namespace HotFix
         public static void Dispose()
         {
             Debug.Log("关闭网络");
+            UIManager.Get().PopAll();
+
             if (client != null)
             {
                 // 不管有没有停反正执行一次，标记stop，让线程等待释放

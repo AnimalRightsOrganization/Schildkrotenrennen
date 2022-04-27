@@ -36,6 +36,10 @@ namespace HotFix
 
         private ClientRoom m_Room; //游戏房间（逻辑）
         private ClientPlayer m_LocalPlayer; //缓存数据，方便读取
+        public bool IsMyTurn
+        {
+            get { return m_Room.NextTurn == m_LocalPlayer.SeatId; }
+        }
         #endregion
 
         #region 内置方法
@@ -272,9 +276,9 @@ namespace HotFix
                 m_PlayPanel.SetActive(false);
             }
 
-            Debug.Log("等待2秒......START");
+            //Debug.Log("等待2秒......START");
             await Task.Delay(2000);
-            Debug.Log($"等待2秒........END：移动{moveChessList.Count}个");
+            //Debug.Log($"等待2秒........END：移动{moveChessList.Count}个");
 
             // 如果是彩色，转成实际的颜色
             bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;

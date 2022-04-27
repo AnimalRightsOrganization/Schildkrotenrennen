@@ -260,6 +260,15 @@ namespace ET
 
 	}
 
+	[Message(OuterOpcode.S2C_NextTurnPacket)]
+	[ProtoContract]
+	public partial class S2C_NextTurnPacket: Object
+	{
+		[ProtoMember(1)]
+		public int SeatID { get; set; }
+
+	}
+
 //比赛结果
 	[Message(OuterOpcode.S2C_GameResultPacket)]
 	[ProtoContract]

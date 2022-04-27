@@ -46,6 +46,13 @@ namespace HotFix
 
         void OnSelect()
         {
+            var ui_game = UIManager.Get().GetUI<UI_Game>();
+            if (ui_game.IsMyTurn == false)
+            {
+                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                ui_toast.Show("不是你的回合，请等待");
+                return;
+            }
             //Debug.Log($"选中：{card.Log()}");
 
             // 实例化创建出来的，要在创建完成后获取坐标
@@ -58,7 +65,6 @@ namespace HotFix
                 m_SelfBtn.interactable = true;
             });
 
-            var ui_game = UIManager.Get().GetUI<UI_Game>();
             ui_game.ShowPlayPanel(card.id, CancelCardAnime, PlayCardAnime);
             ui_game.handIndex = Index;
         }

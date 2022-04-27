@@ -21,6 +21,7 @@ namespace ET
 		 public const ushort C2S_PlayCardPacket = 10017;
 		 public const ushort S2C_PlayCardPacket = 10018;
 		 public const ushort S2C_DealPacket = 10019;
-		 public const ushort S2C_GameResultPacket = 10020;
+		 public const ushort S2C_NextTurnPacket = 10020;
+		 public const ushort S2C_GameResultPacket = 10021;
 	}
 }

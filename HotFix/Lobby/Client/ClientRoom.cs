@@ -81,7 +81,7 @@ namespace HotFix
             List<int> moveChessList = new List<int>();
             PrintHandCards();
 
-            // 解析卡牌
+            // 解析牌型
             int colorId = packet.Color;
             Card card = lib.library[packet.CardID];
             bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;

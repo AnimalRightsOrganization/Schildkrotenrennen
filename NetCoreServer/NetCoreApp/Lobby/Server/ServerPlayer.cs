@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using TcpChatServer;
 using HotFix;
 using ET;
+using Random = System.Random;
+using Debug = System.Diagnostics.Debug;
 
 namespace NetCoreServer
 {
@@ -36,5 +38,26 @@ namespace NetCoreServer
             chessColor = ChessColor.NONE; //空，等待指定
             handCards = new List<Card>(); //空，等待发牌
         }
+
+        #region 机器人
+        public C2S_PlayCardPacket Bot_PlayCardPacket()
+        {
+            Debug.Print($"等待结束。机器人的手牌：{handCards[0].id},{handCards[1].id},{handCards[2].id},{handCards[3].id},{handCards[4].id}");
+
+            int index = new Random().Next(0, 5); //[,)
+            Card card = handCards[index];
+            int color = 0;
+            if ((int)card.cardColor >= 5)
+            {
+                color = new Random().Next(0, 5);
+            }
+            var request = new C2S_PlayCardPacket
+            {
+                CardID = card.id,
+                Color = color,
+            };
+            return request;
+        }
+        #endregion
     }
 }
