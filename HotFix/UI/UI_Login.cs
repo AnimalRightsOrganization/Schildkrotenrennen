@@ -64,7 +64,7 @@ namespace HotFix
         {
             string username = m_UserInput.text;
             if (string.IsNullOrEmpty(username))
-                username = "lala";
+                username = "admin";
             TcpChatClient.SendLogin(username, "123456");
         }
         void OnRegisterBtnClick()

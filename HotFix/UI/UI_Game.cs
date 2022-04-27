@@ -10,50 +10,38 @@ namespace HotFix
     public class UI_Game : UIBase
     {
         #region 界面组件
-        public Dictionary<string, Sprite> dic_sp; //手牌
         public Button m_CloseBtn;
-        public Image m_PlayerImage; //本人
+        public Transform[] m_MapPoints; //地图
+
         public Image[] m_Seats; //所有玩家座位
         public Text[] m_SeatNames; //所有玩家名字
-        public Transform[] m_MapPoints; //地图
-        public Item_Card[] myCards; //手牌
-        public Item_Card otherCard; //动画牌（别人出牌，我收到的新牌）
-        public Item_Chess[] gameChess; //棋子
+        public Dictionary<string, Sprite> idSprites; //身份图集
+        public Image m_SelfIdentify; //本人身份色卡
+
         public int handIndex; //选中手牌，数组Id
+        public Item_Card otherCard; //动画牌（别人出牌、我收到的新牌）
+        public List<Item_Card> myCards; //手牌
+        public Item_Chess[] gameChess; //棋子（按颜色索引存、取）
+
         public int selectedCardId; //选中手牌，出列
-        public int selectedCardColor; //彩色龟，所选颜色
         public GameObject m_PlayPanel; //选中手牌，出牌或选颜色
-        public Button m_PlayBtn; //出牌
         public Button m_CancelBtn; //点击背景，取消选中
+        public Button m_PlayBtn; //出牌
         System.Action CancelAction;
         System.Action PlayAction;
+        public int selectedCardColor; //彩色龟，所选颜色
         public GameObject m_ColorPanel; //彩色龟，选颜色面板
         public Button[] m_ColorBtns; //彩色龟，选颜色按钮
         public RectTransform m_ColorSelected; //彩色龟，选中框
+
+        ClientRoom m_Room; //游戏房间（逻辑）
         #endregion
 
         #region 内置方法
         void Awake()
         {
-            dic_sp = ResManager.LoadSprite("Sprites/identify");
             m_CloseBtn = transform.Find("CloseBtn").GetComponent<Button>();
             m_CloseBtn.onClick.AddListener(OnCloseBtnClick);
-            m_PlayerImage = transform.Find("ChessColor").GetComponent<Image>();
-            //m_Seats = transform.Find("SeatPanel").GetComponentsInChildren<Image>();
-            Transform SeatPanel = transform.Find("SeatPanel");
-            int length = SeatPanel.childCount;
-            m_Seats = new Image[length];
-            for (int i = 0; i < length; i++)
-            {
-                m_Seats[i] = SeatPanel.GetChild(i).GetComponent<Image>();
-            }
-            m_SeatNames = new Text[length];
-            for (int i = 0; i < length; i++)
-            {
-                m_SeatNames[i] = m_Seats[i].GetComponentInChildren<Text>();
-            }
-            //Debug.Log($"座位数={m_Seats.Length}");
-            //Debug.Log($"座位名数={m_SeatNames.Length}");
 
             // 地图
             var mapRoot = transform.Find("MapPoints");
@@ -63,23 +51,39 @@ namespace HotFix
                 m_MapPoints[i] = mapRoot.GetChild(i);
             }
 
-            // 手牌
-            var handPointsRoot = transform.Find("HandPoints");
-            myCards = new Item_Card[5];
-            var cardPrefab = ResManager.LoadPrefab("Prefabs/Card");
-            for (int i = 0; i < 5; i++)
+            // 成员
+            var SeatPanel = transform.Find("SeatPanel");
+            int length = SeatPanel.childCount;
+            m_Seats = new Image[length];
+            m_SeatNames = new Text[length];
+            for (int i = 0; i < length; i++)
             {
-                var handObj = Instantiate(cardPrefab, handPointsRoot);
-                handObj.name = $"HandCard_{i}";
-                var handScript = handObj.AddComponent<Item_Card>();
-                myCards[i] = handScript;
+                var child = SeatPanel.GetChild(i);
+                m_Seats[i] = child.GetComponent<Image>();
+                m_SeatNames[i] = child.GetComponentInChildren<Text>();
             }
+            // 身份色卡
+            idSprites = ResManager.LoadSprite("Sprites/identify");
+            m_SelfIdentify = transform.Find("Identify").GetComponent<Image>();
+
+            // 动画牌
+            var cardPrefab = ResManager.LoadPrefab("Prefabs/Card");
             var otherHandObj = Instantiate(cardPrefab, transform);
             otherHandObj.name = "OtherCard";
             otherCard = otherHandObj.AddComponent<Item_Card>(); //屏幕中央
             otherCard.m_Rect.anchoredPosition3D = new Vector3(-320, 555, 0);
-            otherCard.UnBind();
-
+            otherCard.UnBind(); //设为不可交互
+            // 手牌
+            handIndex = 0;
+            var handCardPanel = transform.Find("HandCardPanel");
+            myCards = new List<Item_Card>();
+            for (int i = 0; i < 5; i++)
+            {
+                var handObj = Instantiate(cardPrefab, handCardPanel);
+                handObj.name = $"HandCard_{i}";
+                var handScript = handObj.AddComponent<Item_Card>();
+                myCards.Add(handScript);
+            }
             // 棋子
             gameChess = new Item_Chess[5];
             var chessPrefab = ResManager.LoadPrefab("Prefabs/Chess");
@@ -91,16 +95,18 @@ namespace HotFix
                 chessScript.InitData(i);
             }
 
+            // 出牌面板
             selectedCardId = 0;
-            selectedCardColor = 0;
             CancelAction = null;
             PlayAction = null;
             m_PlayPanel = transform.Find("PlayPanel").gameObject;
             m_PlayPanel.SetActive(false);
-            m_PlayBtn = transform.Find("PlayPanel/PlayBtn").GetComponent<Button>();
             m_CancelBtn = m_PlayPanel.GetComponent<Button>();
+            m_PlayBtn = transform.Find("PlayPanel/PlayBtn").GetComponent<Button>();
             m_CancelBtn.onClick.AddListener(HidePlayPanel);
             m_PlayBtn.onClick.AddListener(OnPlayBtnClick);
+            // 彩色选项
+            selectedCardColor = 0;
             m_ColorPanel = transform.Find("PlayPanel/ColorPanel").gameObject;
             m_ColorPanel.SetActive(false);
             m_ColorBtns = transform.Find("PlayPanel/ColorPanel").GetComponentsInChildren<Button>();
@@ -108,7 +114,7 @@ namespace HotFix
             for (int i = 0; i < m_ColorBtns.Length; i++)
             {
                 int index = i;
-                Button btn = m_ColorBtns[i];
+                Button btn = m_ColorBtns[index];
                 btn.onClick.AddListener(() =>
                 {
                     selectedCardColor = index;
@@ -118,12 +124,10 @@ namespace HotFix
                 });
             }
         }
-
         void Start()
         {
             NetPacketManager.RegisterEvent(OnNetCallback);
         }
-
         void OnDestroy()
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
@@ -133,9 +137,11 @@ namespace HotFix
         #region 按钮事件
         public void UpdateUI()
         {
-            TcpChatClient.m_ClientRoom.PrintRoom();
+            m_Room = TcpChatClient.m_ClientRoom;
+            m_Room.PrintRoom(); //打印本人手牌
 
-            var players = TcpChatClient.m_ClientRoom.Players;
+            // 绘制成员头像、昵称
+            var players = m_Room.Players;
             for (int i = 0; i < m_Seats.Length; i++)
             {
                 int index = i;
@@ -143,27 +149,26 @@ namespace HotFix
                 var seatName = m_SeatNames[index];
                 if (index >= players.Count)
                 {
-                    //Debug.Log($"关闭:{index}--{seat.gameObject.name}");
                     seat.gameObject.SetActive(false);
                 }
                 else
                 {
-                    //Debug.Log($"打开:{index}--{seat.gameObject.name}");
-                    var player = players[index];
-                    //Debug.Log($"设置名字:{player.UserName}");
                     seat.gameObject.SetActive(true);
+                    var player = players[index];
                     seatName.text = player.NickName;
                 }
             }
 
-            int colorId = (int)TcpChatClient.m_ClientRoom.chessColor;
-            m_PlayerImage.sprite = dic_sp[$"identify_{colorId}"]; //红0黄1绿2蓝3紫4
-            //Debug.Log($"本人颜色={TcpChatClient.m_ClientRoom.chessColor}");
+            // 绘制本人身份色卡(红0,黄1,绿2,蓝3,紫4)
+            int colorId = (int)m_Room.chessColor;
+            m_SelfIdentify.sprite = idSprites[$"identify_{colorId}"];
+            //Debug.Log($"本人颜色={m_Room.chessColor}");
 
+            // 绘制手牌
             for (int i = 0; i < 5; i++)
             {
                 int index = i;
-                var card = TcpChatClient.m_ClientRoom.handCards[i];
+                var card = m_Room.handCards[i];
                 myCards[i].InitData(card);
                 myCards[i].Index = index;
             }
@@ -242,7 +247,7 @@ namespace HotFix
             int colorId = packet.Color;
             Card card = ClientRoom.lib.library[packet.CardID];
             //Debug.Log(card.Log());
-            var chessArray = TcpChatClient.m_ClientRoom.OnGamePlay(handIndex, colorId);
+            var chessArray = m_Room.OnGamePlay(handIndex, colorId);
 
             // ②出牌动画
             // 放大0.2f，移动0.3f，停留1.0f，消失0.5f => 2.0f
@@ -291,7 +296,7 @@ namespace HotFix
             Card card = ClientRoom.lib.library[packet.CardID];
             Debug.Log($"发牌：{card.Log()}");
             //Debug.Log($"发牌：{Card.LogColor((ChessColor)card.cardColor, (int)card.cardNum)}");
-            TcpChatClient.m_ClientRoom.OnGameDeal(card);
+            m_Room.OnGameDeal(card);
 
             // 发牌动画
             await Task.Delay(3000); //等待出牌和走棋动画
@@ -302,7 +307,7 @@ namespace HotFix
             otherCard.transform.position = new Vector3(Screen.width, Screen.height) / 2;
             otherCard.m_Group.alpha = 1;
 
-            Vector3 dst = myCards[myCards.Length - 1].transform.position; //该位置放一堆牌
+            Vector3 dst = myCards[myCards.Count - 1].transform.position; //该位置放一堆牌
             //Debug.Log($"移动到：{dst}");
             Tweener tw1 = otherCard.transform.DOMove(dst, 0.3f);
             await Task.Delay(1000);
