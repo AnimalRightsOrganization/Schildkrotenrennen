@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Random = System.Random;
 using Debug = System.Diagnostics.Debug;
 using HotFix;
@@ -143,8 +144,8 @@ namespace NetCoreServer
         public int nextPlayerIndex = 0; //下一个出牌的座位号
         private Dictionary<ChessColor, int> chessPos; //棋子位置（key=棋子, value=位置）
         private Dictionary<int, List<ChessColor>> mapChess; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
-        private bool IsShuffleStandard; //洗成固定的顺序
         private ChessStatus gameStatus;
+        public DateTime createTime;
 
         // TODO: 保存每步操作。
         // TODO: 机器人随机出牌。优先选自己的+。优先选玩家的颜色-。
@@ -224,6 +225,7 @@ namespace NetCoreServer
                 mapChess.Add(i, new List<ChessColor>());
             }
             gameStatus = ChessStatus.Wait;
+            createTime = DateTime.Now;
         }
         public void OnGameStart_Server()
         {
@@ -397,6 +399,8 @@ namespace NetCoreServer
             return list;
         }
 
+        // 调试参数
+        private bool IsShuffleStandard; //洗成固定的顺序
         public string PrintMap()
         {
             //输出玩家列表

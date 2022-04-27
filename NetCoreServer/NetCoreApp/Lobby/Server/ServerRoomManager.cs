@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 using HotFix;
@@ -91,6 +92,12 @@ namespace NetCoreServer
         {
             ServerRoom[] DictionaryToArray = dic_rooms.Values.ToArray();
             return DictionaryToArray;
+        }
+        public List<ServerRoom> Sort()
+        {
+            var list = dic_rooms.Values.ToList();
+            list.Sort((x, y) => x.createTime.CompareTo(y.createTime));
+            return list;
         }
 
         // 如果战场需要运行Update，定义专门的战场房间容器。

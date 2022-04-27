@@ -162,13 +162,28 @@ namespace TcpChatServer
                 Debug.Print("OnGetRoomList.空数据");
                 return;
             }
-            Debug.Print($"Room List Page={request.Page} by {Id}");
+            Debug.Print($"[C2S_GetRoomList] Page={request.Page} by {Id}");
 
             // 空消息，不用解析
             S2C_GetRoomList packet = new S2C_GetRoomList();
             List<PlayerInfo> players = new List<PlayerInfo>();
-            foreach (ServerRoom room in TCPChatServer.m_RoomManager.GetAll())
+            //foreach (ServerRoom room in TCPChatServer.m_RoomManager.GetAll())
+            //{
+            //    var roomInfo = new RoomInfo
+            //    {
+            //        RoomID = room.RoomID,
+            //        RoomName = room.RoomName,
+            //        HasPwd = !string.IsNullOrEmpty(room.RoomPwd),
+            //        LimitNum = room.RoomLimit,
+            //        Players = players,
+            //    };
+            //    packet.Rooms.Add(roomInfo);
+            //}
+            var listAll = TCPChatServer.m_RoomManager.Sort();
+             var listRange = listAll.GetRange(request.Page, request.Page + 10);
+            for (int i = 0; i < listRange.Count; i++)
             {
+                var room = listRange[i];
                 var roomInfo = new RoomInfo
                 {
                     RoomID = room.RoomID,
