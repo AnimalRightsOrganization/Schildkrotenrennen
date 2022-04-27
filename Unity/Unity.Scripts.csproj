@@ -66,7 +66,7 @@
     <Compile Include="Assets\Scripts\Utils\Md5Utils.cs" />
     <Compile Include="Assets\Scripts\UI\UI_CheckUpdate.cs" />
     <Compile Include="Assets\Scripts\Adapter\AdaptHelper.cs" />
-    <Compile Include="Assets\Scripts\Adapter\IAsyncStateMachineClassInheritanceAdaptor.cs" />
+    <Compile Include="Assets\Scripts\Adapter\IAsyncStateMachineAdapter.cs" />
     <Compile Include="Assets\Scripts\Managers\ResManager.cs" />
     <Compile Include="Assets\Scripts\Utils\ThreadDownload.cs" />
     <Compile Include="Assets\Scripts\Utils\ConstValue.cs" />

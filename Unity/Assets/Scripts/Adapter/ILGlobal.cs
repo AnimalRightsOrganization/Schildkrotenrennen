@@ -58,7 +58,7 @@ namespace Client
             // 这里做一些ILRuntime的注册
             appdomain.RegisterCrossBindingAdaptor(new MonoBehaviourAdapter()); //注册跨域继承（HotFix的Class需要继承Unity工程代码的类时）
             appdomain.RegisterCrossBindingAdaptor(new CoroutineAdapter()); //注册IDisposable, IEnumerator
-            appdomain.RegisterCrossBindingAdaptor(new IAsyncStateMachineClassInheritanceAdaptor()); //注册Task
+            appdomain.RegisterCrossBindingAdaptor(new IAsyncStateMachineAdapter()); //注册Task
 
             //注册litjson
             //LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(appdomain);
