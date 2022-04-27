@@ -49,8 +49,9 @@ namespace HotFix
                 case PacketType.Disconnect:
                     {
                         // 销毁所有UI，返回登录页
-                        //UIManager.Get().PopAll();
-                        //UIManager.Get().Push<UI_Login>();
+                        Debug.Log("<color=green>断线消息：断线Code=？？</color>");
+                        UIManager.Get().PopAll();
+                        UIManager.Get().Push<UI_Login>();
                         break;
                     }
                 case PacketType.S2C_LoginResult:

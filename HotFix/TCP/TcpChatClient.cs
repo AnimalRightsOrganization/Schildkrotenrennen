@@ -82,7 +82,6 @@ namespace HotFix
         public static void Dispose()
         {
             Debug.Log("关闭网络");
-            UIManager.Get().PopAll();
 
             if (client != null)
             {

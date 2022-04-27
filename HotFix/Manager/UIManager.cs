@@ -81,20 +81,19 @@ namespace HotFix
                 Debug.LogError("没有需要销毁的UI");
                 return;
             }
-            //Debug.Log($"Pop: {scriptName}");
             stack.Remove(scriptName);
-            //Destroy(ui.gameObject);
-            //Debug.Log($"recyclePool={recyclePool.Count}");
             recyclePool.Add(scriptName, ui);
             ui.gameObject.SetActive(false);
         }
         public void PopAll()
         {
-            //Debug.Log("PopAll");
-            foreach (var ui in stack)
+            foreach (var item in stack)
             {
-                Pop(ui.Value);
+                //Debug.Log($"{item.Key}---{item.Value.gameObject}");
+                recyclePool.Add(item.Key, item.Value);
+                item.Value.gameObject.SetActive(false);
             }
+            stack.Clear();
         }
 
         #region 测试
