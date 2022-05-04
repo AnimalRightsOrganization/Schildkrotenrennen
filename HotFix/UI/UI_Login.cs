@@ -9,29 +9,33 @@ namespace HotFix
     public class UI_Login : UIBase
     {
         #region 界面组件
-        public Button m_HelpBtn;
+        public GameObject m_LoginPanel;
         public InputField m_UserInput;
+        public InputField m_PwdInput;
         public Button m_LoginBtn;
+
+        public GameObject m_RegistPanel;
         public Button m_RegisterBtn;
-        public Button m_QQBtn;
-        public Button m_WXBtn;
+
+        public Button m_OAuthBtn;
         #endregion
 
         #region 内置方法
         void Awake()
         {
-            m_UserInput = transform.Find("UserInput").GetComponent<InputField>();
-            m_LoginBtn = transform.Find("LoginBtn").GetComponent<Button>();
-            m_RegisterBtn = transform.Find("RegisterBtn").GetComponent<Button>();
-            m_QQBtn = transform.Find("QQButton").GetComponent<Button>();
-            m_WXBtn = transform.Find("WXButton").GetComponent<Button>();
-            m_HelpBtn = transform.Find("HelpButton").GetComponent<Button>();
+            m_LoginPanel = transform.Find("LoginPanel").gameObject;
+            m_UserInput = transform.Find("LoginPanel/UserInput").GetComponent<InputField>();
+            m_PwdInput = transform.Find("LoginPanel/PwdInput").GetComponent<InputField>();
+            m_LoginBtn = transform.Find("LoginPanel/LoginBtn").GetComponent<Button>();
+
+            m_RegistPanel = transform.Find("RegistPanel").gameObject;
+            m_RegisterBtn = transform.Find("RegistPanel/RegisterBtn").GetComponent<Button>();
+
+            m_OAuthBtn = transform.Find("OAuthBtn").GetComponent<Button>();
 
             m_LoginBtn.onClick.AddListener(OnLoginBtnClick);
-            m_RegisterBtn.onClick.AddListener(OnRegisterBtnClick);
-            m_QQBtn.onClick.AddListener(OnQQBtnClick);
-            m_WXBtn.onClick.AddListener(OnWXBtnClick);
-            m_HelpBtn.onClick.AddListener(OnHelpBtnClick);
+            m_RegisterBtn.onClick.AddListener(OnRegistBtnClick);
+            m_OAuthBtn.onClick.AddListener(OnOAuthBtnClick);
         }
 
         void Start()
@@ -43,19 +47,6 @@ namespace HotFix
         void OnDestroy()
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
-
-            m_LoginBtn.onClick.RemoveListener(OnLoginBtnClick);
-            m_RegisterBtn.onClick.RemoveListener(OnRegisterBtnClick);
-            m_QQBtn.onClick.RemoveListener(OnQQBtnClick);
-            m_WXBtn.onClick.RemoveListener(OnWXBtnClick);
-            m_HelpBtn.onClick.RemoveListener(OnHelpBtnClick);
-
-            m_UserInput = null;
-            m_LoginBtn = null;
-            m_RegisterBtn = null;
-            m_QQBtn = null;
-            m_WXBtn = null;
-            m_HelpBtn = null;
         }
         #endregion
 
@@ -67,24 +58,15 @@ namespace HotFix
                 username = "admin";
             TcpChatClient.SendLogin(username, "123456");
         }
-        void OnRegisterBtnClick()
+        void OnRegistBtnClick()
         {
             UIManager.Get().Push<UI_Register>();
         }
-        void OnQQBtnClick()
+        void OnOAuthBtnClick()
         {
-            Debug.Log("[Hotfix] QQ登录");
-            TcpChatClient.SendTestMessage1();
-        }
-        void OnWXBtnClick()
-        {
-            Debug.Log("[Hotfix] 微信登录");
-            TcpChatClient.SendTestMessage2();
-        }
-        void OnHelpBtnClick()
-        {
-            //UIManager.Get().Push<UI_Main>();
-            //TcpChatClient.Disconnect();
+            //TODO: 判断渠道号。弹出登录或三方View。
+            Debug.Log("登录");
+            m_LoginPanel.SetActive(true);
         }
         #endregion
 
@@ -106,6 +88,7 @@ namespace HotFix
             clientPlayer.ResetToLobby();
             TcpChatClient.m_PlayerManager.AddClientPlayer(clientPlayer, true);
             UIManager.Get().Push<UI_Main>();
+            this.Pop();
         }
         #endregion
     }

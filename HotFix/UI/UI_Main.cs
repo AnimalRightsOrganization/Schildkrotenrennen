@@ -116,7 +116,12 @@ namespace HotFix
             var ui_dialog = UIManager.Get().Push<UI_Dialog>();
             ui_dialog.Show("确定退出吗？",
                 () => { ui_dialog.Hide(); }, "取消",
-                () => { this.Pop(); ui_dialog.Hide(); }, "确定");
+                () =>
+                {
+                    UIManager.Get().Push<UI_Login>();
+                    this.Pop();
+                    ui_dialog.Hide();
+                }, "确定");
         }
 
         void OnLeftBtnClick()

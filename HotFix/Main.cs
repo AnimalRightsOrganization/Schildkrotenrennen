@@ -31,6 +31,7 @@ namespace HotFix
         public static void Init()
         {
             UIManager.Get().Push<UI_Login>();
+            //UIManager.Get().Push<UI_Connect>();
         }
 
         public static void Dispose()
