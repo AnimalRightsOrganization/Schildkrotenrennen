@@ -12,11 +12,14 @@ namespace HotFix
         public GameObject m_LoginPanel;
         public InputField m_UserInput;
         public InputField m_PwdInput;
+        public Button m_CloseLoginPanel;
         public Button m_LoginBtn;
+        public Button m_GoSignUpBtn;
 
-        public GameObject m_RegistPanel;
-        public Button m_RegisterBtn;
+        public GameObject m_SignUpPanel;
+        public Button m_SignUpBtn;
 
+        public Text m_VersionText;
         public Button m_OAuthBtn;
         #endregion
 
@@ -26,16 +29,24 @@ namespace HotFix
             m_LoginPanel = transform.Find("LoginPanel").gameObject;
             m_UserInput = transform.Find("LoginPanel/UserInput").GetComponent<InputField>();
             m_PwdInput = transform.Find("LoginPanel/PwdInput").GetComponent<InputField>();
+            m_CloseLoginPanel = transform.Find("LoginPanel/CloseBtn").GetComponent<Button>();
             m_LoginBtn = transform.Find("LoginPanel/LoginBtn").GetComponent<Button>();
+            m_GoSignUpBtn = transform.Find("LoginPanel/SignUpBtn").GetComponent<Button>();
 
-            m_RegistPanel = transform.Find("RegistPanel").gameObject;
-            m_RegisterBtn = transform.Find("RegistPanel/RegisterBtn").GetComponent<Button>();
+            m_SignUpPanel = transform.Find("RegistPanel").gameObject;
+            m_SignUpBtn = transform.Find("RegistPanel/RegisterBtn").GetComponent<Button>();
 
+            m_VersionText = transform.Find("Background/Version").GetComponent<Text>();
             m_OAuthBtn = transform.Find("OAuthBtn").GetComponent<Button>();
 
+            m_CloseLoginPanel.onClick.AddListener(OnCloseLoginPanel);
             m_LoginBtn.onClick.AddListener(OnLoginBtnClick);
-            m_RegisterBtn.onClick.AddListener(OnRegistBtnClick);
+            m_GoSignUpBtn.onClick.AddListener(OnSignUpBtnClick);
+            m_SignUpBtn.onClick.AddListener(OnRegistBtnClick);
             m_OAuthBtn.onClick.AddListener(OnOAuthBtnClick);
+
+            m_LoginPanel.SetActive(false);
+            m_SignUpPanel.SetActive(false);
         }
 
         void Start()
@@ -51,12 +62,20 @@ namespace HotFix
         #endregion
 
         #region 按钮事件
+        void OnCloseLoginPanel()
+        {
+            m_LoginPanel.SetActive(false);
+        }
         void OnLoginBtnClick()
         {
             string username = m_UserInput.text;
             if (string.IsNullOrEmpty(username))
                 username = "admin";
             TcpChatClient.SendLogin(username, "123456");
+        }
+        void OnSignUpBtnClick()
+        {
+        
         }
         void OnRegistBtnClick()
         {

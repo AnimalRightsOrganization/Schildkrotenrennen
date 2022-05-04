@@ -249,7 +249,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 867cc90a3591f164aa8207009e8a3cd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  className: UI_SettingsAdapter
+  className: UI_GameResultAdapter
 --- !u!1 &198880
 GameObject:
   m_ObjectHideFlags: 0
