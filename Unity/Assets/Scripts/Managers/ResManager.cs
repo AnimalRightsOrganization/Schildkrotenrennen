@@ -28,7 +28,7 @@ public class ResManager
     }
     static void Reload()
     {
-        string assetsPath = $@"{Application.persistentDataPath}\StandaloneWindows64\assets.bytes"; //解析文件
+        string assetsPath = $"{Application.persistentDataPath}/{ConstValue.PLATFORM_NAME}/assets.bytes"; //解析文件
         string assetsJson = File.ReadAllText(assetsPath);
         _assetsObj = JsonMapper.ToObject<JsonAssets[]>(assetsJson);
     }
@@ -149,7 +149,7 @@ public class ResManager
     {
         JsonAssets obj = assetsObj.Where(x => x.filePath == assetName.ToLower()).FirstOrDefault();
         //Debug.Log($"assetName={assetName}");
-        string result = $"{Application.persistentDataPath}/StandaloneWindows64/{obj.md5}.unity3d";
+        string result = $"{Application.persistentDataPath}/{ConstValue.PLATFORM_NAME}/{obj.md5}.unity3d";
         //Debug.Log($"<color=green>result={result}</color>");
         return result;
     }

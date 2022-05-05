@@ -126,11 +126,11 @@ public partial class BundleTools : Editor
     {
         // 两个需要清理的目录
         // ./Assets/StreamingAssets/Bundles
-        // ./StandaloneWindows64
+        // ./StandaloneWindows64/Android/iOS
         string[] pathArray = new string[]
         {
             Path.Combine(Application.streamingAssetsPath, "Bundles"),
-            Path.Combine(GetUnityDir(), "StandaloneWindows64"),
+            Path.Combine(GetUnityDir(), ConstValue.PLATFORM_NAME),
         };
         for (int i = 0; i < pathArray.Length; i++)
         {

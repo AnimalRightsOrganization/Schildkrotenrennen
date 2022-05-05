@@ -1,11 +1,16 @@
 ﻿using System.IO;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ConstValue
 {
-    public const string CONFIG_URL = "http://localhost/download/present.json"; //游戏启动首先指向的配置
+#if UNITY_ANDROID
+    public const string PLATFORM_NAME = "Android";
+#elif UNITY_IOS
+    public const string PLATFORM_NAME = "iOS";
+#else
+    public const string PLATFORM_NAME = "StandaloneWindows64";
+#endif
+    public const string CONFIG_URL = "http://192.168.1.101/download/present.json"; //游戏启动首先指向的配置
 
     /// <summary>
     /// ab包下载地址
@@ -17,13 +22,7 @@ public class ConstValue
         {
             if (string.IsNullOrEmpty(dataUrl))
             {
-#if UNITY_ANDROID
-                dataUrl = Path.Combine(GameManager.gameConfig.ab_url, "ANDROID");
-#elif UNITY_IOS
-                dataUrl = Path.Combine(GameManager.gameConfig.ab_url, "IOS");
-#else
-                dataUrl = Path.Combine(GameManager.gameConfig.ab_url, "StandaloneWindows64");
-#endif
+                dataUrl = Path.Combine(GameManager.gameConfig.ab_url, PLATFORM_NAME);
             }
             return dataUrl;
         }
@@ -39,7 +38,7 @@ public class ConstValue
         {
             if (string.IsNullOrEmpty(dataPath)) 
             {
-                dataPath = Path.Combine(Application.persistentDataPath, Application.platform.ToString());
+                dataPath = Path.Combine(Application.persistentDataPath, PLATFORM_NAME);
             }
             return dataPath;
         }

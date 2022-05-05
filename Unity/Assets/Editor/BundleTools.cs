@@ -383,14 +383,7 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/打包AB/iOS", false, 0)]
     private static void AB_iOS()
     {
-        if (!EditorUserBuildSettings.activeBuildTarget.Equals(BuildTarget.iOS))
-        {
-            Debug.LogError("请先切换平台");
-            EditorUtility.DisplayDialog("目标平台与当前平台不一致，请先进行平台转换", "当前平台：" + EditorUserBuildSettings.activeBuildTarget + "\n目标平台：iOS", "OK");
-            return;
-        }
-        BuildAssetBundles();
-        Debug.Log("打包完成");
+        Build_Target(BuildTarget.iOS);
     }
 
     private static void Deploy(BuildTarget target)
@@ -414,7 +407,7 @@ public partial class BundleTools : Editor
         CopyFolder(srcPath, wwwPath);
         Debug.Log($"远程部署完成\n{srcPath}--->\n{wwwPath}");
 
-        Directory.Delete(srcPath, true); //删除 ./StandaloneWindows64
+        Directory.Delete(srcPath, true);
     }
     private static void CopyFolder(string strFromPath, string strToPath)
     {
