@@ -11,6 +11,8 @@ Output/
 /out
 StreamingAssets/
 Build/
+Xcode/
+*.DS_Store
 
 
 # UI资源

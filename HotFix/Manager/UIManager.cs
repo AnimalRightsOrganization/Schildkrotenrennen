@@ -74,7 +74,7 @@ namespace HotFix
             }
             else
             {
-                GameObject prefab = ResManager.LoadPrefab($"ui/{scriptName}");
+                GameObject prefab = ResManager.LoadPrefab($"UI/{scriptName}"); //iOS区分大小写？
                 GameObject obj = Instantiate(prefab, Parent);
                 obj.transform.localPosition = Vector3.zero;
                 obj.name = scriptName;

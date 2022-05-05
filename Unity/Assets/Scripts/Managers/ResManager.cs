@@ -43,6 +43,8 @@ public class ResManager
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(filePath);
 #else
         string filePath = GetFilePath($"{fileName}.unity3d");
+        Debug.Log($"LoadPrefab: filePath={filePath}");
+        Debug.Log($"ab exist: {File.Exists(filePath)}");
 
         // 先读取依赖
         List<AssetBundle> dependBundles = new List<AssetBundle>();
@@ -50,11 +52,15 @@ public class ResManager
         for (int i = 0; i < depends.Length; i++)
         {
             string dependPath = GetFilePath(depends[i]);
+            Debug.Log($"读取依赖：{i}---{dependPath}");
             AssetBundle dependAsset = AssetBundle.LoadFromFile(dependPath.ToLower());
             dependBundles.Add(dependAsset);
         }
 
-        var asset = AssetBundle.LoadFromFile(filePath.ToLower());
+        //Debug.Log($"111.filePath: {filePath}");
+        //Debug.Log($"222.filePath.ToLower(): {filePath.ToLower()}");
+        var asset = AssetBundle.LoadFromFile(filePath); //这里不能小写，会导致iOS读不出。s
+        //Debug.Log($"333.资源数={asset.GetAllAssetNames().Length}---[0]{asset.GetAllAssetNames()[0]}");
         GameObject prefab = asset.LoadAllAssets()[0] as GameObject;
         asset.Unload(false);
 
@@ -147,10 +153,15 @@ public class ResManager
 
     static string GetFilePath(string assetName)
     {
+        Debug.Log($"GetFilePath: {assetName.ToLower()}");
+
         JsonAssets obj = assetsObj.Where(x => x.filePath == assetName.ToLower()).FirstOrDefault();
-        //Debug.Log($"assetName={assetName}");
+        //JsonAssets obj = assetsObj.Where(x => x.filePath == assetName).FirstOrDefault(); //iOS区分大小写？
+        Debug.Log($"obj: {obj.md5}");
+
         string result = $"{Application.persistentDataPath}/{ConstValue.PLATFORM_NAME}/{obj.md5}.unity3d";
-        //Debug.Log($"<color=green>result={result}</color>");
+        Debug.Log($"result={result}");
+
         return result;
     }
 
