@@ -65,9 +65,12 @@ public class ConstValue
         DirectoryInfo direction = new DirectoryInfo("Assets");
         return direction.Parent.ToString();
     }
-    public static string GetServerDir()
+    public static string GetServerDeploy()
     {
+        //注意！！！Windows中，用 '/' 的路径是无法打开的。要用 '\' 。
         string path = $"D:/wamp64/www/{Application.productName}/download";
+        path = path.Replace('/', '\\');
+        Debug.Log($"服务器AB地址：{path}");
         return path;
     }
 

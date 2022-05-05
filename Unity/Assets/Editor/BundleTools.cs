@@ -356,7 +356,7 @@ public partial class BundleTools : Editor
         CopyFolder(srcPath, dstPath);
         Debug.Log($"本地部署完成\n{srcPath}--->\n{dstPath}");
 
-        string wwwPath = $@"{ConstValue.GetServerDir()}\{target}"; //远程部署
+        string wwwPath = $@"{ConstValue.GetServerDeploy()}\{target}"; //远程部署
         if (Directory.Exists(wwwPath))
             Directory.Delete(wwwPath, true);
         CopyFolder(srcPath, wwwPath);
