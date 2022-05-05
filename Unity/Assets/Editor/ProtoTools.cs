@@ -130,7 +130,7 @@ public partial class BundleTools : Editor
         string[] pathArray = new string[]
         {
             Path.Combine(Application.streamingAssetsPath, "Bundles"),
-            Path.Combine(GetUnityDir(), ConstValue.PLATFORM_NAME),
+            Path.Combine(ConstValue.GetUnityDir(), ConstValue.PLATFORM_NAME),
         };
         for (int i = 0; i < pathArray.Length; i++)
         {
@@ -177,7 +177,6 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/热更新/生成Proto", false, 21)]
     static void ConvertProto()
     {
-        //RunBatch("convert_proto.bat");
         InnerProto2CS.Proto2CS();
     }
     [MenuItem("Tools/热更新/编译热更工程", false, 22)]
@@ -237,7 +236,7 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/打包AB/服务器AB资源存放目录", false, 41)]
     static void OpenServerAB()
     {
-        Process.Start("explorer.exe", GetServerDir());
+        Process.Start("explorer.exe", ConstValue.GetServerDir());
     }
     [MenuItem("Tools/打包AB/运行时AB资源下载目录", false, 42)]
     static void OpenAppAB()
@@ -245,8 +244,7 @@ public partial class BundleTools : Editor
         string path = Application.persistentDataPath.Replace("/", @"\"); //向左的[/]无法打开，要转成[\]
         Process.Start("explorer.exe", path);
     }
-
-    [MenuItem("Tools/热更新/生成Present", false, 21)]
+    [MenuItem("Tools/打包AB/生成Present", false, 43)]
     static void CreatePresent()
     {
         Present config = new Present
@@ -259,7 +257,7 @@ public partial class BundleTools : Editor
         };
         string json = JsonMapper.ToJson(config);
         //string filePath = Path.Combine(System.Environment.CurrentDirectory, "present.json");
-        string filePath = Path.Combine(GetServerDir(), "present.json");
+        string filePath = Path.Combine(ConstValue.GetServerDir(), "present.json");
         File.WriteAllText(filePath, json);
         Debug.Log($"output: {filePath}");
     }

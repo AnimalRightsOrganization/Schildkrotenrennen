@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
     {
         UnityWebRequest request = new UnityWebRequest
         {
-            url = ConstValue.CONFIG_URL,
+            url = ConstValue.PRESENT_URL,
             method = "GET",
         };
         request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();

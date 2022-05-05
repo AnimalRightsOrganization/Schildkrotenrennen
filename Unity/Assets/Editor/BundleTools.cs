@@ -7,49 +7,6 @@ using LitJson;
 using UnityEditor;
 public partial class BundleTools : Editor
 {
-    #region 路径
-
-    private static string patchName = "Bundles";
-
-    private static string _srcPath;
-    private static string srcPath
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(_srcPath))
-            {
-                _srcPath = Path.Combine(Application.dataPath, patchName);
-            }
-            return _srcPath;
-        }
-    }
-
-    private static string _outputPath;
-    private static string outputPath
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(_outputPath))
-            {
-                _outputPath = Path.Combine(Application.streamingAssetsPath, patchName);
-            }
-            return _outputPath;
-        }
-    }
-
-    private static string GetUnityDir()
-    {
-        DirectoryInfo direction = new DirectoryInfo("Assets");
-        return direction.Parent.ToString();
-    }
-    private static string GetServerDir()
-    {
-        string path = @"D:\wamp64\www\download";
-        return path;
-    }
-
-    #endregion
-
     #region 标记
 
     [MenuItem("Tools/打包AB/Set Labels", false, 11)]
@@ -59,13 +16,13 @@ public partial class BundleTools : Editor
         AssetDatabase.RemoveUnusedAssetBundleNames();
 
         // 1. 找到资源所在的文件夹
-        DirectoryInfo directoryInfo = new DirectoryInfo(srcPath);
+        DirectoryInfo directoryInfo = new DirectoryInfo(ConstValue.srcPath);
         DirectoryInfo[] typeDirectories = directoryInfo.GetDirectories(); //子文件夹
 
         // 2. 遍历里面每个子文件夹
         foreach (DirectoryInfo childDirectory in typeDirectories)
         {
-            string typeDirectory = srcPath + "/" + childDirectory.Name;
+            string typeDirectory = ConstValue.srcPath + "/" + childDirectory.Name;
             DirectoryInfo sceneDirectoryInfo = new DirectoryInfo(typeDirectory); //一级目录
             //Debug.Log("<color=red>" + typeDirectory + "</color>");
 
@@ -214,10 +171,10 @@ public partial class BundleTools : Editor
     {
         SetAssetBundleLabels();
 
-        if (!Directory.Exists(outputPath))
-            Directory.CreateDirectory(outputPath);
+        if (!Directory.Exists(ConstValue.outputPath))
+            Directory.CreateDirectory(ConstValue.outputPath);
 
-        BuildPipeline.BuildAssetBundles(outputPath, 0, EditorUserBuildSettings.activeBuildTarget);
+        BuildPipeline.BuildAssetBundles(ConstValue.outputPath, 0, EditorUserBuildSettings.activeBuildTarget);
         AssetDatabase.Refresh();
 
         //打包完成后
@@ -274,7 +231,6 @@ public partial class BundleTools : Editor
     }
 
     //移动到根目录，删除*.manifest
-    //[MenuItem("Tools/ExportBundles")]
     private static void ExportBundles()
     {
         string fullPath = "Assets/StreamingAssets";
@@ -287,8 +243,7 @@ public partial class BundleTools : Editor
         FileInfo[] files = direction.GetFiles("*", SearchOption.AllDirectories);
         //Debug.Log(files.Length);
 
-        //string outputPath = Path.Combine(Application.streamingAssetsPath, EditorUserBuildSettings.activeBuildTarget.ToString());
-        string outputPath = Path.Combine(GetUnityDir(), EditorUserBuildSettings.activeBuildTarget.ToString());
+        string outputPath = Path.Combine(ConstValue.GetUnityDir(), EditorUserBuildSettings.activeBuildTarget.ToString());
         if (Directory.Exists(outputPath))
             Directory.Delete(outputPath, true);
         Directory.CreateDirectory(outputPath);
@@ -388,7 +343,7 @@ public partial class BundleTools : Editor
 
     private static void Deploy(BuildTarget target)
     {
-        string srcPath = Path.Combine(GetUnityDir(), target.ToString());
+        string srcPath = Path.Combine(ConstValue.GetUnityDir(), target.ToString());
         if (!Directory.Exists(srcPath))
         {
             Debug.LogError($"src不存在：{srcPath}");
@@ -401,7 +356,7 @@ public partial class BundleTools : Editor
         CopyFolder(srcPath, dstPath);
         Debug.Log($"本地部署完成\n{srcPath}--->\n{dstPath}");
 
-        string wwwPath = $@"{GetServerDir()}\{target}"; //远程部署
+        string wwwPath = $@"{ConstValue.GetServerDir()}\{target}"; //远程部署
         if (Directory.Exists(wwwPath))
             Directory.Delete(wwwPath, true);
         CopyFolder(srcPath, wwwPath);
@@ -411,10 +366,6 @@ public partial class BundleTools : Editor
     }
     private static void CopyFolder(string strFromPath, string strToPath)
     {
-        //c#不支持跨硬盘移动文件夹
-        //DirectoryInfo dirInfo = new DirectoryInfo(srcPath);
-        //dirInfo.MoveTo(dstPath);
-
         //如果源文件夹不存在，则创建
         if (!Directory.Exists(strFromPath))
         {
