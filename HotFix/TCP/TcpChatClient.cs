@@ -97,7 +97,7 @@ namespace HotFix
             m_PlayerManager = new ClientPlayerManager();
 
             // Create a new TCP chat client
-            address = Main.present.server;
+            address = GetHostEntry(Main.present.server).ToString();
             client = new ChatClient(address, port);
             client.tryTime = 0;
 

@@ -82,5 +82,5 @@ public class ConstValue
 #endif
 
     //public const string CONFIG_URL = "http://192.168.1.101/download/present.json"; //游戏启动首先指向的配置
-    public const string PRESENT_URL = "https://moegijinka.cn/turtle/download/present.json";
+    public const string PRESENT_URL = "http://moegijinka.cn/turtle/download/present.json";
 }

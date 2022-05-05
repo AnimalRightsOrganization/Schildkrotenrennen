@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Collections;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.Networking;
 using LitJson;
@@ -45,6 +46,25 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    class AcceptAllCertificatesSignedWithASpecificPublicKey : CertificateHandler
+    {
+        // Encoded RSAPublicKey
+        private static string PUB_KEY = "30818902818100C4A06B7B52F8D17DC1CCB47362" +
+            "C64AB799AAE19E245A7559E9CEEC7D8AA4DF07CB0B21FDFD763C63A313A668FE9D764E" +
+            "D913C51A676788DB62AF624F422C2F112C1316922AA5D37823CD9F43D1FC54513D14B2" +
+            "9E36991F08A042C42EAAEEE5FE8E2CB10167174A359CEBF6FACC2C9CA933AD403137EE" +
+            "2C3F4CBED9460129C72B0203010001";
+
+        protected override bool ValidateCertificate(byte[] certificateData)
+        {
+            X509Certificate2 certificate = new X509Certificate2(certificateData);
+
+            string pk = certificate.GetPublicKeyString();
+
+            return pk.Equals(PUB_KEY);
+        }
+    }
+
     // 读取游戏配置（ab包下载地址，游戏版本号，公告等）
     IEnumerator GetConfig()
     {
@@ -54,6 +74,12 @@ public class GameManager : MonoBehaviour
             method = "GET",
         };
         request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+        if (request.uri.Scheme.Contains("https"))
+        {
+            request.certificateHandler = new AcceptAllCertificatesSignedWithASpecificPublicKey();
+            Debug.Log("has https");
+        }
         yield return request.SendWebRequest();
         if (request.responseCode != 200)
         {
