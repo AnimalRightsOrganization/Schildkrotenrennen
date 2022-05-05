@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
+using LitJson;
 #if UNITY_EDITOR
 using UnityEditor;
 using System.Diagnostics;
@@ -243,6 +244,24 @@ public partial class BundleTools : Editor
     {
         string path = Application.persistentDataPath.Replace("/", @"\"); //向左的[/]无法打开，要转成[\]
         Process.Start("explorer.exe", path);
+    }
+
+    [MenuItem("Tools/热更新/生成Present", false, 21)]
+    static void CreatePresent()
+    {
+        GameConfig config = new GameConfig
+        {
+            server = "http://localhost",
+            web = "",
+            ab_url = "http://localhost/download/",
+            version = "1.0.0",
+            notice = "",
+        };
+        string json = JsonMapper.ToJson(config);
+        //string filePath = Path.Combine(System.Environment.CurrentDirectory, "present.json");
+        string filePath = Path.Combine(GetServerDir(), "present.json");
+        File.WriteAllText(filePath, json);
+        Debug.Log($"output: {filePath}");
     }
 
     #endregion
