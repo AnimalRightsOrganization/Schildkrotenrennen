@@ -58,7 +58,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Utils\UnitySingletonClass.cs" />
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
-    <Compile Include="Assets\Scripts\Configs\GameConfig.cs" />
+    <Compile Include="Assets\Scripts\Configs\Present.cs" />
     <Compile Include="Assets\Scripts\Configs\ABInfo.cs" />
     <Compile Include="Assets\Scripts\Adapter\ILMonoBehaviour.cs" />
     <Compile Include="Assets\Scripts\Adapter\ILHelper.cs" />

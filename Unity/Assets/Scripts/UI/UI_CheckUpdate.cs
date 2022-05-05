@@ -18,8 +18,8 @@ public class UI_CheckUpdate : MonoBehaviour
 
     void Awake()
     {
-        cloudPath = Path.Combine(ConstValue.DataUrl, "assets.bytes");
-        localPath = Path.Combine(ConstValue.DataPath, "assets.bytes");
+        cloudPath = Path.Combine(ConstValue.AB_URL, "assets.bytes");
+        localPath = Path.Combine(ConstValue.AB_FilePath, "assets.bytes");
 
         m_progressSlider = transform.Find("Slider").GetComponent<Slider>();
         m_progressText = transform.Find("Slider").Find("Text").GetComponent<Text>();
@@ -62,7 +62,7 @@ public class UI_CheckUpdate : MonoBehaviour
         List<string> localList = new List<string>();
         for (int i = 0; i < cloudList.Count; i++) 
         {
-            string _localPath = Path.Combine(ConstValue.DataPath, cloudList[i] + ".unity3d");
+            string _localPath = Path.Combine(ConstValue.AB_FilePath, cloudList[i] + ".unity3d");
             bool _exist = File.Exists(_localPath);
             string _md5 = string.Empty;
             if (_exist)
@@ -92,8 +92,8 @@ public class UI_CheckUpdate : MonoBehaviour
         fileCount = 0;
         for (int i = 0; i < diff.Length; i++)
         {
-            string abUrl = Path.Combine(ConstValue.DataUrl, diff[i] + ".unity3d");
-            string abDstPath = Path.Combine(ConstValue.DataPath, diff[i] + ".unity3d");
+            string abUrl = Path.Combine(ConstValue.AB_URL, diff[i] + ".unity3d");
+            string abDstPath = Path.Combine(ConstValue.AB_FilePath, diff[i] + ".unity3d");
             //Debug.LogFormat("下载：{0}\n保存到：{1}", abUrl, abDstPath);
             yield return BeginDownLoad(abUrl, abDstPath);
             fileCount++;

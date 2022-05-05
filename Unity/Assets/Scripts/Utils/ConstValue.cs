@@ -10,37 +10,35 @@ public class ConstValue
 #else
     public const string PLATFORM_NAME = "StandaloneWindows64";
 #endif
-    public const string CONFIG_URL = "http://192.168.1.101/download/present.json"; //游戏启动首先指向的配置
 
-    /// <summary>
-    /// ab包下载地址
-    /// </summary>
-    private static string dataUrl;
-    public static string DataUrl 
+    //public const string CONFIG_URL = "http://192.168.1.101/download/present.json"; //游戏启动首先指向的配置
+    public const string CONFIG_URL = "https://moegijinka.cn/turtle/download/present.json";
+
+    // ab包下载地址
+    private static string ab_url;
+    public static string AB_URL
     {
         get
         {
-            if (string.IsNullOrEmpty(dataUrl))
+            if (string.IsNullOrEmpty(ab_url))
             {
-                dataUrl = Path.Combine(GameManager.gameConfig.ab_url, PLATFORM_NAME);
+                ab_url = Path.Combine(GameManager.present.ab_url, PLATFORM_NAME);
             }
-            return dataUrl;
+            return ab_url;
         }
     }
 
-    /// <summary>
-    /// ab包本地保存位置
-    /// </summary>
-    private static string dataPath;
-    public static string DataPath 
+    // ab包本地保存位置
+    private static string ab_path;
+    public static string AB_FilePath
     {
-        get 
+        get
         {
-            if (string.IsNullOrEmpty(dataPath)) 
+            if (string.IsNullOrEmpty(ab_path))
             {
-                dataPath = Path.Combine(Application.persistentDataPath, PLATFORM_NAME);
+                ab_path = Path.Combine(Application.persistentDataPath, PLATFORM_NAME);
             }
-            return dataPath;
+            return ab_path;
         }
     }
 }

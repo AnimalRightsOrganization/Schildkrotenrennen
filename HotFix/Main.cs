@@ -28,10 +28,14 @@ namespace HotFix
 
         #endregion
 
-        public static void Init()
+        public static Present present;
+
+        public static void Init(Present p)
         {
+            present = p;
+            Debug.Log(p.ToString());
+
             UIManager.Get().Push<UI_Login>();
-            //UIManager.Get().Push<UI_Connect>();
         }
 
         public static void Dispose()

@@ -101,17 +101,11 @@ namespace Client
         // 加载完成，调用ILR代码
         void OnHotFixLoaded()
         {
-            /* 测试调用
-            appdomain.Invoke("HotFix.UIManager", "Test1", null, null);
-            appdomain.Invoke("HotFix.UIManager", "Test2", gameObject, null);
-            appdomain.Invoke("HotFix.UIManager", "Test3", gameObject, "123");
-            */
-
             IL_InitAdapter("UIManager");
             IL_InitAdapter("EventManager");
 
             // IL热更加载UI
-            appdomain.Invoke("HotFix.Main", "Init", gameObject, null); //static方法
+            appdomain.Invoke("HotFix.Main", "Init", gameObject, GameManager.present); //static方法
         }
         void IL_InitAdapter(string adapterName)
         {

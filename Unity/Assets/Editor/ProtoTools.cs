@@ -249,7 +249,7 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/热更新/生成Present", false, 21)]
     static void CreatePresent()
     {
-        GameConfig config = new GameConfig
+        Present config = new Present
         {
             server = "http://localhost",
             web = "",

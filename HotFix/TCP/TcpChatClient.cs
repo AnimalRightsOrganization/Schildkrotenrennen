@@ -73,7 +73,8 @@ namespace HotFix
     public class TcpChatClient
     {
         protected static ChatClient client;
-        const string address = "192.168.1.101"; //TODO: 通过http读取配置
+        //const string address = "192.168.1.101"; //通过http读取配置
+        static string address;
         const int port = 1111;
 
         public static ClientPlayerManager m_PlayerManager;
@@ -96,6 +97,7 @@ namespace HotFix
             m_PlayerManager = new ClientPlayerManager();
 
             // Create a new TCP chat client
+            address = Main.present.server;
             client = new ChatClient(address, port);
             client.tryTime = 0;
 

@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     private static bool Initialized = false;
-    public static GameConfig gameConfig;
+    public static Present present;
 
     void Awake()
     {
@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
 
 #if UNITY_EDITOR && !USE_ASSETBUNDLE
             // 不检查更新
+            present = new Present();
             OnInited();
 #else
             // 加载配置（需要启动资源服务器）
@@ -60,8 +61,8 @@ public class GameManager : MonoBehaviour
             yield break;
         }
         string text = request.downloadHandler.text;
-        //Debug.Log($"success: {text}");
-        gameConfig = JsonMapper.ToObject<GameConfig>(text);
+        Debug.Log($"success: {text}");
+        present = JsonMapper.ToObject<Present>(text);
         request.Dispose();
 
         yield return CheckUpdateAsync(OnInited);
@@ -69,8 +70,8 @@ public class GameManager : MonoBehaviour
 
     IEnumerator CheckUpdateAsync(System.Action action)
     {
-        if (!Directory.Exists(ConstValue.DataPath))
-            Directory.CreateDirectory(ConstValue.DataPath);
+        if (!Directory.Exists(ConstValue.AB_FilePath))
+            Directory.CreateDirectory(ConstValue.AB_FilePath);
 
         Transform root = GameObject.Find("Canvas").transform;
         var request = Resources.LoadAsync<GameObject>("UI_CheckUpdate");
