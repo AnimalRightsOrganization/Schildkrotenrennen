@@ -180,7 +180,19 @@ namespace TcpChatServer
             //    packet.Rooms.Add(roomInfo);
             //}
             var listAll = TCPChatServer.m_RoomManager.Sort();
-             var listRange = listAll.GetRange(request.Page, request.Page + 10);
+            var listRange = listAll.GetRange(request.Page, request.Page + 10);
+            /* 183.Crash
+            UnhandledException Message: Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection.
+            Trace:    at System.Collections.Generic.List`1.GetRange(Int32 index, Int32 count)
+               at TcpChatServer.ChatSession.OnGetRoomList(MemoryStream ms) in C:\Users\Administrator\Desktop\Turtle\NetCoreServer\NetCoreApp\TCP\TcpChatServer.cs:line 183
+               at TcpChatServer.ChatSession.OnReceived(Byte[] buffer, Int64 offset, Int64 size) in C:\Users\Administrator\Desktop\Turtle\NetCoreServer\NetCoreApp\TCP\TcpChatServer.cs:line 71
+               at NetCoreServer.TcpSession.ProcessReceive(SocketAsyncEventArgs e) in C:\Users\Administrator\Desktop\Turtle\NetCoreServer\NetCoreApp\TCP\TcpSession.cs:line 572
+               at NetCoreServer.TcpSession.OnAsyncCompleted(Object sender, SocketAsyncEventArgs e) in C:\Users\Administrator\Desktop\Turtle\NetCoreServer\NetCoreApp\TCP\TcpSession.cs:line 541
+               at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+            --- End of stack trace from previous location where exception was thrown ---
+               at System.Threading._IOCompletionCallback.PerformIOCompletionCallback(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* pNativeOverlapped)
+            Runtime terminating: True
+             */
             for (int i = 0; i < listRange.Count; i++)
             {
                 var room = listRange[i];

@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ET;
+using DG.Tweening;
 
 namespace HotFix
 {
@@ -10,7 +11,8 @@ namespace HotFix
         #region 界面组件
         private int playerNum;
 
-        public Button m_ListBtn;
+        public Animator m_EnterAnime;
+        public Button m_JoinBtn;
         public Button m_CreateButton;
         public Button m_SettingsButton;
         public Button m_ExitButton;
@@ -36,11 +38,12 @@ namespace HotFix
         {
             playerNum = 2;
 
-            m_ListBtn = transform.Find("ListBtn").GetComponent<Button>();
-            m_CreateButton = transform.Find("CreateBtn").GetComponent<Button>();
-            m_SettingsButton = transform.Find("SettingsBtn").GetComponent<Button>();
-            m_ExitButton = transform.Find("ExitBtn").GetComponent<Button>();
-            m_ListBtn.onClick.AddListener(OnListBtnClick);
+            m_EnterAnime = transform.Find("Menu").GetComponent<Animator>();
+            m_JoinBtn = transform.Find("Menu/JoinBtn").GetComponent<Button>();
+            m_CreateButton = transform.Find("Menu/CreateBtn").GetComponent<Button>();
+            m_SettingsButton = transform.Find("Menu/SettingsBtn").GetComponent<Button>();
+            m_ExitButton = transform.Find("Menu/ExitBtn").GetComponent<Button>();
+            m_JoinBtn.onClick.AddListener(OnListBtnClick);
             m_CreateButton.onClick.AddListener(OnCreateBtnClick);
             m_SettingsButton.onClick.AddListener(OnSettingsBtnClick);
             m_ExitButton.onClick.AddListener(OnExitBtnClick);
@@ -88,12 +91,19 @@ namespace HotFix
             m_ListPanel.SetActive(false);
 
             NetPacketManager.RegisterEvent(OnNetCallback);
+
+            Enter();
         }
         void OnDestroy()
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
         }
         #endregion
+
+        void Enter()
+        {
+            m_EnterAnime.SetBool("enter", true);
+        }
 
         #region 按钮事件
         void OnListBtnClick()
