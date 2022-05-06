@@ -141,7 +141,6 @@
     <Compile Include="UI\UIBase.cs" />
     <Compile Include="UI\UI_Login.cs" />
     <Compile Include="UI\UI_Settings.cs" />
-    <Compile Include="UI\UI_Register.cs" />
     <Compile Include="UI\UI_Toast.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

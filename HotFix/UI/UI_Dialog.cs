@@ -9,7 +9,7 @@ namespace HotFix
     {
         public RectTransform m_Panel;
         public CanvasGroup m_CanvasGroup;
-        public Text m_Content;
+        public Text m_Message;
         public Button m_NoBtn;
         public Text m_NoBtnDesc;
         public Button m_YesBtn;
@@ -21,11 +21,11 @@ namespace HotFix
         {
             m_Panel = transform.Find("Panel").GetComponent<RectTransform>();
             m_CanvasGroup = m_Panel.GetComponent<CanvasGroup>();
-            m_Content = transform.Find("Panel/Content").GetComponent<Text>();
-            m_NoBtn = transform.Find("Panel/NoBtn").GetComponent<Button>();
-            m_NoBtnDesc = transform.Find("Panel/NoBtn/Text").GetComponent<Text>();
-            m_YesBtn = transform.Find("Panel/YesBtn").GetComponent<Button>();
-            m_YesBtnDesc = transform.Find("Panel/YesBtn/Text").GetComponent<Text>();
+            m_Message = transform.Find("Panel/Message").GetComponent<Text>();
+            m_NoBtn = transform.Find("Panel/Layout/NoBtn").GetComponent<Button>();
+            m_NoBtnDesc = transform.Find("Panel/Layout/NoBtn/Text").GetComponent<Text>();
+            m_YesBtn = transform.Find("Panel/Layout/YesBtn").GetComponent<Button>();
+            m_YesBtnDesc = transform.Find("Panel/Layout/YesBtn/Text").GetComponent<Text>();
 
             m_Panel.anchoredPosition = Vector3.zero;
             Reset();
@@ -35,7 +35,7 @@ namespace HotFix
         {
             m_Panel.anchoredPosition = new Vector3(0, -200, 0);
             m_CanvasGroup.alpha = 0;
-            m_Content.text = string.Empty;
+            m_Message.text = string.Empty;
             gameObject.SetActive(false);
         }
 
@@ -49,7 +49,7 @@ namespace HotFix
 
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
-            m_Content.text = message;
+            m_Message.text = message;
             m_CanvasGroup.alpha = 1;
             m_Panel.DOLocalMoveY(0, 0.3f);
 

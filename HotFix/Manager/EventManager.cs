@@ -45,12 +45,21 @@ namespace HotFix
             switch (type)
             {
                 case PacketType.Connected:
-                    break;
+                    {
+                        Debug.Log("<color=green>与服务器连接成功</color>");
+                        var packet = new EmptyPacket();
+                        NetPacketManager.Trigger(type, packet);
+                        break;
+                    }
                 case PacketType.Disconnect: //被动断开（服务器没开等原因）
                     {
                         Debug.Log("<color=red>与服务器断开连接</color>");
-                        UIManager.Get().PopAll();
-                        UIManager.Get().Push<UI_Login>();
+                        var dialog = UIManager.Get().Push<UI_Dialog>();
+                        dialog.Show("与服务器断开连接", () =>
+                        {
+                            UIManager.Get().PopAll();
+                            UIManager.Get().Push<UI_Login>();
+                        }, "确定");
                         break;
                     }
                 case PacketType.S2C_LoginResult:

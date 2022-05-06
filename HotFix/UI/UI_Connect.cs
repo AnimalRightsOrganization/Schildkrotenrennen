@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 namespace HotFix
 {
@@ -10,7 +8,7 @@ namespace HotFix
 
         void Awake()
         {
-            m_Rotate = transform.Find("Background/Rotate");
+            m_Rotate = transform.Find("Mask/Rotate");
         }
 
         void Update()

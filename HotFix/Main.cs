@@ -33,7 +33,7 @@ namespace HotFix
         public static void Init(Present p)
         {
             present = p;
-            Debug.Log(p.ToString());
+            //Debug.Log(p.ToString());
 
             UIManager.Get().Push<UI_Login>();
         }

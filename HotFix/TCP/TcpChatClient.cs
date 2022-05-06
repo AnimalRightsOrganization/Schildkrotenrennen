@@ -20,20 +20,25 @@ namespace HotFix
 
         protected override void OnConnected()
         {
-            Debug.Log($"Chat TCP client connected a new session with Id {Id}");
+            //Debug.Log($"Chat TCP client connected a new session with Id {Id}");
             Debug.Log("<color=green>Connected!</color>");
         }
 
         // 被动断开（尝试重连）
         protected override void OnDisconnected()
         {
-            Debug.Log($"Chat TCP client disconnected a session with Id {Id}");
-            Debug.Log("<color=red>Disonnected</color>");
+            //Debug.Log($"Chat TCP client disconnected a session with Id {Id}");
+            Debug.Log("<color=orange>Disonnected</color>");
 
             if (tryTime > 3)
             {
                 _stop = true;
                 Debug.Log("<color=red>重连达到上限</color>");
+
+                // 这里是异步线程中，需要通过Update推送到主线程。
+                PacketType msgId = PacketType.Disconnect;
+                byte[] buffer = new byte[1] { (byte)msgId };
+                EventManager.Get().queue.Enqueue(buffer);
             }
 
             // Wait for a while...
@@ -46,11 +51,6 @@ namespace HotFix
 
                 tryTime++;
             }
-
-            // 这里是异步线程中，需要通过Update推送到主线程。
-            PacketType msgId = PacketType.Disconnect;
-            byte[] buffer = new byte[1] { (byte)msgId };
-            EventManager.Get().queue.Enqueue(buffer);
         }
 
         protected override void OnReceived(byte[] buffer, long offset, long size)
@@ -80,6 +80,10 @@ namespace HotFix
         public static ClientPlayerManager m_PlayerManager;
         public static ClientRoom m_ClientRoom;
 
+        public static bool IsConnected()
+        {
+            return client.IsConnected;
+        }
         public static void Dispose()
         {
             Debug.Log("关闭网络");
