@@ -7,7 +7,7 @@
     public string notice; //公告
     public Present()
     {
-        server = "localhost";
+        server = "moegijinka.cn";
         web = "localhost";
         ab_url = "localhost/download";
     }

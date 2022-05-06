@@ -75,7 +75,8 @@ namespace HotFix
         }
         void OnSignUpBtnClick()
         {
-        
+            m_LoginPanel.SetActive(false);
+            m_SignUpPanel.SetActive(true);
         }
         void OnRegistBtnClick()
         {
@@ -84,8 +85,9 @@ namespace HotFix
         void OnOAuthBtnClick()
         {
             //TODO: 判断渠道号。弹出登录或三方View。
-            Debug.Log("登录");
+            Debug.Log($"当前渠道是：");
             m_LoginPanel.SetActive(true);
+            m_SignUpPanel.SetActive(false);
         }
         #endregion
 
