@@ -58,8 +58,16 @@ namespace HotFix
                         dialog.Show("与服务器断开连接", () =>
                         {
                             UIManager.Get().PopAll();
-                            UIManager.Get().Push<UI_Login>();
+                            var login = UIManager.Get().Push<UI_Login>();
+                            login.BackToLogin();
                         }, "确定");
+                        break;
+                    }
+                case PacketType.S2C_ErrorOperate:
+                    {
+                        var packet = ProtobufHelper.Deserialize<ErrorPacket>(stream);
+                        var toast = UIManager.Get().Push<UI_Toast>();
+                        toast.Show(packet.Message);
                         break;
                     }
                 case PacketType.S2C_LoginResult:

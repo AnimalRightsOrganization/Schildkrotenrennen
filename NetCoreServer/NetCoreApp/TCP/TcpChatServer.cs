@@ -124,6 +124,10 @@ namespace TcpChatServer
             if (result == null)
             {
                 Debug.Print($"用户名或密码错误");
+                var tempData = new BasePlayerData { PeerId = Id, };
+                var tempPlayer = new ServerPlayer(tempData);
+                ErrorPacket err_packet = new ErrorPacket { Code = (int)ErrorCode.LOGIN_FAILED, Message = "用户名或密码错误" };
+                tempPlayer.SendAsync(PacketType.S2C_ErrorOperate, err_packet);
                 return;
             }
             var playerData = new BasePlayerData
