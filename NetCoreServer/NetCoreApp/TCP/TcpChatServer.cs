@@ -167,44 +167,28 @@ namespace TcpChatServer
             // 空消息，不用解析
             S2C_GetRoomList packet = new S2C_GetRoomList();
             List<PlayerInfo> players = new List<PlayerInfo>();
-            //foreach (ServerRoom room in TCPChatServer.m_RoomManager.GetAll())
-            //{
-            //    var roomInfo = new RoomInfo
-            //    {
-            //        RoomID = room.RoomID,
-            //        RoomName = room.RoomName,
-            //        HasPwd = !string.IsNullOrEmpty(room.RoomPwd),
-            //        LimitNum = room.RoomLimit,
-            //        Players = players,
-            //    };
-            //    packet.Rooms.Add(roomInfo);
-            //}
             var listAll = TCPChatServer.m_RoomManager.Sort();
-            var listRange = listAll.GetRange(request.Page, request.Page + 10);
-            /* 183.Crash
-            UnhandledException Message: Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection.
-            Trace:    at System.Collections.Generic.List`1.GetRange(Int32 index, Int32 count)
-               at TcpChatServer.ChatSession.OnGetRoomList(MemoryStream ms) in C:\Users\Administrator\Desktop\Turtle\NetCoreServer\NetCoreApp\TCP\TcpChatServer.cs:line 183
-               at TcpChatServer.ChatSession.OnReceived(Byte[] buffer, Int64 offset, Int64 size) in C:\Users\Administrator\Desktop\Turtle\NetCoreServer\NetCoreApp\TCP\TcpChatServer.cs:line 71
-               at NetCoreServer.TcpSession.ProcessReceive(SocketAsyncEventArgs e) in C:\Users\Administrator\Desktop\Turtle\NetCoreServer\NetCoreApp\TCP\TcpSession.cs:line 572
-               at NetCoreServer.TcpSession.OnAsyncCompleted(Object sender, SocketAsyncEventArgs e) in C:\Users\Administrator\Desktop\Turtle\NetCoreServer\NetCoreApp\TCP\TcpSession.cs:line 541
-               at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
-            --- End of stack trace from previous location where exception was thrown ---
-               at System.Threading._IOCompletionCallback.PerformIOCompletionCallback(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* pNativeOverlapped)
-            Runtime terminating: True
-             */
-            for (int i = 0; i < listRange.Count; i++)
+            if (listAll.Count > 0)
             {
-                var room = listRange[i];
-                var roomInfo = new RoomInfo
+                // 获取指定区间
+                int startId = Math.Clamp(request.Page * 10, 0, (listAll.Count % 10 + 1));
+                int endId = Math.Clamp(startId + 10, 0, listAll.Count - 1);
+                Debug.Print($"当前房间数={listAll.Count}，获取区间({startId}, {endId})");
+
+                var listRange = listAll.GetRange(startId, endId); //Crash，数组越界
+                for (int i = 0; i < listRange.Count; i++)
                 {
-                    RoomID = room.RoomID,
-                    RoomName = room.RoomName,
-                    HasPwd = !string.IsNullOrEmpty(room.RoomPwd),
-                    LimitNum = room.RoomLimit,
-                    Players = players,
-                };
-                packet.Rooms.Add(roomInfo);
+                    var room = listRange[i];
+                    var roomInfo = new RoomInfo
+                    {
+                        RoomID = room.RoomID,
+                        RoomName = room.RoomName,
+                        HasPwd = !string.IsNullOrEmpty(room.RoomPwd),
+                        LimitNum = room.RoomLimit,
+                        Players = players,
+                    };
+                    packet.Rooms.Add(roomInfo);
+                }
             }
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);

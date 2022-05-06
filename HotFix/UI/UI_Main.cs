@@ -31,6 +31,7 @@ namespace HotFix
         public Item_Lobby[] m_Rooms;
         public Button m_PrevPageBtn;
         public Button m_NextPageBtn;
+        public GameObject m_Notice;
         #endregion
 
         #region 内置方法
@@ -43,7 +44,7 @@ namespace HotFix
             m_CreateButton = transform.Find("Menu/CreateBtn").GetComponent<Button>();
             m_SettingsButton = transform.Find("Menu/SettingsBtn").GetComponent<Button>();
             m_ExitButton = transform.Find("Menu/ExitBtn").GetComponent<Button>();
-            m_JoinBtn.onClick.AddListener(OnListBtnClick);
+            m_JoinBtn.onClick.AddListener(OnJoinBtnClick);
             m_CreateButton.onClick.AddListener(OnCreateBtnClick);
             m_SettingsButton.onClick.AddListener(OnSettingsBtnClick);
             m_ExitButton.onClick.AddListener(OnExitBtnClick);
@@ -51,7 +52,7 @@ namespace HotFix
             var createTrans = transform.Find("CreatePanel");
             m_CreatePanel = createTrans.gameObject;
             m_CreatePanel.SetActive(true);
-            m_CloseCreatePanel = createTrans.Find("CloseBtn").GetComponent<Button>();
+            m_CloseCreatePanel = createTrans.Find("Panel/CloseBtn").GetComponent<Button>();
             m_NameInput = createTrans.Find("NamePanel/NameInput").GetComponent<InputField>();
             m_KeyInput = createTrans.Find("KeyPanel/KeyInput").GetComponent<InputField>();
             m_NumText = createTrans.Find("NumPanel/Num").GetComponent<Text>();
@@ -71,6 +72,7 @@ namespace HotFix
             m_CloseListPanel.onClick.AddListener(() => { m_ListPanel.SetActive(false); });
             m_PrevPageBtn = transform.Find("ListPanel/PrevBtn").GetComponent<Button>();
             m_NextPageBtn = transform.Find("ListPanel/NextBtn").GetComponent<Button>();
+            m_Notice = transform.Find("ListPanel/Notice").gameObject;
             m_PrevPageBtn.onClick.AddListener(OnPrevBtnClick);
             m_NextPageBtn.onClick.AddListener(OnNextBtnClick);
 
@@ -106,7 +108,7 @@ namespace HotFix
         }
 
         #region 按钮事件
-        void OnListBtnClick()
+        void OnJoinBtnClick()
         {
             TcpChatClient.SendGetRoomList(0);
 
@@ -240,6 +242,8 @@ namespace HotFix
         {
             var data = (S2C_GetRoomList)reader;
             Debug.Log($"获得房间列表: count={data.Rooms.Count}");
+
+            m_Notice.SetActive(data.Rooms.Count == 0);
 
             for (int i = 0; i < m_Rooms.Length; i++)
             {

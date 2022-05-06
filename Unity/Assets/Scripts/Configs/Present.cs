@@ -7,6 +7,7 @@
     public string notice; //公告
     public Present()
     {
+        //server = "192.168.1.101"; //本地调试用
         server = "moegijinka.cn";
         web = "localhost";
         ab_url = "localhost/download";

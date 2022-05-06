@@ -89,6 +89,14 @@ namespace Client
                     ((System.Action)act)();
                 });
             });
+            // 注册Bool委托
+            appdomain.DelegateManager.RegisterDelegateConvertor<UnityEngine.Events.UnityAction<System.Boolean>>((act) =>
+            {
+                return new UnityEngine.Events.UnityAction<System.Boolean>((arg0) =>
+                {
+                    ((System.Action<System.Boolean>)act)(arg0);
+                });
+            });
 
             LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(appdomain);
             ET.ILHelper.InitILRuntime(appdomain); //好像没啥用
