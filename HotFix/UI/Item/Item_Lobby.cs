@@ -9,6 +9,7 @@ namespace HotFix
     {
         public Text m_Name;
         public Button m_SelfBtn;
+        public GameObject m_LockIcon;
 
         public RoomInfo data;
 
@@ -17,6 +18,7 @@ namespace HotFix
             //Debug.Log($"{gameObject.name}.Awake"); //Prefab中开始是关闭的，导致Awake执行了两次？
             m_Name = transform.Find("Text").GetComponent<Text>();
             m_SelfBtn = transform.GetComponent<Button>();
+            m_LockIcon = transform.Find("Lock").gameObject;
             //m_SelfBtn.onClick.RemoveAllListeners();
             m_SelfBtn.onClick.AddListener(OnSelfClick);
         }
@@ -25,6 +27,7 @@ namespace HotFix
         {
             data = roomInfo;
             m_Name.text = data.RoomName;
+            m_LockIcon.SetActive(roomInfo.HasPwd);
         }
 
         void OnSelfClick()
