@@ -83,6 +83,10 @@ namespace HotFix
             TcpChatClient.Connect();
             UIManager.Get().Push<UI_Connect>();
         }
+        public void BackToLogin()
+        {
+            m_OAuthBtn.gameObject.SetActive(true);
+        }
 
         #region 按钮事件
         void OnCloseSignUpPanel()

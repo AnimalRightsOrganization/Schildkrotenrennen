@@ -38,7 +38,6 @@ namespace HotFix
         void Awake()
         {
             playerNum = 2;
-
             m_EnterAnime = transform.Find("Menu").GetComponent<Animator>();
             m_JoinBtn = transform.Find("Menu/JoinBtn").GetComponent<Button>();
             m_CreateButton = transform.Find("Menu/CreateBtn").GetComponent<Button>();
@@ -72,7 +71,7 @@ namespace HotFix
             m_CloseListPanel.onClick.AddListener(() => { m_ListPanel.SetActive(false); });
             m_PrevPageBtn = transform.Find("ListPanel/PrevBtn").GetComponent<Button>();
             m_NextPageBtn = transform.Find("ListPanel/NextBtn").GetComponent<Button>();
-            m_Notice = transform.Find("ListPanel/Notice").gameObject;
+            m_Notice = transform.Find("ListPanel/Blue/Notice").gameObject;
             m_PrevPageBtn.onClick.AddListener(OnPrevBtnClick);
             m_NextPageBtn.onClick.AddListener(OnNextBtnClick);
 
@@ -84,6 +83,11 @@ namespace HotFix
                 var item_room = roomObj.AddComponent<Item_Lobby>();
                 m_Rooms[i] = item_room;
             }
+        }
+        void OnEnable()
+        {
+            Debug.Log("UI_Main.OnEnable");
+            Enter();
         }
         void Start()
         {
@@ -102,12 +106,12 @@ namespace HotFix
         }
         #endregion
 
+        #region 按钮事件
         void Enter()
         {
             m_EnterAnime.SetBool("enter", true);
         }
 
-        #region 按钮事件
         void OnJoinBtnClick()
         {
             TcpChatClient.SendGetRoomList(0);
@@ -130,7 +134,9 @@ namespace HotFix
                 () => { ui_dialog.Hide(); }, "取消",
                 () =>
                 {
-                    UIManager.Get().Push<UI_Login>();
+                    var login = UIManager.Get().Push<UI_Login>();
+                    login.BackToLogin();
+                    m_EnterAnime.SetBool("enter", false);
                     this.Pop();
                     ui_dialog.Hide();
                 }, "确定");
