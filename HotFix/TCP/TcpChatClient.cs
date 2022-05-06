@@ -199,7 +199,9 @@ namespace HotFix
         {
             if (name.Length < 3)
             {
-                Debug.LogError($"房间名称至少3个字:{name.Length}"); //TODO: Toast
+                Debug.LogError($"房间名称至少3个字:{name.Length}");
+                var toast = UIManager.Get().Push<UI_Toast>();
+                toast.Show("房间名称至少3个字");
                 return false;
             }
 

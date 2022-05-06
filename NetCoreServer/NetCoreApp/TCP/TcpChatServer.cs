@@ -179,11 +179,12 @@ namespace TcpChatServer
                 for (int i = 0; i < listRange.Count; i++)
                 {
                     var room = listRange[i];
-                    var roomInfo = new RoomInfo
+                    var roomInfo = new RoomInfo //构建房间列表
                     {
                         RoomID = room.RoomID,
                         RoomName = room.RoomName,
                         HasPwd = !string.IsNullOrEmpty(room.RoomPwd),
+                        Pwd = string.Empty, //此时不用传，根据HasPwd做显示
                         LimitNum = room.RoomLimit,
                         Players = players,
                     };
@@ -226,10 +227,12 @@ namespace TcpChatServer
                 return;
             }
 
-            var roomInfo = new RoomInfo
+            var roomInfo = new RoomInfo //创建房间
             {
                 RoomID = serverRoom.RoomID,
                 RoomName = request.RoomName,
+                HasPwd = !string.IsNullOrEmpty(request.RoomPwd),
+                Pwd = request.RoomPwd,
                 LimitNum = request.LimitNum,
                 Players = new List<PlayerInfo>
                 {
@@ -277,11 +280,12 @@ namespace TcpChatServer
                 var playerInfo = new PlayerInfo { SeatID = player.SeatId, UserName = player.UserName, NickName = player.NickName };
                 players.Add(playerInfo);
             }
-            RoomInfo roomInfo = new RoomInfo
+            var roomInfo = new RoomInfo //加入房间
             {
                 RoomID = serverRoom.RoomID,
                 RoomName = serverRoom.RoomName,
                 HasPwd = !string.IsNullOrEmpty(serverRoom.RoomPwd),
+                Pwd = serverRoom.RoomPwd,
                 LimitNum = serverRoom.RoomLimit,
                 Players = players,
             };
@@ -338,9 +342,12 @@ namespace TcpChatServer
                 Debug.Print($"[S2C] 单发给{p.UserName}，离开房间");
 
                 // 房间内其他人员广播，更新房间信息
-                var roomInfo = new RoomInfo {
+                var roomInfo = new RoomInfo //离开房间
+                {
                     RoomID = roomData.RoomID,
                     RoomName = roomData.RoomName,
+                    HasPwd = !string.IsNullOrEmpty(serverRoom.RoomPwd),
+                    Pwd = serverRoom.RoomPwd,
                     LimitNum = roomData.RoomLimit,
                     Players = players,
                 };
@@ -424,10 +431,12 @@ namespace TcpChatServer
                 };
                 players.Add(_playerInfo);
             }
-            var roomInfo = new RoomInfo
+            var roomInfo = new RoomInfo //房主操作客位
             {
                 RoomID = roomData.RoomID,
                 RoomName = roomData.RoomName,
+                HasPwd = !string.IsNullOrEmpty(serverRoom.RoomPwd),
+                Pwd = serverRoom.RoomPwd,
                 LimitNum = roomData.RoomLimit,
                 Players = players,
             };

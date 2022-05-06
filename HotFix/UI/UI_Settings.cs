@@ -41,7 +41,7 @@ namespace HotFix
 
         void OnCloseBtnClick()
         {
-            UIManager.Get().Pop(this);
+            this.Pop();
         }
 
         void OnMusicChanged(bool value)

@@ -182,9 +182,12 @@ namespace ET
 		public bool HasPwd { get; set; }
 
 		[ProtoMember(4)]
-		public int LimitNum { get; set; }
+		public string Pwd { get; set; }
 
 		[ProtoMember(5)]
+		public int LimitNum { get; set; }
+
+		[ProtoMember(6)]
 		public List<PlayerInfo> Players = new List<PlayerInfo>();
 
 	}

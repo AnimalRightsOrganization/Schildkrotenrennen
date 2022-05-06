@@ -8,14 +8,17 @@ namespace HotFix
 {
     public class UI_Main : UIBase
     {
+        public static Color FONT_BLACK = new Color(.196f, .196f, .196f);
+        public static Color FONT_BLUE = new Color(43 / 255f, 114 / 255f, 143 / 255f, 0.5f);
+
         #region 界面组件
         private int playerNum;
 
         public Animator m_EnterAnime;
         public Button m_JoinBtn;
-        public Button m_CreateButton;
-        public Button m_SettingsButton;
-        public Button m_ExitButton;
+        public Button m_CreateBtn;
+        public Button m_SettingsBtn;
+        public Button m_ExitBtn;
 
         public GameObject m_CreatePanel;
         public Button m_CloseCreatePanel;
@@ -40,20 +43,20 @@ namespace HotFix
             playerNum = 2;
             m_EnterAnime = transform.Find("Menu").GetComponent<Animator>();
             m_JoinBtn = transform.Find("Menu/JoinBtn").GetComponent<Button>();
-            m_CreateButton = transform.Find("Menu/CreateBtn").GetComponent<Button>();
-            m_SettingsButton = transform.Find("Menu/SettingsBtn").GetComponent<Button>();
-            m_ExitButton = transform.Find("Menu/ExitBtn").GetComponent<Button>();
+            m_CreateBtn = transform.Find("Menu/CreateBtn").GetComponent<Button>();
+            m_SettingsBtn = transform.Find("Menu/SettingsBtn").GetComponent<Button>();
+            m_ExitBtn = transform.Find("Menu/ExitBtn").GetComponent<Button>();
             m_JoinBtn.onClick.AddListener(OnJoinBtnClick);
-            m_CreateButton.onClick.AddListener(OnCreateBtnClick);
-            m_SettingsButton.onClick.AddListener(OnSettingsBtnClick);
-            m_ExitButton.onClick.AddListener(OnExitBtnClick);
+            m_CreateBtn.onClick.AddListener(OnCreateBtnClick);
+            m_SettingsBtn.onClick.AddListener(OnSettingsBtnClick);
+            m_ExitBtn.onClick.AddListener(OnExitBtnClick);
 
             var createTrans = transform.Find("CreatePanel");
             m_CreatePanel = createTrans.gameObject;
             m_CreatePanel.SetActive(true);
-            m_CloseCreatePanel = createTrans.Find("Panel/CloseBtn").GetComponent<Button>();
-            m_NameInput = createTrans.Find("NamePanel/NameInput").GetComponent<InputField>();
-            m_KeyInput = createTrans.Find("KeyPanel/KeyInput").GetComponent<InputField>();
+            m_CloseCreatePanel = createTrans.Find("CloseBtn").GetComponent<Button>();
+            m_NameInput = createTrans.Find("NameInput").GetComponent<InputField>();
+            m_KeyInput = createTrans.Find("KeyInput").GetComponent<InputField>();
             m_NumText = createTrans.Find("NumPanel/Num").GetComponent<Text>();
             m_LeftBtn = createTrans.Find("NumPanel/LeftBtn").GetComponent<Button>();
             m_RightBtn = createTrans.Find("NumPanel/RightBtn").GetComponent<Button>();
@@ -144,36 +147,30 @@ namespace HotFix
 
         void OnLeftBtnClick()
         {
-            //m_LeftBtn.transform.position = m_NumText.transform.position;
-            //return;
-
             playerNum--;
             if (playerNum < 2)
-            {
                 playerNum = 5;
-            }
             RefreshPlayerNum();
         }
         void OnRightBtnClick()
         {
             playerNum++;
             if (playerNum > 5)
-            {
                 playerNum = 2;
-            }
             RefreshPlayerNum();
         }
         void RefreshPlayerNum()
         {
-            m_NumText.text = $"{playerNum}";
-            //Debug.Log($"人数={playerNum}");
+            m_NumText.text = $"{playerNum} 人";
         }
         void OnConfirmBtnClick()
         {
             bool result = TcpChatClient.SendCreateRoom(m_NameInput.text, m_KeyInput.text, playerNum);
+            //m_NameInput.placeholder.color = result ? FONT_BLUE : Color.red;
             if (!result)
+            {
                 return;
-
+            }
             m_CreatePanel.SetActive(false);
         }
 
@@ -205,13 +202,14 @@ namespace HotFix
         void OnGetRoomInfo(object reader)
         {
             var response = (S2C_RoomInfo)reader;
-            Debug.Log($"[UI_Main.获取房间信息(自己创建/加入): [{response.Room.RoomName}#{response.Room.RoomID}]，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
+            Debug.Log($"[UI_Main.获取房间信息(自己创建/加入): [{response.Room.RoomName}#{response.Room.RoomID}密码:{response.Room.Pwd}]，Count={response.Room.Players.Count}/{response.Room.LimitNum}");
 
             //自己创建/加入
             var roomData = new BaseRoomData
             {
                 RoomID = response.Room.RoomID,
                 RoomName = response.Room.RoomName,
+                RoomPwd = response.Room.Pwd,
                 RoomLimit = response.Room.LimitNum,
                 Players = new List<BasePlayerData>(),
             };
@@ -240,9 +238,6 @@ namespace HotFix
             var ui_room = UIManager.Get().Push<UI_Room>();
             //Debug.Log("更新: UI_Room.UpdateUI");
             ui_room.UpdateUI(roomData);
-
-            //this.Pop();
-            //UIManager.Get().Pop(this);
         }
         void OnGetRoomList(object reader)
         {

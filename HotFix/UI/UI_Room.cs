@@ -9,16 +9,17 @@ namespace HotFix
     {
         #region 界面组件
         public Text m_NameText;
-        public Text m_PwdText;
         public Button m_CloseBtn;
         public Button m_StartBtn;
         public List<Item_Room> SeatList;
+        public Button m_PwdBtn;
+        public Text m_PwdText;
         #endregion
 
         #region 内置方法
         void Awake()
         {
-            Transform seatRoot = transform.Find("SeatPanel/Layout");
+            Transform seatRoot = transform.Find("SeatPanel");
             SeatList = new List<Item_Room>();
             for (int i = 0; i < seatRoot.childCount; i++)
             {
@@ -27,11 +28,15 @@ namespace HotFix
                 SeatList.Add(script);
             }
 
-            m_NameText = transform.Find("Background/Text").GetComponent<Text>();
-            m_CloseBtn = transform.Find("Background/CloseBtn").GetComponent<Button>();
+            m_NameText = transform.Find("Blue/Headline/Text").GetComponent<Text>();
+            m_CloseBtn = transform.Find("CloseBtn").GetComponent<Button>();
             m_StartBtn = transform.Find("StartBtn").GetComponent<Button>();
             m_CloseBtn.onClick.AddListener(OnSendLeaveRoom);
             m_StartBtn.onClick.AddListener(OnSendStartGame);
+
+            m_PwdBtn = transform.Find("PwdBtn").GetComponent<Button>();
+            m_PwdText = transform.Find("PwdBtn/ActiveMessages/Circle/NumberText").GetComponent<Text>();
+            m_PwdBtn.onClick.AddListener(OnPwdBtnClick);
         }
         void Start()
         {
@@ -57,14 +62,31 @@ namespace HotFix
         {
             TcpChatClient.SendGameStart();
         }
+        void OnPwdBtnClick()
+        {
+            var dialog = UIManager.Get().Push<UI_Dialog>();
+            dialog.ShowInput(m_PwdText.text,
+            () =>
+            {
+                Debug.Log("修改密码");
+                dialog.Pop();
+            }, "修改密码",
+            () =>
+            {
+                Debug.Log("删除密码");
+                dialog.Pop();
+            }, "删除密码");
+        }
         #endregion
 
         #region 网络事件
         public void UpdateUI(BaseRoomData roomData)
         {
-            Debug.Log($"房间初始化：#{roomData.RoomID}，人数={roomData.Players.Count}/{roomData.RoomLimit}");
+            Debug.Log($"房间初始化：#{roomData.RoomID}，密码：{roomData.RoomPwd}，人数={roomData.Players.Count}/{roomData.RoomLimit}");
 
             m_NameText.text = roomData.RoomName;
+            m_PwdText.text = roomData.RoomPwd;
+            m_PwdBtn.gameObject.SetActive(!string.IsNullOrEmpty(roomData.RoomPwd));
             bool isHost = roomData.Players[0].UserName == TcpChatClient.m_PlayerManager.LocalPlayer.UserName;
             m_StartBtn.gameObject.SetActive(isHost);
 
@@ -160,6 +182,7 @@ namespace HotFix
             {
                 RoomID = response.Room.RoomID,
                 RoomName = response.Room.RoomName,
+                RoomPwd = response.Room.Pwd,
                 RoomLimit = response.Room.LimitNum,
                 Players = new List<BasePlayerData>(),
             };

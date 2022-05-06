@@ -87,8 +87,9 @@ message RoomInfo
 	int32 RoomID 				= 1; //房间Id
 	string RoomName 			= 2; //房间名
 	bool HasPwd 				= 3; //有无密码
-	int32 LimitNum 				= 4; //人数限制
-	repeated PlayerInfo Players = 5; //玩家信息
+	string Pwd 					= 4; //密码（仅创建时下发给房主）
+	int32 LimitNum 				= 5; //人数限制
+	repeated PlayerInfo Players = 6; //玩家信息
 }
 //房间内玩家信息
 message PlayerInfo
