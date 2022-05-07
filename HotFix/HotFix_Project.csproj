@@ -113,6 +113,7 @@
     <Compile Include="Core\Object\ProtoObject.cs" />
     <Compile Include="Core\PoolHelper.cs" />
     <Compile Include="Core\ProtobufHelper.cs" />
+    <Compile Include="Manager\MapManager.cs" />
     <Compile Include="UI\Item\Item_Card.cs" />
     <Compile Include="Lobby\Shared\CardConfig.cs" />
     <Compile Include="Lobby\Client\ClientPlayer.cs" />

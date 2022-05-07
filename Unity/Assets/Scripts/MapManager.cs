@@ -3,7 +3,6 @@
  */
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEditor;
 using DG.Tweening;
 
@@ -54,7 +53,7 @@ public class MapManager : MonoBehaviour
         get
         {
             if (_instance == null)
-                _instance = new MapManager();
+                _instance = FindObjectOfType<MapManager>();
             return _instance;
         }
     }
@@ -77,36 +76,31 @@ public class MapManager : MonoBehaviour
     //key:乌龟颜色  value:格子ID
     public int[] TurtlePos;
 
-    void InitAssets()
+    public void InitAssets()
     {
-        var map_asset = ResManager.LoadPrefab("Prefabs/Map");
-        Map = Instantiate(map_asset).transform;
-        Map.name = "Map";
-
-        //var rock_asset = ResManager.LoadPrefab("Prefabs/Rock");
+        //var map_asset = ResManager.LoadPrefab("Prefabs/Map");
+        //Map = Instantiate(map_asset).transform;
+        Map = transform.Find("Map");
+        //Map.name = "Map";
         Rock = new Transform[10];
-        //for (int i = 0; i < 10; i++)
-        //{
-        //    var obj  = Instantiate(rock_asset);
-        //    obj.name = $"Rock_{i}";
-        //    Rock[i] = obj.transform;
-        //}
         for (int i = 0; i < Map.childCount; i++)
         {
             var item = Map.GetChild(i);
             Rock[i] = item;
         }
 
-        var turtle_asset = ResManager.LoadPrefab("Prefabs/Turtle");
+        //var turtle_asset = ResManager.LoadPrefab("Prefabs/Turtle");
         Turtle = new Transform[5];
-        for (int i = 0; i < 5; i++)
+        var turtles = transform.Find("Turtles");
+        for (int i = 0; i < turtles.childCount; i++)
         {
-            var obj = Instantiate(turtle_asset);
-            obj.name = $"Turtle_{i}";
-            Turtle[i] = obj.transform;
+            //var obj = Instantiate(turtle_asset);
+            //obj.name = $"Turtle_{i}";
+            var item = turtles.GetChild(i);
+            Turtle[i] = item.transform;
         }
     }
-    void InitData()
+    public void InitData()
     {
         // 起点有5只龟
         GridData = new List<int>[10];
@@ -124,7 +118,7 @@ public class MapManager : MonoBehaviour
         TurtlePos[3] = 0;
         TurtlePos[4] = 0;
     }
-    void Dispose()
+    public void Dispose()
     {
         Destroy(Map.gameObject);
         for (int i = Turtle.Length - 1; i >= 0; i--)
@@ -238,6 +232,10 @@ public class MapManager : MonoBehaviour
             handCard.localPosition = Vector3.zero;
         }
     }
+
+
+
+
 
     void Start()
     {

@@ -484,8 +484,14 @@ namespace TcpChatServer
         }
         protected async void OnGamePlay(C2S_PlayCardPacket request, ServerPlayer p)
         {
-            ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
             Debug.Print($"[C2S] {p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}-{request.Color}");
+
+            ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
+            if (serverRoom == null)
+            {
+                Debug.Print($"[Error] 房间已经解散");
+                return;
+            }
 
             if (p.SeatId != serverRoom.nextPlayerIndex)
             {
@@ -494,7 +500,12 @@ namespace TcpChatServer
             bool end = serverRoom.OnGamePlay_Server(p, request);
 
             // 房间内广播出牌结果
-            var packet1 = new S2C_PlayCardPacket { CardID = request.CardID, Color = request.Color, SeatID = p.SeatId };
+            var packet1 = new S2C_PlayCardPacket
+            {
+                CardID = request.CardID,
+                Color = request.Color,
+                SeatID = p.SeatId,
+            };
             serverRoom.SendAsync(PacketType.S2C_GamePlay, packet1);
             Debug.Print($"[S2C] 广播出牌消息：座位#{packet1.SeatID}出{packet1.CardID}");
 

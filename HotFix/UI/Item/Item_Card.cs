@@ -95,6 +95,9 @@ namespace HotFix
             //Debug.Log("tw3.等待0.5秒");
             transform.localScale = Vector3.one;
             gameObject.SetActive(false);
+
+            //TODO: 被Pool回收
+            //transform.SetParent(null);
         }
     }
 }

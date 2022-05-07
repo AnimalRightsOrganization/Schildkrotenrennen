@@ -44,6 +44,10 @@ public class MonoBehaviourAdapterEditor : UnityEditor.UI.GraphicEditor
                     {
                         instance[i.Value] = EditorGUILayout.IntField(name, (int)instance[i.Value]);
                     }
+                    else if (cType == typeof(bool))
+                    {
+                        instance[i.Value] = EditorGUILayout.Toggle(name, i.Value == 1);
+                    }
                     else
                         throw new System.NotImplementedException();//剩下的大家自己补吧
                 }

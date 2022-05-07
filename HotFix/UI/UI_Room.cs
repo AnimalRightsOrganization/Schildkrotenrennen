@@ -82,7 +82,7 @@ namespace HotFix
         #region 网络事件
         public void UpdateUI(BaseRoomData roomData)
         {
-            Debug.Log($"房间初始化：#{roomData.RoomID}，密码：{roomData.RoomPwd}，人数={roomData.Players.Count}/{roomData.RoomLimit}");
+            //Debug.Log($"房间初始化：#{roomData.RoomID}，密码：{roomData.RoomPwd}，人数={roomData.Players.Count}/{roomData.RoomLimit}");
 
             m_NameText.text = roomData.RoomName;
             m_PwdText.text = roomData.RoomPwd;
@@ -210,7 +210,7 @@ namespace HotFix
             var packet = (S2C_GameStartPacket)reader;
             TcpChatClient.m_ClientRoom.OnGameStart_Client(packet);
 
-            this.Pop();
+            UIManager.Get().PopAll();
             var ui_game = UIManager.Get().Push<UI_Game>();
             ui_game.UpdateUI();
         }

@@ -20,9 +20,11 @@ namespace HotFix
         public RectTransform NextIcon; //轮次指示
         public Image[] m_Seats; //所有玩家座位
         public Text[] m_SeatNames; //所有玩家名字
-        public Image m_MyIdentify; //我的身份色卡
+        public Image m_MyTurtleColor; //我的身份色卡
 
         public int handIndex; //选中手牌，数组Id
+        public RectTransform[] Hands;
+        public Transform DeskCards;
         public Item_Card otherCard; //动画牌（别人出牌、我收到的新牌）
         public List<Item_Card> myCards; //手牌
 
@@ -49,9 +51,16 @@ namespace HotFix
         #region 内置方法
         void Awake()
         {
+            var map_asset = ResManager.LoadPrefab("Prefabs/MapManager");
+            var map_manager = Instantiate(map_asset);
+            map_manager.name = "MapManager";
+            map_manager.AddComponent<MapManager>();
+            MapManager.Instance.InitAssets();
+
             m_MenuBtn = transform.Find("MenuBtn").GetComponent<Button>();
             m_MenuBtn.onClick.AddListener(OnMenuBtnClick);
 
+            ///*
             // 地图
             var mapRoot = transform.Find("MapPoints");
             m_MapPoints = new Transform[mapRoot.childCount];
@@ -59,41 +68,47 @@ namespace HotFix
             {
                 m_MapPoints[i] = mapRoot.GetChild(i);
             }
+            //*/
 
             // 成员
+            idSprites = ResManager.LoadSprite("Sprites/identify");
             NextIcon = transform.Find("NextIcon").GetComponent<RectTransform>();
-            var SeatPanel = transform.Find("SeatPanel");
-            int length = SeatPanel.childCount;
+            var seatPanel = transform.Find("SeatPanel");
+            int length = seatPanel.childCount;
             m_Seats = new Image[length];
             m_SeatNames = new Text[length];
             for (int i = 0; i < length; i++)
             {
-                var child = SeatPanel.GetChild(i);
+                var child = seatPanel.GetChild(i);
                 m_Seats[i] = child.GetComponent<Image>();
                 m_SeatNames[i] = child.GetComponentInChildren<Text>();
             }
-            // 身份色卡
-            idSprites = ResManager.LoadSprite("Sprites/identify");
-            m_MyIdentify = transform.Find("Identify").GetComponent<Image>();
+            m_MyTurtleColor = transform.Find("MyTurtleColor").GetComponent<Image>();
 
             // 动画牌
             var cardPrefab = ResManager.LoadPrefab("Prefabs/Card");
             var otherHandObj = Instantiate(cardPrefab, transform);
             otherHandObj.name = "OtherCard";
             otherCard = otherHandObj.AddComponent<Item_Card>(); //屏幕中央
-            otherCard.m_Rect.anchoredPosition3D = new Vector3(-320, 555, 0);
+            otherCard.m_Rect.anchoredPosition = new Vector3(-600, 555);
             otherCard.UnBind(); //设为不可交互
             // 手牌
             handIndex = 0;
-            var handCardPanel = transform.Find("HandCardPanel");
+            Hands = new RectTransform[5];
             myCards = new List<Item_Card>();
-            for (int i = 0; i < 5; i++)
+            var handCardRoot = transform.Find("HandCards");
+            for (int i = 0; i < handCardRoot.childCount; i++)
             {
-                var handObj = Instantiate(cardPrefab, handCardPanel);
-                handObj.name = $"HandCard_{i}";
-                var handScript = handObj.AddComponent<Item_Card>();
+                var handSlot = handCardRoot.GetChild(i);
+                Hands[i] = handSlot.GetComponent<RectTransform>();
+
+                var cardObj = Instantiate(cardPrefab, handSlot);
+                cardObj.name = $"Card_{i}";
+                var handScript = cardObj.AddComponent<Item_Card>();
                 myCards.Add(handScript);
             }
+
+            ///*
             // 棋子
             gameChess = new Item_Chess[5];
             var chessPrefab = ResManager.LoadPrefab("Prefabs/Chess");
@@ -105,6 +120,7 @@ namespace HotFix
                 gameChess[i] = chessScript;
                 chessScript.InitData(i);
             }
+            //*/
 
             // 出牌面板
             selectedCardId = 0;
@@ -139,6 +155,9 @@ namespace HotFix
         void Start()
         {
             NetPacketManager.RegisterEvent(OnNetCallback);
+
+            NextIcon.SetParent(m_SeatNames[0].transform);
+            NextIcon.anchoredPosition = Vector3.zero;
         }
         void OnDestroy()
         {
@@ -154,7 +173,6 @@ namespace HotFix
         {
             GameEndAction = null;
             m_Room = TcpChatClient.m_ClientRoom;
-            //m_Room.PrintRoom(); //打印本人手牌
             m_LocalPlayer = TcpChatClient.m_PlayerManager.LocalPlayer;
 
             // 绘制成员头像、昵称
@@ -178,7 +196,7 @@ namespace HotFix
 
             // 绘制本人身份色卡(红0,黄1,绿2,蓝3,紫4)
             int colorId = (int)m_Room.myTurtleColor;
-            m_MyIdentify.sprite = idSprites[$"identify_{colorId}"];
+            m_MyTurtleColor.sprite = idSprites[$"identify_{colorId}"];
             //Debug.Log($"本人颜色={m_Room.TurtleColor}");
 
             // 绘制手牌
@@ -194,7 +212,6 @@ namespace HotFix
         {
             selectedCardColor = -1;
 
-            //Debug.Log($"ShowPlayPanel: id={carcdid}");
             selectedCardId = carcdid;
             CancelAction = noAction;
             PlayAction = yesAction;
@@ -246,6 +263,17 @@ namespace HotFix
         }
         #endregion
 
+        void SortHandCards()
+        {
+            for (int i = 0; i < Hands.Length; i++)
+            {
+                var handSlot = Hands[i];
+                var handCard = myCards[i].transform;
+                handCard.SetParent(handSlot);
+                handCard.localPosition = Vector3.zero;
+            }
+        }
+
         #region 网络事件
         void OnNetCallback(PacketType type, object reader)
         {
@@ -269,7 +297,7 @@ namespace HotFix
         void OnYourTurn(object reader)
         {
             var packet = (S2C_NextTurnPacket)reader;
-            Debug.Log($"[S2C_YourTurn] 下轮出牌的是{packet.SeatID}");
+            Debug.Log($"[S2C_YourTurn] 下轮出牌的是座位#{packet.SeatID}");
             NextIcon.SetParent(m_SeatNames[packet.SeatID].transform);
             NextIcon.anchoredPosition = Vector3.zero;
         }
@@ -277,12 +305,12 @@ namespace HotFix
         async void OnPlay(object reader)
         {
             var packet = (S2C_PlayCardPacket)reader;
-            Debug.Log($"[S2C] 收到出牌，座位#{packet.SeatID}出牌{packet.CardID}-{packet.Color}，是第{handIndex}张手牌");
+            Debug.Log($"[S2C] 座位#{packet.SeatID}出牌{packet.CardID}-{packet.Color}，是第{handIndex}张手牌");
 
             // ①解析牌型
             int colorId = packet.Color;
             Card card = ClientRoom.lib.library[packet.CardID];
-            var moveChessList = m_Room.OnGamePlay_Client(packet);
+            var moveChessList = m_Room.OnGamePlay_Client(packet); //通知逻辑层
 
             // ②出牌动画
             // 放大0.2f，移动0.3f，停留1.0f，消失0.5f => 2.0f
@@ -298,17 +326,22 @@ namespace HotFix
             }
             else
             {
-                //Debug.Log("是自己出牌，执行委托Item_Card.PlayCardAnime()");
-                PlayAction?.Invoke();
+                //Debug.Log("是自己出牌");
+                PlayAction?.Invoke(); //也是PlayCardAnime()
                 m_PlayPanel.SetActive(false);
             }
 
-            //Debug.Log("等待2秒......START");
-            await Task.Delay(2000);
+            await Task.Delay(1000);
+            SortHandCards();
+            await Task.Delay(1000);
+
+
+            /* 测试
             string chessStr = string.Empty;
             for (int i = 0; i < moveChessList.Count; i++)
                 chessStr += $"{moveChessList[i]}、";
             Debug.Log($"等待2秒........END：移动{moveChessList.Count}个：{chessStr}");
+            */
 
             // 有堆叠，颜色是计算得到的数组
             int step = (int)card.cardNum; //走几步
@@ -341,7 +374,7 @@ namespace HotFix
         async void OnDeal(object reader)
         {
             var packet = (S2C_DealPacket)reader;
-            Debug.Log($"[S2C_GameDeal] 收到新的牌: Card:{packet.CardID}, to#{packet.SeatID}");
+            //Debug.Log($"[S2C_GameDeal] 收到新的牌: Card:{packet.CardID}, to#{packet.SeatID}");
 
             // 解析牌型
             Card card = ClientRoom.lib.library[packet.CardID];
