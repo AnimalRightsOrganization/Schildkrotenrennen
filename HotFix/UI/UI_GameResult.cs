@@ -1,29 +1,47 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using ET;
 
 namespace HotFix
 {
     public class UI_GameResult : UIBase
     {
+        public Text m_ResultText;
+        public Button m_ExitBtn;
         public List<Text> m_RankList;
-        public Button m_CloseBtn;
 
         void Awake()
         {
-            m_CloseBtn = transform.Find("CloseBtn").GetComponent<Button>();
-            m_CloseBtn.onClick.AddListener(OnCloseBtnClick);
+            m_ResultText = transform.Find("Blue/Headline/Text").GetComponent<Text>();
+            m_ExitBtn = transform.Find("ExitBtn").GetComponent<Button>();
+            m_ExitBtn.onClick.AddListener(OnExitBtnClick);
+
+            m_RankList = new List<Text>();
+            var rankPanel = transform.Find("RankPanel");
+            for (int i = 0; i < rankPanel.childCount; i++)
+            {
+                var child = rankPanel.GetChild(i);
+                var script = child.GetComponent<Text>();
+                m_RankList.Add(script);
+            }
         }
 
         public void UpdateUI(List<int> rank)
         {
+            for (int i = 0; i < rank.Count; i++)
+            {
+                int seatId = rank[i]; //排名i --- 座位seatId
 
+                var rankItem = m_RankList[i]; //第i名
+                var playerData = TcpChatClient.m_ClientRoom.Players[seatId];
+                rankItem.text = playerData.NickName;
+            }
         }
 
-        void OnCloseBtnClick()
+        void OnExitBtnClick()
         {
-            Debug.Log("关闭");
+            UIManager.Get().Push<UI_Main>();
+            this.Pop();
         }
     }
 }
