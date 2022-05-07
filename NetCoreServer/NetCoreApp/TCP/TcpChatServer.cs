@@ -476,13 +476,10 @@ namespace TcpChatServer
                 return;
             }
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            //ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
-            //Debug.Print($"[C2S] {p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}-{request.Color}");
             OnGamePlay(request, p);
         }
         protected async void OnGamePlay(C2S_PlayCardPacket request, ServerPlayer p)
         {
-            //ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
             Debug.Print($"[C2S] {p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}-{request.Color}");
 
@@ -510,11 +507,11 @@ namespace TcpChatServer
             p.SendAsync(PacketType.S2C_GameDeal, packet2);
             Debug.Print($"[S2C] 单发发牌消息：{packet2.CardID}给座位#{packet2.SeatID}");
 
-            // 给下一个出牌的人提示出牌
+            // 广播下轮出牌人
             int nextSeatId = serverRoom.nextPlayerIndex;
             var packet3 = new S2C_NextTurnPacket { SeatID = nextSeatId };
             serverRoom.SendAsync(PacketType.S2C_YourTurn, packet3);
-            Debug.Print($"[S2C] 广播下一轮出牌座位：#{nextSeatId}");
+            Debug.Print($"[S2C] 广播下轮出牌人，座位#{nextSeatId}");
 
             ServerPlayer nextPlayer = serverRoom.GetPlayer(nextSeatId);
             if (nextPlayer.IsBot)

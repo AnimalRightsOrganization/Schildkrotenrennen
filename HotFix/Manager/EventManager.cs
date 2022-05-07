@@ -115,7 +115,7 @@ namespace HotFix
                     }
                 case PacketType.S2C_YourTurn:
                     {
-                        EmptyPacket packet = new EmptyPacket();
+                        var packet = ProtobufHelper.Deserialize<S2C_NextTurnPacket>(stream);
                         NetPacketManager.Trigger(type, packet);
                         break;
                     }

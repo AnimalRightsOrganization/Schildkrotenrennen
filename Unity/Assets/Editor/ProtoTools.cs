@@ -242,9 +242,7 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/打包AB/运行时AB资源下载目录", false, 42)]
     static void OpenAppAB()
     {
-        // string path = System.IO.Path.Combine(Application.persistentDataPath, "Resources");
-        string path = Application.persistentDataPath;
-        Debug.Log(path);
+        string path = Path.Combine(Application.persistentDataPath, "Unity");
         EditorUtility.RevealInFinder(path);
         // string path = Application.persistentDataPath.Replace("/", @"\"); //向左的[/]无法打开，要转成[\]
         // Process.Start("explorer.exe", path);

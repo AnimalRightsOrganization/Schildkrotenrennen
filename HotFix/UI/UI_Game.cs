@@ -13,6 +13,7 @@ namespace HotFix
         public Button m_CloseBtn;
         public Transform[] m_MapPoints; //地图
 
+        public RectTransform NextIcon;
         public Image[] m_Seats; //所有玩家座位
         public Text[] m_SeatNames; //所有玩家名字
         public Dictionary<string, Sprite> idSprites; //身份图集
@@ -58,6 +59,7 @@ namespace HotFix
             }
 
             // 成员
+            NextIcon = transform.Find("NextIcon").GetComponent<RectTransform>();
             var SeatPanel = transform.Find("SeatPanel");
             int length = SeatPanel.childCount;
             m_Seats = new Image[length];
@@ -139,6 +141,9 @@ namespace HotFix
         void OnDestroy()
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
+
+            NextIcon.SetParent(m_SeatNames[0].transform);
+            NextIcon.anchoredPosition = Vector3.zero;
         }
         #endregion
 
@@ -246,7 +251,7 @@ namespace HotFix
             switch (type)
             {
                 case PacketType.S2C_YourTurn:
-                    OnYourTurn();
+                    OnYourTurn(reader);
                     break;
                 case PacketType.S2C_GamePlay:
                     OnPlay(reader);
@@ -260,10 +265,12 @@ namespace HotFix
             }
         }
         // 提示出牌
-        void OnYourTurn()
+        void OnYourTurn(object reader)
         {
-            //Debug.Log("[S2C_YourTurn] 收到提示出牌");
-            //m_Room.NextTurn = 0;
+            var packet = (S2C_NextTurnPacket)reader;
+            Debug.Log($"[S2C_YourTurn] 下轮出牌的是{packet.SeatID}");
+            NextIcon.SetParent(m_SeatNames[packet.SeatID].transform);
+            NextIcon.anchoredPosition = Vector3.zero;
         }
         // 出牌消息
         async void OnPlay(object reader)
