@@ -11,7 +11,7 @@ namespace HotFix
         public Image mColorImage;
         public Dictionary<string, Sprite> mColorSp;
 
-        public ChessColor mColor;
+        public TurtleColor mColor;
         public int CurrentIndex; //当前在的格子[0~9]
 
         void Awake()
@@ -24,12 +24,12 @@ namespace HotFix
         {
             mColorImage.sprite = mColorSp[$"models_{id}"];
 
-            mColor = (ChessColor)id;
+            mColor = (TurtleColor)id;
             CurrentIndex = 0;
         }
 
-        //public async Task Move(ChessColor colorKey, int step)
-        public void Move(ChessColor colorKey, int step)
+        //public async Task Move(TurtleColor colorKey, int step)
+        public void Move(TurtleColor colorKey, int step)
         {
             //对出牌、发牌的动画牌不影响
             if (colorKey != mColor)

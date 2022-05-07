@@ -33,10 +33,10 @@ namespace HotFix
 
         public static CardLib lib;
         // 保存乌龟棋子位置
-        public Dictionary<ChessColor, int> chessPos; //棋子位置（key=棋子, value=位置）
-        public Dictionary<int, List<ChessColor>> mapChess; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
+        public Dictionary<TurtleColor, int> chessPos; //棋子位置（key=棋子, value=位置）
+        public Dictionary<int, List<TurtleColor>> mapChess; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
         // 保存自己的颜色和手牌
-        public ChessColor chessColor;
+        public TurtleColor TurtleColor;
         public List<Card> handCards; //索引是显示顺序
         public int NextTurn = 0; //下回合谁出牌（座位号）
         public ChessStatus gameStatus;
@@ -45,21 +45,21 @@ namespace HotFix
         private void Init()
         {
             lib = new CardLib();
-            chessColor = ChessColor.NONE; //空，等待指定
+            TurtleColor = TurtleColor.NONE; //空，等待指定
             handCards = new List<Card>(); //空，等待发牌
-            chessPos = new Dictionary<ChessColor, int>();
-            chessPos.Add(ChessColor.RED, 0);
-            chessPos.Add(ChessColor.YELLOW, 0);
-            chessPos.Add(ChessColor.GREEN, 0);
-            chessPos.Add(ChessColor.BLUE, 0);
-            chessPos.Add(ChessColor.PURPLE, 0);
-            mapChess = new Dictionary<int, List<ChessColor>>();
-            mapChess.Add(0, new List<ChessColor> { (ChessColor)0, (ChessColor)1, (ChessColor)2, (ChessColor)3, (ChessColor)4 });
+            chessPos = new Dictionary<TurtleColor, int>();
+            chessPos.Add(TurtleColor.RED, 0);
+            chessPos.Add(TurtleColor.YELLOW, 0);
+            chessPos.Add(TurtleColor.GREEN, 0);
+            chessPos.Add(TurtleColor.BLUE, 0);
+            chessPos.Add(TurtleColor.PURPLE, 0);
+            mapChess = new Dictionary<int, List<TurtleColor>>();
+            mapChess.Add(0, new List<TurtleColor> { (TurtleColor)0, (TurtleColor)1, (TurtleColor)2, (TurtleColor)3, (TurtleColor)4 });
             for (int i = 1; i < 10; i++)
             {
-                mapChess.Add(i, new List<ChessColor>());
+                mapChess.Add(i, new List<TurtleColor>());
             }
-            List<ChessColor> origin = mapChess[0];
+            List<TurtleColor> origin = mapChess[0];
             //Debug.Log($"起点叠了{origin.Count}层");
             gameStatus = ChessStatus.Wait;
         }
@@ -67,7 +67,7 @@ namespace HotFix
         {
             this.Init();
 
-            this.chessColor = (ChessColor)packet.Color;
+            this.TurtleColor = (TurtleColor)packet.Color;
             this.handCards = new List<Card>();
             for (int i = 0; i < packet.Cards.Count; i++)
             {
@@ -86,7 +86,7 @@ namespace HotFix
             int colorId = packet.Color;
             Card card = lib.library[packet.CardID];
             bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;
-            ChessColor colorKey = colorful ? (ChessColor)colorId : (ChessColor)card.cardColor; //哪只乌龟
+            TurtleColor colorKey = colorful ? (TurtleColor)colorId : (TurtleColor)card.cardColor; //哪只乌龟
             int step = (int)card.cardNum; //走几步
 
             // 如果是自己出的，移除手牌
@@ -103,8 +103,8 @@ namespace HotFix
             if (curPos > 0)
             {
                 // 考虑叠起来的情况。
-                List<ChessColor> temp = new List<ChessColor>();
-                List<ChessColor> curGrid = mapChess[curPos];
+                List<TurtleColor> temp = new List<TurtleColor>();
+                List<TurtleColor> curGrid = mapChess[curPos];
                 Debug.Log($"移动棋子{colorKey}，格子{curPos}上叠了{curGrid.Count}层");
 
                 int index = curGrid.IndexOf(colorKey);
@@ -112,7 +112,7 @@ namespace HotFix
 
                 for (int i = 0; i < curGrid.Count; i++)
                 {
-                    ChessColor chess = curGrid[i];
+                    TurtleColor chess = curGrid[i];
                     //Debug.Log($"{i}---格子{curPos}上，第{i}层是{chess} / {curGrid.Count}");
 
                     if (i >= index)
@@ -129,7 +129,7 @@ namespace HotFix
                 }
                 for (int i = 0; i < temp.Count; i++)
                 {
-                    ChessColor chess = temp[i];
+                    TurtleColor chess = temp[i];
                     curGrid.Remove(chess);
                     Debug.Log($"---------从格子{curPos}移除{chess}");
                 }
@@ -162,7 +162,7 @@ namespace HotFix
 
         public void PrintRoom()
         {
-            string content = $"颜色={chessColor}，手牌=";
+            string content = $"颜色={TurtleColor}，手牌=";
             for (int i = 0; i < handCards.Count; i++)
             {
                 Card handCard = handCards[i];
@@ -179,7 +179,7 @@ namespace HotFix
             Debug.Log(handStr);
         }
 
-        public List<ChessColor> GetSlowest()
+        public List<TurtleColor> GetSlowest()
         {
             for (int i = 0; i < mapChess.Count; i++)
             {

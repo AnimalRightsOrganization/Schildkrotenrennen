@@ -162,7 +162,7 @@ namespace HotFix
      * 同时到达，越上面的排名靠前 */
 
     // 5身份牌，5棋子
-    public enum ChessColor
+    public enum TurtleColor
     {
         NONE    = -1, //未指定的
         RED     = 0,
@@ -206,7 +206,7 @@ namespace HotFix
             string part1 = $"<color={cardColor.ToString().ToLower()}>{cardColor}{op}{step}</color>";
             return $"解析牌型: [{id}] {part1}";
         }
-        public static string LogColor(ChessColor color, int step)
+        public static string LogColor(TurtleColor color, int step)
         {
             string op = step > 0 ? "+" : "";
             string part1 = $"<color={color.ToString().ToLower()}>{color}{op}{step}</color>";

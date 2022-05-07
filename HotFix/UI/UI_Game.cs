@@ -98,7 +98,7 @@ namespace HotFix
             for (int i = 0; i < 5; i++)
             {
                 var chessObj = Instantiate(chessPrefab, m_MapPoints[0]);
-                chessObj.name = $"Chess_{(ChessColor)i}";
+                chessObj.name = $"Chess_{(TurtleColor)i}";
                 var chessScript = chessObj.AddComponent<Item_Chess>();
                 gameChess[i] = chessScript;
                 chessScript.InitData(i);
@@ -128,7 +128,7 @@ namespace HotFix
                 btn.onClick.AddListener(() =>
                 {
                     selectedCardColor = index;
-                    Debug.Log($"彩色龟，选颜色{(ChessColor)selectedCardColor}");
+                    Debug.Log($"彩色龟，选颜色{(TurtleColor)selectedCardColor}");
                     m_ColorSelected.SetParent(btn.transform);
                     m_ColorSelected.anchoredPosition = Vector2.zero;
                 });
@@ -175,9 +175,9 @@ namespace HotFix
             }
 
             // 绘制本人身份色卡(红0,黄1,绿2,蓝3,紫4)
-            int colorId = (int)m_Room.chessColor;
+            int colorId = (int)m_Room.TurtleColor;
             m_SelfIdentify.sprite = idSprites[$"identify_{colorId}"];
-            //Debug.Log($"本人颜色={m_Room.chessColor}");
+            //Debug.Log($"本人颜色={m_Room.TurtleColor}");
 
             // 绘制手牌
             for (int i = 0; i < 5; i++)
@@ -212,11 +212,11 @@ namespace HotFix
             else if (card.cardColor == CardColor.SLOWEST)
             {
                 Debug.Log($"显示最慢选择");
-                List<ChessColor> slowestArray = m_Room.GetSlowest(); //0~4
+                List<TurtleColor> slowestArray = m_Room.GetSlowest(); //0~4
                 for (int i = 0; i < m_ColorBtns.Length; i++)
                 {
                     var btn = m_ColorBtns[i];
-                    bool available = slowestArray.Contains((ChessColor)i);
+                    bool available = slowestArray.Contains((TurtleColor)i);
                     btn.gameObject.SetActive(available);
                     if (selectedCardColor == -1 && available)
                     {
@@ -312,7 +312,7 @@ namespace HotFix
 
             // 有堆叠，颜色是计算得到的数组
             //bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;
-            //ChessColor colorKey = colorful ? (ChessColor)colorId : (ChessColor)card.cardColor; //哪只乌龟
+            //TurtleColor colorKey = colorful ? (TurtleColor)colorId : (TurtleColor)card.cardColor; //哪只乌龟
             int step = (int)card.cardNum; //走几步
 
             // ③动画控制走棋子，考虑叠起来
@@ -320,8 +320,8 @@ namespace HotFix
             {
                 int index = moveChessList[i];
                 var chess = gameChess[index];
-                Debug.Log($"移动棋子{index}：{(ChessColor)index}---{chess.mColor}");
-                chess.Move((ChessColor)index, step);
+                Debug.Log($"移动棋子{index}：{(TurtleColor)index}---{chess.mColor}");
+                chess.Move((TurtleColor)index, step);
             }
 
             if (m_Room.gameStatus == ChessStatus.End)
@@ -348,7 +348,7 @@ namespace HotFix
             // 解析牌型
             Card card = ClientRoom.lib.library[packet.CardID];
             Debug.Log($"发牌：{card.Log()}");
-            //Debug.Log($"发牌：{Card.LogColor((ChessColor)card.cardColor, (int)card.cardNum)}");
+            //Debug.Log($"发牌：{Card.LogColor((TurtleColor)card.cardColor, (int)card.cardNum)}");
             m_Room.OnGameDeal_Client(card);
 
             // 发牌动画
