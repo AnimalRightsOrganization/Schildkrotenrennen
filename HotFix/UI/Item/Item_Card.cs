@@ -53,7 +53,7 @@ namespace HotFix
                 ui_toast.Show("不是你的回合，请等待");
                 return;
             }
-            if (ui_game.m_Room.gameStatus == ChessStatus.End)
+            if (ui_game.m_Room.gameStatus == TurtleAnime.End)
             {
                 var ui_toast = UIManager.Get().Push<UI_Toast>();
                 ui_toast.Show("已经结束嘞");
@@ -94,7 +94,6 @@ namespace HotFix
             await Task.Delay(500);
             //Debug.Log("tw3.等待0.5秒");
             transform.localScale = Vector3.one;
-            //m_Group.alpha = 1;
             gameObject.SetActive(false);
         }
     }

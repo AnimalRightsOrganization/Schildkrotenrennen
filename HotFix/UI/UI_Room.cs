@@ -210,7 +210,7 @@ namespace HotFix
             var packet = (S2C_GameStartPacket)reader;
             TcpChatClient.m_ClientRoom.OnGameStart_Client(packet);
 
-            UIManager.Get().Pop(this);
+            this.Pop();
             var ui_game = UIManager.Get().Push<UI_Game>();
             ui_game.UpdateUI();
         }

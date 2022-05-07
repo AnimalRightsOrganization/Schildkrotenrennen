@@ -60,20 +60,22 @@ namespace WinFormsApp1
             // 
             // title
             // 
-            this.title.AutoSize = true;
             this.title.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.title.Location = new System.Drawing.Point(180, 150);
-            this.title.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.title.Location = new System.Drawing.Point(170, 180);
+            this.title.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(118, 20);
+            this.title.Size = new System.Drawing.Size(140, 30);
             this.title.TabIndex = 0;
             this.title.Text = "NetCoreServer";
             this.title.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // connectBtn
             // 
-            this.connectBtn.Location = new System.Drawing.Point(180, 250);
-            this.connectBtn.Margin = new System.Windows.Forms.Padding(4);
+            this.connectBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.connectBtn.Location = new System.Drawing.Point(180, 300);
+            this.connectBtn.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.connectBtn.Name = "connectBtn";
             this.connectBtn.Size = new System.Drawing.Size(120, 30);
             this.connectBtn.TabIndex = 1;
@@ -83,8 +85,8 @@ namespace WinFormsApp1
             // 
             // startServerBtn
             // 
-            this.startServerBtn.Location = new System.Drawing.Point(180, 400);
-            this.startServerBtn.Margin = new System.Windows.Forms.Padding(4);
+            this.startServerBtn.Location = new System.Drawing.Point(180, 450);
+            this.startServerBtn.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.startServerBtn.Name = "startServerBtn";
             this.startServerBtn.Size = new System.Drawing.Size(120, 30);
             this.startServerBtn.TabIndex = 2;
@@ -94,7 +96,8 @@ namespace WinFormsApp1
             // 
             // stopServerBtn
             // 
-            this.stopServerBtn.Location = new System.Drawing.Point(180, 450);
+            this.stopServerBtn.Location = new System.Drawing.Point(180, 500);
+            this.stopServerBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.stopServerBtn.Name = "stopServerBtn";
             this.stopServerBtn.Size = new System.Drawing.Size(120, 30);
             this.stopServerBtn.TabIndex = 3;
@@ -104,7 +107,8 @@ namespace WinFormsApp1
             // 
             // onlineNumBtn
             // 
-            this.onlineNumBtn.Location = new System.Drawing.Point(180, 500);
+            this.onlineNumBtn.Location = new System.Drawing.Point(180, 560);
+            this.onlineNumBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.onlineNumBtn.Name = "onlineNumBtn";
             this.onlineNumBtn.Size = new System.Drawing.Size(120, 30);
             this.onlineNumBtn.TabIndex = 4;
@@ -114,19 +118,25 @@ namespace WinFormsApp1
             // 
             // pictureBox1
             // 
+            this.pictureBox1.AccessibleRole = System.Windows.Forms.AccessibleRole.OutlineButton;
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Image = global::NetCoreServer.Properties.Resources.red_light_x32;
-            this.pictureBox1.Location = new System.Drawing.Point(228, 330);
+            this.pictureBox1.Location = new System.Drawing.Point(220, 360);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox1.Size = new System.Drawing.Size(40, 40);
             this.pictureBox1.TabIndex = 5;
             this.pictureBox1.TabStop = false;
             // 
             // logText
             // 
             this.logText.AutoSize = true;
-            this.logText.Location = new System.Drawing.Point(12, 9);
+            this.logText.Location = new System.Drawing.Point(15, 11);
+            this.logText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.logText.Name = "logText";
-            this.logText.Size = new System.Drawing.Size(48, 20);
+            this.logText.Size = new System.Drawing.Size(56, 24);
             this.logText.TabIndex = 6;
             this.logText.Text = "NULL";
             // 
@@ -145,7 +155,7 @@ namespace WinFormsApp1
             this.exitToolStripMenuItem,
             this.connectToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(129, 76);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(142, 94);
             // 
             // showToolStripMenuItem
             // 
@@ -153,41 +163,41 @@ namespace WinFormsApp1
             this.maxToolStripMenuItem,
             this.windowToolStripMenuItem});
             this.showToolStripMenuItem.Name = "showToolStripMenuItem";
-            this.showToolStripMenuItem.Size = new System.Drawing.Size(128, 24);
+            this.showToolStripMenuItem.Size = new System.Drawing.Size(141, 30);
             this.showToolStripMenuItem.Text = "显示";
             this.showToolStripMenuItem.Click += new System.EventHandler(this.ShowToolStripMenuItem_Click);
             // 
             // maxToolStripMenuItem
             // 
             this.maxToolStripMenuItem.Name = "maxToolStripMenuItem";
-            this.maxToolStripMenuItem.Size = new System.Drawing.Size(152, 26);
+            this.maxToolStripMenuItem.Size = new System.Drawing.Size(181, 34);
             this.maxToolStripMenuItem.Text = "Max";
             // 
             // windowToolStripMenuItem
             // 
             this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
-            this.windowToolStripMenuItem.Size = new System.Drawing.Size(152, 26);
+            this.windowToolStripMenuItem.Size = new System.Drawing.Size(181, 34);
             this.windowToolStripMenuItem.Text = "Window";
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(128, 24);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(141, 30);
             this.exitToolStripMenuItem.Text = "退出";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
             // connectToolStripMenuItem
             // 
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(128, 24);
+            this.connectToolStripMenuItem.Size = new System.Drawing.Size(141, 30);
             this.connectToolStripMenuItem.Text = "连接DB";
             this.connectToolStripMenuItem.Click += new System.EventHandler(this.ConnectToolStripMenuItem_Click);
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(480, 720);
+            this.ClientSize = new System.Drawing.Size(478, 694);
             this.Controls.Add(this.logText);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.onlineNumBtn);
@@ -195,7 +205,7 @@ namespace WinFormsApp1
             this.Controls.Add(this.startServerBtn);
             this.Controls.Add(this.connectBtn);
             this.Controls.Add(this.title);
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.Name = "MainForm";
             this.Text = "Winform+NetCore3.1+MongoDB";
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
@@ -335,43 +345,35 @@ namespace WinFormsApp1
             //终止此进程，并将退出代码返回到操作系统。
             //exitCode。返回到操作系统的退出代码。 使用 0（零）指示处理已成功完成。
             //Environment.Exit(0);
-
             //Environment.Exit(1);
 
-            //Debug.Print($"{Application.ExecutablePath}-------");
+            //Debug.Print($"{Application.ExecutablePath}-------"); //是dll
+            //System.Diagnostics.Process.Start(Application.ExecutablePath);
             string path = @"C:\Users\Administrator\Desktop\Turtle\NetCoreServer\NetCoreApp\bin\Debug\netcoreapp3.1\NetCoreServer.exe";
             System.Diagnostics.Process.Start(path);
-            //System.Diagnostics.Process.Start(Application.ExecutablePath); //是dll
             Application.Exit();
         }
         static void RegisterHandler()
         {
             Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-            //AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
-            //AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
         }
         static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
             Exception ex = e.Exception;
             string body = $"ThreadException: Message: {ex.Message}\nData: {ex.Data}\nTrace: {ex.StackTrace}\nSource: {ex.Source}";
-            //Debug.Print(body);
             WriteLog(body);
         }
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Exception ex = (Exception)e.ExceptionObject;
             string body = $"UnhandledException Message: {ex.Message}\nTrace: {ex.StackTrace}\nRuntime terminating: {e.IsTerminating}";
-            //Debug.Print(body);
             WriteLog(body);
         }
         public static void WriteLog(string err_message)
         {
-            //string currDir = Environment.CurrentDirectory;
-            //Debug.Print(currDir);
             string root = @$"C:\Users\Administrator\Desktop\";
 
-            //string fileName = System.DateTime.Now.ToString(); //2022/4/27 3:18:34
             string fileName = $"{System.DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss")}.txt"; //2022_04_27_03_19_40
             //Debug.Print(fileName);
 

@@ -1,10 +1,9 @@
 ﻿/* UI层解析消息后，传给本3d对象管理器。
  * 本管理器执行那种颜色，走几步的操作。
  */
-using System.Threading.Tasks;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEditor;
 using DG.Tweening;
 
@@ -19,15 +18,21 @@ public class DemoEditor : Editor
 
         if (GUILayout.Button("+1"))
         {
-            demo.Move1(demo.selected, 1);
+            demo.Move1(demo.selectedTurtle, 1);
         }
         if (GUILayout.Button("+2"))
         {
-            demo.Move2(demo.selected);
+            demo.Move2(demo.selectedTurtle);
         }
         if (GUILayout.Button("-1"))
         {
-            demo.Move1(demo.selected, -1);
+            demo.Move1(demo.selectedTurtle, -1);
+        }
+
+
+        if (GUILayout.Button("PlayCard"))
+        {
+            demo.PlayCard();
         }
     }
 }
@@ -43,48 +48,90 @@ public enum TurtleColor
 }
 public class MapManager : MonoBehaviour
 {
+    static MapManager _instance;
+    public static MapManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = new MapManager();
+            return _instance;
+        }
+    }
+
     public const float TURTLE_HEIGHT = 0.25f;
 
     public bool IsLock = false;
 
-    public GameObject Map;
+    public Transform Map;
     public Transform[] Rock;
     public Transform[] Turtle;
+    public RectTransform[] Hands;
+    public List<RectTransform> HandCards;
+    public Transform DeskCards;
 
     // 记录每个格子中的乌龟，及顺序（从下到上）
     //key:格子ID  value:乌龟，及顺序
-    public List<int>[] GridContent;
-
+    public List<int>[] GridData;
     // 查询某乌龟当前所在格子
     //key:乌龟颜色  value:格子ID
-    public int[] TurtleInGrid;
+    public int[] TurtlePos;
 
-    void Start()
+    void InitAssets()
     {
-        //var map_asset = ResManager.LoadPrefab("Prefabs/Map");
-        //Map = Instantiate(map_asset);
-        //Map.name = "Map";
+        var map_asset = ResManager.LoadPrefab("Prefabs/Map");
+        Map = Instantiate(map_asset).transform;
+        Map.name = "Map";
 
-        Init();
+        //var rock_asset = ResManager.LoadPrefab("Prefabs/Rock");
+        Rock = new Transform[10];
+        //for (int i = 0; i < 10; i++)
+        //{
+        //    var obj  = Instantiate(rock_asset);
+        //    obj.name = $"Rock_{i}";
+        //    Rock[i] = obj.transform;
+        //}
+        for (int i = 0; i < Map.childCount; i++)
+        {
+            var item = Map.GetChild(i);
+            Rock[i] = item;
+        }
+
+        var turtle_asset = ResManager.LoadPrefab("Prefabs/Turtle");
+        Turtle = new Transform[5];
+        for (int i = 0; i < 5; i++)
+        {
+            var obj = Instantiate(turtle_asset);
+            obj.name = $"Turtle_{i}";
+            Turtle[i] = obj.transform;
+        }
     }
-
-    void Init()
+    void InitData()
     {
         // 起点有5只龟
-        GridContent = new List<int>[10];
+        GridData = new List<int>[10];
         for (int i = 0; i < 10; i++)
         {
-            GridContent[i] = new List<int>();
+            GridData[i] = new List<int>();
         }
-        GridContent[0] = new List<int> { 0, 1, 2, 3, 4 };
+        GridData[0] = new List<int> { 0, 1, 2, 3, 4 };
 
         // 5只龟在起点
-        TurtleInGrid = new int[5];
-        TurtleInGrid[0] = 0;
-        TurtleInGrid[1] = 0;
-        TurtleInGrid[2] = 0;
-        TurtleInGrid[3] = 0;
-        TurtleInGrid[4] = 0;
+        TurtlePos = new int[5];
+        TurtlePos[0] = 0;
+        TurtlePos[1] = 0;
+        TurtlePos[2] = 0;
+        TurtlePos[3] = 0;
+        TurtlePos[4] = 0;
+    }
+    void Dispose()
+    {
+        Destroy(Map.gameObject);
+        for (int i = Turtle.Length - 1; i >= 0; i--)
+        {
+            var obj = Turtle[i].gameObject;
+            Destroy(obj);
+        }
     }
 
     public Tweener Move1(TurtleColor turtle, int step)
@@ -98,7 +145,7 @@ public class MapManager : MonoBehaviour
 
         // 数据层计算
         int turtle_id = (int)turtle;
-        int src_id = TurtleInGrid[turtle_id];
+        int src_id = TurtlePos[turtle_id];
         if (src_id >= 9)
         {
             Debug.LogError("已经到达终点");
@@ -113,16 +160,16 @@ public class MapManager : MonoBehaviour
         Vector3 dest_pos = Rock[dest_id].position;
 
         // 数据层修改
-        TurtleInGrid[turtle_id] = dest_id; //乌龟移动到新的格子
-        GridContent[src_id].Remove(turtle_id); //原格子删除它
-        GridContent[dest_id].Add(turtle_id); //新格子加入它
+        TurtlePos[turtle_id] = dest_id; //乌龟移动到新的格子
+        GridData[src_id].Remove(turtle_id); //原格子删除它
+        GridData[dest_id].Add(turtle_id); //新格子加入它
+
 
         //TODO: 曡在上层的乌龟，也要移动
 
 
-
         // 表现层计算高度
-        int dest_count = GridContent[dest_id].Count;
+        int dest_count = GridData[dest_id].Count;
         dest_pos.y = TURTLE_HEIGHT * dest_count;
 
         // 表现层修改
@@ -130,16 +177,13 @@ public class MapManager : MonoBehaviour
         tw.OnPlay(() =>
         {
             IsLock = true;
-            //Debug.Log("tw.OnPlay.111");
         });
         tw.OnComplete(() =>
         {
             IsLock = false;
-            //Debug.Log("tw.OnComplete.111");
         });
         return tw;
     }
-
     public void Move2(TurtleColor turtle)
     {
         //TODO:
@@ -163,5 +207,43 @@ public class MapManager : MonoBehaviour
         });
     }
 
-    public TurtleColor selected;
+    public RectTransform ui_game;
+    public void PlayCard()
+    {
+        var cgroup = HandCards[selectedCard].GetComponent<CanvasGroup>();
+
+        var dest = ui_game.position;
+        var tw1 = cgroup.transform.DOMove(dest, 0.5f);
+        //tw1.SetDelay(1); //延迟出牌
+        tw1.OnComplete(() =>
+        {
+            var tw2 = cgroup.DOFade(0, 0.5f);
+            tw2.SetDelay(1); //延迟消失
+            tw2.OnComplete(() =>
+            {
+                HandCards[selectedCard].SetParent(DeskCards);
+                HandCards.RemoveAt(selectedCard);
+                SortHandCards();
+            });
+        });
+    }
+
+    void SortHandCards()
+    {
+        for (int i = 0; i < Hands.Length; i++)
+        {
+            var handSlot = Hands[i];
+            var handCard = HandCards[i];
+            handCard.SetParent(handSlot);
+            handCard.localPosition = Vector3.zero;
+        }
+    }
+
+    void Start()
+    {
+        //InitAssets();
+        InitData();
+    }
+    public TurtleColor selectedTurtle;
+    public int selectedCard;
 }

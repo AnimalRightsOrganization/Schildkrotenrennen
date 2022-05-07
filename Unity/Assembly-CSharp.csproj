@@ -77,11 +77,8 @@
     <Compile Include="Assets\GUIPackCartoon\Demo\Scripts\TintedButton.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\StreamingAssets\HotFix.dll" />
     <None Include="Assets\GUIPackCartoon\Demo\Shaders\GrayTint.shader" />
-    <None Include="Assets\StreamingAssets\UnityEngine.CoreModule.dll" />
     <None Include="Assets\GUIPackCartoon\Demo\Fonts\OFL.txt" />
-    <None Include="Assets\StreamingAssets\UnityEngine.AnimationModule.dll" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

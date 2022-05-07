@@ -9,20 +9,22 @@ namespace HotFix
 {
     public class UI_Game : UIBase
     {
-        #region 界面组件
-        public Button m_CloseBtn;
+        // 等待移除
         public Transform[] m_MapPoints; //地图
+        public Item_Chess[] gameChess; //棋子（按颜色索引存、取）
 
+        #region 界面组件
+        public Button m_MenuBtn;
+
+        public Dictionary<string, Sprite> idSprites; //身份图集
         public RectTransform NextIcon; //轮次指示
         public Image[] m_Seats; //所有玩家座位
         public Text[] m_SeatNames; //所有玩家名字
-        public Dictionary<string, Sprite> idSprites; //身份图集
-        public Image m_SelfIdentify; //本人身份色卡
+        public Image m_MyIdentify; //我的身份色卡
 
         public int handIndex; //选中手牌，数组Id
         public Item_Card otherCard; //动画牌（别人出牌、我收到的新牌）
         public List<Item_Card> myCards; //手牌
-        public Item_Chess[] gameChess; //棋子（按颜色索引存、取）
 
         public int selectedCardId; //选中手牌，出列
         public GameObject m_PlayPanel; //选中手牌，出牌或选颜色
@@ -47,8 +49,8 @@ namespace HotFix
         #region 内置方法
         void Awake()
         {
-            m_CloseBtn = transform.Find("CloseBtn").GetComponent<Button>();
-            m_CloseBtn.onClick.AddListener(OnCloseBtnClick);
+            m_MenuBtn = transform.Find("MenuBtn").GetComponent<Button>();
+            m_MenuBtn.onClick.AddListener(OnMenuBtnClick);
 
             // 地图
             var mapRoot = transform.Find("MapPoints");
@@ -72,7 +74,7 @@ namespace HotFix
             }
             // 身份色卡
             idSprites = ResManager.LoadSprite("Sprites/identify");
-            m_SelfIdentify = transform.Find("Identify").GetComponent<Image>();
+            m_MyIdentify = transform.Find("Identify").GetComponent<Image>();
 
             // 动画牌
             var cardPrefab = ResManager.LoadPrefab("Prefabs/Card");
@@ -175,8 +177,8 @@ namespace HotFix
             }
 
             // 绘制本人身份色卡(红0,黄1,绿2,蓝3,紫4)
-            int colorId = (int)m_Room.turtleColor;
-            m_SelfIdentify.sprite = idSprites[$"identify_{colorId}"];
+            int colorId = (int)m_Room.myTurtleColor;
+            m_MyIdentify.sprite = idSprites[$"identify_{colorId}"];
             //Debug.Log($"本人颜色={m_Room.TurtleColor}");
 
             // 绘制手牌
@@ -187,11 +189,6 @@ namespace HotFix
                 myCards[i].InitData(card);
                 myCards[i].Index = index;
             }
-        }
-        void OnCloseBtnClick()
-        {
-            Debug.Log("退出游戏");
-            TcpChatClient.SendLeaveRoom();
         }
         public void ShowPlayPanel(int carcdid, System.Action noAction, System.Action yesAction)
         {
@@ -206,12 +203,12 @@ namespace HotFix
             //Debug.Log($"显示：{card.Log()}");
             if (card.cardColor == CardColor.COLOR)
             {
-                Debug.Log($"显示颜色选择");
+                //Debug.Log($"显示颜色选择");
                 m_ColorPanel.SetActive(true);
             }
             else if (card.cardColor == CardColor.SLOWEST)
             {
-                Debug.Log($"显示最慢选择");
+                //Debug.Log($"显示最慢选择");
                 List<TurtleColor> slowestArray = m_Room.GetSlowest(); //0~4
                 for (int i = 0; i < m_ColorBtns.Length; i++)
                 {
@@ -236,6 +233,10 @@ namespace HotFix
         {
             CancelAction?.Invoke();
             m_PlayPanel.SetActive(false);
+        }
+        void OnMenuBtnClick()
+        {
+            Debug.Log("游戏菜单");
         }
         void OnPlayBtnClick()
         {
@@ -321,7 +322,7 @@ namespace HotFix
                 chess.Move((TurtleColor)index, step);
             }
 
-            if (m_Room.gameStatus == ChessStatus.End)
+            if (m_Room.gameStatus == TurtleAnime.End)
             {
                 await Task.Delay(1500);
                 GameEndAction?.Invoke();
@@ -345,7 +346,6 @@ namespace HotFix
             // 解析牌型
             Card card = ClientRoom.lib.library[packet.CardID];
             Debug.Log($"发牌：{card.Log()}");
-            //Debug.Log($"发牌：{Card.LogColor((TurtleColor)card.cardColor, (int)card.cardNum)}");
             m_Room.OnGameDeal_Client(card);
 
             // 发牌动画
@@ -358,7 +358,6 @@ namespace HotFix
             otherCard.m_Group.alpha = 1;
 
             Vector3 dst = myCards[myCards.Count - 1].transform.position; //该位置放一堆牌
-            //Debug.Log($"移动到：{dst}");
             Tweener tw1 = otherCard.transform.DOMove(dst, 0.3f);
             await Task.Delay(1000);
 

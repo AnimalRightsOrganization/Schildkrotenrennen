@@ -165,22 +165,26 @@ namespace HotFix
     public enum TurtleColor
     {
         NONE    = -1, //未指定的
+        /* 该段是一致的 */
         RED     = 0,
         YELLOW  = 1,
         GREEN   = 2,
         BLUE    = 3,
         PURPLE  = 4,
+        /* ************ */
         COUNT   = 5,
     }
     // 卡牌颜色
     public enum CardColor
     {
         NONE    = -1, //未指定的
+        /* 该段是一致的 */
         RED     = 0,
         YELLOW  = 1,
         GREEN   = 2,
         BLUE    = 3,
         PURPLE  = 4,
+        /* ************ */
         COLOR   = 5,
         SLOWEST = 6,
     }
@@ -215,7 +219,7 @@ namespace HotFix
     }
 
     // 卡牌点数
-    public enum ChessStatus
+    public enum TurtleAnime
     {
         Wait    = 0, //等待出牌
         Anime   = 1, //出牌、棋子等动画中
