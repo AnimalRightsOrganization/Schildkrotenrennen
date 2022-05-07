@@ -36,7 +36,7 @@ namespace HotFix
         public Dictionary<TurtleColor, int> chessPos; //棋子位置（key=棋子, value=位置）
         public Dictionary<int, List<TurtleColor>> mapChess; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
         // 保存自己的颜色和手牌
-        public TurtleColor TurtleColor;
+        public TurtleColor turtleColor;
         public List<Card> handCards; //索引是显示顺序
         public int NextTurn = 0; //下回合谁出牌（座位号）
         public ChessStatus gameStatus;
@@ -45,7 +45,7 @@ namespace HotFix
         private void Init()
         {
             lib = new CardLib();
-            TurtleColor = TurtleColor.NONE; //空，等待指定
+            turtleColor = TurtleColor.NONE; //空，等待指定
             handCards = new List<Card>(); //空，等待发牌
             chessPos = new Dictionary<TurtleColor, int>();
             chessPos.Add(TurtleColor.RED, 0);
@@ -67,7 +67,7 @@ namespace HotFix
         {
             this.Init();
 
-            this.TurtleColor = (TurtleColor)packet.Color;
+            this.turtleColor = (TurtleColor)packet.Color;
             this.handCards = new List<Card>();
             for (int i = 0; i < packet.Cards.Count; i++)
             {
@@ -162,7 +162,7 @@ namespace HotFix
 
         public void PrintRoom()
         {
-            string content = $"颜色={TurtleColor}，手牌=";
+            string content = $"颜色={turtleColor}，手牌=";
             for (int i = 0; i < handCards.Count; i++)
             {
                 Card handCard = handCards[i];

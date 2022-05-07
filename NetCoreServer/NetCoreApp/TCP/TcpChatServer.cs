@@ -64,6 +64,9 @@ namespace TcpChatServer
                 case PacketType.C2S_LoginReq:
                     OnLoginReq(ms);
                     break;
+                case PacketType.C2S_RegisterReq:
+                    OnSignUpReq(ms);
+                    break;
                 case PacketType.C2S_Chat:
                     OnChat(ms);
                     break;
@@ -148,6 +151,7 @@ namespace TcpChatServer
 
             WinFormsApp1.MainForm.Instance.RefreshPlayerNum();
         }
+        protected void OnSignUpReq(MemoryStream ms) { }
         protected void OnChat(MemoryStream ms)
         {
             var request = ProtobufHelper.Deserialize<TheMsg>(ms);
@@ -466,7 +470,7 @@ namespace TcpChatServer
 
             serverRoom.OnGameStart_Server();
         }
-        // 收到消息（只有真人）
+        // 收到消息（只对真人）
         protected void OnGamePlay(MemoryStream ms)
         {
             var request = ProtobufHelper.Deserialize<C2S_PlayCardPacket>(ms);
@@ -517,8 +521,9 @@ namespace TcpChatServer
             if (nextPlayer.IsBot)
             {
                 // 下个是机器人，计算后发出牌消息
-                Debug.Print("下个出牌的是机器人，等待四秒（动画时间）");
-                await Task.Delay(4000);
+                Debug.Print($"下个出牌的是机器人，等待五秒（动画时间）---{System.DateTime.Now.ToString("HH:mm:ss")}");
+                await Task.Delay(5000);
+                Debug.Print($"Done---{System.DateTime.Now.ToString("HH:mm:ss")}");
                 var bot_request = nextPlayer.Bot_PlayCardPacket();
                 OnGamePlay(bot_request, nextPlayer);
             }

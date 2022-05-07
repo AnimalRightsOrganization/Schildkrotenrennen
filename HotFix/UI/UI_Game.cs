@@ -13,7 +13,7 @@ namespace HotFix
         public Button m_CloseBtn;
         public Transform[] m_MapPoints; //地图
 
-        public RectTransform NextIcon;
+        public RectTransform NextIcon; //轮次指示
         public Image[] m_Seats; //所有玩家座位
         public Text[] m_SeatNames; //所有玩家名字
         public Dictionary<string, Sprite> idSprites; //身份图集
@@ -175,7 +175,7 @@ namespace HotFix
             }
 
             // 绘制本人身份色卡(红0,黄1,绿2,蓝3,紫4)
-            int colorId = (int)m_Room.TurtleColor;
+            int colorId = (int)m_Room.turtleColor;
             m_SelfIdentify.sprite = idSprites[$"identify_{colorId}"];
             //Debug.Log($"本人颜色={m_Room.TurtleColor}");
 
@@ -281,7 +281,6 @@ namespace HotFix
             // ①解析牌型
             int colorId = packet.Color;
             Card card = ClientRoom.lib.library[packet.CardID];
-            //Debug.Log(card.Log());
             var moveChessList = m_Room.OnGamePlay_Client(packet);
 
             // ②出牌动画
@@ -311,8 +310,6 @@ namespace HotFix
             Debug.Log($"等待2秒........END：移动{moveChessList.Count}个：{chessStr}");
 
             // 有堆叠，颜色是计算得到的数组
-            //bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;
-            //TurtleColor colorKey = colorful ? (TurtleColor)colorId : (TurtleColor)card.cardColor; //哪只乌龟
             int step = (int)card.cardNum; //走几步
 
             // ③动画控制走棋子，考虑叠起来

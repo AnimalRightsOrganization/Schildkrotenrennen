@@ -213,7 +213,7 @@ namespace NetCoreServer.Utils
             }
         }
 
-        public static async Task<bool> Register(string usr, string pwd)
+        public static async Task<bool> SignUp(string usr, string pwd)
         {
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {

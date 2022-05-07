@@ -1,3 +1,6 @@
+ï»¿/* UIå±‚è§£ææ¶ˆæ¯åï¼Œä¼ ç»™æœ¬3då¯¹è±¡ç®¡ç†å™¨ã€‚
+ * æœ¬ç®¡ç†å™¨æ‰§è¡Œé‚£ç§é¢œè‰²ï¼Œèµ°å‡ æ­¥çš„æ“ä½œã€‚
+ */
 using System.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +13,7 @@ public class DemoEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        DrawDefaultInspector(); //ÏÔÊ¾Ä¬ÈÏËùÓĞ²ÎÊı
+        DrawDefaultInspector(); //æ˜¾ç¤ºé»˜è®¤æ‰€æœ‰å‚æ•°
 
         MapManager demo = (MapManager)target;
 
@@ -30,7 +33,7 @@ public class DemoEditor : Editor
 }
 public enum TurtleColor
 {
-    NONE = -1, //Î´Ö¸¶¨µÄ
+    NONE = -1, //æœªæŒ‡å®šçš„
     RED = 0,
     YELLOW = 1,
     GREEN = 2,
@@ -48,12 +51,12 @@ public class MapManager : MonoBehaviour
     public Transform[] Rock;
     public Transform[] Turtle;
 
-    // ¼ÇÂ¼Ã¿¸ö¸ñ×ÓÖĞµÄÎÚ¹ê£¬¼°Ë³Ğò£¨´ÓÏÂµ½ÉÏ£©
-    //key:¸ñ×ÓID  value:ÎÚ¹ê£¬¼°Ë³Ğò
+    // è®°å½•æ¯ä¸ªæ ¼å­ä¸­çš„ä¹Œé¾Ÿï¼ŒåŠé¡ºåºï¼ˆä»ä¸‹åˆ°ä¸Šï¼‰
+    //key:æ ¼å­ID  value:ä¹Œé¾Ÿï¼ŒåŠé¡ºåº
     public List<int>[] GridContent;
 
-    // ²éÑ¯Ä³ÎÚ¹êµ±Ç°ËùÔÚ¸ñ×Ó
-    //key:ÎÚ¹êÑÕÉ«  value:¸ñ×ÓID
+    // æŸ¥è¯¢æŸä¹Œé¾Ÿå½“å‰æ‰€åœ¨æ ¼å­
+    //key:ä¹Œé¾Ÿé¢œè‰²  value:æ ¼å­ID
     public int[] TurtleInGrid;
 
     void Start()
@@ -67,7 +70,7 @@ public class MapManager : MonoBehaviour
 
     void Init()
     {
-        // ÆğµãÓĞ5Ö»¹ê
+        // èµ·ç‚¹æœ‰5åªé¾Ÿ
         GridContent = new List<int>[10];
         for (int i = 0; i < 10; i++)
         {
@@ -75,7 +78,7 @@ public class MapManager : MonoBehaviour
         }
         GridContent[0] = new List<int> { 0, 1, 2, 3, 4 };
 
-        // 5Ö»¹êÔÚÆğµã
+        // 5åªé¾Ÿåœ¨èµ·ç‚¹
         TurtleInGrid = new int[5];
         TurtleInGrid[0] = 0;
         TurtleInGrid[1] = 0;
@@ -89,47 +92,50 @@ public class MapManager : MonoBehaviour
         Tweener tw = null;
         if (IsLock)
         {
-            Debug.LogError("ÒÆ¶¯ÖĞ...ÉÔºóÔÙÊÔ");
+            Debug.LogError("ç§»åŠ¨ä¸­...ç¨åå†è¯•");
             return tw;
         }
 
-        // Êı¾İ²ã¼ÆËã
+        // æ•°æ®å±‚è®¡ç®—
         int turtle_id = (int)turtle;
         int src_id = TurtleInGrid[turtle_id];
         if (src_id >= 9)
         {
-            Debug.LogError("ÒÑ¾­µ½´ïÖÕµã");
+            Debug.LogError("å·²ç»åˆ°è¾¾ç»ˆç‚¹");
             return tw;
         }
         int dest_id = src_id + step;
         if (dest_id < 0)
         {
-            Debug.LogError("ÒÑ¾­ÔÚÆğµã");
+            Debug.LogError("å·²ç»åœ¨èµ·ç‚¹");
             return tw;
         }
         Vector3 dest_pos = Rock[dest_id].position;
 
-        // Êı¾İ²ãĞŞ¸Ä
-        TurtleInGrid[turtle_id] = dest_id;
-        GridContent[src_id].Remove(turtle_id);
-        GridContent[dest_id].Add(turtle_id);
+        // æ•°æ®å±‚ä¿®æ”¹
+        TurtleInGrid[turtle_id] = dest_id; //ä¹Œé¾Ÿç§»åŠ¨åˆ°æ–°çš„æ ¼å­
+        GridContent[src_id].Remove(turtle_id); //åŸæ ¼å­åˆ é™¤å®ƒ
+        GridContent[dest_id].Add(turtle_id); //æ–°æ ¼å­åŠ å…¥å®ƒ
+
+        //TODO: æ›¡åœ¨ä¸Šå±‚çš„ä¹Œé¾Ÿï¼Œä¹Ÿè¦ç§»åŠ¨
 
 
-        // ¼ì²éÄ¿±ê¸ñ×Óµ±Ç°ÊÇ·ñÓĞÎÚ¹ê£¬½ö¶Ô±íÏÖ²ãÓĞÓ°Ïì
+
+        // è¡¨ç°å±‚è®¡ç®—é«˜åº¦
         int dest_count = GridContent[dest_id].Count;
         dest_pos.y = TURTLE_HEIGHT * dest_count;
 
-        // ±íÏÖ²ãĞŞ¸Ä
+        // è¡¨ç°å±‚ä¿®æ”¹
         tw = Turtle[turtle_id].DOMove(dest_pos, 0.5f);
         tw.OnPlay(() =>
         {
             IsLock = true;
-            Debug.Log("tw.OnPlay.111");
+            //Debug.Log("tw.OnPlay.111");
         });
         tw.OnComplete(() =>
         {
             IsLock = false;
-            Debug.Log("tw.OnComplete.111");
+            //Debug.Log("tw.OnComplete.111");
         });
         return tw;
     }
@@ -137,14 +143,14 @@ public class MapManager : MonoBehaviour
     public void Move2(TurtleColor turtle)
     {
         //TODO:
-        //~~¢ÙInspectorÉÏÏÔÊ¾×Öµä¡£~~
-        //~~¢Ú×ßÍêµşÆğÀ´¡£~~
-        //~~¢ÛºóÍË¡£~~
-        //~~¢ÜÒÆ¶¯Á½¸ñ¡£~~
-        //¢İµşÆğÀ´×ß¡£³éÈ¡Çø¼ä¡£
+        //~~â‘ Inspectorä¸Šæ˜¾ç¤ºå­—å…¸ã€‚~~
+        //~~â‘¡èµ°å®Œå èµ·æ¥ã€‚~~
+        //~~â‘¢åé€€ã€‚~~
+        //~~â‘£ç§»åŠ¨ä¸¤æ ¼ã€‚~~
+        //â‘¤å èµ·æ¥èµ°ã€‚æŠ½å–åŒºé—´ã€‚
 
         var tw = Move1(turtle, 1);
-        //ÕâÀïÔÙ´Î×¢²áÎ¯ÍĞ£¬Ïàµ±ÓÚ°ÑMove1ÀïÃæµÄÎ¯ÍĞ¸²¸ÇÁË
+        //è¿™é‡Œå†æ¬¡æ³¨å†Œå§”æ‰˜ï¼Œç›¸å½“äºæŠŠMove1é‡Œé¢çš„å§”æ‰˜è¦†ç›–äº†
         tw.OnPlay(() =>
         {
             IsLock = true;
