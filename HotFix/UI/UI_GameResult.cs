@@ -26,11 +26,18 @@ namespace HotFix
             }
         }
 
-        public void UpdateUI(List<int> rank)
+        public void UpdateUI(List<int> rankList)
         {
-            for (int i = 0; i < rank.Count; i++)
+            string rankStr = string.Empty;
+            for (int i = 0; i < rankList.Count; i++)
             {
-                int seatId = rank[i]; //排名i --- 座位seatId
+                rankStr += $"{rankList[i]}、";
+            }
+            Debug.Log($"更新UI：{rankStr}");
+
+            for (int i = 0; i < rankList.Count; i++)
+            {
+                int seatId = rankList[i]; //排名i --- 座位seatId
 
                 var rankItem = m_RankList[i]; //第i名
                 var playerData = TcpChatClient.m_ClientRoom.Players[seatId];

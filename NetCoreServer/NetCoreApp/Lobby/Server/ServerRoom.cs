@@ -387,7 +387,7 @@ namespace NetCoreServer
             Debug.Print("给出结算");
             gameStatus = ChessStatus.End;
             var list = new List<int>();
-            for (int i = mapChess.Count - 1; i > 0; i--)
+            for (int i = mapChess.Count - 1; i >= 0; i--)
             {
                 var grid = mapChess[i];
                 for (int t = 0; t < grid.Count - 1; t++)

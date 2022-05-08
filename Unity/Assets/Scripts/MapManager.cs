@@ -240,7 +240,7 @@ public class MapManager : MonoBehaviour
     void Start()
     {
         //InitAssets();
-        InitData();
+        //InitData();
     }
     public TurtleColor selectedTurtle;
     public int selectedCard;

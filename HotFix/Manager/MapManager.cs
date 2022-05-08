@@ -26,8 +26,6 @@ namespace HotFix
         public const float TURTLE_HEIGHT = 0.25f;
 
 
-        public RectTransform[] Hands;
-        public Transform DeskCards;
         public bool IsLock;
         // 记录每个格子中的乌龟，及顺序（从下到上）
         //key:格子ID  value:乌龟，及顺序
@@ -135,12 +133,7 @@ namespace HotFix
         }
         public void Move2(TurtleColor turtle)
         {
-            //TODO:
-            //~~①Inspector上显示字典。~~
-            //~~②走完叠起来。~~
-            //~~③后退。~~
-            //~~④移动两格。~~
-            //⑤叠起来走。抽取区间。
+            //TODO: 叠起来走。抽取区间。
 
             var tw = Move1(turtle, 1);
             //这里再次注册委托，相当于把Move1里面的委托覆盖了
@@ -153,29 +146,6 @@ namespace HotFix
                 IsLock = false;
 
                 Move1(turtle, 1);
-            });
-        }
-
-        public int selectedCard;
-        public List<RectTransform> HandCards;
-        public RectTransform ui_game;
-        public void PlayCard()
-        {
-            var cgroup = HandCards[selectedCard].GetComponent<CanvasGroup>();
-
-            var dest = ui_game.position;
-            var tw1 = cgroup.transform.DOMove(dest, 0.5f);
-            //tw1.SetDelay(1); //延迟出牌
-            tw1.OnComplete(() =>
-            {
-                var tw2 = cgroup.DOFade(0, 0.5f);
-                tw2.SetDelay(1); //延迟消失
-                tw2.OnComplete(() =>
-                {
-                    HandCards[selectedCard].SetParent(DeskCards);
-                    HandCards.RemoveAt(selectedCard);
-                    //SortHandCards();
-                });
             });
         }
     }

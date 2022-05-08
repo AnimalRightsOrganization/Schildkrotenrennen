@@ -14,7 +14,6 @@ namespace HotFix
 
         #region 界面组件
         public Button m_MenuBtn;
-
         public Dictionary<string, Sprite> idSprites; //身份图集
         public RectTransform NextIcon; //轮次指示
         public Image[] m_Seats; //所有玩家座位
@@ -276,7 +275,7 @@ namespace HotFix
             card.transform.position = Vector3.zero;
             card.gameObject.SetActive(false);
         }
-        public int handIndex; //选中手牌(0～4)
+        public int handIndex; //选中手牌[0～4]
         public RectTransform[] HandSlots;
         public List<Item_Card> HandCardViews; //我的手牌（实体）
         public void SortHandCards()
@@ -362,7 +361,7 @@ namespace HotFix
             {
                 int index = moveChessList[i];
                 var chess = m_Turtles[index];
-                Debug.Log($"乌龟{index}：{(TurtleColor)index}---{chess.mColor}移动");
+                Debug.Log($"乌龟{index}移动。{(TurtleColor)index}：{chess.mColor}");
                 chess.Move((TurtleColor)index, step);
             }
 
@@ -374,11 +373,9 @@ namespace HotFix
             }
 
             //⑤发牌动画
-            Debug.Log($"是否播放发牌动画？我的手牌数={handCardCount}");
+            //Debug.Log($"是否播放发牌动画？我的手牌数={handCardCount}");
             if (handCardCount == 5)
-            {
                 return;
-            }
             if (GetNewCard)
             {
                 await Task.Delay(500); //等待出牌和走棋动画
@@ -414,7 +411,7 @@ namespace HotFix
         // 结算消息
         void OnGameResult(object reader)
         {
-            Debug.Log("[S2C_GameResult] 结算消息");
+            Debug.Log("[S2C] 结算消息");
             var packet = (S2C_GameResultPacket)reader;
 
             // 等待棋子走完，再弹出。

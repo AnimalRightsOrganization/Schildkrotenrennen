@@ -41,7 +41,7 @@ namespace HotFix
 
         // 记录每个格子中的乌龟，及顺序（从下到上）
         //key:格子ID, value:乌龟颜色及顺序
-        Dictionary<int, List<TurtleColor>> GridData;
+        public Dictionary<int, List<TurtleColor>> GridData;
 
         public TurtleColor myTurtleColor; //我的颜色
         public List<Card> HandCardDatas; //key:顺序, value:我的手牌（数据）
@@ -102,15 +102,15 @@ namespace HotFix
             // 如果是自己出的，移除手牌
             if (packet.SeatID == TcpChatClient.m_PlayerManager.LocalPlayer.SeatId)
             {
-                PrintHandCards();
+                //PrintHandCards();
                 HandCardDatas.Remove(card);
-                PrintHandCards();
+                //PrintHandCards();
             }
 
             // 走棋子
             int curPos = TurtlePos[colorKey]; //某颜色棋子当前位置
             int dstPos = Mathf.Clamp(curPos + step, 0, 9); //前往位置
-            if (curPos > 0)
+            if (curPos > 0) //非起点
             {
                 // 考虑叠起来的情况。
                 List<TurtleColor> temp = new List<TurtleColor>();
@@ -141,22 +141,22 @@ namespace HotFix
                 {
                     TurtleColor chess = temp[i];
                     curGrid.Remove(chess);
-                    Debug.Log($"---------从格子{curPos}移除{chess}");
+                    //Debug.Log($"---------从格子{curPos}移除{chess}");
                 }
             }
-            else
+            else //起点
             {
                 TurtlePos[colorKey] = dstPos; //起点不堆叠
 
-                Debug.Log($"起点不堆叠，从{curPos}移除{colorKey}");
+                //Debug.Log($"起点不堆叠，从{curPos}移除{colorKey}");
                 GridData[curPos].Remove(colorKey);
-                Debug.Log($"把{colorKey}添加到{dstPos}");
+                //Debug.Log($"把{colorKey}添加到{dstPos}");
                 GridData[dstPos].Add(colorKey);
 
                 moveChessList.Add((int)colorKey);
-                Debug.Log($"<color=white>移动棋子：{colorKey}。" +
-                    $"\n移动后，上个格子[{curPos}]{GridData[curPos].Count}层。" +
-                    $"这个格子[{dstPos}]{GridData[dstPos].Count}层。</color>");
+                //Debug.Log($"<color=white>移动棋子：{colorKey}。" +
+                //    $"\n移动后，上个格子[{curPos}]{GridData[curPos].Count}层。" +
+                //    $"这个格子[{dstPos}]{GridData[dstPos].Count}层。</color>");
             }
 
             return moveChessList;
@@ -165,7 +165,7 @@ namespace HotFix
         public void OnGameDeal_Client(Card card)
         {
             HandCardDatas.Add(card);
-            PrintHandCards();
+            //PrintHandCards();
         }
         // 结算
         public void OnGameResult_Client()
@@ -184,18 +184,7 @@ namespace HotFix
             return null;
         }
 
-        public void PrintRoom()
-        {
-            string content = $"颜色={myTurtleColor}，手牌=";
-            for (int i = 0; i < HandCardDatas.Count; i++)
-            {
-                Card handCard = HandCardDatas[i];
-                content += $"{handCard.id}、";
-            }
-            content += $"棋子：";
-            Debug.Log(content);
-        }
-        public void PrintHandCards()
+        void PrintHandCards()
         {
             string handStr = $"{HandCardDatas.Count}张：";
             for (int i = 0; i < HandCardDatas.Count; i++)

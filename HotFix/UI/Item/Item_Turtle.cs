@@ -1,16 +1,26 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using DG.Tweening;
+using System.Collections.Generic;
 
 namespace HotFix
 {
     public class Item_Turtle : UIBase
     {
-        public MeshRenderer m_Render;
-        public Texture2D m_Texture;
+        const float TURTLE_HEIGHT = 0.25f;
+        // 底层0.25; 叠1层0.5;
+        static float TURTLE_Y(int layer)
+        {
+            float result = TURTLE_HEIGHT * (layer + 1);
+            return result;
+        }
 
+        private MeshRenderer m_Render;
+        private Texture2D m_Texture;
         public TurtleColor mColor;
-        public int CurrentIndex; //当前在的格子[0~9]
+
+        private int CurrentPos; //当前所在格子[0～9]
+        private bool IsLock; //移动中锁定
+        private UI_Game ui_game;
 
         void Awake()
         {
@@ -23,34 +33,74 @@ namespace HotFix
             m_Render.material.mainTexture = m_Texture;
 
             mColor = (TurtleColor)id;
-            CurrentIndex = 0;
+            CurrentPos = 0;
+
+            IsLock = false;
         }
 
-        public void Move(TurtleColor colorKey, int step)
+        public Tweener MoveOnce(int step)
         {
-            //对出牌、发牌的动画牌不影响
-            if (colorKey != mColor)
-                Debug.LogError($"{gameObject.name}移动错误，颜色不一致{mColor}:{colorKey}");
-
-            Debug.Log($"{Card.LogColor(colorKey, step)} -> 棋子{colorKey}，走{step}步。");
-
-            int TargetIndex = Mathf.Clamp(CurrentIndex + step, 0, 9);
-            if (TargetIndex == CurrentIndex)
+            Tweener tw = null;
+            if (IsLock)
             {
-                Debug.LogError($"原地，不移动：{CurrentIndex} --> {TargetIndex}");
-                return;
+                Debug.LogError("移动中...稍后再试");
+                return tw;
             }
 
-            var ui_game = UIManager.Get().GetUI<UI_Game>();
-            Vector3 dst = ui_game.m_Rocks[TargetIndex].position;
-            Tweener tw = transform.DOMove(dst, 0.5f);
+            int dest_id = Mathf.Clamp(CurrentPos + step, 0, 9);
+            if (dest_id == CurrentPos)
+            {
+                Debug.Log($"原地不动：{CurrentPos} → {dest_id}");
+                return tw;
+            }
+            CurrentPos = dest_id;
 
-            CurrentIndex = TargetIndex;
+            Vector3 dest_pos = ui_game.m_Rocks[dest_id].position;
 
+            List<TurtleColor> dest_turtles = ui_game.m_Room.GridData[dest_id];
+            // 移动完成后，我是第几层
+            int myLayer = dest_turtles.IndexOf(mColor);
+            dest_pos.y = TURTLE_Y(myLayer);
+
+            tw = transform.DOMove(dest_pos, 0.5f);
+            tw.OnPlay(() =>
+            {
+                IsLock = true;
+            });
             tw.OnComplete(() =>
             {
-                transform.SetParent(ui_game.m_Rocks[TargetIndex]);
+                IsLock = false;
             });
+            return tw;
+        }
+        public void Move(TurtleColor colorKey, int step)
+        {
+            if (ui_game == null)
+                ui_game = UIManager.Get().GetUI<UI_Game>();
+
+            if (colorKey != mColor)
+                Debug.LogError($"{gameObject.name}移动错误，颜色不一致{mColor}:{colorKey}");
+            Debug.Log($"棋子{Card.LogColor(colorKey, step)}，走{step}步。");
+
+            if (step == 2) //+2
+            {
+                var tw = MoveOnce(1);
+                //这里再次注册委托，相当于把Move1里面的委托覆盖了
+                tw.OnPlay(() =>
+                {
+                    IsLock = true;
+                });
+                tw.OnComplete(() =>
+                {
+                    IsLock = false;
+
+                    MoveOnce(1);
+                });
+            }
+            else //+1, -1
+            {
+                MoveOnce(step);
+            }
         }
     }
 }

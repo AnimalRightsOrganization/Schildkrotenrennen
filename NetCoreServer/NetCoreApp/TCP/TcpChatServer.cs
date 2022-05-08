@@ -544,6 +544,13 @@ namespace TcpChatServer
             var rankList = serverRoom.OnGameResult();
             var packet = new S2C_GameResultPacket { Rank = rankList };
             serverRoom.SendAsync(PacketType.S2C_GameResult, packet);
+
+            string rankStr = string.Empty;
+            for (int i = 0; i < rankList.Count; i++)
+            {
+                rankStr += $"{rankList[i]}、";
+            }
+            Debug.Print($"广播结算消息：{rankStr}");
         }
     }
 
