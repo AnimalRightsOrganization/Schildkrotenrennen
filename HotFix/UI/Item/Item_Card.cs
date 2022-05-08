@@ -8,25 +8,25 @@ namespace HotFix
 {
     public class Item_Card : UIBase
     {
-        public RectTransform m_Rect;
-        public CanvasGroup m_Group;
         public Dictionary<string, Sprite> cardArray;
+        //public RectTransform m_Rect;
+        public CanvasGroup m_Group;
         public Button m_SelfBtn;
 
         public int Index; //界面中的摆放顺序
         public Card card;
         private Vector3 src;
-        private Vector3 dst;
 
         void Awake()
         {
-            m_Rect = transform.GetComponent<RectTransform>();
-            m_Group = transform.GetComponent<CanvasGroup>();
             cardArray = ResManager.LoadSprite("Sprites/cards");
+            //m_Rect = transform.GetComponent<RectTransform>();
+            m_Group = transform.GetComponent<CanvasGroup>();
             m_SelfBtn = transform.Find("Image").GetComponent<Button>();
             m_SelfBtn.onClick.AddListener(OnSelect);
         }
 
+        // 使动画牌不可交互
         public void UnBind()
         {
             m_Group.interactable = false;
@@ -59,11 +59,10 @@ namespace HotFix
                 ui_toast.Show("已经结束嘞");
                 return;
             }
-            //Debug.Log($"选中：{card.Log()}");
 
             // 实例化创建出来的，要在创建完成后获取坐标
             src = transform.position;
-            dst = src + Vector3.up * 100;
+            Vector3 dst = src + Vector3.up * 100;
             m_SelfBtn.interactable = false;
             Tweener tw_show = transform.DOMove(dst, 0.3f);
             tw_show.OnComplete(()=>
@@ -90,14 +89,21 @@ namespace HotFix
             await Task.Delay(1300);
             //Debug.Log("tw2.等待1.3秒");
 
+            //如果是我出牌，此时整理一遍手牌
+            //Debug.Log("<<<<此时整理一遍手牌>>>>");
+            var game = UIManager.Get().GetUI<UI_Game>();
+            this.transform.SetParent(null); //移出Slot
+            game.HandCardViews.Remove(this); //移出实体列表
+            game.SortHandCards();
+
             Tweener tw3 = m_Group.DOFade(0, 0.5f);
             await Task.Delay(500);
             //Debug.Log("tw3.等待0.5秒");
             transform.localScale = Vector3.one;
             gameObject.SetActive(false);
 
-            //TODO: 被Pool回收
-            //transform.SetParent(null);
+            // 被Pool回收
+            game.DespawnCard(this);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace HotFix
@@ -28,11 +27,8 @@ namespace HotFix
 
         void OnSelfClick()
         {
-            //Debug.Log($"座位上的人是: {(playerData == null ? "空" : playerData.NickName)}");
-
             if (playerData == null)
             {
-                Debug.Log($"#{SeatID}是空座位，加入机器人");
                 var ui_dialog = UIManager.Get().Push<UI_Dialog>();
                 ui_dialog.Show("是否加入机器人？",
                     () => { ui_dialog.Hide(); }, "取消",
@@ -44,7 +40,6 @@ namespace HotFix
             }
             else
             {
-                //Debug.Log($"{playerData.UserName}\n{TcpChatClient.m_PlayerManager.LocalPlayer.UserName}");
                 if (playerData.UserName == TcpChatClient.m_PlayerManager.LocalPlayer.UserName)
                 {
                     //Debug.Log($"#{SeatID}是自己，没效果");

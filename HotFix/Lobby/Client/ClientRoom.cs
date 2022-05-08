@@ -44,7 +44,7 @@ namespace HotFix
         Dictionary<int, List<TurtleColor>> GridData;
 
         public TurtleColor myTurtleColor; //我的颜色
-        public List<Card> handCards; //key:顺序, value:我的手牌
+        public List<Card> HandCardDatas; //key:顺序, value:我的手牌（数据）
         public int NextTurn; //下回出牌的座位号
         public TurtleAnime gameStatus; //流程控制
 
@@ -68,7 +68,7 @@ namespace HotFix
             }
 
             myTurtleColor = TurtleColor.NONE; //空，等待指定
-            handCards = new List<Card>(); //空，等待发牌
+            HandCardDatas = new List<Card>(); //空，等待发牌
             NextTurn = 0; //从房主开始
             gameStatus = TurtleAnime.Wait;
         }
@@ -82,7 +82,7 @@ namespace HotFix
             {
                 int cardid = packet.Cards[i];
                 Card card = lib.library[cardid];
-                this.handCards.Add(card);
+                this.HandCardDatas.Add(card);
             }
             this.NextTurn = 0;
         }
@@ -103,11 +103,7 @@ namespace HotFix
             if (packet.SeatID == TcpChatClient.m_PlayerManager.LocalPlayer.SeatId)
             {
                 PrintHandCards();
-                handCards.Remove(card);
-                /*
-                int index = handCards.IndexOf(card); //是手牌中的第几张
-                handCards[index] = null; //占位，不打乱顺序
-                */
+                HandCardDatas.Remove(card);
                 PrintHandCards();
             }
 
@@ -168,14 +164,7 @@ namespace HotFix
         // 自己出牌后，收到新的手牌
         public void OnGameDeal_Client(Card card)
         {
-            handCards.Add(card);
-            /*
-            for (int i = 0; i < handCards.Count; i++)
-            {
-                var hand_card = handCards[i];
-                if (hand_card == null)
-                    handCards[i] = card;
-            }*/
+            HandCardDatas.Add(card);
             PrintHandCards();
         }
         // 结算
@@ -198,20 +187,20 @@ namespace HotFix
         public void PrintRoom()
         {
             string content = $"颜色={myTurtleColor}，手牌=";
-            for (int i = 0; i < handCards.Count; i++)
+            for (int i = 0; i < HandCardDatas.Count; i++)
             {
-                Card handCard = handCards[i];
+                Card handCard = HandCardDatas[i];
                 content += $"{handCard.id}、";
             }
             content += $"棋子：";
-            UnityEngine.Debug.Log(content);
+            Debug.Log(content);
         }
         public void PrintHandCards()
         {
-            string handStr = $"{handCards.Count}张：";
-            for (int i = 0; i < handCards.Count; i++)
+            string handStr = $"{HandCardDatas.Count}张：";
+            for (int i = 0; i < HandCardDatas.Count; i++)
             {
-                var hand_card = handCards[i];
+                var hand_card = HandCardDatas[i];
                 if (hand_card != null)
                 {
                     handStr += $"{i}--[{hand_card.id}]、";

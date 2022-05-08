@@ -22,19 +22,13 @@ namespace HotFix
         public Text[] m_SeatNames; //所有玩家名字
         public Image m_MyTurtleColor; //我的身份色卡
 
-        public int handIndex; //选中手牌，数组Id
-        public RectTransform[] Hands;
-        public Transform DeskCards;
-        public Item_Card otherCard; //动画牌（别人出牌、我收到的新牌）
-        public List<Item_Card> myCards; //手牌
-
+        System.Action CancelAction;
+        System.Action PlayAction;
+        System.Action GameEndAction;
         public int selectedCardId; //选中手牌，出列
         public GameObject m_PlayPanel; //选中手牌，出牌或选颜色
         public Button m_CancelBtn; //点击背景，取消选中
         public Button m_PlayBtn; //出牌
-        System.Action CancelAction;
-        System.Action PlayAction;
-        System.Action GameEndAction;
         public int selectedCardColor; //彩色龟，所选颜色
         public GameObject m_ColorPanel; //彩色龟，选颜色面板
         public Button[] m_ColorBtns; //彩色龟，选颜色按钮
@@ -85,27 +79,21 @@ namespace HotFix
             }
             m_MyTurtleColor = transform.Find("MyTurtleColor").GetComponent<Image>();
 
-            // 动画牌
-            var cardPrefab = ResManager.LoadPrefab("Prefabs/Card");
-            var otherHandObj = Instantiate(cardPrefab, transform);
-            otherHandObj.name = "OtherCard";
-            otherCard = otherHandObj.AddComponent<Item_Card>(); //屏幕中央
-            otherCard.m_Rect.anchoredPosition = new Vector3(-600, 555);
-            otherCard.UnBind(); //设为不可交互
-            // 手牌
+            // 卡牌
+            InitCardPool();
             handIndex = 0;
-            Hands = new RectTransform[5];
-            myCards = new List<Item_Card>();
-            var handCardRoot = transform.Find("HandCards");
-            for (int i = 0; i < handCardRoot.childCount; i++)
+            HandSlots = new RectTransform[5];
+            HandCardViews = new List<Item_Card>();
+            var handSlotRoot = transform.Find("HandSlots");
+            for (int i = 0; i < handSlotRoot.childCount; i++)
             {
-                var handSlot = handCardRoot.GetChild(i);
-                Hands[i] = handSlot.GetComponent<RectTransform>();
+                var slot = handSlotRoot.GetChild(i);
+                HandSlots[i] = slot.GetComponent<RectTransform>();
 
-                var cardObj = Instantiate(cardPrefab, handSlot);
-                cardObj.name = $"Card_{i}";
-                var handScript = cardObj.AddComponent<Item_Card>();
-                myCards.Add(handScript);
+                var handCard = SpawnCard();
+                handCard.transform.SetParent(slot);
+                handCard.transform.localPosition = Vector3.zero;
+                HandCardViews.Add(handCard);
             }
 
             ///*
@@ -197,15 +185,14 @@ namespace HotFix
             // 绘制本人身份色卡(红0,黄1,绿2,蓝3,紫4)
             int colorId = (int)m_Room.myTurtleColor;
             m_MyTurtleColor.sprite = idSprites[$"identify_{colorId}"];
-            //Debug.Log($"本人颜色={m_Room.TurtleColor}");
 
             // 绘制手牌
             for (int i = 0; i < 5; i++)
             {
                 int index = i;
-                var card = m_Room.handCards[i];
-                myCards[i].InitData(card);
-                myCards[i].Index = index;
+                var card = m_Room.HandCardDatas[i];
+                HandCardViews[i].InitData(card);
+                HandCardViews[i].Index = index;
             }
         }
         public void ShowPlayPanel(int carcdid, System.Action noAction, System.Action yesAction)
@@ -258,19 +245,70 @@ namespace HotFix
         void OnPlayBtnClick()
         {
             Card card = ClientRoom.lib.library[selectedCardId];
-            Debug.Log($"点击出牌：{card.Log()}");
+            Debug.Log($"[C] 点击出牌：{card.Log()}");
             TcpChatClient.SendGamePlay(card.id, selectedCardColor);
         }
         #endregion
 
-        void SortHandCards()
+        private GameObject cardPrefab;
+        private Transform DeskCards;
+        private List<Item_Card> m_CardPool;
+        private void InitCardPool()
         {
-            for (int i = 0; i < Hands.Length; i++)
+            cardPrefab = ResManager.LoadPrefab("Prefabs/Card");
+            DeskCards = transform.Find("DeskCards");
+
+            m_CardPool = new List<Item_Card>();
+            for (int i = 0; i < 10; i++)
             {
-                var handSlot = Hands[i];
-                var handCard = myCards[i].transform;
-                handCard.SetParent(handSlot);
-                handCard.localPosition = Vector3.zero;
+                var card_obj = Instantiate(cardPrefab, DeskCards);
+                var card_item = card_obj.AddComponent<Item_Card>();
+                m_CardPool.Add(card_item);
+                card_obj.SetActive(false);
+                card_item.m_Group.alpha = 0;
+            }
+        }
+        private Item_Card SpawnCard()
+        {
+            Item_Card script = null;
+            if (m_CardPool.Count > 0)
+            {
+                script = m_CardPool[0];
+                m_CardPool.Remove(script);
+            }
+            else
+            {
+                var card_obj = Instantiate(cardPrefab, DeskCards);
+                script = card_obj.AddComponent<Item_Card>();
+            }
+            script.gameObject.SetActive(true);
+            script.m_Group.alpha = 1;
+            return script;
+        }
+        public void DespawnCard(Item_Card card)
+        {
+            m_CardPool.Add(card);
+            card.m_Group.alpha = 0;
+            card.transform.SetParent(DeskCards);
+            card.transform.position = Vector3.zero;
+            card.gameObject.SetActive(false);
+        }
+        public int handIndex; //选中手牌(0～4)
+        public RectTransform[] HandSlots;
+        public List<Item_Card> HandCardViews; //我的手牌（实体）
+        public void SortHandCards()
+        {
+            //Debug.Log($"整理手牌：当前手牌数={HandCardViews.Count}");
+            for (int i = 0; i < HandSlots.Length; i++)
+            {
+                var slot = HandSlots[i];
+                if (i >= HandCardViews.Count)
+                    return;
+                var card = HandCardViews[i];
+                card.Index = i;
+                card.transform.SetParent(slot);
+                card.transform.localPosition = Vector3.zero;
+                //Debug.Log($"{i}------整理手牌：{card.card.Log()}放到槽{i}中");
             }
         }
 
@@ -298,6 +336,7 @@ namespace HotFix
         {
             var packet = (S2C_NextTurnPacket)reader;
             Debug.Log($"[S2C_YourTurn] 下轮出牌的是座位#{packet.SeatID}");
+            m_Room.NextTurn = packet.SeatID;
             NextIcon.SetParent(m_SeatNames[packet.SeatID].transform);
             NextIcon.anchoredPosition = Vector3.zero;
         }
@@ -311,92 +350,83 @@ namespace HotFix
             int colorId = packet.Color;
             Card card = ClientRoom.lib.library[packet.CardID];
             var moveChessList = m_Room.OnGamePlay_Client(packet); //通知逻辑层
+            int handCardCount = m_Room.HandCardDatas.Count; //我的手牌数。如果是别人出牌，这里不会减少。
 
             // ②出牌动画
             // 放大0.2f，移动0.3f，停留1.0f，消失0.5f => 2.0f
-            if (packet.SeatID != m_LocalPlayer.SeatId)
+            if (packet.SeatID != m_LocalPlayer.SeatId) //别人出牌
             {
-                //Debug.Log($"是别人出牌，座位#{packet.SeatID}");
                 var srcSeat = m_Seats[packet.SeatID].transform;
                 Vector3 src = srcSeat.position;
+                var otherCard = SpawnCard();
                 otherCard.transform.position = src;
                 otherCard.m_Group.alpha = 1;
                 otherCard.InitData(card);
                 otherCard.PlayCardAnime();
             }
-            else
+            else //自己出牌
             {
-                //Debug.Log("是自己出牌");
                 PlayAction?.Invoke(); //也是PlayCardAnime()
                 m_PlayPanel.SetActive(false);
             }
 
-            await Task.Delay(1000);
-            SortHandCards();
-            await Task.Delay(1000);
+            await Task.Delay(2000);
 
-
-            /* 测试
-            string chessStr = string.Empty;
-            for (int i = 0; i < moveChessList.Count; i++)
-                chessStr += $"{moveChessList[i]}、";
-            Debug.Log($"等待2秒........END：移动{moveChessList.Count}个：{chessStr}");
-            */
-
-            // 有堆叠，颜色是计算得到的数组
+            // ③乌龟移动（0.5s）
             int step = (int)card.cardNum; //走几步
-
-            // ③动画控制走棋子，考虑叠起来
+            // 考虑堆叠，颜色是计算得到的数组
             for (int i = 0; i < moveChessList.Count; i++)
             {
                 int index = moveChessList[i];
                 var chess = gameChess[index];
-                Debug.Log($"移动棋子{index}：{(TurtleColor)index}---{chess.mColor}");
+                Debug.Log($"乌龟{index}：{(TurtleColor)index}---{chess.mColor}移动");
                 chess.Move((TurtleColor)index, step);
             }
 
+            // ④结算面板，等待乌龟移动结束再弹出
             if (m_Room.gameStatus == TurtleAnime.End)
             {
                 await Task.Delay(1500);
                 GameEndAction?.Invoke();
             }
 
-            // ④下一轮出牌者
-            m_Room.NextTurn = packet.SeatID + 1;
-            if (m_Room.NextTurn >= m_Room.RoomLimit)
-                m_Room.NextTurn = 0;
-            if (m_Room.NextTurn == m_LocalPlayer.SeatId)
+            //⑤发牌动画
+            Debug.Log($"是否播放发牌动画？我的手牌数={handCardCount}");
+            if (handCardCount == 5)
             {
-                // 解除手牌锁定
+                return;
+            }
+            if (GetNetCard)
+            {
+                await Task.Delay(500); //等待出牌和走棋动画
+                int index = HandSlots.Length - 1;
+                var newCardData = m_Room.HandCardDatas[index];
+                Item_Card newCard = SpawnCard();
+                newCard.InitData(newCardData);
+                newCard.Index = index;
+                var slot = HandSlots[index];
+                Vector3 dst = slot.transform.position;
+                Tweener tw1 = newCard.transform.DOMove(dst, 0.3f);
+                tw1.OnComplete(() =>
+                {
+                    newCard.transform.SetParent(slot);
+                    HandCardViews.Add(newCard);
+                    GetNetCard = false;
+                });
             }
         }
-        // 发牌消息
-        async void OnDeal(object reader)
+        // 发牌消息（和出牌消息同时返回，这里做暂存，
+        // 动画直接在发牌消息中做，避免定时器误差）
+        private bool GetNetCard;
+        void OnDeal(object reader)
         {
             var packet = (S2C_DealPacket)reader;
-            //Debug.Log($"[S2C_GameDeal] 收到新的牌: Card:{packet.CardID}, to#{packet.SeatID}");
 
-            // 解析牌型
+            // ①解析牌型
             Card card = ClientRoom.lib.library[packet.CardID];
-            Debug.Log($"发牌：{card.Log()}");
-            m_Room.OnGameDeal_Client(card);
-
-            // 发牌动画
-            await Task.Delay(3000); //等待出牌和走棋动画
-            myCards[handIndex].transform.SetAsLastSibling();
-            myCards[handIndex].gameObject.SetActive(true);
-
-            otherCard.InitData(card);
-            otherCard.transform.position = new Vector3(Screen.width, Screen.height) / 2;
-            otherCard.m_Group.alpha = 1;
-
-            Vector3 dst = myCards[myCards.Count - 1].transform.position; //该位置放一堆牌
-            Tweener tw1 = otherCard.transform.DOMove(dst, 0.3f);
-            await Task.Delay(1000);
-
-            otherCard.m_Group.DOFade(0, 0.5f);
-            myCards[handIndex].InitData(card);
-            myCards[handIndex].m_Group.alpha = 1;
+            Debug.Log($"我收到一张新牌：{card.Log()}");
+            m_Room.OnGameDeal_Client(card); //存入数据层
+            GetNetCard = true;
         }
         // 结算消息
         void OnGameResult(object reader)

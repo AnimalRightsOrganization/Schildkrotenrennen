@@ -45,8 +45,6 @@ namespace TcpChatServer
         // 注意这里是线程中
         protected override void OnReceived(byte[] buffer, long offset, long size)
         {
-            //Debug.Print($"OnReceived: buffer={buffer.Length}, offset={offset}, size={size}");
-
             // 解析msgId
             byte msgId = buffer[0];
             byte[] body = new byte[size - 1];

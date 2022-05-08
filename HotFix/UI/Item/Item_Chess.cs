@@ -28,7 +28,6 @@ namespace HotFix
             CurrentIndex = 0;
         }
 
-        //public async Task Move(TurtleColor colorKey, int step)
         public void Move(TurtleColor colorKey, int step)
         {
             //对出牌、发牌的动画牌不影响
@@ -54,8 +53,6 @@ namespace HotFix
             {
                 transform.SetParent(ui_game.m_MapPoints[TargetIndex]);
             });
-            //await Task.Delay(500);
-            //transform.SetParent(ui_game.m_MapPoints[TargetIndex]);
         }
     }
 }
