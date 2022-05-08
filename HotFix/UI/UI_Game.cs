@@ -9,9 +9,8 @@ namespace HotFix
 {
     public class UI_Game : UIBase
     {
-        // 等待移除
-        public Transform[] m_MapPoints; //地图
-        public Item_Chess[] gameChess; //棋子（按颜色索引存、取）
+        public Transform[] m_Rocks; //地图
+        public Item_Turtle[] m_Turtles; //棋子（按颜色索引存、取）
 
         #region 界面组件
         public Button m_MenuBtn;
@@ -54,15 +53,10 @@ namespace HotFix
             m_MenuBtn = transform.Find("MenuBtn").GetComponent<Button>();
             m_MenuBtn.onClick.AddListener(OnMenuBtnClick);
 
-            ///*
             // 地图
-            var mapRoot = transform.Find("MapPoints");
-            m_MapPoints = new Transform[mapRoot.childCount];
-            for (int i = 0; i < mapRoot.childCount; i++)
-            {
-                m_MapPoints[i] = mapRoot.GetChild(i);
-            }
-            //*/
+            m_Rocks = MapManager.Instance.Rock;
+            // 棋子
+            m_Turtles = MapManager.Instance.Turtle;
 
             // 成员
             idSprites = ResManager.LoadSprite("Sprites/identify");
@@ -95,20 +89,6 @@ namespace HotFix
                 handCard.transform.localPosition = Vector3.zero;
                 HandCardViews.Add(handCard);
             }
-
-            ///*
-            // 棋子
-            gameChess = new Item_Chess[5];
-            var chessPrefab = ResManager.LoadPrefab("Prefabs/Chess");
-            for (int i = 0; i < 5; i++)
-            {
-                var chessObj = Instantiate(chessPrefab, m_MapPoints[0]);
-                chessObj.name = $"Chess_{(TurtleColor)i}";
-                var chessScript = chessObj.AddComponent<Item_Chess>();
-                gameChess[i] = chessScript;
-                chessScript.InitData(i);
-            }
-            //*/
 
             // 出牌面板
             selectedCardId = 0;
@@ -153,6 +133,7 @@ namespace HotFix
 
             NextIcon.SetParent(m_SeatNames[0].transform);
             NextIcon.anchoredPosition = Vector3.zero;
+            GetNewCard = false;
         }
         #endregion
 
@@ -194,6 +175,8 @@ namespace HotFix
                 HandCardViews[i].InitData(card);
                 HandCardViews[i].Index = index;
             }
+
+            GetNewCard = false;
         }
         public void ShowPlayPanel(int carcdid, System.Action noAction, System.Action yesAction)
         {
@@ -378,7 +361,7 @@ namespace HotFix
             for (int i = 0; i < moveChessList.Count; i++)
             {
                 int index = moveChessList[i];
-                var chess = gameChess[index];
+                var chess = m_Turtles[index];
                 Debug.Log($"乌龟{index}：{(TurtleColor)index}---{chess.mColor}移动");
                 chess.Move((TurtleColor)index, step);
             }
@@ -396,7 +379,7 @@ namespace HotFix
             {
                 return;
             }
-            if (GetNetCard)
+            if (GetNewCard)
             {
                 await Task.Delay(500); //等待出牌和走棋动画
                 int index = HandSlots.Length - 1;
@@ -411,13 +394,13 @@ namespace HotFix
                 {
                     newCard.transform.SetParent(slot);
                     HandCardViews.Add(newCard);
-                    GetNetCard = false;
+                    GetNewCard = false;
                 });
             }
         }
         // 发牌消息（和出牌消息同时返回，这里做暂存，
         // 动画直接在发牌消息中做，避免定时器误差）
-        private bool GetNetCard;
+        private bool GetNewCard;
         void OnDeal(object reader)
         {
             var packet = (S2C_DealPacket)reader;
@@ -426,7 +409,7 @@ namespace HotFix
             Card card = ClientRoom.lib.library[packet.CardID];
             Debug.Log($"我收到一张新牌：{card.Log()}");
             m_Room.OnGameDeal_Client(card); //存入数据层
-            GetNetCard = true;
+            GetNewCard = true;
         }
         // 结算消息
         void OnGameResult(object reader)

@@ -122,6 +122,21 @@ public class ResManager
         return textAsset.bytes;
     }
 
+    public static Texture2D LoadTexture2D(string fileName)
+    {
+        Texture2D t2d;
+#if UNITY_EDITOR && !USE_ASSETBUNDLE
+        string filePath = $"Assets/Bundles/{fileName}.png";
+        t2d = AssetDatabase.LoadAssetAtPath<Texture2D>(filePath);
+#else
+        string filePath = GetFilePath($"{fileName}.unity3d");
+        AssetBundle asset = AssetBundle.LoadFromFile(filePath);
+        t2d = asset.LoadAllAssets()[0] as Texture2D;
+        asset.Unload(false);
+#endif
+        return t2d;
+    }
+
     public static Dictionary<string, Sprite> LoadSprite(string configName)
     {
         Dictionary<string, Sprite> sp;

@@ -20,15 +20,15 @@ namespace HotFix
             }
         }
 
-        public const float TURTLE_HEIGHT = 0.25f;
-        public bool IsLock;
-
         public Transform Map;
         public Transform[] Rock;
-        public Transform[] Turtle;
+        public Item_Turtle[] Turtle;
+        public const float TURTLE_HEIGHT = 0.25f;
+
+
         public RectTransform[] Hands;
         public Transform DeskCards;
-
+        public bool IsLock;
         // 记录每个格子中的乌龟，及顺序（从下到上）
         //key:格子ID  value:乌龟，及顺序
         public List<int>[] GridData;
@@ -46,12 +46,13 @@ namespace HotFix
                 Rock[i] = item;
             }
 
-            Turtle = new Transform[5];
+            Turtle = new Item_Turtle[5];
             var turtles = transform.Find("Turtles");
             for (int i = 0; i < turtles.childCount; i++)
             {
                 var item = turtles.GetChild(i);
-                Turtle[i] = item.transform;
+                Turtle[i] = item.gameObject.AddComponent<Item_Turtle>();
+                Turtle[i].InitData(i);
             }
         }
         public void InitData()
@@ -121,7 +122,7 @@ namespace HotFix
             dest_pos.y = TURTLE_HEIGHT * dest_count;
 
             // 表现层修改
-            tw = Turtle[turtle_id].DOMove(dest_pos, 0.5f);
+            tw = Turtle[turtle_id].transform.DOMove(dest_pos, 0.5f);
             tw.OnPlay(() =>
             {
                 IsLock = true;
@@ -173,19 +174,9 @@ namespace HotFix
                 {
                     HandCards[selectedCard].SetParent(DeskCards);
                     HandCards.RemoveAt(selectedCard);
-                    SortHandCards();
+                    //SortHandCards();
                 });
             });
-        }
-        void SortHandCards()
-        {
-            for (int i = 0; i < Hands.Length; i++)
-            {
-                var handSlot = Hands[i];
-                var handCard = HandCards[i];
-                handCard.SetParent(handSlot);
-                handCard.localPosition = Vector3.zero;
-            }
         }
     }
 }

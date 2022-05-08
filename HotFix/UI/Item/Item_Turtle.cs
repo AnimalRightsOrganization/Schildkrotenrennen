@@ -1,28 +1,26 @@
-﻿using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using DG.Tweening;
 
 namespace HotFix
 {
-    public class Item_Chess : UIBase
+    public class Item_Turtle : UIBase
     {
-        public Image mColorImage;
-        public Dictionary<string, Sprite> mColorSp;
+        public MeshRenderer m_Render;
+        public Texture2D m_Texture;
 
         public TurtleColor mColor;
         public int CurrentIndex; //当前在的格子[0~9]
 
         void Awake()
         {
-            mColorImage = GetComponentInChildren<Image>();
-            mColorSp = ResManager.LoadSprite("Sprites/Models");
+            m_Render = GetComponent<MeshRenderer>();
         }
 
         public void InitData(int id)
         {
-            mColorImage.sprite = mColorSp[$"models_{id}"];
+            m_Texture = ResManager.LoadTexture2D($"Sprites/{(TurtleColor)id}");
+            m_Render.material.mainTexture = m_Texture;
 
             mColor = (TurtleColor)id;
             CurrentIndex = 0;
