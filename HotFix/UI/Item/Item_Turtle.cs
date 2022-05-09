@@ -38,7 +38,7 @@ namespace HotFix
             IsLock = false;
         }
 
-        public Tweener MoveOnce(int step)
+        public Tweener MoveOnce(int step, int layer)
         {
             Tweener tw = null;
             if (IsLock)
@@ -64,7 +64,9 @@ namespace HotFix
             {
                 List<TurtleColor> dest_turtles = ui_game.m_Room.GridData[dest_id];
                 // 移动完成后，我是第几层
-                int myLayer = dest_turtles.IndexOf(mColor);
+                // （IndexOf）不在数组中，会返回-1
+                int index = dest_turtles.IndexOf(mColor);
+                int myLayer = index == -1 ? layer : index;
                 dest_pos.y = TURTLE_Y(myLayer);
             }
 
@@ -79,7 +81,7 @@ namespace HotFix
             });
             return tw;
         }
-        public void Move(TurtleColor colorKey, int step)
+        public void Move(TurtleColor colorKey, int step, int layer)
         {
             if (ui_game == null)
                 ui_game = UIManager.Get().GetUI<UI_Game>();
@@ -90,7 +92,7 @@ namespace HotFix
 
             if (step == 2) //+2
             {
-                var tw = MoveOnce(1);
+                var tw = MoveOnce(1, layer);
                 //这里再次注册委托，相当于把Move1里面的委托覆盖了
                 tw.OnPlay(() =>
                 {
@@ -100,12 +102,12 @@ namespace HotFix
                 {
                     IsLock = false;
 
-                    MoveOnce(1);
+                    MoveOnce(1, layer);
                 });
             }
             else //+1, -1
             {
-                MoveOnce(step);
+                MoveOnce(step, layer);
             }
         }
     }

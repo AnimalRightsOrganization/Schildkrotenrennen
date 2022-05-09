@@ -367,7 +367,7 @@ namespace HotFix
                 int index = moveChessList[i];
                 var chess = m_Turtles[index];
                 Debug.Log($"乌龟{index}移动。{(TurtleColor)index}：{chess.mColor}");
-                chess.Move((TurtleColor)index, step);
+                chess.Move((TurtleColor)index, step, i);
             }
 
             // ④结算面板，等待乌龟移动结束再弹出
