@@ -34,7 +34,7 @@ namespace HotFix
         {
             if (tw2 != null && (tw2.IsActive() || tw2.IsPlaying()))
             {
-                Debug.LogError("动画播放中。。。");
+                //Debug.LogError("动画播放中。。。");
                 return;
             }
 

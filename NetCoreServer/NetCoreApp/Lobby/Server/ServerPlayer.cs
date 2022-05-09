@@ -31,11 +31,11 @@ namespace NetCoreServer
         }
 
         // 保存自己的颜色和手牌
-        public ChessColor chessColor;
+        public TurtleColor chessColor;
         public List<Card> handCards; //长度永远是5
         public void Init()
         {
-            chessColor = ChessColor.NONE; //空，等待指定
+            chessColor = TurtleColor.NONE; //空，等待指定
             handCards = new List<Card>(); //空，等待发牌
         }
 

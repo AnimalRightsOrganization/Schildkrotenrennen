@@ -36,10 +36,9 @@ namespace HotFix
 
         public void InitData(Card data)
         {
+            card = data;
             if (ui_game == null)
                 ui_game = UIManager.Get().GetUI<UI_Game>();
-
-            card = data;
 
             string combName = (data.cardColor.ToString().ToLower() + "" + (data.cardNum > 0 ? "+" : "") + (int)data.cardNum);
             //Debug.Log($"初始化新牌Item_Card: {combName}");
@@ -51,6 +50,10 @@ namespace HotFix
             if (ui_game == null)
                 ui_game = UIManager.Get().GetUI<UI_Game>();
 
+            if (ui_game.m_Room.gameStatus == TurtleAnime.Anime)
+            {
+                return; //取消动画没播完
+            }
             if (ui_game.IsMyTurn == false)
             {
                 var ui_toast = UIManager.Get().Push<UI_Toast>();
@@ -66,12 +69,13 @@ namespace HotFix
 
             // 实例化创建出来的，要在创建完成后获取坐标
             src = transform.position;
-            //Vector3 dest_pos = src + Vector3.up * 100; //会根据分辨率变化
             float dest_pos_y = ui_game.HandSlotRoot.position.y;
             m_SelfBtn.interactable = false;
+            ui_game.m_Room.gameStatus = TurtleAnime.Anime;
             Tweener tw_show = transform.DOMoveY(dest_pos_y, 0.2f);
             tw_show.OnComplete(()=>
             {
+                ui_game.m_Room.gameStatus = TurtleAnime.Wait;
                 m_SelfBtn.interactable = true;
             });
 
@@ -80,7 +84,12 @@ namespace HotFix
         }
         void CancelCardAnime()
         {
-            transform.DOMove(src, 0.3f);
+            ui_game.m_Room.gameStatus = TurtleAnime.Anime;
+            Tweener tw_hide = transform.DOMove(src, 0.3f);
+            tw_hide.OnComplete(() =>
+            {
+                ui_game.m_Room.gameStatus = TurtleAnime.Wait;
+            });
         }
         public async void PlayCardAnime()
         {

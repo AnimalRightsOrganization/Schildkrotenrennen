@@ -142,9 +142,9 @@ namespace NetCoreServer
         private List<Card> cardList;
         private int nextIndex = 0; //下一张下发的牌
         public int nextPlayerIndex = 0; //下一个出牌的座位号
-        private Dictionary<ChessColor, int> chessPos; //棋子位置（key=棋子, value=位置）
-        private Dictionary<int, List<ChessColor>> GridData; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
-        private ChessStatus gameStatus;
+        private Dictionary<TurtleColor, int> chessPos; //棋子位置（key=棋子, value=位置）
+        private Dictionary<int, List<TurtleColor>> GridData; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
+        private TurtleAnime gameStatus;
         public DateTime createTime;
 
         // TODO: 机器人随机出牌。优先选自己的+。优先选玩家的颜色-。
@@ -177,7 +177,7 @@ namespace NetCoreServer
         private static byte[] AllotColor()
         {
             // 5色，不重复
-            int count = (int)ChessColor.COUNT;
+            int count = (int)TurtleColor.COUNT;
             byte[] colors = new byte[] { 0, 1, 2, 3, 4 };
 
             // 打乱排序
@@ -195,7 +195,7 @@ namespace NetCoreServer
             }
             return colors;
         }
-        private List<ChessColor> GetSlowest()
+        private List<TurtleColor> GetSlowest()
         {
             for (int i = 0; i < GridData.Count; i++)
             {
@@ -211,19 +211,19 @@ namespace NetCoreServer
             lib = new CardLib();
             nextIndex = 0;
             nextPlayerIndex = 0;
-            chessPos = new Dictionary<ChessColor, int>();
-            chessPos.Add(ChessColor.RED, 0);
-            chessPos.Add(ChessColor.YELLOW, 0);
-            chessPos.Add(ChessColor.GREEN, 0);
-            chessPos.Add(ChessColor.BLUE, 0);
-            chessPos.Add(ChessColor.PURPLE, 0);
-            GridData = new Dictionary<int, List<ChessColor>>();
-            GridData.Add(0, new List<ChessColor> { (ChessColor)0, (ChessColor)1, (ChessColor)2, (ChessColor)3, (ChessColor)4 });
+            chessPos = new Dictionary<TurtleColor, int>();
+            chessPos.Add(TurtleColor.RED, 0);
+            chessPos.Add(TurtleColor.YELLOW, 0);
+            chessPos.Add(TurtleColor.GREEN, 0);
+            chessPos.Add(TurtleColor.BLUE, 0);
+            chessPos.Add(TurtleColor.PURPLE, 0);
+            GridData = new Dictionary<int, List<TurtleColor>>();
+            GridData.Add(0, new List<TurtleColor> { (TurtleColor)0, (TurtleColor)1, (TurtleColor)2, (TurtleColor)3, (TurtleColor)4 });
             for (int i = 1; i < 10; i++)
             {
-                GridData.Add(i, new List<ChessColor>());
+                GridData.Add(i, new List<TurtleColor>());
             }
-            gameStatus = ChessStatus.Wait;
+            gameStatus = TurtleAnime.Wait;
             createTime = DateTime.Now;
         }
         public void OnGameStart_Server()
@@ -248,7 +248,7 @@ namespace NetCoreServer
             {
                 var player = (ServerPlayer)m_PlayerDic[i];
                 player.Init();
-                player.chessColor = (ChessColor)colors[i];
+                player.chessColor = (TurtleColor)colors[i];
             }
             // 遍历分配手牌（发5张）
             for (int n = 0; n < 5; n++)
@@ -274,7 +274,7 @@ namespace NetCoreServer
         }
         public bool OnGamePlay_Server(ServerPlayer p, C2S_PlayCardPacket request)
         {
-            if (gameStatus == ChessStatus.End)
+            if (gameStatus == TurtleAnime.End)
             {
                 Debug.Print("比赛已经结束");
                 return true;
@@ -287,15 +287,15 @@ namespace NetCoreServer
             Card card = lib.library[cardId];
             // 如果是彩色，转成实际的颜色
             bool colorful = card.cardColor == CardColor.COLOR || card.cardColor == CardColor.SLOWEST;
-            ChessColor colorKey = colorful ? (ChessColor)colorId : (ChessColor)card.cardColor; //哪只乌龟
+            TurtleColor colorKey = colorful ? (TurtleColor)colorId : (TurtleColor)card.cardColor; //哪只乌龟
             int step = (int)card.cardNum; //走几步
             // 检测作弊或Bug
             if (card.cardColor == CardColor.SLOWEST)
             {
                 var slowestArray = GetSlowest();
-                if (slowestArray.Contains((ChessColor)colorId) == false)
+                if (slowestArray.Contains((TurtleColor)colorId) == false)
                 {
-                    Debug.Print($"玩家选的颜色{(ChessColor)colorId}，不是最慢的");
+                    Debug.Print($"玩家选的颜色{(TurtleColor)colorId}，不是最慢的");
                     return false;
                 }
             }
@@ -307,14 +307,14 @@ namespace NetCoreServer
             if (curPos > 0)
             {
                 // 考虑叠起来的情况。
-                List<ChessColor> temp = new List<ChessColor>();
-                List<ChessColor> curGrid = GridData[curPos];
+                List<TurtleColor> temp = new List<TurtleColor>();
+                List<TurtleColor> curGrid = GridData[curPos];
 
                 int index = curGrid.IndexOf(colorKey);
 
                 for (int i = 0; i < curGrid.Count; i++)
                 {
-                    ChessColor chess = curGrid[i];
+                    TurtleColor chess = curGrid[i];
 
                     if (i >= index)
                     {
@@ -329,7 +329,7 @@ namespace NetCoreServer
                 }
                 for (int i = 0; i < temp.Count; i++)
                 {
-                    ChessColor chess = temp[i];
+                    TurtleColor chess = temp[i];
                     curGrid.Remove(chess);
                     Debug.Print($"{i}---------从格子{curPos}移除{chess}, curGrid.count={curGrid.Count}");
                 }
@@ -384,7 +384,7 @@ namespace NetCoreServer
         public List<int> OnGameResult()
         {
             Debug.Print("给出结算");
-            gameStatus = ChessStatus.End;
+            gameStatus = TurtleAnime.End;
             var turtles = new List<int>();
             for (int i = GridData.Count - 1; i >= 0; i--) //从终点开始遍历
             {

@@ -173,7 +173,6 @@ namespace HotFix
                 Debug.LogError($"密码长度过短");
                 return;
             }
-            //TODO: 服务器/客户端共用规则，双边验证...
 
             var cmd = new C2S_LoginPacket { Username = usr, Password = pwd };
             Debug.Log($"[C2S] {cmd.Username}, {cmd.Password}");
@@ -194,7 +193,8 @@ namespace HotFix
         {
             if (message.Length <= 0)
             {
-                Debug.LogError($"内容为空"); //TODO: Toast
+                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                ui_toast.Show("内容为空");
                 return;
             }
 

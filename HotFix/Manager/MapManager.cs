@@ -120,8 +120,6 @@ namespace HotFix
             GridData[dest_id].Add(turtle_id); //新格子加入它
 
 
-            //TODO: 曡在上层的乌龟，也要移动
-
 
             // 表现层计算高度
             int dest_count = GridData[dest_id].Count;
@@ -141,8 +139,6 @@ namespace HotFix
         }
         public void Move2(TurtleColor turtle)
         {
-            //TODO: 叠起来走。抽取区间。
-
             var tw = Move1(turtle, 1);
             //这里再次注册委托，相当于把Move1里面的委托覆盖了
             tw.OnPlay(() =>

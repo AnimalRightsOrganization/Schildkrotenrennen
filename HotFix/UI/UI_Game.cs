@@ -217,6 +217,10 @@ namespace HotFix
         }
         public void HidePlayPanel()
         {
+            if (m_Room.gameStatus == TurtleAnime.Anime)
+            {
+                return; //上移动画没播完
+            }
             CancelAction?.Invoke();
             m_PlayPanel.SetActive(false);
         }
