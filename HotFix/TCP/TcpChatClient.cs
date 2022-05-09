@@ -186,11 +186,6 @@ namespace HotFix
                 Debug.LogError($"用户名或密码不能为空");
                 return;
             }
-            if (pwd.Length < 6)
-            {
-                Debug.LogError($"密码长度过短");
-                return;
-            }
             var cmd = new C2S_LoginPacket { Username = usr, Password = pwd };
             Debug.Log($"[C2S] {cmd.Username}, {cmd.Password}");
             SendAsync(PacketType.C2S_RegisterReq, cmd);

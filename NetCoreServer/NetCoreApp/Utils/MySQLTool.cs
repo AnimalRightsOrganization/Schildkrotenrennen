@@ -225,7 +225,7 @@ namespace NetCoreServer.Utils
                     string SQL1 = $"SELECT COUNT(*) FROM db_user WHERE username='{usr}';";
                     command.CommandText = SQL1;
                     int count = Convert.ToInt32(command.ExecuteScalar());
-                    Debug.Print($"count={count}");
+                    Debug.Print($"检查用户名是否占用了，count={count}");
                     if (count > 0)
                     {
                         Debug.Print($"已经存在用户:{usr}");
@@ -233,7 +233,7 @@ namespace NetCoreServer.Utils
                     }
 
                     // createtime默认:CURRENT_TIMESTAMP，创建数据时自动生成当前时间
-                    string SQL2 = $"INSERT INTO db_user (userid, username, password) VALUES ('{0}', '{usr}', '{pwd}');";
+                    string SQL2 = $"INSERT INTO db_user (userid, username, nickname, password) VALUES ('{0}', '{usr}', '{usr}', '{pwd}');";
                     command.CommandText = SQL2;
                     int rowCount = await command.ExecuteNonQueryAsync();
                     Debug.Print($"Number of rows inserted={rowCount}"); //插入了几行

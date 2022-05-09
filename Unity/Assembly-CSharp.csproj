@@ -78,10 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\GUIPackCartoon\Demo\Shaders\GrayTint.shader" />
-    <None Include="Assets\StreamingAssets\UnityEngine.AnimationModule.dll" />
     <None Include="Assets\GUIPackCartoon\Demo\Fonts\OFL.txt" />
-    <None Include="Assets\StreamingAssets\UnityEngine.CoreModule.dll" />
-    <None Include="Assets\StreamingAssets\HotFix.dll" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

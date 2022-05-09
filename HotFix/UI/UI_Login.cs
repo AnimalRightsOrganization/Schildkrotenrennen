@@ -117,17 +117,24 @@ namespace HotFix
         }
         void OnSignUpBtnClick()
         {
-            var ui_toast = UIManager.Get().GetUI<UI_Toast>();
             if (string.IsNullOrEmpty(m_SignUp_UserInput.text) || 
                 string.IsNullOrEmpty(m_SignUp_PwdInput.text) ||
                 string.IsNullOrEmpty(m_SignUp_Pwd2Input.text))
             {
+                var ui_toast = UIManager.Get().Push<UI_Toast>();
                 ui_toast.Show("用户名和密码不能为空");
                 return;
             }
             if (m_SignUp_PwdInput.text.Equals(m_SignUp_Pwd2Input.text) == false)
             {
-                ui_toast.Show("密码输入不一致");
+                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                ui_toast.Show("两次密码输入不一致");
+                return;
+            }
+            if (m_SignUp_PwdInput.text.Length < 6)
+            {
+                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                ui_toast.Show("密码长度过短");
                 return;
             }
             string username = m_SignUp_UserInput.text;

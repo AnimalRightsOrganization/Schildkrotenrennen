@@ -157,10 +157,33 @@ namespace TcpChatServer
                 Debug.Print("OnSignUpReq.空数据");
                 return;
             }
+
             Debug.Print($"[C2S] 请求注册:{request.Username}");
 
             bool result = await MySQLTool.SignUp(request.Username, request.Password);
             Debug.Print($"注册结果: {result}");
+
+            var playerData = new BasePlayerData
+            {
+                IsBot = false,
+                PeerId = Id,
+                UserName = request.Username,
+                NickName = request.Username,
+                RoomId = -1,
+                SeatId = -1,
+                Status = PlayerStatus.OFFLINE,
+            };
+            var serverPlayer = new ServerPlayer(playerData);
+            if (result)
+            {
+                var packet = new S2C_LoginResultPacket { Code = 0, Username = request.Username, Nickname = request.Username };
+                serverPlayer.SendAsync(PacketType.S2C_LoginResult, packet);
+            }
+            else
+            {
+                var err_packet = new ErrorPacket { Code = (int)ErrorCode.UserNameUsed, Message = "用户名已被注册" };
+                serverPlayer.SendAsync(PacketType.S2C_ErrorOperate, err_packet);
+            }
         }
         protected void OnChat(MemoryStream ms)
         {
