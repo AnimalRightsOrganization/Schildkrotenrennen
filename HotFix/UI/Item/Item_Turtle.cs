@@ -54,6 +54,7 @@ namespace HotFix
                 return tw;
             }
             CurrentPos = dest_id;
+            Debug.Log($"目标格子:{dest_id}");
 
             Vector3 dest_pos = ui_game.m_Rocks[dest_id].position;
             if (dest_id == 0) //退回起点，读取配置
@@ -63,10 +64,13 @@ namespace HotFix
             else
             {
                 List<TurtleColor> dest_turtles = ui_game.m_Room.GridData[dest_id];
+                int dest_count = dest_turtles.Count;
                 // 移动完成后，我是第几层
                 // （IndexOf）不在数组中，会返回-1
+                // 如果中间格子有龟，则也返回-1。取到dest_count，使经过时走在最顶上
                 int index = dest_turtles.IndexOf(mColor);
-                int myLayer = index == -1 ? layer : index;
+                int myLayer = index == -1 ? (dest_count == 0 ? layer : dest_count) : index;
+                Debug.Log($"移动完成后，我是第几层？？myLayer={myLayer}");
                 dest_pos.y = TURTLE_Y(myLayer);
             }
 
@@ -88,10 +92,11 @@ namespace HotFix
 
             if (colorKey != mColor)
                 Debug.LogError($"{gameObject.name}移动错误，颜色不一致{mColor}:{colorKey}");
-            Debug.Log($"棋子{Card.LogColor(colorKey, step)}，走{step}步。");
+            Debug.Log($"乌龟{Card.LogColor(colorKey, step)}，走{step}步。");
 
             if (step == 2) //+2
             {
+                Debug.Log("+2，第一次移动");
                 var tw = MoveOnce(1, layer);
                 //这里再次注册委托，相当于把Move1里面的委托覆盖了
                 tw.OnPlay(() =>
@@ -102,6 +107,7 @@ namespace HotFix
                 {
                     IsLock = false;
 
+                    Debug.Log("+2，第二次移动");
                     MoveOnce(1, layer);
                 });
             }

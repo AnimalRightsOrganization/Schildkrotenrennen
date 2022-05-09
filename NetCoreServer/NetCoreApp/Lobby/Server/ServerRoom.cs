@@ -195,7 +195,7 @@ namespace NetCoreServer
             }
             return colors;
         }
-        private List<TurtleColor> GetSlowest()
+        public List<TurtleColor> GetSlowest()
         {
             for (int i = 0; i < GridData.Count; i++)
             {

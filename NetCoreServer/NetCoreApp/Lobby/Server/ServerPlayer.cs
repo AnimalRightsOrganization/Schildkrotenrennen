@@ -47,10 +47,18 @@ namespace NetCoreServer
             int index = new Random().Next(0, 5); //[,)
             Card card = handCards[index];
             int color = 0;
-            if ((int)card.cardColor >= 5)
+            if (card.cardColor == CardColor.COLOR)
             {
                 color = new Random().Next(0, 5);
             }
+            else if (card.cardColor == CardColor.SLOWEST)
+            {
+                var serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(RoomId);
+                var list = serverRoom.GetSlowest();
+                int rd = new Random().Next(0, list.Count);
+                color = (int)list[rd];
+            }
+
             var request = new C2S_PlayCardPacket
             {
                 CardID = card.id,
