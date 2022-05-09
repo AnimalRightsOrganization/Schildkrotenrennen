@@ -31,7 +31,8 @@ public class DemoEditor : Editor
 
         if (GUILayout.Button("PlayCard"))
         {
-            demo.PlayCard();
+            //demo.PlayCard();
+            demo.Play();
         }
     }
 }
@@ -235,7 +236,15 @@ public class MapManager : MonoBehaviour
 
 
 
+    public float Y;
+    public Transform indicator;
+    public void Play()
+    {
+        var card = HandCards[selectedCard];
 
+        Y = indicator.position.y;
+        card.DOMoveY(Y, 0.5f);
+    }
 
     void Start()
     {

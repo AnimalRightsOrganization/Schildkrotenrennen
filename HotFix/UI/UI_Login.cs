@@ -117,7 +117,22 @@ namespace HotFix
         }
         void OnSignUpBtnClick()
         {
-            //UIManager.Get().Push<UI_Register>();
+            var ui_toast = UIManager.Get().GetUI<UI_Toast>();
+            if (string.IsNullOrEmpty(m_SignUp_UserInput.text) || 
+                string.IsNullOrEmpty(m_SignUp_PwdInput.text) ||
+                string.IsNullOrEmpty(m_SignUp_Pwd2Input.text))
+            {
+                ui_toast.Show("用户名和密码不能为空");
+                return;
+            }
+            if (m_SignUp_PwdInput.text.Equals(m_SignUp_Pwd2Input.text) == false)
+            {
+                ui_toast.Show("密码输入不一致");
+                return;
+            }
+            string username = m_SignUp_UserInput.text;
+            string password = m_SignUp_Pwd2Input.text;
+            TcpChatClient.SendSignUp(username, password);
         }
         void OnOAuthBtnClick()
         {

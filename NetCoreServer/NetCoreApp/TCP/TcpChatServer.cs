@@ -149,7 +149,19 @@ namespace TcpChatServer
 
             WinFormsApp1.MainForm.Instance.RefreshPlayerNum();
         }
-        protected void OnSignUpReq(MemoryStream ms) { }
+        protected async void OnSignUpReq(MemoryStream ms)
+        {
+            var request = ProtobufHelper.Deserialize<C2S_LoginPacket>(ms); //解包
+            if (request == null)
+            {
+                Debug.Print("OnSignUpReq.空数据");
+                return;
+            }
+            Debug.Print($"[C2S] 请求注册:{request.Username}");
+
+            bool result = await MySQLTool.SignUp(request.Username, request.Password);
+            Debug.Print($"注册结果: {result}");
+        }
         protected void OnChat(MemoryStream ms)
         {
             var request = ProtobufHelper.Deserialize<TheMsg>(ms);
@@ -509,7 +521,7 @@ namespace TcpChatServer
 
             if (end)
             {
-                Debug.Print("到达终点，不在发牌");
+                Debug.Print("到达终点，不再发牌");
                 OnGameResult();
                 return;
             }
@@ -537,20 +549,30 @@ namespace TcpChatServer
                 OnGamePlay(bot_request, nextPlayer);
             }
         }
-        protected void OnGameResult()
+        public void OnGameResult()
         {
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
-            var rankList = serverRoom.OnGameResult();
-            var packet = new S2C_GameResultPacket { Rank = rankList };
+            List<int> turtleRank = serverRoom.OnGameResult(); //五只龟的顺序
+
+            List<int> playerRank = new List<int>();
+            for (int i = 0; i < serverRoom.Players.Count; i++)
+            {
+                var serverPlayer = serverRoom.GetPlayer(i);
+                int color = (int)serverPlayer.chessColor;
+                int rank = turtleRank.IndexOf(color);
+                playerRank[i] = rank;
+            }
+
+            var packet = new S2C_GameResultPacket { Rank = playerRank }; //key:座位号, value:排名
             serverRoom.SendAsync(PacketType.S2C_GameResult, packet);
 
             string rankStr = string.Empty;
-            for (int i = 0; i < rankList.Count; i++)
+            for (int i = 0; i < playerRank.Count; i++)
             {
-                rankStr += $"{rankList[i]}、";
+                rankStr += $"{playerRank[i]}、";
             }
-            Debug.Print($"广播结算消息：{rankStr}");
+            Debug.Print($"广播结算消息[{playerRank.Count}]：{rankStr}");
         }
     }
 

@@ -56,11 +56,17 @@ namespace HotFix
             CurrentPos = dest_id;
 
             Vector3 dest_pos = ui_game.m_Rocks[dest_id].position;
-
-            List<TurtleColor> dest_turtles = ui_game.m_Room.GridData[dest_id];
-            // 移动完成后，我是第几层
-            int myLayer = dest_turtles.IndexOf(mColor);
-            dest_pos.y = TURTLE_Y(myLayer);
+            if (dest_id == 0) //退回起点，读取配置
+            {
+                dest_pos = MapManager.START_POS[(int)mColor];
+            }
+            else
+            {
+                List<TurtleColor> dest_turtles = ui_game.m_Room.GridData[dest_id];
+                // 移动完成后，我是第几层
+                int myLayer = dest_turtles.IndexOf(mColor);
+                dest_pos.y = TURTLE_Y(myLayer);
+            }
 
             tw = transform.DOMove(dest_pos, 0.5f);
             tw.OnPlay(() =>

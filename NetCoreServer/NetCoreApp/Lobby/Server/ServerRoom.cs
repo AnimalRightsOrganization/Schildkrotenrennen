@@ -143,11 +143,10 @@ namespace NetCoreServer
         private int nextIndex = 0; //下一张下发的牌
         public int nextPlayerIndex = 0; //下一个出牌的座位号
         private Dictionary<ChessColor, int> chessPos; //棋子位置（key=棋子, value=位置）
-        private Dictionary<int, List<ChessColor>> mapChess; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
+        private Dictionary<int, List<ChessColor>> GridData; //地图中每个格子的棋子，堆叠顺序（key=位置, value=堆叠顺序）
         private ChessStatus gameStatus;
         public DateTime createTime;
 
-        // TODO: 保存每步操作。
         // TODO: 机器人随机出牌。优先选自己的+。优先选玩家的颜色-。
         private static List<int> CardToInt(List<Card> cards)
         {
@@ -198,9 +197,9 @@ namespace NetCoreServer
         }
         private List<ChessColor> GetSlowest()
         {
-            for (int i = 0; i < mapChess.Count; i++)
+            for (int i = 0; i < GridData.Count; i++)
             {
-                var grid = mapChess[i];
+                var grid = GridData[i];
                 if (grid.Count > 0)
                     return grid;
             }
@@ -218,11 +217,11 @@ namespace NetCoreServer
             chessPos.Add(ChessColor.GREEN, 0);
             chessPos.Add(ChessColor.BLUE, 0);
             chessPos.Add(ChessColor.PURPLE, 0);
-            mapChess = new Dictionary<int, List<ChessColor>>();
-            mapChess.Add(0, new List<ChessColor> { (ChessColor)0, (ChessColor)1, (ChessColor)2, (ChessColor)3, (ChessColor)4 });
+            GridData = new Dictionary<int, List<ChessColor>>();
+            GridData.Add(0, new List<ChessColor> { (ChessColor)0, (ChessColor)1, (ChessColor)2, (ChessColor)3, (ChessColor)4 });
             for (int i = 1; i < 10; i++)
             {
-                mapChess.Add(i, new List<ChessColor>());
+                GridData.Add(i, new List<ChessColor>());
             }
             gameStatus = ChessStatus.Wait;
             createTime = DateTime.Now;
@@ -309,7 +308,7 @@ namespace NetCoreServer
             {
                 // 考虑叠起来的情况。
                 List<ChessColor> temp = new List<ChessColor>();
-                List<ChessColor> curGrid = mapChess[curPos];
+                List<ChessColor> curGrid = GridData[curPos];
 
                 int index = curGrid.IndexOf(colorKey);
 
@@ -322,7 +321,7 @@ namespace NetCoreServer
                         chessPos[chess] = dstPos;
 
                         temp.Add(chess);
-                        mapChess[dstPos].Add(chess);
+                        GridData[dstPos].Add(chess);
                         Debug.Print($"{i}+++++++++将棋子{chess}移到{dstPos}, temp.count={temp.Count}");
 
                         //moveChessList.Add((int)chess);
@@ -339,8 +338,8 @@ namespace NetCoreServer
             {
                 chessPos[colorKey] = dstPos; //起点不堆叠
 
-                mapChess[curPos].Remove(colorKey);
-                mapChess[dstPos].Add(colorKey);
+                GridData[curPos].Remove(colorKey);
+                GridData[dstPos].Add(colorKey);
 
                 //moveChessList.Add((int)colorKey);
             }
@@ -354,7 +353,7 @@ namespace NetCoreServer
             Debug.Print($"检查是否到终点: {dstPos}");
             if (dstPos >= 9)
             {
-                OnGameResult();
+                //OnGameResult();
                 return true;
             }
             return false;
@@ -386,17 +385,17 @@ namespace NetCoreServer
         {
             Debug.Print("给出结算");
             gameStatus = ChessStatus.End;
-            var list = new List<int>();
-            for (int i = mapChess.Count - 1; i >= 0; i--)
+            var turtles = new List<int>();
+            for (int i = GridData.Count - 1; i >= 0; i--) //从终点开始遍历
             {
-                var grid = mapChess[i];
-                for (int t = 0; t < grid.Count - 1; t++)
+                var grid = GridData[i];
+                for (int t = 0; t < grid.Count; t++)
                 {
-                    var chess = grid[t];
-                    list.Add((int)chess);
+                    int chess = (int)grid[t];
+                    turtles.Add(chess);
                 }
             }
-            return list;
+            return turtles;
         }
 
         // 调试参数
@@ -407,9 +406,9 @@ namespace NetCoreServer
             //输出剩余卡牌池
             //输棋子的位置
             string posStr = $"棋子的位置：";
-            for (int i = 0; i < mapChess.Count; i++)
+            for (int i = 0; i < GridData.Count; i++)
             {
-                var grid = mapChess[i];
+                var grid = GridData[i];
                 if (grid.Count > 0)
                 {
                     posStr += $"\n[第{i}格]";

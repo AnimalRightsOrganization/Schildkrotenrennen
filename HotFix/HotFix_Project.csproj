@@ -120,7 +120,6 @@
     <Compile Include="Lobby\Client\ClientPlayerManager.cs" />
     <Compile Include="Lobby\Client\ClientRoom.cs" />
     <Compile Include="UI\Item\Item_Turtle.cs" />
-    <Compile Include="UI\Item\Item_Chess.cs" />
     <Compile Include="Lobby\Shared\BasePlayer.cs" />
     <Compile Include="Lobby\Shared\BaseRoom.cs" />
     <Compile Include="Lobby\Shared\GamePackets.cs" />

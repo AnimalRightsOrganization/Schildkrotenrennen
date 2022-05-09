@@ -1398,6 +1398,8 @@ MonoBehaviour:
   DeskCards: {fileID: 1657659881}
   TurtlePos: 
   ui_game: {fileID: 2108539787}
+  Y: 0
+  indicator: {fileID: 1848940844}
   selectedTurtle: 0
   selectedCard: 0
 --- !u!4 &1365241877

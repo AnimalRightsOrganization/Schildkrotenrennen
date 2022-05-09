@@ -77,10 +77,10 @@ namespace HotFix
             handIndex = 0;
             HandSlots = new RectTransform[5];
             HandCardViews = new List<Item_Card>();
-            var handSlotRoot = transform.Find("HandSlots");
-            for (int i = 0; i < handSlotRoot.childCount; i++)
+            HandSlotRoot = transform.Find("HandSlots");
+            for (int i = 0; i < HandSlotRoot.childCount; i++)
             {
-                var slot = handSlotRoot.GetChild(i);
+                var slot = HandSlotRoot.GetChild(i);
                 HandSlots[i] = slot.GetComponent<RectTransform>();
 
                 var handCard = SpawnCard();
@@ -276,6 +276,7 @@ namespace HotFix
             card.gameObject.SetActive(false);
         }
         public int handIndex; //选中手牌[0～4]
+        public Transform HandSlotRoot;
         public RectTransform[] HandSlots;
         public List<Item_Card> HandCardViews; //我的手牌（实体）
         public void SortHandCards()
@@ -418,7 +419,6 @@ namespace HotFix
             m_Room.OnGameResult_Client();
             GameEndAction = () =>
             {
-                Debug.Log("结算委托");
                 var ui_result = UIManager.Get().Push<UI_GameResult>();
                 ui_result.UpdateUI(packet.Rank);
             };

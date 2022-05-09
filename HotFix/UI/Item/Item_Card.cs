@@ -9,18 +9,17 @@ namespace HotFix
     public class Item_Card : UIBase
     {
         public Dictionary<string, Sprite> cardArray;
-        //public RectTransform m_Rect;
         public CanvasGroup m_Group;
         public Button m_SelfBtn;
 
         public int Index; //界面中的摆放顺序
         public Card card;
         private Vector3 src;
+        private UI_Game ui_game;
 
         void Awake()
         {
             cardArray = ResManager.LoadSprite("Sprites/cards");
-            //m_Rect = transform.GetComponent<RectTransform>();
             m_Group = transform.GetComponent<CanvasGroup>();
             m_SelfBtn = transform.Find("Image").GetComponent<Button>();
             m_SelfBtn.onClick.AddListener(OnSelect);
@@ -37,6 +36,9 @@ namespace HotFix
 
         public void InitData(Card data)
         {
+            if (ui_game == null)
+                ui_game = UIManager.Get().GetUI<UI_Game>();
+
             card = data;
 
             string combName = (data.cardColor.ToString().ToLower() + "" + (data.cardNum > 0 ? "+" : "") + (int)data.cardNum);
@@ -46,7 +48,9 @@ namespace HotFix
 
         void OnSelect()
         {
-            var ui_game = UIManager.Get().GetUI<UI_Game>();
+            if (ui_game == null)
+                ui_game = UIManager.Get().GetUI<UI_Game>();
+
             if (ui_game.IsMyTurn == false)
             {
                 var ui_toast = UIManager.Get().Push<UI_Toast>();
@@ -62,9 +66,10 @@ namespace HotFix
 
             // 实例化创建出来的，要在创建完成后获取坐标
             src = transform.position;
-            Vector3 dst = src + Vector3.up * 100;
+            //Vector3 dest_pos = src + Vector3.up * 100; //会根据分辨率变化
+            float dest_pos_y = ui_game.HandSlotRoot.position.y;
             m_SelfBtn.interactable = false;
-            Tweener tw_show = transform.DOMove(dst, 0.3f);
+            Tweener tw_show = transform.DOMoveY(dest_pos_y, 0.2f);
             tw_show.OnComplete(()=>
             {
                 m_SelfBtn.interactable = true;
@@ -79,22 +84,23 @@ namespace HotFix
         }
         public async void PlayCardAnime()
         {
+            if (ui_game == null)
+                ui_game = UIManager.Get().GetUI<UI_Game>();
+
             transform.localScale = Vector3.one;
             Tweener tw1 = transform.DOScale(1.1f, 0.2f);
             await Task.Delay(200);
             //Debug.Log("tw1.等待0.2秒");
 
-            Vector3 dst = new Vector3(Screen.width, Screen.height) / 2; //固定到屏幕中心
-            Tweener tw2 = transform.DOMove(dst, 0.3f);
+            Vector3 dest_pos = ui_game.transform.position; //屏幕中心
+            Tweener tw2 = transform.DOMove(dest_pos, 0.3f);
             await Task.Delay(1300);
             //Debug.Log("tw2.等待1.3秒");
 
             //如果是我出牌，此时整理一遍手牌
-            //Debug.Log("<<<<此时整理一遍手牌>>>>");
-            var game = UIManager.Get().GetUI<UI_Game>();
             this.transform.SetParent(null); //移出Slot
-            game.HandCardViews.Remove(this); //移出实体列表
-            game.SortHandCards();
+            ui_game.HandCardViews.Remove(this); //移出实体列表
+            ui_game.SortHandCards(); //整理手牌
 
             Tweener tw3 = m_Group.DOFade(0, 0.5f);
             await Task.Delay(500);
@@ -103,7 +109,7 @@ namespace HotFix
             gameObject.SetActive(false);
 
             // 被Pool回收
-            game.DespawnCard(this);
+            ui_game.DespawnCard(this);
         }
     }
 }

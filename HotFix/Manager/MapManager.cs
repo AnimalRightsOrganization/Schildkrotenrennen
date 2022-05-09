@@ -24,6 +24,14 @@ namespace HotFix
         public Transform[] Rock;
         public Item_Turtle[] Turtle;
         public const float TURTLE_HEIGHT = 0.25f;
+        public static Vector3[] START_POS = new Vector3[]
+        {
+            new Vector3(1, 0.25f, 1.6f),
+            new Vector3(2, 0.25f, 1.6f),
+            new Vector3(3, 0.25f, 1.6f),
+            new Vector3(4, 0.25f, 1.6f),
+            new Vector3(5, 0.25f, 1.6f),
+        };
 
 
         public bool IsLock;
