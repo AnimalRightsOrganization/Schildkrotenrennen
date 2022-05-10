@@ -34,6 +34,7 @@ namespace HotFix
         public Item_Lobby[] m_Rooms;
         public Button m_PrevPageBtn;
         public Button m_NextPageBtn;
+        public Text m_PageText;
         public GameObject m_Notice;
 
         private int Page;
@@ -76,6 +77,7 @@ namespace HotFix
             m_CloseListPanel.onClick.AddListener(() => { m_ListPanel.SetActive(false); });
             m_PrevPageBtn = transform.Find("ListPanel/PrevBtn").GetComponent<Button>();
             m_NextPageBtn = transform.Find("ListPanel/NextBtn").GetComponent<Button>();
+            m_PageText = transform.Find("ListPanel/PageText").GetComponent<Text>();
             m_Notice = transform.Find("ListPanel/Blue/Notice").gameObject;
             m_PrevPageBtn.onClick.AddListener(OnPrevBtnClick);
             m_NextPageBtn.onClick.AddListener(OnNextBtnClick);
@@ -117,6 +119,7 @@ namespace HotFix
             m_EnterAnime.SetBool("enter", true);
 
             Page = 1;
+            m_PageText.text = $"第{Page}页";
         }
 
         void OnJoinBtnClick()
@@ -180,14 +183,14 @@ namespace HotFix
 
         void OnPrevBtnClick()
         {
-            Page--;
-            Page = Mathf.Max(1, Page);
-            TcpChatClient.SendGetRoomList(Page);
+            //Page--;
+            //Page = Mathf.Max(1, Page);
+            //TcpChatClient.SendGetRoomList(Page);
+            TcpChatClient.SendGetRoomList(Page - 1);
         }
         void OnNextBtnClick()
         {
-            //Page++;
-            TcpChatClient.SendGetRoomList(Page);
+            TcpChatClient.SendGetRoomList(Page + 1);
         }
         #endregion
 
@@ -248,27 +251,35 @@ namespace HotFix
             var ui_room = UIManager.Get().Push<UI_Room>();
             //Debug.Log("更新: UI_Room.UpdateUI");
             ui_room.UpdateUI(roomData);
+
+            m_CreatePanel.SetActive(false);
+            m_ListPanel.SetActive(false);
         }
         void OnGetRoomList(object reader)
         {
             var data = (S2C_GetRoomList)reader;
-            Debug.Log($"获得房间列表: count={data.Rooms.Count}");
+            Page = data.Page == 0 ? Page : data.Page;
+            Debug.Log($"获得房间列表: count={data.Rooms.Count}，Page={data.Page}");
 
-            m_Notice.SetActive(data.Rooms.Count == 0);
-            //Page = data.Rooms.Count == 0 ? Page : Page + 1;
-
-            for (int i = 0; i < m_Rooms.Length; i++)
+            //==0时不刷新。
+            if (data.Page > 0)
             {
-                var item_room = m_Rooms[i];
-                if (i >= data.Rooms.Count)
+                m_Notice.SetActive(data.Rooms.Count == 0);
+                m_PageText.text = $"第{Page}页";
+
+                for (int i = 0; i < m_Rooms.Length; i++)
                 {
-                    item_room.gameObject.SetActive(false);
-                }
-                else
-                {
-                    var roomData = data.Rooms[i];
-                    item_room.gameObject.SetActive(true);
-                    item_room.UpdateUI(roomData);
+                    var item_room = m_Rooms[i];
+                    if (i >= data.Rooms.Count)
+                    {
+                        item_room.gameObject.SetActive(false);
+                    }
+                    else
+                    {
+                        var roomData = data.Rooms[i];
+                        item_room.gameObject.SetActive(true);
+                        item_room.UpdateUI(roomData);
+                    }
                 }
             }
         }

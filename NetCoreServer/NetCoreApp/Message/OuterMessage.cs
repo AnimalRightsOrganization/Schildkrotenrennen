@@ -131,6 +131,9 @@ namespace ET
 		[ProtoMember(1)]
 		public List<RoomInfo> Rooms = new List<RoomInfo>();
 
+		[ProtoMember(2)]
+		public int Page { get; set; }
+
 	}
 
 	[Message(OuterOpcode.S2C_LeaveRoomPacket)]

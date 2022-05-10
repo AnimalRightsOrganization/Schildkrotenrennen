@@ -62,6 +62,7 @@ message S2C_RoomInfo
 message S2C_GetRoomList
 {
 	repeated RoomInfo Rooms = 1; //房间列表
+	int32 Page 	= 2; 			 //页码
 }
 message S2C_LeaveRoomPacket
 {

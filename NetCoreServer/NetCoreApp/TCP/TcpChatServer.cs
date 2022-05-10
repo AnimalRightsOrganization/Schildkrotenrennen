@@ -224,6 +224,7 @@ namespace TcpChatServer
                     roomInfo.Pwd = string.Empty;
                     packet.Rooms.Add(roomInfo);
                 }
+                packet.Page = listRange.Count == 0 ? 0 : request.Page; //0代表不存在的页码
             }
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);

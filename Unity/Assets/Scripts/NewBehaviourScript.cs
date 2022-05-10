@@ -5,12 +5,13 @@ using UnityEngine;
 public class NewBehaviourScript : MonoBehaviour
 {
     List<int> DataSource = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-    public int PageIndex = 10000;
+    public int PageIndex = 1;
     public int EachCount = 10;
     public List<int> listRange;
 
     void Awake()
     {
+        /*
         System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
         watch.Start();
         // 100万级，7~9ms
@@ -22,7 +23,7 @@ public class NewBehaviourScript : MonoBehaviour
         }
         watch.Stop();
         var useTime = watch.ElapsedMilliseconds;
-        Debug.Log($"插入耗时：{useTime}ms");
+        Debug.Log($"插入耗时：{useTime}ms");*/
     }
 
     void Start()
