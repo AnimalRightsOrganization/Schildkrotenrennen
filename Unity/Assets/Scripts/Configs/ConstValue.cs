@@ -70,7 +70,7 @@ public class ConstValue
         //注意！！！Windows中，用 '/' 的路径是无法打开的。要用 '\' 。
         string path = $"D:/wamp64/www/{Application.productName}/download";
         path = path.Replace('/', '\\');
-        Debug.Log($"服务器AB地址：{path}");
+        //Debug.Log($"服务器AB地址：{path}");
         return path;
     }
 

@@ -3,5 +3,5 @@ guid: 14d32e1c01c2ac84da87963d2714b2d4
 PrefabImporter:
   externalObjects: {}
   userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+  assetBundleName: prefabs/mapmanager
+  assetBundleVariant: unity3d

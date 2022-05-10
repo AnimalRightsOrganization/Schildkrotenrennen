@@ -71,7 +71,6 @@
     <Compile Include="Assets\Scripts\Utils\ThreadDownload.cs" />
     <Compile Include="Assets\Scripts\Configs\ConstValue.cs" />
     <Compile Include="Assets\Scripts\Adapter\ILGlobal.cs" />
-    <Compile Include="Assets\Scripts\MapManager.cs" />
     <Compile Include="Assets\Scripts\Utils\Utils.cs" />
     <Compile Include="Assets\Scripts\Adapter\ILUIBase.cs" />
   </ItemGroup>
