@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
@@ -212,11 +213,11 @@ namespace TcpChatServer
             if (listAll.Count > 0)
             {
                 // 获取指定区间
-                int startId = Math.Clamp(request.Page * 10, 0, (listAll.Count % 10 + 1));
-                int endId = Math.Clamp(startId + 10, 0, listAll.Count - 1);
-                Debug.Print($"当前房间数={listAll.Count}，获取区间({startId}, {endId})");
-
-                var listRange = listAll.GetRange(startId, endId); //Crash，数组越界
+                //int startId = Math.Clamp(request.Page * 10, 0, (listAll.Count % 10 + 1));
+                //int endId = Math.Clamp(startId + 10, 0, listAll.Count - 1);
+                //Debug.Print($"当前房间数={listAll.Count}，获取区间({startId}, {endId})");
+                //var listRange = listAll.GetRange(startId, endId); //Crash，数组越界
+                var listRange = GetPage(listAll, request.Page);
                 for (int i = 0; i < listRange.Count; i++)
                 {
                     var room = listRange[i];
@@ -235,6 +236,13 @@ namespace TcpChatServer
 
             ServerPlayer p = TCPChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
             p.SendAsync(PacketType.S2C_RoomList, packet);
+        }
+        private const int EachCount = 10;
+        private List<ServerRoom> GetPage(List<ServerRoom> DataSource, int PageIndex)
+        {
+            //Skip()跳过多少条
+            //Take()查询多少条
+            return DataSource.Skip((PageIndex - 1) * EachCount).Take(EachCount).ToList();
         }
         protected void OnCreateRoom(MemoryStream ms)
         {
@@ -262,8 +270,8 @@ namespace TcpChatServer
             var serverRoom = TCPChatServer.m_RoomManager.CreateServerRoom(p, roomData);
             if (serverRoom == null)
             {
-                Debug.Print("创建房间出错");
-                ErrorPacket err_packet = new ErrorPacket { Code = (int)ErrorCode.RoomIsFull, Message = "创建房间出错" };
+                Debug.Print("大厅爆满，无法创建");
+                ErrorPacket err_packet = new ErrorPacket { Code = (int)ErrorCode.LOBBY_IS_FULL, Message = "大厅爆满" };
                 p.SendAsync(PacketType.S2C_ErrorOperate, err_packet);
                 return;
             }
@@ -302,12 +310,14 @@ namespace TcpChatServer
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(request.RoomID);
             if (serverRoom.RoomPwd != request.RoomPwd)
             {
-                Debug.Print($"房间密码错误：[{serverRoom.RoomPwd}]({serverRoom.RoomPwd.Length}) : [{request.RoomPwd}]({request.RoomPwd.Length})");
+                ErrorPacket err_packet = new ErrorPacket { Code = (int)ErrorCode.ROOM_PWD_ERR, Message = "房间密码错误" };
+                p.SendAsync(PacketType.S2C_ErrorOperate, err_packet);
                 return;
             }
             if (serverRoom.m_PlayerDic.Count >= serverRoom.RoomLimit)
             {
-                Debug.Print("房间爆满");
+                ErrorPacket err_packet = new ErrorPacket { Code = (int)ErrorCode.ROOM_IS_FULL, Message = "房间爆满" };
+                p.SendAsync(PacketType.S2C_ErrorOperate, err_packet);
                 return;
             }
             serverRoom.AddPlayer(p);

@@ -63,6 +63,12 @@ namespace HotFix
                         }, "确定");
                         break;
                     }
+                case PacketType.Reconnect:
+                    {
+                        Debug.Log("<color=orange>重连中</color>");
+                        UIManager.Get().Push<UI_Connect>();
+                        break;
+                    }
                 case PacketType.S2C_ErrorOperate:
                     {
                         var packet = ProtobufHelper.Deserialize<ErrorPacket>(stream);

@@ -35,6 +35,8 @@ namespace HotFix
         public Button m_PrevPageBtn;
         public Button m_NextPageBtn;
         public GameObject m_Notice;
+
+        private int Page;
         #endregion
 
         #region 内置方法
@@ -113,11 +115,13 @@ namespace HotFix
         void Enter()
         {
             m_EnterAnime.SetBool("enter", true);
+
+            Page = 1;
         }
 
         void OnJoinBtnClick()
         {
-            TcpChatClient.SendGetRoomList(0);
+            TcpChatClient.SendGetRoomList(1);
 
             //弹出大厅列表
             m_ListPanel.SetActive(true);
@@ -176,9 +180,15 @@ namespace HotFix
 
         void OnPrevBtnClick()
         {
-            //TcpChatClient.SendGetRoomList(0);
+            Page--;
+            Page = Mathf.Max(1, Page);
+            TcpChatClient.SendGetRoomList(Page);
         }
-        void OnNextBtnClick() { }
+        void OnNextBtnClick()
+        {
+            //Page++;
+            TcpChatClient.SendGetRoomList(Page);
+        }
         #endregion
 
         #region 网络事件
@@ -245,6 +255,7 @@ namespace HotFix
             Debug.Log($"获得房间列表: count={data.Rooms.Count}");
 
             m_Notice.SetActive(data.Rooms.Count == 0);
+            //Page = data.Rooms.Count == 0 ? Page : Page + 1;
 
             for (int i = 0; i < m_Rooms.Length; i++)
             {

@@ -68,6 +68,7 @@
     <Compile Include="Assets\Scripts\Adapter\AdaptHelper.cs" />
     <Compile Include="Assets\Scripts\Adapter\IAsyncStateMachineAdapter.cs" />
     <Compile Include="Assets\Scripts\Managers\ResManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\NewBehaviourScript.cs" />
     <Compile Include="Assets\Scripts\Utils\ThreadDownload.cs" />
     <Compile Include="Assets\Scripts\Configs\ConstValue.cs" />
     <Compile Include="Assets\Scripts\Adapter\ILGlobal.cs" />

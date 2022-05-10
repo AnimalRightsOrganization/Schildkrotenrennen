@@ -36,12 +36,22 @@ namespace HotFix
 
             if (data.HasPwd)
             {
-                // 弹出输入框
-                Debug.LogError("TODO: 有密码，弹出输入框");
+                // 弹出密码输入框
+                var ui_dialog = UIManager.Get().Push<UI_Dialog>();
+                ui_dialog.ShowInput("输入密码",
+                () =>
+                {
+                    ui_dialog.Pop();
+                }, "取消",
+                () =>
+                {
+                    TcpChatClient.SendJoinRoom(data.RoomID, ui_dialog.m_Input.text);
+                    ui_dialog.Pop();
+                }, "确定");
                 return;
             }
 
-            TcpChatClient.SendJoinRoom(data.RoomID, "");
+            TcpChatClient.SendJoinRoom(data.RoomID, string.Empty);
         }
     }
 }

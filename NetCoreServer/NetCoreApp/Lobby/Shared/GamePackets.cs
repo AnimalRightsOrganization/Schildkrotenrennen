@@ -3,7 +3,8 @@
     public enum ErrorCode : byte
     {
         LOBBY_IS_FULL,      //大厅爆满
-        RoomIsFull,         //房间爆满
+        ROOM_IS_FULL,       //房间爆满
+        ROOM_PWD_ERR,       //房间密码错误
         UserNameUsed,       //账号已经注册
         LOGIN_FAILED,       //用户名或密码错误
         BE_KICKED,          //被踢了（顶号/GM）
@@ -43,6 +44,7 @@
     {
         Connected = 0   ,   //连接成功（本地消息）
         Disconnect      ,   //连接断开（本地消息）
+        Reconnect       ,   //尝试重连中（本地消息）
         Beep            ,   //心跳
         ///////////////////////////////////////////////
         C2S_RegisterReq ,   //注册请求

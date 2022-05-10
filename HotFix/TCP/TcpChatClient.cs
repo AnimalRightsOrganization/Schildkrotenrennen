@@ -28,7 +28,7 @@ namespace HotFix
         protected override void OnDisconnected()
         {
             //Debug.Log($"Chat TCP client disconnected a session with Id {Id}");
-            Debug.Log("<color=orange>Disonnected</color>");
+            Debug.Log($"<color=orange>Disonnected:{tryTime}</color>");
 
             if (tryTime > 3)
             {
@@ -37,6 +37,12 @@ namespace HotFix
 
                 // 这里是异步线程中，需要通过Update推送到主线程。
                 PacketType msgId = PacketType.Disconnect;
+                byte[] buffer = new byte[1] { (byte)msgId };
+                EventManager.Get().queue.Enqueue(buffer);
+            }
+            else
+            {
+                PacketType msgId = PacketType.Reconnect;
                 byte[] buffer = new byte[1] { (byte)msgId };
                 EventManager.Get().queue.Enqueue(buffer);
             }

@@ -43,8 +43,8 @@ public class ResManager
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(filePath);
 #else
         string filePath = GetFilePath($"{fileName}.unity3d");
-        Debug.Log($"LoadPrefab: filePath={filePath}");
-        Debug.Log($"ab exist: {File.Exists(filePath)}");
+        //Debug.Log($"LoadPrefab: filePath={filePath}");
+        //Debug.Log($"ab exist: {File.Exists(filePath)}");
 
         // 先读取依赖
         List<AssetBundle> dependBundles = new List<AssetBundle>();

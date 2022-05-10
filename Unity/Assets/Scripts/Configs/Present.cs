@@ -9,7 +9,7 @@
     {
         server = "192.168.1.101"; //本地调试用
         //server = "moegijinka.cn";
-        web = "localhost";
-        ab_url = "localhost/download";
+        web = "http://localhost";
+        ab_url = $"http://localhost/{UnityEngine.Application.productName}/download";
     }
 }
