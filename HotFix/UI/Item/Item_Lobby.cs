@@ -26,7 +26,7 @@ namespace HotFix
         public void UpdateUI(RoomInfo roomInfo)
         {
             data = roomInfo;
-            m_Name.text = data.RoomName;
+            m_Name.text = $"{data.RoomName} {data.Players.Count}/{data.LimitNum}";
             m_LockIcon.SetActive(roomInfo.HasPwd);
         }
 
@@ -45,6 +45,12 @@ namespace HotFix
                 }, "取消",
                 () =>
                 {
+                    if (string.IsNullOrEmpty(ui_dialog.m_Input.text))
+                    {
+                        var ui_toast = UIManager.Get().Push<UI_Toast>();
+                        ui_toast.Show("请输入密码");
+                        return;
+                    }
                     TcpChatClient.SendJoinRoom(data.RoomID, ui_dialog.m_Input.text);
                     ui_dialog.Pop();
                 }, "确定");

@@ -87,6 +87,7 @@ namespace NetCoreServer
             }
             return false;
         }
+        // 组织用户数据
         public ServerPlayer GetPlayer(int seatId)
         {
             BasePlayer basePlayer = null;
@@ -96,6 +97,40 @@ namespace NetCoreServer
             }
             return null;
         }
+        // 组织房间数据
+        public RoomInfo GetRoomInfo()
+        {
+            var temp = new List<PlayerInfo>();
+            /*
+            for (int i = 0; i < CurCount; i++)
+            {
+                var player = m_PlayerDic[i];
+                var playerInfo = new PlayerInfo { SeatID = player.SeatId, UserName = player.UserName, NickName = player.NickName };
+                temp.Add(playerInfo);
+            }*/
+            foreach (var item in m_PlayerDic)
+            {
+                var _player = item.Value;
+                var _playerInfo = new PlayerInfo
+                {
+                    SeatID = item.Key,
+                    UserName = _player.UserName,
+                    NickName = _player.NickName,
+                };
+                temp.Add(_playerInfo);
+            }
+            var roomInfo = new RoomInfo //公共
+            {
+                RoomID = RoomID,
+                RoomName = RoomName,
+                HasPwd = !string.IsNullOrEmpty(RoomPwd),
+                Pwd = RoomPwd,
+                LimitNum = RoomLimit,
+                Players = temp,
+            };
+            return roomInfo;
+        }
+
         // 检查空座位
         public bool IsAvailableSeat(int seatId)
         {

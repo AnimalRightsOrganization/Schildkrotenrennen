@@ -52,8 +52,8 @@ namespace NetCoreServer
                 Debug.Print("严重的错误，无法移除房间");
             }
         }
-        // 关闭房间（如果该用户是房主）
-        public bool RemoveIfHost(ServerPlayer p)
+        // 移除用户（如果移除的是房主，则关闭房间）
+        public bool RemovePlayer(ServerPlayer p)
         {
             ServerRoom serverRoom = GetServerRoom(p.RoomId);
             if (serverRoom == null)
@@ -66,7 +66,14 @@ namespace NetCoreServer
                 RemoveServerRoom(p.RoomId);
                 return true;
             }
-            return false;
+            else
+            {
+                bool result = serverRoom.RemovePlayer(p);
+                var roomInfo = serverRoom.GetRoomInfo(); //客位关闭游戏，移除用户
+                S2C_RoomInfo packet = new S2C_RoomInfo { Room = roomInfo };
+                serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet);
+                return result;
+            }
         }
         // 关闭房间（所有）
         public void RemoveAll()

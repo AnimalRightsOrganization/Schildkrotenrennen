@@ -90,19 +90,19 @@ namespace HotFix
             bool isHost = roomData.Players[0].UserName == TcpChatClient.m_PlayerManager.LocalPlayer.UserName;
             m_StartBtn.gameObject.SetActive(isHost);
 
-            // 控制座位总数显示
             for (int i = 0; i < SeatList.Count; i++)
             {
                 int index = i;
 
-                var scriptItem = SeatList[index];
+                var script_seat = SeatList[index];
                 if (index >= roomData.RoomLimit)
                 {
-                    scriptItem.gameObject.SetActive(false);
+                    // 控制座位总数显示
+                    script_seat.gameObject.SetActive(false);
                 }
                 else
                 {
-                    scriptItem.gameObject.SetActive(true);
+                    script_seat.gameObject.SetActive(true);
 
                     BasePlayerData playerData = null;
                     foreach (var data in roomData.Players)
@@ -115,12 +115,11 @@ namespace HotFix
                     }
                     if (playerData != null)
                     {
-                        //Debug.Log($"InitUI: {playerData.ToString()}");
-                        scriptItem.UpdateUI(playerData, index);
+                        script_seat.UpdateUI(playerData, index);
                     }
                     else
                     {
-                        scriptItem.UpdateUI(null, index);
+                        script_seat.UpdateUI(null, index);
                     }
                 }
             }

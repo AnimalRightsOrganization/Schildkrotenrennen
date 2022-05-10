@@ -37,7 +37,11 @@ namespace TcpChatServer
                 Debug.Print("找不到用户了");
                 return;
             }
-            TCPChatServer.m_RoomManager.RemoveIfHost(player); //如果是房主
+            if (player.RoomId != 0)
+            {
+                TCPChatServer.m_RoomManager.RemovePlayer(player); //如果是房主
+            }
+
             TCPChatServer.m_PlayerManager.RemovePlayer(Id);
 
             WinFormsApp1.MainForm.Instance.RefreshPlayerNum();
@@ -182,7 +186,7 @@ namespace TcpChatServer
             }
             else
             {
-                var err_packet = new ErrorPacket { Code = (int)ErrorCode.UserNameUsed, Message = "用户名已被注册" };
+                var err_packet = new ErrorPacket { Code = (int)ErrorCode.USERNAME_USED, Message = "用户名已被注册" };
                 serverPlayer.SendAsync(PacketType.S2C_ErrorOperate, err_packet);
             }
         }
@@ -208,28 +212,16 @@ namespace TcpChatServer
 
             // 空消息，不用解析
             S2C_GetRoomList packet = new S2C_GetRoomList();
-            List<PlayerInfo> players = new List<PlayerInfo>();
             var listAll = TCPChatServer.m_RoomManager.Sort();
             if (listAll.Count > 0)
             {
                 // 获取指定区间
-                //int startId = Math.Clamp(request.Page * 10, 0, (listAll.Count % 10 + 1));
-                //int endId = Math.Clamp(startId + 10, 0, listAll.Count - 1);
-                //Debug.Print($"当前房间数={listAll.Count}，获取区间({startId}, {endId})");
-                //var listRange = listAll.GetRange(startId, endId); //Crash，数组越界
                 var listRange = GetPage(listAll, request.Page);
                 for (int i = 0; i < listRange.Count; i++)
                 {
-                    var room = listRange[i];
-                    var roomInfo = new RoomInfo //构建房间列表
-                    {
-                        RoomID = room.RoomID,
-                        RoomName = room.RoomName,
-                        HasPwd = !string.IsNullOrEmpty(room.RoomPwd),
-                        Pwd = string.Empty, //此时不用传，根据HasPwd做显示
-                        LimitNum = room.RoomLimit,
-                        Players = players,
-                    };
+                    var serverRoom = listRange[i];
+                    var roomInfo = serverRoom.GetRoomInfo(); //构建房间列表
+                    roomInfo.Pwd = string.Empty;
                     packet.Rooms.Add(roomInfo);
                 }
             }
@@ -276,19 +268,7 @@ namespace TcpChatServer
                 return;
             }
 
-            var roomInfo = new RoomInfo //创建房间
-            {
-                RoomID = serverRoom.RoomID,
-                RoomName = request.RoomName,
-                HasPwd = !string.IsNullOrEmpty(request.RoomPwd),
-                Pwd = request.RoomPwd,
-                LimitNum = request.LimitNum,
-                Players = new List<PlayerInfo>
-                {
-                    new PlayerInfo { UserName = p.UserName, NickName = p.NickName, SeatID = 0 },
-                },
-            };
-
+            var roomInfo = serverRoom.GetRoomInfo(); //创建房间
             S2C_RoomInfo packet = new S2C_RoomInfo { Room = roomInfo };
             Debug.Print($"[S2C_RoomInfo] {roomInfo.ToString()}");
             p.SendAsync(PacketType.S2C_RoomInfo, packet);
@@ -324,22 +304,7 @@ namespace TcpChatServer
             Debug.Print($"允许加入，服务器修改{p.UserName}状态，#{p.RoomId},#{p.SeatId},状态:{p.Status}");
 
             Debug.Print(serverRoom.ToString());
-            var players = new List<PlayerInfo>();
-            for (int i = 0; i < serverRoom.CurCount; i++)
-            {
-                var player = serverRoom.m_PlayerDic[i];
-                var playerInfo = new PlayerInfo { SeatID = player.SeatId, UserName = player.UserName, NickName = player.NickName };
-                players.Add(playerInfo);
-            }
-            var roomInfo = new RoomInfo //加入房间
-            {
-                RoomID = serverRoom.RoomID,
-                RoomName = serverRoom.RoomName,
-                HasPwd = !string.IsNullOrEmpty(serverRoom.RoomPwd),
-                Pwd = serverRoom.RoomPwd,
-                LimitNum = serverRoom.RoomLimit,
-                Players = players,
-            };
+            var roomInfo = serverRoom.GetRoomInfo(); //加入房间
             S2C_RoomInfo packet = new S2C_RoomInfo { Room = roomInfo };
             serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet);
         }
@@ -374,14 +339,6 @@ namespace TcpChatServer
             else
             {
                 serverRoom.RemovePlayer(p);
-                var players = new List<PlayerInfo>();
-                foreach (var item in serverRoom.m_PlayerDic)
-                {
-                    ServerPlayer player = serverRoom.GetPlayer(item.Key);
-                    //BasePlayer player = item.Value;
-                    var playerInfo = new PlayerInfo { SeatID = item.Key, UserName = player.UserName, NickName = player.NickName };
-                    players.Add(playerInfo);
-                }
 
                 var packet1 = new S2C_LeaveRoomPacket
                 { 
@@ -393,15 +350,7 @@ namespace TcpChatServer
                 Debug.Print($"[S2C] 单发给{p.UserName}，离开房间");
 
                 // 房间内其他人员广播，更新房间信息
-                var roomInfo = new RoomInfo //离开房间
-                {
-                    RoomID = roomData.RoomID,
-                    RoomName = roomData.RoomName,
-                    HasPwd = !string.IsNullOrEmpty(serverRoom.RoomPwd),
-                    Pwd = serverRoom.RoomPwd,
-                    LimitNum = roomData.RoomLimit,
-                    Players = players,
-                };
+                var roomInfo = serverRoom.GetRoomInfo(); //离开房间
                 var packet2 = new S2C_RoomInfo { Room = roomInfo };
                 serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet2);
                 Debug.Print("[S2C] 广播给房间内剩余人员，更新房间信息");
@@ -469,28 +418,7 @@ namespace TcpChatServer
                     }
             }
 
-            // 重新组装房间内信息
-            var players = new List<PlayerInfo>();
-            foreach (var item in serverRoom.m_PlayerDic)
-            {
-                var _player = item.Value;
-                var _playerInfo = new PlayerInfo
-                {
-                    SeatID = item.Key,
-                    UserName = _player.UserName,
-                    NickName = _player.NickName,
-                };
-                players.Add(_playerInfo);
-            }
-            var roomInfo = new RoomInfo //房主操作客位
-            {
-                RoomID = roomData.RoomID,
-                RoomName = roomData.RoomName,
-                HasPwd = !string.IsNullOrEmpty(serverRoom.RoomPwd),
-                Pwd = serverRoom.RoomPwd,
-                LimitNum = roomData.RoomLimit,
-                Players = players,
-            };
+            var roomInfo = serverRoom.GetRoomInfo(); //房主操作客位
             var packet1 = new S2C_RoomInfo { Room = roomInfo };
             Debug.Print($"[S2C] {roomInfo.ToString()}");
             // 房间内广播，更新房间信息
