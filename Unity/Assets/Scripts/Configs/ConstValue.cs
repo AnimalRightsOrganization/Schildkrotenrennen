@@ -68,7 +68,7 @@ public class ConstValue
     public static string GetServerDeploy()
     {
         //注意！！！Windows中，用 '/' 的路径是无法打开的。要用 '\' 。
-        string path = $"D:/wamp64/www/{Application.productName}/download";
+        string path = $"D:/wamp64/www/app/{Application.productName}/res";
         path = path.Replace('/', '\\');
         //Debug.Log($"服务器AB地址：{path}");
         return path;
@@ -84,6 +84,5 @@ public class ConstValue
     public const string PLATFORM_NAME = "StandaloneWindows64";
 #endif
 
-    public const string PRESENT_URL = "http://192.168.1.101/turtle/download/present.json"; //游戏启动首先指向的配置
-    //public const string PRESENT_URL = "http://moegijinka.cn/turtle/download/present.json";
+    public const string PRESENT_URL = "http://app.moegijinka.cn/turtlerace/present.json"; //游戏启动首先指向的配置
 }

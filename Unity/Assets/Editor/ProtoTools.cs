@@ -250,16 +250,8 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/打包AB/生成Present", false, 43)]
     static void CreatePresent()
     {
-        Present config = new Present
-        {
-            server = "http://localhost",
-            web = "",
-            ab_url = "http://localhost/download/",
-            version = "1.0.0",
-            notice = "",
-        };
+        Present config = new Present();
         string json = JsonMapper.ToJson(config);
-        //string filePath = Path.Combine(System.Environment.CurrentDirectory, "present.json");
         string filePath = Path.Combine(ConstValue.GetServerDeploy(), "present.json");
         File.WriteAllText(filePath, json);
         Debug.Log($"output: {filePath}");

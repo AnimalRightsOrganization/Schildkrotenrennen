@@ -22,7 +22,7 @@ namespace NetCoreServer.Utils
                 var bd = new MySqlConnectionStringBuilder
                 {
                     Server = "localhost",
-                    Database = "turtle",
+                    Database = "turtlerace",
                     UserID = "seol",
                     Password = "123456",
                     SslMode = MySqlSslMode.None,
@@ -50,7 +50,7 @@ namespace NetCoreServer.Utils
         public static void Insert()
         {
             //一次插入多条
-            //string SQL = $"INSERT INTO db_user (userid, username, password) VALUES ('{1}', '{usr}', '{pwd}'), ('{2}', 'apple', 'applepwd');";
+            //string SQL = $"INSERT INTO tb_user (userid, username, password) VALUES ('{1}', '{usr}', '{pwd}'), ('{2}', 'apple', 'applepwd');";
         }
         public static void Delete() { }
         public static void Update() { }
@@ -122,7 +122,7 @@ namespace NetCoreServer.Utils
         public static async Task<int> QueryUsersCount()
         {
             // 查询全服玩家数
-            string SQL = "SELECT COUNT(*) FROM db_user";
+            string SQL = "SELECT COUNT(*) FROM tb_user";
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
                 await conn.OpenAsync();
@@ -135,7 +135,7 @@ namespace NetCoreServer.Utils
         }
         public static async Task<bool> CheckLogin(string usr, string pwd)
         {
-            string SQL = $"SELECT * FROM db_user WHERE username='{usr}';";
+            string SQL = $"SELECT * FROM tb_user WHERE username='{usr}';";
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
                 await conn.OpenAsync();
@@ -171,7 +171,7 @@ namespace NetCoreServer.Utils
         {
             UserInfo userInfo = new UserInfo();
 
-            string SQL = $"SELECT * FROM db_user WHERE username='{usr}' AND password='{pwd}';";
+            string SQL = $"SELECT * FROM tb_user WHERE username='{usr}' AND password='{pwd}';";
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
                 await conn.OpenAsync();
@@ -199,7 +199,7 @@ namespace NetCoreServer.Utils
 
         public static async Task<int> CheckUserExist(string usr, string pwd)
         {
-            string SQL = $"SELECT COUNT(*) FROM db_user WHERE username='{usr}';";
+            string SQL = $"SELECT COUNT(*) FROM tb_user WHERE username='{usr}';";
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
                 await conn.OpenAsync();
@@ -222,7 +222,7 @@ namespace NetCoreServer.Utils
                 using (var command = conn.CreateCommand())
                 {
                     // 先通过查询确定主键不重复，再执行插入
-                    string SQL1 = $"SELECT COUNT(*) FROM db_user WHERE username='{usr}';";
+                    string SQL1 = $"SELECT COUNT(*) FROM tb_user WHERE username='{usr}';";
                     command.CommandText = SQL1;
                     int count = Convert.ToInt32(command.ExecuteScalar());
                     Debug.Print($"检查用户名是否占用了，count={count}");
@@ -233,7 +233,7 @@ namespace NetCoreServer.Utils
                     }
 
                     // createtime默认:CURRENT_TIMESTAMP，创建数据时自动生成当前时间
-                    string SQL2 = $"INSERT INTO db_user (userid, username, nickname, password) VALUES ('{0}', '{usr}', '{usr}', '{pwd}');";
+                    string SQL2 = $"INSERT INTO tb_user (userid, username, nickname, password) VALUES ('{0}', '{usr}', '{usr}', '{pwd}');";
                     command.CommandText = SQL2;
                     int rowCount = await command.ExecuteNonQueryAsync();
                     Debug.Print($"Number of rows inserted={rowCount}"); //插入了几行

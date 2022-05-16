@@ -7,9 +7,8 @@
     public string notice; //公告
     public Present()
     {
-        server = "192.168.1.101"; //本地调试用
-        //server = "moegijinka.cn";
-        web = "http://localhost";
-        ab_url = $"http://localhost/{UnityEngine.Application.productName}/download";
+        server = "moegijinka.cn"; //本地host配了域名
+        web = "moegijinka.cn";
+        ab_url = $"http://app.moegijinka.cn/{UnityEngine.Application.productName}/res";
     }
 }
