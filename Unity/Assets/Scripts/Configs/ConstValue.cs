@@ -81,12 +81,16 @@ public class ConstValue
     public static string GetDeployRes { get { return $"{GetDeployRoot}\\res"; } }
     #endregion
 
+    public static string BuildDir = System.Environment.CurrentDirectory + "\\Build\\";
 #if UNITY_ANDROID
     public const string PLATFORM_NAME = "Android";
+    public static string LocationPath = BuildDir + $"{Application.productName}.apk";
 #elif UNITY_IOS
     public const string PLATFORM_NAME = "iOS";
+    public static string LocationPath = BuildDir;
 #else
     public const string PLATFORM_NAME = "StandaloneWindows64";
+    public static string LocationPath = BuildDir + $"{Application.productName}.exe";
 #endif
 
     //public const string PRESENT_URL = "http://app.moegijinka.cn/turtlerace/present.json"; //（不要文件配置了，使用Http请求）

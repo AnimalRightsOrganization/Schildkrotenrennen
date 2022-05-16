@@ -49,7 +49,7 @@ public partial class BundleTools : Editor
         Debug.LogWarning("设置成功");
     }
 
-    [MenuItem("Tools/打包AB/Clean Labels", true, 11)]
+    [MenuItem("Tools/打包AB/Clean Labels", false, 11)]
     public static void ClearAssetBundlesName()
     {
         // 获取所有的AssetBundle名称
@@ -207,8 +207,7 @@ public partial class BundleTools : Editor
         string[] bundles = manifest.GetAllAssetBundles();
 
         string res_version_txt = $"{Application.dataPath}/res_version.txt";
-        int last_res_version = int.Parse(File.ReadAllText(res_version_txt));
-        int res_version = last_res_version + 1;
+        int res_version = int.Parse(File.ReadAllText(res_version_txt));
         List<ABInfo> ABInfoList = new List<ABInfo>();
         for (int i = 0; i < bundles.Length; i++)
         {

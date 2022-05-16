@@ -9,12 +9,12 @@ public class ZipEditor : Editor
     static string zipFilePath = @"C:\Users\Administrator\Desktop\dump.zip";
     static string extractDir = @"C:\Users\Administrator\Desktop\dump2\"; //与dump一致。
 
-    [MenuItem("Tools/ZIP/Pack", false, 0)]
+    [MenuItem("Tools/ZIP/Pack", true, 0)]
     public static void Pack()
     {
         PackFiles(zipFilePath, sourceDir);
     }
-    [MenuItem("Tools/ZIP/UnPack", false, 1)]
+    [MenuItem("Tools/ZIP/UnPack", true, 1)]
     public static void UnPack()
     {
         UnpackFiles(zipFilePath, extractDir);
