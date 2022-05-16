@@ -59,6 +59,7 @@
     <Compile Include="Assets\Scripts\Utils\UnitySingletonClass.cs" />
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
     <Compile Include="Assets\Scripts\Configs\ABInfo.cs" />
+    <Compile Include="Assets\Scripts\Utils\HttpHelper.cs" />
     <Compile Include="Assets\Scripts\Adapter\ILMonoBehaviour.cs" />
     <Compile Include="Assets\Scripts\Adapter\ILHelper.cs" />
     <Compile Include="Assets\Scripts\Utils\FixShader.cs" />

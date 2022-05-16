@@ -11,7 +11,6 @@ public class UI_CheckUpdate : MonoBehaviour
 {
     private static string cloudPath;
     private static string localPath;
-    private int remote_res_version;
     private List<ABInfo> downloadList = new List<ABInfo>();
     [SerializeField] private Slider m_progressSlider;
     [SerializeField] private Text m_progressText;
@@ -35,7 +34,7 @@ public class UI_CheckUpdate : MonoBehaviour
 
     public IEnumerator StartCheck(System.Action action)
     {
-        // 1. 读取网上(assets.bytes)
+        // 1. 下载远程的(assets.bytes)
         ABInfo[] cloudInfos = new ABInfo[] { };
         List<string> cloudList = new List<string>();
         WWW www = new WWW(cloudPath);
@@ -49,7 +48,6 @@ public class UI_CheckUpdate : MonoBehaviour
         if (www.isDone)
         {
             var r_assets_bytes = JsonMapper.ToObject<AssetsBytes>(www.text);
-            remote_res_version = r_assets_bytes.res_version;
             cloudInfos = r_assets_bytes.ABInfoList;
             www.Dispose();
             for (int i = 0; i < cloudInfos.Length; i++)
@@ -57,7 +55,7 @@ public class UI_CheckUpdate : MonoBehaviour
                 cloudList.Add(cloudInfos[i].md5);
             }
         }
-        Debug.Log("云端：" + cloudList.Count);
+        Debug.Log("远程：" + cloudList.Count);
 
 
         // 2. 读取本地(assets.bytes) //不需要改成逐一分析本地文件MD5
@@ -110,7 +108,7 @@ public class UI_CheckUpdate : MonoBehaviour
         Debug.Log("<color=green>更新完成</color>");
 
         // 6. 显示下一级界面
-        action();
+        action?.Invoke();
         Destroy(gameObject);
     }
 

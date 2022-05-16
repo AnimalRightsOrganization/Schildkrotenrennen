@@ -26,8 +26,8 @@ public class CustomHierarchy : Editor
             Color fontColor = Color.white;
             Color backgroundColor = new Color(0.3f, 0.3f, 0.3f); //默认背景色
 
-            var prefabType = PrefabUtility.GetPrefabType(gameObject);
-            if (prefabType == PrefabType.None)
+            var prefabType = PrefabUtility.GetPrefabAssetType(gameObject);
+            if (prefabType == PrefabAssetType.NotAPrefab)
             {
                 if (Selection.instanceIDs.Contains(instanceID))
                 {

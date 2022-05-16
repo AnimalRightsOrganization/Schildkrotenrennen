@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     private static bool Initialized = false;
-    public static Present present;
+    public static Present present; //通过请求返回
 
     void Awake()
     {
@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
             OnInited();
 #else
             // 加载配置（需要启动资源服务器）
-            StartCoroutine(GetConfig());
+            GetConfig();
 #endif
         }
         else
@@ -66,33 +66,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // 读取游戏配置（ab包下载地址，游戏版本号，公告等）
-    IEnumerator GetConfig()
+    // 请求游戏配置
+    async void GetConfig()
     {
-        UnityWebRequest request = new UnityWebRequest
-        {
-            url = ConstValue.PRESENT_URL,
-            method = "GET",
-        };
-        request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
-        if (request.uri.Scheme.Contains("https"))
-        {
-            request.certificateHandler = new AcceptAllCertificatesSignedWithASpecificPublicKey();
-            Debug.Log("has https");
-        }
-        yield return request.SendWebRequest();
-        if (request.responseCode != 200)
-        {
-            Debug.LogError($"error code = {request.responseCode}");
-            yield break;
-        }
-        string text = request.downloadHandler.text;
+        string text = await HttpHelper.TryGetAsync(ConstValue.PRESENT_GET);
         Debug.Log($"success: {text}");
-        present = JsonMapper.ToObject<Present>(text);
-        request.Dispose();
+        var obj = JsonMapper.ToObject<ServerResponse>(text);
+        present = JsonMapper.ToObject<Present>(obj.data);
 
-        yield return CheckUpdateAsync(OnInited);
+        StartCoroutine(CheckUpdateAsync(OnInited));
     }
 
     IEnumerator CheckUpdateAsync(System.Action action)

@@ -232,27 +232,6 @@ public partial class BundleTools : Editor
         proc.StartInfo.FileName = "NetCoreApp.sln";
         proc.Start();
     }
-    [MenuItem("Tools/打包AB/服务器AB资源存放目录", false, 41)]
-    static void OpenServerAB()
-    {
-        string path = ConstValue.GetDeployRoot;
-        EditorUtility.RevealInFinder(path);
-    }
-    [MenuItem("Tools/打包AB/运行时AB资源下载目录", false, 42)]
-    static void OpenAppAB()
-    {
-        string path = Path.Combine(Application.persistentDataPath, "Unity");
-        EditorUtility.RevealInFinder(path);
-    }
-    [MenuItem("Tools/打包AB/生成Present", true, 43)]
-    public static void CreatePresent()
-    {
-        Present config = new Present();
-        string json = JsonMapper.ToJson(config);
-        string filePath = Path.Combine(ConstValue.GetDeployRoot, "present.json");
-        File.WriteAllText(filePath, json);
-        Debug.Log($"output: {filePath}");
-    }
 
     #endregion
 }

@@ -1,8 +1,6 @@
-using System;
+ï»¿using System;
 using System.IO;
-using System.Net.Http;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using LitJson;
@@ -17,72 +15,37 @@ public class DeployEditor : EditorWindow
     static string l_app_version = "0.0.0";
     static string l_res_version = "0";
 
-    const string readme = "ËµÃ÷£º" +
-        "\n´ò°üÖ´ĞĞÁË×ÊÔ´´ò°ü+²¿Êğµ½Ä£ÄâµÄ±¾µØºÍ·şÎñÆ÷£¬ĞèÒª½øÒ»²½¸üĞÂ·şÎñÆ÷ÅäÖÃÎÄ¼ş¡£" +
-        "\n²¿ÊğÊ±Í¨¹ıPOSTÍ¨ÖªPHPÖ´ĞĞ¸üĞÂSQL¡¢ÔÚ·şÎñÆ÷Ä¿Â¼ÏÂÉú³ÉĞÂµÄpresent.json¡£Í¬Ê±Éú³ÉÒ»Ìõ²¿Êğ¼ÇÂ¼¡£" +
-        "\n¼´jsonÎÄ¼şºÍSQLÍ¬Ê±ÓĞ¼ÇÂ¼°æ±¾×÷ÓÃ¡£";
+    const string readme = "è¯´æ˜ï¼š" +
+        "\n[çº¿ä¸Šç‰ˆæœ¬] è¯·æ±‚æœåŠ¡å™¨æŸ¥è¯¢çº¿ä¸Šå½“å‰è¿è¥çš„åº”ç”¨å’Œèµ„æºç‰ˆæœ¬ã€‚" +
+        "\n[å¼€å‘ç‰ˆæœ¬] æŒ‡çš„æ˜¯æ‰§è¡Œå®Œæ‰“åŒ…ï¼Œå‡†å¤‡ä¸Šä¼ åˆ°æœåŠ¡å™¨çš„å®‰è£…åŒ…å’Œèµ„æºåŒ…ã€‚" +
+        "\n[å‹ç¼©] æŠŠå®‰è£…åŒ…å’Œèµ„æºåŒ…æ‰“åŒ…ç§° *.zip æ–‡ä»¶ä¸Šä¼ ã€‚" +
+        "\n[æ‰“åŒ…] æ‰§è¡Œäº†èµ„æºæ‰“åŒ…+éƒ¨ç½²èµ„æºåˆ°æ¨¡æ‹Ÿçš„æœ¬åœ°å’ŒæœåŠ¡å™¨ï¼Œè¿˜éœ€è¦å®é™…ä¸Šä¼ åŒ…ä½“ï¼Œå¹¶æ›´æ–°SQLè®°å½•ã€‚" +
+        "\n[éƒ¨ç½²] é€šè¿‡POSTé€šçŸ¥PHPæ‰§è¡Œæ›´æ–°SQLï¼ŒåŒæ—¶ç”Ÿæˆä¸€æ¡éƒ¨ç½²è®°å½•ã€‚";
 
     void OnGUI()
     {
         GUILayout.Space(10);
-        GUILayout.Box($"Ä¿±êÆ½Ì¨£º{ConstValue.PLATFORM_NAME}");
-
-
-        GUILayout.Space(10); //ÉÏ10
-        GUILayout.BeginHorizontal();
-        GUILayout.Space(10); //×ó10
-        if (GUILayout.Button("ÏßÉÏ°æ±¾", GUILayout.Width(100)))
-        {
-            AppInfo();
-        }
-        GUILayout.Space(10);
-        GUILayout.Label("Ö÷°ü:", GUILayout.Width(50));
-        GUILayout.TextField(r_app_version);
-        GUILayout.Space(10);
-        GUILayout.Label("×ÊÔ´:", GUILayout.Width(50));
-        GUILayout.TextField(r_res_version);
-        GUILayout.Space(10);
-        GUILayout.EndHorizontal();
+        GUILayout.Box($"ç›®æ ‡å¹³å°ï¼š{ConstValue.PLATFORM_NAME}");
         GUILayout.Space(10);
 
 
         GUILayout.BeginHorizontal();
         GUILayout.Space(10);
-        //GUILayout.Box("¿ª·¢°æ±¾", GUILayout.Width(100));
-        if (GUILayout.Button("¿ª·¢°æ±¾", GUILayout.Width(100)))
-        {
-            l_app_version = Application.version;
-            string ver_path = $"{Application.dataPath}/res_version.txt";
-            l_res_version = File.ReadAllText(ver_path);
-        }
-        GUILayout.Space(10);
-        GUILayout.Label("Ö÷°ü:", GUILayout.Width(50));
-        GUILayout.TextField(l_app_version);
-        GUILayout.Space(10);
-        GUILayout.Label("×ÊÔ´:", GUILayout.Width(50));
-        GUILayout.TextField(l_res_version);
-        GUILayout.Space(10);
-        GUILayout.EndHorizontal();
-        GUILayout.Space(10);
-
-
-        GUILayout.BeginHorizontal();
-        GUILayout.Space(10);
-        if (GUILayout.Button("´ò°ü", GUILayout.Width(100), GUILayout.Height(40)))
+        if (GUILayout.Button("æ‰“åŒ…", GUILayout.Width(100), GUILayout.Height(40)))
         {
             BuildTarget type = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), ConstValue.PLATFORM_NAME);
-            //Debug.Log($"type={type}");
             BundleTools.Build_Target(type);
+            GetDevVersion();
         }
         GUILayout.BeginVertical(GUILayout.Height(50));
         {
-            GUILayout.BeginHorizontal("Ô¶³Ì");
+            GUILayout.BeginHorizontal();
             {
                 string path = ConstValue.GetDeployRoot;
                 GUILayout.Space(10);
-                GUILayout.Label("Ô¶³Ì:", GUILayout.Width(50));
+                GUILayout.Label("è¿œç¨‹:", GUILayout.Width(50));
                 GUILayout.TextField(path, GUILayout.Width(380));
-                if (GUILayout.Button("´ò¿ª", GUILayout.Width(60)))
+                if (GUILayout.Button("æ‰“å¼€", GUILayout.Width(60)))
                 {
                     //Debug.Log(path.Length);
                     //EditorUtility.RevealInFinder(path + "\\res");
@@ -90,13 +53,13 @@ public class DeployEditor : EditorWindow
                 }
             }
             GUILayout.EndHorizontal();
-            GUILayout.BeginHorizontal("±¾µØ");
+            GUILayout.BeginHorizontal();
             {
                 string path = Application.persistentDataPath.Replace("/", "\\");
                 GUILayout.Space(10);
-                GUILayout.Label("±¾µØ:", GUILayout.Width(50));
+                GUILayout.Label("æœ¬åœ°:", GUILayout.Width(50));
                 GUILayout.TextField(path, GUILayout.Width(380));
-                if (GUILayout.Button("´ò¿ª", GUILayout.Width(60)))
+                if (GUILayout.Button("æ‰“å¼€", GUILayout.Width(60)))
                 {
                     //Debug.Log(path.Length);
                     //EditorUtility.RevealInFinder(path + "\\Unity");
@@ -106,24 +69,68 @@ public class DeployEditor : EditorWindow
             GUILayout.EndHorizontal();
         }
         GUILayout.EndVertical();
-        GUILayout.Space(10);
         GUILayout.EndHorizontal();
 
 
         GUILayout.BeginHorizontal();
-        GUILayout.Space(10);
-        if (GUILayout.Button("Éú³É°æ±¾ÎÄ¼ş", GUILayout.Width(100)))
+        GUILayout.Space(10); //å·¦10
+        if (GUILayout.Button("çº¿ä¸Šç‰ˆæœ¬", GUILayout.Width(100)))
         {
-            BundleTools.CreatePresent();
+            AppInfo();
+        }
+        GUILayout.Space(10);
+        GUILayout.Label("ä¸»åŒ…:", GUILayout.Width(50));
+        GUILayout.TextField(r_app_version);
+        GUILayout.Space(10);
+        GUILayout.Label("èµ„æº:", GUILayout.Width(50));
+        GUILayout.TextField(r_res_version);
+        GUILayout.Space(10);
+        GUILayout.EndHorizontal();
+        GUILayout.Space(10);
+
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Space(10);
+        if (GUILayout.Button("å¼€å‘ç‰ˆæœ¬", GUILayout.Width(100)))
+        {
+            GetDevVersion();
+        }
+        GUILayout.Space(10);
+        GUILayout.Label("ä¸»åŒ…:", GUILayout.Width(50));
+        GUILayout.TextField(l_app_version);
+        GUILayout.Space(10);
+        GUILayout.Label("èµ„æº:", GUILayout.Width(50));
+        GUILayout.TextField(l_res_version);
+        GUILayout.Space(10);
+        GUILayout.EndHorizontal();
+        GUILayout.Space(10);
+
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Space(10);
+        if (GUILayout.Button("å‹ç¼©", GUILayout.Width(100)))
+        {
+
+        }
+        GUILayout.Space(10);
+        GUILayout.EndHorizontal();
+        GUILayout.Space(10);
+
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Space(10);
+        if (GUILayout.Button("éƒ¨ç½²", GUILayout.Width(100)))
+        {
+            DeployRes();
         }
         GUILayout.Space(10);
         GUILayout.EndHorizontal();
 
 
-        GUILayout.Space(35);
+        GUILayout.Space(10);
         GUILayout.BeginHorizontal();
         GUILayout.Space(10);
-        GUILayout.TextArea(readme, GUILayout.Width(620), GUILayout.Height(100));
+        GUILayout.TextArea(readme, GUILayout.Width(620), GUILayout.Height(90));
         GUILayout.Space(10);
         GUILayout.EndHorizontal();
     }
@@ -132,29 +139,48 @@ public class DeployEditor : EditorWindow
     static void AddWindow()
     {
         Rect rect = new Rect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-        DeployEditor window = (DeployEditor)GetWindowWithRect(typeof(DeployEditor), rect, true, "²¿Êğ");
+        DeployEditor window = (DeployEditor)GetWindowWithRect(typeof(DeployEditor), rect, true, "éƒ¨ç½²");
         window.Show();
     }
 
-    // ²éÑ¯Êı¾İ¿â£¬µ±Ç°ÓÎÏ·°æ±¾
+    static void PackZIP()
+    {
+    
+    }
+
+    // æŸ¥è¯¢æ•°æ®åº“ï¼Œå½“å‰æ¸¸æˆç‰ˆæœ¬
     static async Task<string> GetAppInfo()
     {
-        string api = $"http://restapi.moegijinka.cn/api/v1/GameCenter/game_data?name={Application.productName}";
-        HttpClient client = new HttpClient();
-        HttpResponseMessage response = await client.GetAsync(api);
-        response.EnsureSuccessStatusCode();
-        string responseBody = await response.Content.ReadAsStringAsync();
-        //return responseBody;
+        string responseBody = await HttpHelper.TryGetAsync(ConstValue.GAME_DATA);
         var obj = JsonMapper.ToObject<ServerResponse>(responseBody);
-        //return obj.data;
         var model = JsonMapper.ToObject<DBApp>(obj.data);
-        //return model;
         r_app_version = model.app_version;
         r_res_version = model.res_version;
-        return $"Ö÷°ü:{model.app_version}, ×ÊÔ´:{model.res_version}";
+        return $"ä¸»åŒ…:{model.app_version}, èµ„æº:{model.res_version}";
     }
     static async void AppInfo()
     {
         await GetAppInfo();
+    }
+    static void GetDevVersion()
+    {
+        l_app_version = Application.version;
+        string ver_path = $"{Application.dataPath}/res_version.txt";
+        l_res_version = File.ReadAllText(ver_path);
+    }
+    // éƒ¨ç½²æ–°ç‰ˆåº”ç”¨ã€èµ„æº
+    static async Task<string> PostDeployRes()
+    {
+        C2S_Deploy data = new C2S_Deploy { app_version = l_app_version, res_version = l_res_version };
+        string postJson = JsonMapper.ToJson(data);
+        string responseBody = await HttpHelper.TryPostAsync(ConstValue.PRESENT_DEPLOY, postJson);
+        return responseBody;
+    }
+    static async void DeployRes()
+    {
+        string log = await PostDeployRes();
+        Debug.Log(log);
+        var obj = JsonMapper.ToObject<ServerResponse>(log);
+        Debug.Log($"éƒ¨ç½²å®Œæˆ: {obj.msg}");
     }
 }

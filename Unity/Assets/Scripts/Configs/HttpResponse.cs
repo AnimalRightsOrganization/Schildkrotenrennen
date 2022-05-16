@@ -20,7 +20,6 @@ public class C2S_QRVerify
     }
     public string code;
 }
-
 public class C2S_Login
 {
     public C2S_Login()
@@ -94,4 +93,14 @@ public class Present
     public string app_version;  //服务器资源版本
     public string res_version;  //服务器资源版本
     public string notice;       //公告
+}
+public class C2S_Deploy
+{
+    public C2S_Deploy()
+    {
+        app_version = string.Empty;
+        res_version = string.Empty;
+    }
+    public string app_version;
+    public string res_version;
 }
