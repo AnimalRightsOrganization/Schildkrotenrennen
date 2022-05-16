@@ -110,7 +110,7 @@ public class DeployEditor : EditorWindow
         GUILayout.Space(10);
         if (GUILayout.Button("压缩", GUILayout.Width(100)))
         {
-
+            PackZIP();
         }
         GUILayout.Space(10);
         GUILayout.EndHorizontal();
@@ -143,9 +143,24 @@ public class DeployEditor : EditorWindow
         window.Show();
     }
 
-    static void PackZIP()
+    static async void PackZIP()
     {
-    
+        string app_path = Path.Combine(Environment.CurrentDirectory, "Build").Replace("/", "\\");
+        string app_zip = Path.Combine(Environment.CurrentDirectory, "app.zip").Replace("/", "\\");
+        Debug.Log($"压缩1：{app_path} --->\n{app_zip}");
+        string res_path = Path.Combine(Application.persistentDataPath, ConstValue.PLATFORM_NAME).Replace("/", "\\");
+        string res_zip = Path.Combine(Environment.CurrentDirectory, "res.zip").Replace("/", "\\");
+        Debug.Log($"压缩2：{res_path} --->\n{res_zip}");
+
+        EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0 / 2);
+        await Task.Delay(100);
+        ZipEditor.PackFiles(app_zip, app_path);
+        EditorUtility.DisplayProgressBar("压缩", "压缩中...", 1 / 2);
+        await Task.Delay(100);
+        ZipEditor.PackFiles(res_zip, res_path);
+        EditorUtility.DisplayProgressBar("压缩", "压缩中...", 2 / 2);
+        await Task.Delay(100);
+        EditorUtility.ClearProgressBar();
     }
 
     // 查询数据库，当前游戏版本
