@@ -207,6 +207,10 @@ public partial class BundleTools : Editor
         string[] bundles = manifest.GetAllAssetBundles();
 
         string res_version_txt = $"{Application.dataPath}/res_version.txt";
+        if (File.Exists(res_version_txt) == false)
+        {
+            File.WriteAllText(res_version_txt, "1");
+        }
         int res_version = int.Parse(File.ReadAllText(res_version_txt));
         List<ABInfo> ABInfoList = new List<ABInfo>();
         for (int i = 0; i < bundles.Length; i++)
