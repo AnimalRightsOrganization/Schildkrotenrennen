@@ -85,11 +85,11 @@
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\IProtoSerializer.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\BufferExtension.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_String_Binding.cs" />
+    <Compile Include="Assets\ThirdParty\ILRuntime\2.0.2\Demo\Scripts\Examples\13_Proto\Proto3.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Meta\TypeFormatEventArgs.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_GC_Binding.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\2.0.2\Demo\Scripts\Examples\08_MonoBehaviour\Editor\MonoBehaviourAdapterEditor.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\UnityEngine_UI_Text_Binding.cs" />
-    <Compile Include="Assets\ThirdParty\ILRuntime\2.0.2\Demo\Scripts\Examples\13_Proto\Proto3.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_Math_Binding.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\2.0.2\Demo\Scripts\Examples\08_MonoBehaviour\MonoBehaviourAdapter.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\2.0.2\Demo\Scripts\Examples\12_Performance\Performance.cs" />
@@ -132,8 +132,8 @@
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\BooleanSerializer.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\TestDelegateFunction_Binding.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\DoubleSerializer.cs" />
-    <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\FieldDecorator.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_Collections_Generic_IList_1_ILTypeInstance_Binding.cs" />
+    <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\FieldDecorator.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\2.0.2\Demo\Scripts\Examples\11_ValueTypeBinding\Vector3Binder.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_Net_IPEndPoint_Binding.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_Byte_Binding.cs" />
