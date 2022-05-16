@@ -4,8 +4,7 @@ using UnityEngine;
 public class ConstValue
 {
     #region 路径
-
-    static string patchName = "Bundles";
+    const string patchName = "Bundles";
 
     // ab打包源文件
     static string _srcPath;
@@ -41,12 +40,12 @@ public class ConstValue
         {
             if (string.IsNullOrEmpty(ab_url))
             {
-                ab_url = Path.Combine(GameManager.present.ab_url, PLATFORM_NAME);
+                ab_url = Path.Combine(GameManager.present.res_url, PLATFORM_NAME);
             }
             return ab_url;
         }
     }
-    // ab包本地保存位置
+    // ab包本地下载位置
     static string ab_path;
     public static string AB_FilePath
     {
@@ -60,20 +59,26 @@ public class ConstValue
         }
     }
 
-    public static string GetUnityDir()
+    // Unity工程根目录
+    public static string GetUnityDir
     {
-        DirectoryInfo direction = new DirectoryInfo("Assets");
-        return direction.Parent.ToString();
+        get
+        {
+            var direction = new DirectoryInfo("Assets");
+            return direction.Parent.ToString();
+        }
     }
-    public static string GetServerDeploy()
+    // 远程部署根目录
+    public static string GetDeployRoot
     {
-        //注意！！！Windows中，用 '/' 的路径是无法打开的。要用 '\' 。
-        string path = $"D:/wamp64/www/app/{Application.productName}/res";
-        path = path.Replace('/', '\\');
-        //Debug.Log($"服务器AB地址：{path}");
-        return path;
+        get
+        {
+            //注意！！！Windows中，用 '/' 的路径是无法打开的。要用 '\' 。
+            string path = $"D:\\wamp64\\www\\app\\{Application.productName}";
+            return path;
+        }
     }
-
+    public static string GetDeployRes { get { return $"{GetDeployRoot}\\res"; } }
     #endregion
 
 #if UNITY_ANDROID

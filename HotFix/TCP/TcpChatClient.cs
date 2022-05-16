@@ -107,16 +107,16 @@ namespace HotFix
             m_PlayerManager = new ClientPlayerManager();
 
             // Create a new TCP chat client
-            Debug.Log($"读取配置文件:{Main.present.server}");
+            Debug.Log($"读取配置文件:{Main.present.gate}");
             IPAddress IPAddr;
-            if (IPAddress.TryParse(Main.present.server, out IPAddr))
+            if (IPAddress.TryParse(Main.present.gate, out IPAddr))
             {
-                address = Main.present.server;
+                address = Main.present.gate;
                 Debug.Log($"是IP:{address}");
             }
             else
             {
-                address = GetHostEntry(Main.present.server).ToString();
+                address = GetHostEntry(Main.present.gate).ToString();
                 Debug.Log($"是域名:{address}");
             }
             client = new ChatClient(address, port);

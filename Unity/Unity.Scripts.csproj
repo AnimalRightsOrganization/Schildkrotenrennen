@@ -58,7 +58,6 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Utils\UnitySingletonClass.cs" />
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
-    <Compile Include="Assets\Scripts\Configs\Present.cs" />
     <Compile Include="Assets\Scripts\Configs\ABInfo.cs" />
     <Compile Include="Assets\Scripts\Adapter\ILMonoBehaviour.cs" />
     <Compile Include="Assets\Scripts\Adapter\ILHelper.cs" />
@@ -68,7 +67,7 @@
     <Compile Include="Assets\Scripts\Adapter\AdaptHelper.cs" />
     <Compile Include="Assets\Scripts\Adapter\IAsyncStateMachineAdapter.cs" />
     <Compile Include="Assets\Scripts\Managers\ResManager.cs" />
-    <Compile Include="Assets\Scripts\NewBehaviourScript.cs" />
+    <Compile Include="Assets\Scripts\Configs\HttpResponse.cs" />
     <Compile Include="Assets\Scripts\Utils\ThreadDownload.cs" />
     <Compile Include="Assets\Scripts\Configs\ConstValue.cs" />
     <Compile Include="Assets\Scripts\Adapter\ILGlobal.cs" />

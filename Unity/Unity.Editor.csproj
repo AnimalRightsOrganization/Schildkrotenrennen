@@ -58,8 +58,9 @@
   <ItemGroup>
     <Compile Include="Assets\Editor\BundleTools.cs" />
     <Compile Include="Assets\Editor\CustomHierarchy.cs" />
+    <Compile Include="Assets\Editor\DeployEditor.cs" />
     <Compile Include="Assets\Editor\ToolsEditor.cs" />
-    <Compile Include="Assets\Editor\ProtoTools.cs" />
+    <Compile Include="Assets\Editor\BundleTools_Extension.cs" />
     <Compile Include="Assets\Editor\CreateConfig.cs" />
   </ItemGroup>
   <ItemGroup>

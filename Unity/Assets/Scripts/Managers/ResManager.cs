@@ -7,30 +7,23 @@ using LitJson;
 using UnityEditor;
 #endif
 
-public class JsonAssets //就是ABInfo
-{
-    public string filePath;
-    public string md5;
-    public string[] depend;
-}
-
 public class ResManager
 {
-    static JsonAssets[] _assetsObj;
-    static JsonAssets[] assetsObj
+    static AssetsBytes _assetsBytes;
+    static AssetsBytes assetsBytes
     {
         get
         {
-            if (_assetsObj == null)
+            if (_assetsBytes == null)
                 Reload();
-            return _assetsObj;
+            return _assetsBytes;
         }
     }
     static void Reload()
     {
         string assetsPath = $"{Application.persistentDataPath}/{ConstValue.PLATFORM_NAME}/assets.bytes"; //解析文件
         string assetsJson = File.ReadAllText(assetsPath);
-        _assetsObj = JsonMapper.ToObject<JsonAssets[]>(assetsJson);
+        _assetsBytes = JsonMapper.ToObject<AssetsBytes>(assetsJson);
     }
 
     public const string BUNDLES_FOLDER = "Assets/Bundles";
@@ -170,8 +163,7 @@ public class ResManager
     {
         Debug.Log($"GetFilePath: {assetName.ToLower()}");
 
-        JsonAssets obj = assetsObj.Where(x => x.filePath == assetName.ToLower()).FirstOrDefault();
-        //JsonAssets obj = assetsObj.Where(x => x.filePath == assetName).FirstOrDefault(); //iOS区分大小写？
+        ABInfo obj = assetsBytes.ABInfoList.Where(x => x.filePath == assetName.ToLower()).FirstOrDefault();//转小写，因为iOS区分大小写
         Debug.Log($"obj: {obj.md5}");
 
         string result = $"{Application.persistentDataPath}/{ConstValue.PLATFORM_NAME}/{obj.md5}.unity3d";
@@ -182,7 +174,7 @@ public class ResManager
 
     static string[] GetDepends(string assetName)
     {
-        JsonAssets obj = assetsObj.Where(x => x.filePath == assetName.ToLower()).FirstOrDefault();
+        ABInfo obj = assetsBytes.ABInfoList.Where(x => x.filePath == assetName.ToLower()).FirstOrDefault();
         return obj.depend;
     }
 

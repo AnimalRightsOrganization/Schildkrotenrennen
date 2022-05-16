@@ -9,8 +9,8 @@ public partial class BundleTools : Editor
 {
     #region 标记
 
-    [MenuItem("Tools/打包AB/Set Labels", false, 11)]
-    private static void SetAssetBundleLabels()
+    [MenuItem("Tools/打包AB/Set Labels", true, 11)]
+    public static void SetAssetBundleLabels()
     {
         // 移除所有没有使用的标记
         AssetDatabase.RemoveUnusedAssetBundleNames();
@@ -49,11 +49,8 @@ public partial class BundleTools : Editor
         Debug.LogWarning("设置成功");
     }
 
-    /// <summary>
-    /// 清除所有的AssetBundleName，由于打包方法会将所有设置过AssetBundleName的资源打包，所以自动打包前需要清理
-    /// </summary>
-    [MenuItem("Tools/打包AB/Clean Labels", false, 11)]
-    private static void ClearAssetBundlesName()
+    [MenuItem("Tools/打包AB/Clean Labels", true, 11)]
+    public static void ClearAssetBundlesName()
     {
         // 获取所有的AssetBundle名称
         string[] abNames = AssetDatabase.GetAllAssetBundleNames();
@@ -140,7 +137,7 @@ public partial class BundleTools : Editor
     }
 
     /// <summary>
-    /// 获取包名
+    /// 获取资源名称
     /// </summary>
     /// <param name="fileInfo">文件信息</param>
     /// <param name="typeName">资源类型</param>
@@ -209,8 +206,11 @@ public partial class BundleTools : Editor
         AssetBundleManifest manifest = bundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
         string[] bundles = manifest.GetAllAssetBundles();
 
+        string res_version_txt = $"{Application.dataPath}/res_version.txt";
+        int last_res_version = int.Parse(File.ReadAllText(res_version_txt));
+        int res_version = last_res_version + 1;
         List<ABInfo> ABInfoList = new List<ABInfo>();
-        for (int i = 0; i < bundles.Length; i++) 
+        for (int i = 0; i < bundles.Length; i++)
         {
             //计算文件md5，写入json
             string filePath = Path.Combine(Application.streamingAssetsPath, "Bundles/" + bundles[i]);
@@ -219,8 +219,9 @@ public partial class BundleTools : Editor
             ABInfo fs = new ABInfo(bundles[i], md5, depends);
             ABInfoList.Add(fs);
         }
-        string jsonStr = JsonMapper.ToJson(ABInfoList);
-        Debug.Log(jsonStr);
+        AssetsBytes data = new AssetsBytes(res_version, ABInfoList);
+        string jsonStr = JsonMapper.ToJson(data);
+        //Debug.Log(jsonStr);
 
         // 压缩包释放掉
         bundle.Unload(false);
@@ -228,6 +229,7 @@ public partial class BundleTools : Editor
 
         string assetsPath = Path.Combine(Application.streamingAssetsPath, "Bundles/assets.bytes");
         File.WriteAllText(assetsPath, jsonStr);
+        File.WriteAllText(res_version_txt, res_version.ToString());
     }
 
     //移动到根目录，删除*.manifest
@@ -243,7 +245,7 @@ public partial class BundleTools : Editor
         FileInfo[] files = direction.GetFiles("*", SearchOption.AllDirectories);
         //Debug.Log(files.Length);
 
-        string outputPath = Path.Combine(ConstValue.GetUnityDir(), EditorUserBuildSettings.activeBuildTarget.ToString());
+        string outputPath = Path.Combine(ConstValue.GetUnityDir, EditorUserBuildSettings.activeBuildTarget.ToString());
         if (Directory.Exists(outputPath))
             Directory.Delete(outputPath, true);
         Directory.CreateDirectory(outputPath);
@@ -300,7 +302,7 @@ public partial class BundleTools : Editor
 
     #region 目标平台
 
-    private static void Build_Target(BuildTarget target)
+    public static void Build_Target(BuildTarget target)
     {
         if (!EditorUserBuildSettings.activeBuildTarget.Equals(target))
         {
@@ -343,7 +345,7 @@ public partial class BundleTools : Editor
 
     private static void Deploy(BuildTarget target)
     {
-        string srcPath = Path.Combine(ConstValue.GetUnityDir(), target.ToString());
+        string srcPath = Path.Combine(ConstValue.GetUnityDir, target.ToString());
         if (!Directory.Exists(srcPath))
         {
             Debug.LogError($"src不存在：{srcPath}");
@@ -356,7 +358,7 @@ public partial class BundleTools : Editor
         CopyFolder(srcPath, dstPath);
         Debug.Log($"本地部署完成\n{srcPath}--->\n{dstPath}");
 
-        string wwwPath = $@"{ConstValue.GetServerDeploy()}\{target}"; //远程部署
+        string wwwPath = $@"{ConstValue.GetDeployRes}\{target}"; //远程部署
         if (Directory.Exists(wwwPath))
             Directory.Delete(wwwPath, true);
         CopyFolder(srcPath, wwwPath);

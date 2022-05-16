@@ -11,7 +11,8 @@ public class UI_CheckUpdate : MonoBehaviour
 {
     private static string cloudPath;
     private static string localPath;
-    private List<JsonAssets> downloadList = new List<JsonAssets>();
+    private int remote_res_version;
+    private List<ABInfo> downloadList = new List<ABInfo>();
     [SerializeField] private Slider m_progressSlider;
     [SerializeField] private Text m_progressText;
     private int fileCount = 0;
@@ -35,20 +36,21 @@ public class UI_CheckUpdate : MonoBehaviour
     public IEnumerator StartCheck(System.Action action)
     {
         // 1. 读取网上(assets.bytes)
-        //ABInfo[] cloudInfos = new ABInfo[] { };
-        JsonAssets[] cloudInfos = new JsonAssets[] { };
+        ABInfo[] cloudInfos = new ABInfo[] { };
         List<string> cloudList = new List<string>();
         WWW www = new WWW(cloudPath);
         while (!www.isDone) { }
         yield return www;
-        if (!string.IsNullOrEmpty(www.error)) 
+        if (!string.IsNullOrEmpty(www.error))
         {
             Debug.LogError(www.error);
             yield break;
         }
         if (www.isDone)
         {
-            cloudInfos = JsonMapper.ToObject<JsonAssets[]>(www.text);
+            var r_assets_bytes = JsonMapper.ToObject<AssetsBytes>(www.text);
+            remote_res_version = r_assets_bytes.res_version;
+            cloudInfos = r_assets_bytes.ABInfoList;
             www.Dispose();
             for (int i = 0; i < cloudInfos.Length; i++)
             {
@@ -60,7 +62,7 @@ public class UI_CheckUpdate : MonoBehaviour
 
         // 2. 读取本地(assets.bytes) //不需要改成逐一分析本地文件MD5
         List<string> localList = new List<string>();
-        for (int i = 0; i < cloudList.Count; i++) 
+        for (int i = 0; i < cloudList.Count; i++)
         {
             string _localPath = Path.Combine(ConstValue.AB_FilePath, cloudList[i] + ".unity3d");
             bool _exist = File.Exists(_localPath);
@@ -80,7 +82,7 @@ public class UI_CheckUpdate : MonoBehaviour
 
         // 3. 比较差异，创建下载列表(downloadList)
         var diff = cloudList.Except(localList).ToArray();
-        downloadList = new List<JsonAssets>();
+        downloadList = new List<ABInfo>();
         for (int i = 0; i < diff.Length; i++)
         {
             var ab = cloudInfos.Where(x => x.md5 == diff[i]).ToList()[0];
@@ -152,6 +154,6 @@ public class UI_CheckUpdate : MonoBehaviour
             }
         }
     }
-    
+
     #endregion
 }

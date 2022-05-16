@@ -130,7 +130,7 @@ public partial class BundleTools : Editor
         string[] pathArray = new string[]
         {
             Path.Combine(Application.streamingAssetsPath, "Bundles"),
-            Path.Combine(ConstValue.GetUnityDir(), ConstValue.PLATFORM_NAME),
+            Path.Combine(ConstValue.GetUnityDir, ConstValue.PLATFORM_NAME),
         };
         for (int i = 0; i < pathArray.Length; i++)
         {
@@ -228,7 +228,6 @@ public partial class BundleTools : Editor
         projPath = projPath.Replace(@"\", "/");
 #endif
         Process proc = new Process();
-        //proc.StartInfo.FileName = projPath;
         proc.StartInfo.WorkingDirectory = projPath;
         proc.StartInfo.FileName = "NetCoreApp.sln";
         proc.Start();
@@ -236,23 +235,21 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/打包AB/服务器AB资源存放目录", false, 41)]
     static void OpenServerAB()
     {
-        string path = ConstValue.GetServerDeploy();
-        Process.Start("explorer.exe", path);
+        string path = ConstValue.GetDeployRoot;
+        EditorUtility.RevealInFinder(path);
     }
     [MenuItem("Tools/打包AB/运行时AB资源下载目录", false, 42)]
     static void OpenAppAB()
     {
         string path = Path.Combine(Application.persistentDataPath, "Unity");
         EditorUtility.RevealInFinder(path);
-        // string path = Application.persistentDataPath.Replace("/", @"\"); //向左的[/]无法打开，要转成[\]
-        // Process.Start("explorer.exe", path);
     }
-    [MenuItem("Tools/打包AB/生成Present", false, 43)]
-    static void CreatePresent()
+    [MenuItem("Tools/打包AB/生成Present", true, 43)]
+    public static void CreatePresent()
     {
         Present config = new Present();
         string json = JsonMapper.ToJson(config);
-        string filePath = Path.Combine(ConstValue.GetServerDeploy(), "present.json");
+        string filePath = Path.Combine(ConstValue.GetDeployRoot, "present.json");
         File.WriteAllText(filePath, json);
         Debug.Log($"output: {filePath}");
     }
