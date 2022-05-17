@@ -151,10 +151,6 @@ namespace NetCoreServer.Utils
                             //TODO: 预防键或值为空
                             //var userid = reader.GetInt32("userid");
                             //Debug.Print($"userid={userid}");
-                            //var nickname = reader.GetString("nickname");
-                            //Debug.Print($"nickname={nickname}");
-                            //var createtime = reader.GetDateTime("createtime");
-                            //Debug.Print($"createtime={createtime}");
                             return true;
                         }
                     }
@@ -172,6 +168,35 @@ namespace NetCoreServer.Utils
             UserInfo userInfo = new UserInfo();
 
             string SQL = $"SELECT * FROM tb_user WHERE username='{usr}' AND password='{pwd}';";
+            using (var conn = new MySqlConnection(builder.ConnectionString))
+            {
+                await conn.OpenAsync();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = SQL;
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            userInfo.userid = reader.GetInt32("userid");
+                            userInfo.username = reader.GetString("username");
+                            userInfo.nickname = reader.GetString("nickname");
+                            userInfo.score = reader.GetInt32("score");
+                            return userInfo;
+                        }
+                    }
+                }
+                //Debug.Print("Closing connection");
+                return null;
+            }
+        }
+        public static async Task<UserInfo> GetUserInfo(string token)
+        {
+            UserInfo userInfo = new UserInfo();
+
+            string SQL = $"SELECT * FROM tb_user WHERE token='{token}';";
             using (var conn = new MySqlConnection(builder.ConnectionString))
             {
                 await conn.OpenAsync();

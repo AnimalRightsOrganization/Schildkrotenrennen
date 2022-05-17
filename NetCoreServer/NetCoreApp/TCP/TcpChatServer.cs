@@ -77,6 +77,9 @@ namespace TcpChatServer
                     break;
                 case PacketType.Disconnect:
                     break;
+                case PacketType.C2S_LoginToken:
+                    OnLoginByToken(ms);
+                    break;
                 case PacketType.C2S_LoginReq:
                     OnLoginReq(ms);
                     break;
@@ -129,6 +132,44 @@ namespace TcpChatServer
             SendAsync(buffer);
         }
 
+        protected async void OnLoginByToken(MemoryStream ms)
+        {
+            var request = ProtobufHelper.Deserialize<C2S_LoginTokenPacket>(ms); //解包
+            if (request == null)
+            {
+                Debug.Print("Token.空数据");
+                return;
+            }
+            Debug.Print($"[C2S] Token={request.Token} by {Id}");
+
+            UserInfo result = await MySQLTool.GetUserInfo(request.Token);
+            if (result == null)
+            {
+                Debug.Print($"用户名或密码错误");
+                var tempData = new BasePlayerData { PeerId = Id, };
+                var tempPlayer = new ServerPlayer(tempData);
+                ErrorPacket err_packet = new ErrorPacket { Code = (int)ErrorCode.LOGIN_FAILED, Message = "用户名或密码错误" };
+                tempPlayer.SendAsync(PacketType.S2C_ErrorOperate, err_packet);
+                return;
+            }
+            var playerData = new BasePlayerData
+            {
+                IsBot = false,
+                PeerId = Id,
+                UserName = result.username,
+                NickName = result.nickname,
+                RoomId = -1,
+                SeatId = -1,
+                Status = PlayerStatus.LOBBY,
+            };
+            var serverPlayer = new ServerPlayer(playerData);
+            TCPChatServer.m_PlayerManager.AddPlayer(serverPlayer);
+
+            var packet = new S2C_LoginResultPacket { Code = 0, Username = result.username, Nickname = result.nickname };
+            serverPlayer.SendAsync(PacketType.S2C_LoginResult, packet);
+
+            WinFormsApp1.MainForm.Instance.RefreshPlayerNum();
+        }
         protected async void OnLoginReq(MemoryStream ms)
         {
             var request = ProtobufHelper.Deserialize<C2S_LoginPacket>(ms); //解包

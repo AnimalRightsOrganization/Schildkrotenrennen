@@ -167,6 +167,18 @@ namespace HotFix
             client.SendAsync(buffer);
         }
 
+        public static void SendLogin(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                Debug.LogError($"token不能为空");
+                return;
+            }
+
+            var cmd = new C2S_LoginTokenPacket { Token = token };
+            Debug.Log($"[C2S] {cmd.Token}");
+            SendAsync(PacketType.C2S_LoginToken, cmd);
+        }
         public static void SendLogin(string usr, string pwd)
         {
             if (string.IsNullOrEmpty(usr) || string.IsNullOrEmpty(pwd))

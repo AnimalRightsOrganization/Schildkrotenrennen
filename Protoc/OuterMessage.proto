@@ -26,6 +26,10 @@ message TheMsgList
 }
 
 // 登录
+message C2S_LoginTokenPacket
+{
+	string Token = 1;
+}
 message C2S_LoginPacket
 {
 	string Username = 1;

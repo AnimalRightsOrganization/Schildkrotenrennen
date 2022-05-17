@@ -163,8 +163,6 @@ namespace HotFix
             {
                 case PacketType.Connected:
                     OnConnected();
-                    //string token = IPC.IPCManager.Token;
-                    //Debug.Log($"连接服务器成功，尝试读取Token：{token}");
                     break;
                 case PacketType.S2C_LoginResult:
                     OnLoginResult(reader);
@@ -176,6 +174,12 @@ namespace HotFix
             var connect = UIManager.Get().GetUI<UI_Connect>();
             connect.Pop();
             m_OAuthBtn.gameObject.SetActive(true);
+
+            string token = GameManager.Token;
+            Debug.Log($"连接服务器成功，尝试读取Token：{token}");
+            // 使用Token登录
+            if (!string.IsNullOrEmpty(token))
+                TcpChatClient.SendLogin(token);
         }
         void OnLoginResult(object reader)
         {

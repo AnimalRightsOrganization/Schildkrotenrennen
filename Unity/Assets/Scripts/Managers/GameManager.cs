@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Collections;
-using System.Threading.Tasks;
 using UnityEngine;
 using LitJson;
 
@@ -11,6 +10,7 @@ public class GameManager : MonoBehaviour
     private static bool Initialized = false;
     public static Present present; //通过请求返回
     private readonly IPC _ipc = new IPC { ReceiveTimeout = 10 };
+    public static string Token { get; private set; }
 
     void Awake()
     {
@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
             // 绑定组件
             transform.Find("ILGlobal").gameObject.AddComponent<Client.ILGlobal>();
 
-            //IPC.Run(Handler);
+            IPC_Login();
 
 #if UNITY_EDITOR && !USE_ASSETBUNDLE
             // 不检查更新
@@ -88,6 +88,7 @@ public class GameManager : MonoBehaviour
         try
         {
             string result = await _ipc.Send("Login 0");
+            Token = result;
             Debug.Log($"IPC返回：{result}");
         }
         catch (System.Exception e)

@@ -217,9 +217,10 @@ public class DeployEditor : EditorWindow
     // 压缩
     static async void PackAppZip()
     {
-        //string app_path = Path.Combine(Environment.CurrentDirectory, "Build").Replace("/", "\\");
         string app_path = ConstValue.BuildDir;
-        string app_zip = Path.Combine(Environment.CurrentDirectory, $"{Application.productName}.app.zip").Replace("/", "\\");
+        //string file_name = Application.productName;
+        string file_name = ConstValue.PLATFORM_NAME;
+        string app_zip = Path.Combine(Environment.CurrentDirectory, $"{file_name}.app.zip").Replace("/", "\\");
         Debug.Log($"压缩应用：{app_path} --->\n{app_zip}");
 
         EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0f);
@@ -238,7 +239,9 @@ public class DeployEditor : EditorWindow
     static async void PackResZip()
     {
         string res_path = Path.Combine(Application.persistentDataPath, ConstValue.PLATFORM_NAME).Replace("/", "\\");
-        string res_zip = Path.Combine(Environment.CurrentDirectory, $"{Application.productName}.res.zip").Replace("/", "\\");
+        //string file_name = Application.productName;
+        string file_name = ConstValue.PLATFORM_NAME;
+        string res_zip = Path.Combine(Environment.CurrentDirectory, $"{file_name}.res.zip").Replace("/", "\\");
         Debug.Log($"压缩资源：{res_path} --->\n{res_zip}");
 
         EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0f);

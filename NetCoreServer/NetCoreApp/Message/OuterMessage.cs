@@ -50,6 +50,15 @@ namespace ET
 	}
 
 // 登录
+	[Message(OuterOpcode.C2S_LoginTokenPacket)]
+	[ProtoContract]
+	public partial class C2S_LoginTokenPacket: Object
+	{
+		[ProtoMember(1)]
+		public string Token { get; set; }
+
+	}
+
 	[Message(OuterOpcode.C2S_LoginPacket)]
 	[ProtoContract]
 	public partial class C2S_LoginPacket: Object

@@ -48,6 +48,7 @@
         Beep            ,   //心跳
         ///////////////////////////////////////////////
         C2S_RegisterReq ,   //注册请求
+        C2S_LoginToken  ,   //登录请求Token
         C2S_LoginReq    ,   //登录请求
         C2S_LogoutReq   ,   //登出请求
         C2S_UserInfo    ,   //请求用户信息
