@@ -192,7 +192,7 @@ namespace HotFix
                 return;
             }
 
-            var cmd = new C2S_LoginPacket { Username = usr, Password = pwd };
+            var cmd = new C2S_LoginPacket { Username = usr, Password = Md5Utils.GetMD5String(pwd) };
             Debug.Log($"[C2S] {cmd.Username}, {cmd.Password}");
             SendAsync(PacketType.C2S_LoginReq, cmd);
         }

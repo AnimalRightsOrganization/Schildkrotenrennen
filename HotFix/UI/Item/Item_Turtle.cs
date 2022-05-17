@@ -29,8 +29,8 @@ namespace HotFix
 
         public void InitData(int id)
         {
-            m_Texture = ResManager.LoadTexture2D($"Sprites/{(TurtleColor)id}");
-            m_Render.material.mainTexture = m_Texture;
+            //m_Texture = ResManager.LoadTexture2D($"Sprites/{(TurtleColor)id}");
+            //m_Render.material.mainTexture = m_Texture;
 
             mColor = (TurtleColor)id;
             CurrentPos = 0;

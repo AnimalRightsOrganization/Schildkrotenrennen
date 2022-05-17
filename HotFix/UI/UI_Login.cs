@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ET;
+using System.Threading.Tasks;
 
 namespace HotFix
 {
@@ -175,11 +176,26 @@ namespace HotFix
             connect.Pop();
             m_OAuthBtn.gameObject.SetActive(true);
 
+            SendLoginByToken();
+        }
+        async void SendLoginByToken()
+        {
             string token = GameManager.Token;
+            //string token = "DE8FD617D94B7EFD67E79314B3F0C665";
             Debug.Log($"连接服务器成功，尝试读取Token：{token}");
+
+            var connect = UIManager.Get().Push<UI_Connect>();
+            await Task.Delay(500);
+
             // 使用Token登录
             if (!string.IsNullOrEmpty(token))
+            {
                 TcpChatClient.SendLogin(token);
+            }
+            else
+            {
+                connect.Pop();
+            }
         }
         void OnLoginResult(object reader)
         {
@@ -190,6 +206,9 @@ namespace HotFix
             TcpChatClient.m_PlayerManager.AddClientPlayer(clientPlayer, true);
             UIManager.Get().Push<UI_Main>();
             //this.Pop();
+            var connect = UIManager.Get().GetUI<UI_Connect>();
+            if (connect != null)
+                connect.Pop();
 
             m_Foreground.SetActive(false);
             m_Login_Panel.SetActive(false);
