@@ -56,25 +56,8 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Utils\UnitySingletonClass.cs" />
-    <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
-    <Compile Include="Assets\Scripts\Configs\ABInfo.cs" />
-    <Compile Include="Assets\Scripts\Utils\HttpHelper.cs" />
-    <Compile Include="Assets\Scripts\Adapter\ILMonoBehaviour.cs" />
-    <Compile Include="Assets\Scripts\Adapter\ILHelper.cs" />
-    <Compile Include="Assets\Scripts\Utils\FixShader.cs" />
-    <Compile Include="Assets\Scripts\Utils\Md5Utils.cs" />
-    <Compile Include="Assets\Scripts\UI\UI_CheckUpdate.cs" />
-    <Compile Include="Assets\Scripts\Adapter\AdaptHelper.cs" />
-    <Compile Include="Assets\Scripts\Utils\ziptest1.cs" />
-    <Compile Include="Assets\Scripts\Adapter\IAsyncStateMachineAdapter.cs" />
-    <Compile Include="Assets\Scripts\Managers\ResManager.cs" />
-    <Compile Include="Assets\Scripts\Configs\HttpResponse.cs" />
-    <Compile Include="Assets\Scripts\Utils\ThreadDownload.cs" />
-    <Compile Include="Assets\Scripts\Configs\ConstValue.cs" />
-    <Compile Include="Assets\Scripts\Adapter\ILGlobal.cs" />
-    <Compile Include="Assets\Scripts\Utils\Utils.cs" />
-    <Compile Include="Assets\Scripts\Adapter\ILUIBase.cs" />
+    <Compile Include="Assets\ProcessCommunication.cs" />
+    <Compile Include="Assets\Loom.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\res_version.txt" />
@@ -307,9 +290,6 @@
     </Reference>
     <Reference Include="UnityEditor.UnityConnectModule">
       <HintPath>D:\Program Files\Unity\2020.3.33f1c2\Editor\Data\Managed\UnityEngine\UnityEditor.UnityConnectModule.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Scripts">
-      <HintPath>Library\ScriptAssemblies\Unity.Scripts.dll</HintPath>
     </Reference>
     <Reference Include="ILRuntime.Mono.Cecil.Mdb">
       <HintPath>Library\PackageCache\com.ourpalm.ilruntime@2.0.2\Plugins\ILRuntime.Mono.Cecil.Mdb.dll</HintPath>
@@ -709,6 +689,10 @@
     <ProjectReference Include="Unity.ThirdParty.csproj">
       <Project>{E15BADD2-3A26-309A-AB0F-DC5B08044350}</Project>
       <Name>Unity.ThirdParty</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Scripts.csproj">
+      <Project>{8A0E6C70-4D71-8F15-B6E4-1F3BC3A15E7B}</Project>
+      <Name>Unity.Scripts</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.Editor.csproj">
       <Project>{CD311104-1830-B119-81B6-5DBEE2467FFB}</Project>

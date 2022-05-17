@@ -186,6 +186,7 @@ public class DeployEditor : EditorWindow
         string res_version_txt = $"{Application.dataPath}/res_version.txt";
         File.WriteAllText(res_version_txt, l_res_version);
         Debug.Log($"资源设置成功: {l_res_version}");
+        AssetDatabase.Refresh();
     }
 
     // 打包
@@ -210,6 +211,7 @@ public class DeployEditor : EditorWindow
     {
         BuildTarget type = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), ConstValue.PLATFORM_NAME);
         BundleTools.Build_Target(type);
+        AssetDatabase.Refresh();
     }
 
     // 压缩

@@ -59,6 +59,7 @@
     <Compile Include="Assets\Editor\BundleTools.cs" />
     <Compile Include="Assets\Editor\CustomHierarchy.cs" />
     <Compile Include="Assets\Editor\DeployEditor.cs" />
+    <Compile Include="Assets\Editor\PlayModeStateChangedExample.cs" />
     <Compile Include="Assets\Editor\ZipEditor.cs" />
     <Compile Include="Assets\Editor\ToolsEditor.cs" />
     <Compile Include="Assets\Editor\BundleTools_Extension.cs" />

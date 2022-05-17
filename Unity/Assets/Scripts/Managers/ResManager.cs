@@ -161,14 +161,11 @@ public class ResManager
 
     static string GetFilePath(string assetName)
     {
-        Debug.Log($"GetFilePath: {assetName.ToLower()}");
-
+        //Debug.Log($"GetFilePath: {assetName.ToLower()}");
         ABInfo obj = assetsBytes.ABInfoList.Where(x => x.filePath == assetName.ToLower()).FirstOrDefault();//转小写，因为iOS区分大小写
-        Debug.Log($"obj: {obj.md5}");
-
+        //Debug.Log($"obj: {obj.md5}");
         string result = $"{Application.persistentDataPath}/{ConstValue.PLATFORM_NAME}/{obj.md5}.unity3d";
-        Debug.Log($"result={result}");
-
+        //Debug.Log($"result={result}");
         return result;
     }
 

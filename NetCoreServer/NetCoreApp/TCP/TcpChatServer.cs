@@ -54,6 +54,19 @@ namespace TcpChatServer
             byte msgId = buffer[0];
             byte[] body = new byte[size - 1];
             Array.Copy(buffer, 1, body, 0, size - 1);
+            /* 
+            UnhandledException Message: Source array was not long enough. Check the source index, length, and the array's lower bounds. (Parameter 'sourceArray')
+            Trace:    at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length, Boolean reliable)
+                at System.Array.Copy(Array sourceArray, Int64 sourceIndex, Array destinationArray, Int64 destinationIndex, Int64 length)
+                at TcpChatServer.ChatSession.OnReceived(Byte[] buffer, Int64 offset, Int64 size) in D:\Documents\GitHub\Turtle\NetCoreServer\NetCoreApp\TCP\TcpChatServer.cs:line 56
+                at NetCoreServer.TcpSession.ProcessReceive(SocketAsyncEventArgs e) in D:\Documents\GitHub\Turtle\NetCoreServer\NetCoreApp\TCP\TcpSession.cs:line 572
+                at NetCoreServer.TcpSession.TryReceive() in D:\Documents\GitHub\Turtle\NetCoreServer\NetCoreApp\TCP\TcpSession.cs:line 441
+                at NetCoreServer.TcpSession.OnAsyncCompleted(Object sender, SocketAsyncEventArgs e) in D:\Documents\GitHub\Turtle\NetCoreServer\NetCoreApp\TCP\TcpSession.cs:line 542
+                at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+            --- End of stack trace from previous location where exception was thrown ---
+                at System.Threading._IOCompletionCallback.PerformIOCompletionCallback(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* pNativeOverlapped)
+            Runtime terminating: True
+             */
             MemoryStream ms = new MemoryStream(body, 0, body.Length);
             PacketType type = (PacketType)msgId;
             Debug.Print($"msgType={type}, from {Id}");

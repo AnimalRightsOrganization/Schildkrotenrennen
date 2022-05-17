@@ -1,9 +1,7 @@
 ﻿using System.IO;
 using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Networking;
 using LitJson;
 
 public class GameManager : MonoBehaviour
@@ -12,6 +10,7 @@ public class GameManager : MonoBehaviour
 
     private static bool Initialized = false;
     public static Present present; //通过请求返回
+    private readonly IPC _ipc = new IPC { ReceiveTimeout = 10 };
 
     void Awake()
     {
@@ -32,6 +31,8 @@ public class GameManager : MonoBehaviour
             // 绑定组件
             transform.Find("ILGlobal").gameObject.AddComponent<Client.ILGlobal>();
 
+            //IPC.Run(Handler);
+
 #if UNITY_EDITOR && !USE_ASSETBUNDLE
             // 不检查更新
             present = new Present();
@@ -47,36 +48,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    class AcceptAllCertificatesSignedWithASpecificPublicKey : CertificateHandler
-    {
-        // Encoded RSAPublicKey
-        private static string PUB_KEY = "30818902818100C4A06B7B52F8D17DC1CCB47362" +
-            "C64AB799AAE19E245A7559E9CEEC7D8AA4DF07CB0B21FDFD763C63A313A668FE9D764E" +
-            "D913C51A676788DB62AF624F422C2F112C1316922AA5D37823CD9F43D1FC54513D14B2" +
-            "9E36991F08A042C42EAAEEE5FE8E2CB10167174A359CEBF6FACC2C9CA933AD403137EE" +
-            "2C3F4CBED9460129C72B0203010001";
-
-        protected override bool ValidateCertificate(byte[] certificateData)
-        {
-            X509Certificate2 certificate = new X509Certificate2(certificateData);
-
-            string pk = certificate.GetPublicKeyString();
-
-            return pk.Equals(PUB_KEY);
-        }
-    }
-
     // 请求游戏配置
     async void GetConfig()
     {
         string text = await HttpHelper.TryGetAsync(ConstValue.PRESENT_GET);
-        Debug.Log($"success: {text}");
+        //Debug.Log($"success: {text}");
         var obj = JsonMapper.ToObject<ServerResponse>(text);
         present = JsonMapper.ToObject<Present>(obj.data);
 
         StartCoroutine(CheckUpdateAsync(OnInited));
     }
-
+    
     IEnumerator CheckUpdateAsync(System.Action action)
     {
         if (!Directory.Exists(ConstValue.AB_FilePath))
@@ -88,9 +70,9 @@ public class GameManager : MonoBehaviour
 
         var asset = request.asset as GameObject;
         GameObject prefab = Instantiate(asset, root);
-        var script = prefab.AddComponent<UI_CheckUpdate>();
+        var ui_checkupdate = prefab.AddComponent<UI_CheckUpdate>();
 
-        yield return script.StartCheck(action);
+        yield return ui_checkupdate.StartCheck(action);
     }
 
     // 初始化完成，控制权移交ILR
@@ -99,5 +81,30 @@ public class GameManager : MonoBehaviour
         Initialized = true;
 
         Client.ILGlobal.Instance.GlobalInit(); //加载dll
+    }
+
+    async void IPC_Login()
+    {
+        try
+        {
+            string result = await _ipc.Send("Login 0");
+            Debug.Log($"IPC返回：{result}");
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log(e.Message);
+        }
+    }
+    async void IPC_Exit()
+    {
+        try
+        {
+            string result = await _ipc.Send("Exit 0");
+            Debug.Log($"IPC返回：{result}");
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log(e.Message);
+        }
     }
 }
