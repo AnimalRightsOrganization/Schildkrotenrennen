@@ -302,6 +302,11 @@ public class DeployEditor : EditorWindow
     }
     static async void DeployRes()
     {
+        string src = @"C:\Users\Administrator\source\repos\QRCode\GameCenter\bin\Debug\net6.0-windows\Temp\StandaloneWindows64.zip";
+        string dst = @"C:\Users\Administrator\source\repos\QRCode\GameCenter\bin\Debug\net6.0-windows\Applications\turtlerace2\";
+        ZipEditor.UnpackFiles(src, dst);
+        return;
+
         await PostDeployRes();
     }
 }

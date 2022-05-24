@@ -48,6 +48,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        //IPC_Exit(); //必须有回包，不然对方卡死
+    }
+
     // 请求游戏配置
     async void GetConfig()
     {
