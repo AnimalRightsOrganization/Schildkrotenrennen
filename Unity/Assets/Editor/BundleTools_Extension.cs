@@ -115,7 +115,7 @@ public partial class BundleTools : Editor
         await Task.Delay(SLEEP_TIME);
         EditorUtility.ClearProgressBar();
     }
-    [MenuItem("Tools/测试/CMD", false, 11)]
+    [MenuItem("Tools/测试/CMD", true, 11)]
     static void TestCMD()
     {
         ExecuteCommand(@"ipconfig /flushdns");
@@ -140,7 +140,7 @@ public partial class BundleTools : Editor
         }
         Debug.Log("清理完成");
     }
-    [MenuItem("Tools/测试/取消读条", false, 13)]
+    [MenuItem("Tools/测试/取消读条", true, 13)]
     static void CancelableProgressBar()
     {
         EditorUtility.ClearProgressBar();
