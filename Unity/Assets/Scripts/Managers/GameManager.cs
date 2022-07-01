@@ -101,6 +101,7 @@ public class GameManager : MonoBehaviour
             Debug.Log(e.Message);
         }
     }
+    /*
     async void IPC_Exit()
     {
         try
@@ -112,5 +113,5 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log(e.Message);
         }
-    }
+    }*/
 }
