@@ -177,7 +177,7 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/热更新/生成Proto", false, 21)]
     static void ConvertProto()
     {
-        InnerProto2CS.Proto2CS();
+        ProtoTools.Proto2CS();
     }
     [MenuItem("Tools/热更新/编译热更工程", false, 22)]
     static void CompileHotFix()

@@ -47,7 +47,7 @@
   <PropertyGroup>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <UnityProjectGenerator>Package</UnityProjectGenerator>
-    <UnityProjectGeneratorVersion>2.0.15</UnityProjectGeneratorVersion>
+    <UnityProjectGeneratorVersion>2.0.16</UnityProjectGeneratorVersion>
     <UnityProjectType>Editor:5</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>2020.3.36f1c1</UnityVersion>
@@ -56,12 +56,12 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Editor\BundleTools.cs" />
+    <Compile Include="Assets\Editor\AssetBundle\BundleTools.cs" />
     <Compile Include="Assets\Editor\CustomHierarchy.cs" />
-    <Compile Include="Assets\Editor\DeployEditor.cs" />
-    <Compile Include="Assets\Editor\ZipEditor.cs" />
-    <Compile Include="Assets\Editor\ToolsEditor.cs" />
-    <Compile Include="Assets\Editor\BundleTools_Extension.cs" />
+    <Compile Include="Assets\Editor\AssetBundle\DeployTools.cs" />
+    <Compile Include="Assets\Editor\AssetBundle\ZipTools.cs" />
+    <Compile Include="Assets\Editor\ProtoTools.cs" />
+    <Compile Include="Assets\Editor\AssetBundle\BundleTools_Extension.cs" />
     <Compile Include="Assets\Editor\CreateConfig.cs" />
   </ItemGroup>
   <ItemGroup>

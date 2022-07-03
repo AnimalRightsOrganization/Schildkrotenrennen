@@ -10,7 +10,7 @@ internal class OpcodeInfo
     public int Opcode;
 }
 
-public static class InnerProto2CS
+public static class ProtoTools
 {
     private static readonly char[] splitChars = { ' ', '\t' };
     private static readonly List<OpcodeInfo> msgOpcode = new List<OpcodeInfo>();

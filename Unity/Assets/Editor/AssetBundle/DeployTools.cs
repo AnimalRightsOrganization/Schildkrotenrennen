@@ -5,13 +5,13 @@ using UnityEngine;
 using UnityEditor;
 using LitJson;
 
-public class DeployEditor : EditorWindow
+public class DeployTools : EditorWindow
 {
     [MenuItem("Tools/Deploy")]
     static void AddWindow()
     {
         Rect rect = new Rect(0, 0, 600, 400);
-        DeployEditor window = (DeployEditor)GetWindowWithRect(typeof(DeployEditor), rect, true, "部署");
+        DeployTools window = (DeployTools)GetWindowWithRect(typeof(DeployTools), rect, true, "部署");
         window.Show();
     }
 
@@ -229,7 +229,7 @@ public class DeployEditor : EditorWindow
 
         EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0.5f);
         await Task.Delay(100);
-        ZipEditor.PackFiles(app_zip, app_path);
+        ZipTools.PackFiles(app_zip, app_path);
 
         EditorUtility.DisplayProgressBar("压缩", "压缩中...", 1f);
         await Task.Delay(100);
@@ -250,7 +250,7 @@ public class DeployEditor : EditorWindow
 
         EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0.5f);
         await Task.Delay(100);
-        ZipEditor.PackFiles(res_zip, res_path);
+        ZipTools.PackFiles(res_zip, res_path);
 
         EditorUtility.DisplayProgressBar("压缩", "压缩中...", 1f);
         await Task.Delay(100);
@@ -304,7 +304,7 @@ public class DeployEditor : EditorWindow
     {
         string src = @"C:\Users\Administrator\source\repos\QRCode\GameCenter\bin\Debug\net6.0-windows\Temp\StandaloneWindows64.zip";
         string dst = @"C:\Users\Administrator\source\repos\QRCode\GameCenter\bin\Debug\net6.0-windows\Applications\turtlerace2\";
-        ZipEditor.UnpackFiles(src, dst);
+        ZipTools.UnpackFiles(src, dst);
         return;
 
         await PostDeployRes();
