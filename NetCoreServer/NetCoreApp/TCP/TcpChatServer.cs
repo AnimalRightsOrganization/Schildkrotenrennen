@@ -517,7 +517,7 @@ namespace TcpChatServer
         }
         protected async void OnGamePlay(C2S_PlayCardPacket request, ServerPlayer p)
         {
-            Debug.Print($"[C2S] {p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}-{request.Color}");
+            Debug.Print($"[C2S] {p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}/{request.Color}");
 
             ServerRoom serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(p.RoomId);
             if (serverRoom == null)
@@ -584,7 +584,8 @@ namespace TcpChatServer
                 var serverPlayer = serverRoom.GetPlayer(i);
                 int color = (int)serverPlayer.chessColor;
                 int rank = turtleRank.IndexOf(color);
-                playerRank[i] = rank;
+                //playerRank[i] = rank;
+                playerRank.Add(rank);
             }
 
             var packet = new S2C_GameResultPacket { Rank = playerRank }; //key:座位号, value:排名

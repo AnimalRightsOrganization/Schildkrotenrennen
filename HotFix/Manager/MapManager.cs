@@ -166,10 +166,10 @@ namespace HotFix
                     int index = int.Parse(_name);
                     var data = GridData[index];
 
+                    Debug.Log($"格子_{index}: {data.Count}个");
                     if (index > 0 && data.Count > 1)
                     {
                         //TODO: 显示堆叠详情
-                        Debug.Log($"格子_{index}: {data.Count}个");
                     }
                 }
             }

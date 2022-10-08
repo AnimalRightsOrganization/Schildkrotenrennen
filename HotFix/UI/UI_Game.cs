@@ -187,10 +187,16 @@ namespace HotFix
             PlayAction = yesAction;
             m_PlayPanel.SetActive(true);
             Card card = ClientRoom.lib.library[selectedCardId];
-            //Debug.Log($"显示：{card.Log()}");
+            Debug.Log($"显示：{card.Log()}");
+
             if (card.cardColor == CardColor.COLOR)
             {
                 //Debug.Log($"显示颜色选择");
+                for (int i = 0; i < m_ColorBtns.Length; i++)
+                {
+                    var btn = m_ColorBtns[i];
+                    btn.gameObject.SetActive(true);
+                }
                 m_ColorPanel.SetActive(true);
             }
             else if (card.cardColor == CardColor.SLOWEST)
@@ -232,7 +238,7 @@ namespace HotFix
         void OnPlayBtnClick()
         {
             Card card = ClientRoom.lib.library[selectedCardId];
-            Debug.Log($"[C] 点击出牌：{card.Log()}");
+            Debug.Log($"[C] 点击出牌：{card.Log()}, selectedCardColor={selectedCardColor}");
             TcpChatClient.SendGamePlay(card.id, selectedCardColor);
         }
         #endregion

@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using LitJson;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
