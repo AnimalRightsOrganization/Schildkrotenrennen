@@ -4,6 +4,7 @@ using Random = System.Random;
 using Debug = System.Diagnostics.Debug;
 using HotFix;
 using ET;
+using System.Xml.Linq;
 
 namespace NetCoreServer
 {

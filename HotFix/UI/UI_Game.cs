@@ -180,7 +180,8 @@ namespace HotFix
         }
         public void ShowPlayPanel(int carcdid, System.Action noAction, System.Action yesAction)
         {
-            selectedCardColor = -1;
+            //selectedCardColor = -1;
+            selectedCardColor = 0;
 
             selectedCardId = carcdid;
             CancelAction = noAction;
@@ -196,19 +197,26 @@ namespace HotFix
                 {
                     var btn = m_ColorBtns[i];
                     btn.gameObject.SetActive(true);
+
+                    if (i == 0)
+                    {
+                        m_ColorSelected.SetParent(btn.transform);
+                        m_ColorSelected.anchoredPosition = Vector2.zero;
+                    }
                 }
                 m_ColorPanel.SetActive(true);
             }
             else if (card.cardColor == CardColor.SLOWEST)
             {
-                //Debug.Log($"显示最慢选择");
                 List<TurtleColor> slowestArray = m_Room.GetSlowest(); //0~4
-                for (int i = 0; i < m_ColorBtns.Length; i++)
+                Debug.Log($"显示最慢选择: {slowestArray.Count}");
+                for (int i = m_ColorBtns.Length - 1; i >= 0; i--)
                 {
                     var btn = m_ColorBtns[i];
                     bool available = slowestArray.Contains((TurtleColor)i);
                     btn.gameObject.SetActive(available);
-                    if (selectedCardColor == -1 && available)
+
+                    if (available)
                     {
                         selectedCardColor = i;
                         m_ColorSelected.SetParent(btn.transform);
@@ -338,7 +346,7 @@ namespace HotFix
         async void OnPlay(object reader)
         {
             var packet = (S2C_PlayCardPacket)reader;
-            Debug.Log($"[S2C] 座位#{packet.SeatID}出牌{packet.CardID}-{packet.Color}，是第{handIndex}张手牌");
+            Debug.Log($"[S2C] 座位#{packet.SeatID}出牌{packet.CardID}/{packet.Color}，是第{handIndex}张手牌");
 
             // ①解析牌型
             int colorId = packet.Color;

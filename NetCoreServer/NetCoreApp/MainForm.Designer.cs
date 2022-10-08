@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using NetCoreServer;
 using NetCoreServer.Utils;
 
 namespace WinFormsApp1
@@ -329,7 +330,9 @@ namespace WinFormsApp1
             }
             else
             {
-                logText = TcpChatServer.TCPChatServer.m_RoomManager.GetServerRoom(1).PrintMap();
+                var room = TcpChatServer.TCPChatServer.m_RoomManager.GetServerRoom(1);
+                Debug.Print($"房间内人数={room.m_PlayerDic.Count}");
+                logText = room.PrintMap();
             }
             InvokeUI(() => {
                 this.logText.Text = logText;

@@ -579,12 +579,12 @@ namespace TcpChatServer
             List<int> turtleRank = serverRoom.OnGameResult(); //五只龟的顺序
 
             List<int> playerRank = new List<int>();
-            for (int i = 0; i < serverRoom.Players.Count; i++)
+            Debug.Print($"结算：人数={serverRoom.m_PlayerDic.Count}");
+            for (int i = 0; i < serverRoom.m_PlayerDic.Count; i++)
             {
                 var serverPlayer = serverRoom.GetPlayer(i);
                 int color = (int)serverPlayer.chessColor;
                 int rank = turtleRank.IndexOf(color);
-                //playerRank[i] = rank;
                 playerRank.Add(rank);
             }
 
