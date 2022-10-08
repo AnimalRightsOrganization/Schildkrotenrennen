@@ -1,8 +1,8 @@
 ﻿/* UI层解析消息后，传给本3d对象管理器。
  * 本管理器执行那种颜色，走几步的操作。
  */
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using DG.Tweening;
 
 namespace HotFix
@@ -32,15 +32,8 @@ namespace HotFix
             new Vector3(4, 0.25f, 1.6f),
             new Vector3(5, 0.25f, 1.6f),
         };
-
-
-        public bool IsLock;
-        // 记录每个格子中的乌龟，及顺序（从下到上）
-        //key:格子ID  value:乌龟，及顺序
-        public List<int>[] GridData;
-        // 查询某乌龟当前所在格子
-        //key:乌龟颜色  value:格子ID
-        public int[] TurtlePos;
+        public static Vector3 orig_p = new Vector3(0, 18, -2);
+        public static Vector3 orig_r = new Vector3(60, 0, 0);
 
         public void InitAssets()
         {
@@ -61,24 +54,7 @@ namespace HotFix
                 Turtle[i].InitData(i);
             }
         }
-        public void InitData()
-        {
-            // 起点有5只龟
-            GridData = new List<int>[10];
-            for (int i = 0; i < 10; i++)
-            {
-                GridData[i] = new List<int>();
-            }
-            GridData[0] = new List<int> { 0, 1, 2, 3, 4 };
 
-            // 5只龟在起点
-            TurtlePos = new int[5];
-            TurtlePos[0] = 0;
-            TurtlePos[1] = 0;
-            TurtlePos[2] = 0;
-            TurtlePos[3] = 0;
-            TurtlePos[4] = 0;
-        }
         public void Dispose()
         {
             Destroy(Map.gameObject);
@@ -89,72 +65,18 @@ namespace HotFix
             }
         }
 
-        public Tweener Move1(TurtleColor turtle, int step)
-        {
-            Tweener tw = null;
-            if (IsLock)
-            {
-                Debug.LogError("移动中...稍后再试");
-                return tw;
-            }
-
-            // 数据层计算
-            int turtle_id = (int)turtle;
-            int src_id = TurtlePos[turtle_id];
-            if (src_id >= 9)
-            {
-                Debug.LogError("已经到达终点");
-                return tw;
-            }
-            int dest_id = src_id + step;
-            if (dest_id < 0)
-            {
-                Debug.LogError("已经在起点");
-                return tw;
-            }
-            Vector3 dest_pos = Rock[dest_id].position;
-
-            // 数据层修改
-            TurtlePos[turtle_id] = dest_id; //乌龟移动到新的格子
-            GridData[src_id].Remove(turtle_id); //原格子删除它
-            GridData[dest_id].Add(turtle_id); //新格子加入它
-
-
-
-            // 表现层计算高度
-            int dest_count = GridData[dest_id].Count;
-            dest_pos.y = TURTLE_HEIGHT * dest_count;
-
-            // 表现层修改
-            tw = Turtle[turtle_id].transform.DOMove(dest_pos, 0.5f);
-            tw.OnPlay(() =>
-            {
-                IsLock = true;
-            });
-            tw.OnComplete(() =>
-            {
-                IsLock = false;
-            });
-            return tw;
-        }
-        public void Move2(TurtleColor turtle)
-        {
-            var tw = Move1(turtle, 1);
-            //这里再次注册委托，相当于把Move1里面的委托覆盖了
-            tw.OnPlay(() =>
-            {
-                IsLock = true;
-            });
-            tw.OnComplete(() =>
-            {
-                IsLock = false;
-
-                Move1(turtle, 1);
-            });
-        }
-
         void Update()
         {
+            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+            {
+                // Check if finger is over a UI element
+                if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+                {
+                    Debug.Log("Touched the UI");
+                    return;
+                }
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit hit;
@@ -164,12 +86,25 @@ namespace HotFix
                     //Debug.Log($"click: {hit.transform.name}");
                     string _name = hit.transform.name.Split('_')[1];
                     int index = int.Parse(_name);
-                    var data = GridData[index];
 
-                    Debug.Log($"格子_{index}: {data.Count}个");
+                    var data = TcpChatClient.m_ClientRoom.GridData[index];
+
                     if (index > 0 && data.Count > 1)
                     {
-                        //TODO: 显示堆叠详情
+                        Debug.Log($"格子_{index}: {data.Count}个");
+
+                        // 显示堆叠详情
+                        var tw0 = Camera.main.transform.DOMove(hit.transform.position + new Vector3(0, 6, -6), 0.3f);
+                        var tw1 = Camera.main.transform.DORotate(new Vector3(30, 0, 0), 0.3f);
+                        tw0.OnComplete(() =>
+                        {
+                            var tw2 = Camera.main.transform.DOMove(orig_p, 0.3f);
+                            var tw3 = Camera.main.transform.DORotate(orig_r, 0.3f);
+                            tw2.SetDelay(1); //秒
+                            tw3.SetDelay(1);
+                            tw2.Play();
+                            tw3.Play();
+                        });
                     }
                 }
             }

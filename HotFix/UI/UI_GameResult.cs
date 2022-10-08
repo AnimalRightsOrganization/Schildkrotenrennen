@@ -30,12 +30,14 @@ namespace HotFix
         {
             //dic[座位号] = 排名
 
+            ///* 打印
             string rankStr = string.Empty;
             for (int i = 0; i < rankList.Count; i++)
             {
-                rankStr += $"{rankList[i]}、";
+                rankStr += $"座位{i}是第{rankList[i]}名；";
             }
             Debug.Log($"更新UI：{rankStr}");
+            //*/
 
             for (int i = 0; i < rankList.Count; i++)
             {
