@@ -53,7 +53,14 @@ namespace TcpChatServer
             // 解析msgId
             byte msgId = buffer[0];
             byte[] body = new byte[size - 1];
-            Array.Copy(buffer, 1, body, 0, size - 1);
+            try
+            {
+                Array.Copy(buffer, 1, body, 0, size - 1);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
             /* 
             UnhandledException Message: Source array was not long enough. Check the source index, length, and the array's lower bounds. (Parameter 'sourceArray')
             Trace:    at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length, Boolean reliable)

@@ -152,5 +152,27 @@ namespace HotFix
                 Move1(turtle, 1);
             });
         }
+
+        void Update()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                RaycastHit hit;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out hit))
+                {
+                    //Debug.Log($"click: {hit.transform.name}");
+                    string _name = hit.transform.name.Split('_')[1];
+                    int index = int.Parse(_name);
+                    var data = GridData[index];
+
+                    if (index > 0 && data.Count > 1)
+                    {
+                        //TODO: 显示堆叠详情
+                        Debug.Log($"格子_{index}: {data.Count}个");
+                    }
+                }
+            }
+        }
     }
 }

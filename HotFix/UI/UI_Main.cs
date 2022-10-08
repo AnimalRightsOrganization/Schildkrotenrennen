@@ -36,6 +36,7 @@ namespace HotFix
         public Button m_NextPageBtn;
         public Text m_PageText;
         public GameObject m_Notice;
+        public Transform m_RoomRoot;
 
         private int Page;
         #endregion
@@ -83,10 +84,10 @@ namespace HotFix
             m_NextPageBtn.onClick.AddListener(OnNextBtnClick);
 
             m_Rooms = new Item_Lobby[10];
-            var roomPanel = transform.Find("ListPanel/Root");
+            m_RoomRoot = transform.Find("ListPanel/Root");
             for (int i = 0; i < 10; i++)
             {
-                var roomObj = roomPanel.GetChild(i).gameObject;
+                var roomObj = m_RoomRoot.GetChild(i).gameObject;
                 var item_room = roomObj.AddComponent<Item_Lobby>();
                 m_Rooms[i] = item_room;
             }
@@ -261,10 +262,13 @@ namespace HotFix
             Page = data.Page == 0 ? Page : data.Page;
             Debug.Log($"获得房间列表: count={data.Rooms.Count}，Page={data.Page}");
 
+            //count=0，Page=0
+            m_Notice.SetActive(data.Rooms.Count == 0);
+            m_RoomRoot.gameObject.SetActive(data.Rooms.Count > 0);
+
             //==0时不刷新。
             if (data.Page > 0)
             {
-                m_Notice.SetActive(data.Rooms.Count == 0);
                 m_PageText.text = $"第{Page}页";
 
                 for (int i = 0; i < m_Rooms.Length; i++)

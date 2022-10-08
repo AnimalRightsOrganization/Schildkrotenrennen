@@ -101,13 +101,7 @@ namespace NetCoreServer
         public RoomInfo GetRoomInfo()
         {
             var temp = new List<PlayerInfo>();
-            /*
-            for (int i = 0; i < CurCount; i++)
-            {
-                var player = m_PlayerDic[i];
-                var playerInfo = new PlayerInfo { SeatID = player.SeatId, UserName = player.UserName, NickName = player.NickName };
-                temp.Add(playerInfo);
-            }*/
+
             foreach (var item in m_PlayerDic)
             {
                 var _player = item.Value;
@@ -336,8 +330,15 @@ namespace NetCoreServer
             }
 
             // 走棋子
-            //List<int> moveChessList = new List<int>();
-            int curPos = chessPos[colorKey]; //某颜色棋子当前位置
+            int curPos = 0;
+            try
+            {
+                curPos = chessPos[colorKey]; //某颜色棋子当前位置
+            }
+            catch
+            {
+                Debug.Print($"错误的key：{colorKey} / {chessPos.Count}");
+            }
             int dstPos = System.Math.Clamp(curPos + step, 0, 9); //前往位置
             if (curPos > 0)
             {

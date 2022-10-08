@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using ET;
-using System.Threading.Tasks;
 
 namespace HotFix
 {
@@ -104,7 +103,12 @@ namespace HotFix
             string username = m_Login_UserInput.text;
             if (string.IsNullOrEmpty(username))
                 username = "admin";
-            TcpChatClient.SendLogin(username, "123456");
+
+            string password = m_Login_PwdInput.text;
+            if (string.IsNullOrEmpty(password))
+                password = "123456";
+
+            TcpChatClient.SendLogin(username, password);
         }
         void OnGoLoginBtnClick()
         {
@@ -205,7 +209,7 @@ namespace HotFix
             clientPlayer.ResetToLobby();
             TcpChatClient.m_PlayerManager.AddClientPlayer(clientPlayer, true);
             UIManager.Get().Push<UI_Main>();
-            //this.Pop();
+
             var connect = UIManager.Get().GetUI<UI_Connect>();
             if (connect != null)
                 connect.Pop();

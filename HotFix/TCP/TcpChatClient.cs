@@ -183,12 +183,20 @@ namespace HotFix
         {
             if (string.IsNullOrEmpty(usr) || string.IsNullOrEmpty(pwd))
             {
-                Debug.LogError($"用户名或密码不能为空");
+                string err_str = "用户名或密码不能为空";
+                Debug.LogError(err_str);
+
+                var toast = UIManager.Get().Push<UI_Toast>();
+                toast.Show(err_str);
                 return;
             }
             if (pwd.Length < 6)
             {
-                Debug.LogError($"密码长度过短");
+                string err_str = "密码长度过短";
+                Debug.LogError(err_str);
+
+                var toast = UIManager.Get().Push<UI_Toast>();
+                toast.Show(err_str);
                 return;
             }
 

@@ -48,6 +48,7 @@ namespace HotFix
             map_manager.name = "MapManager";
             map_manager.AddComponent<MapManager>();
             MapManager.Instance.InitAssets();
+            MapManager.Instance.InitData();
 
             m_MenuBtn = transform.Find("MenuBtn").GetComponent<Button>();
             m_MenuBtn.onClick.AddListener(OnMenuBtnClick);
