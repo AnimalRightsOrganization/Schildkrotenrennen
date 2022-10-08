@@ -48,11 +48,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void OnDestroy()
-    {
-        //IPC_Exit(); //必须有回包，不然对方卡死
-    }
-
     // 请求游戏配置
     async void GetConfig()
     {
@@ -98,20 +93,7 @@ public class GameManager : MonoBehaviour
         }
         catch (System.Exception e)
         {
-            Debug.Log(e.Message);
+            Debug.Log($"未启动大厅：{e.Message}");
         }
     }
-    /*
-    async void IPC_Exit()
-    {
-        try
-        {
-            string result = await _ipc.Send("Exit 0");
-            Debug.Log($"IPC返回：{result}");
-        }
-        catch (System.Exception e)
-        {
-            Debug.Log(e.Message);
-        }
-    }*/
 }

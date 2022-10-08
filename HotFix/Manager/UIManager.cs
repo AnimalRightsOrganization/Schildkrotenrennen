@@ -35,7 +35,7 @@ namespace HotFix
             UIBase ui = null;
             if (stack.TryGetValue(scriptName, out ui) == false)
             {
-                Debug.LogError($"还没有创建：{scriptName}");
+                //Debug.LogError($"还没有创建：{scriptName}");
                 return null;
             }
             return ui.GetComponent<UIBase>();
