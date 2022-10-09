@@ -26,7 +26,6 @@ namespace HotFix
             }
         }
 
-
         static List<string> ColorName = new List<string> { "红色", "黄色", "绿色", "蓝色", "紫色" };
         public void UpdateUI(List<int> rankList)
         {
@@ -55,8 +54,8 @@ namespace HotFix
 
         void OnExitBtnClick()
         {
-            MapManager.Instance.Reset();
-            UIManager.Get().PopAll();
+            Destroy(MapManager.Instance.gameObject);
+            UIManager.Get().PopAll(true);
             UIManager.Get().Push<UI_Login>();
             UIManager.Get().Push<UI_Main>();
         }

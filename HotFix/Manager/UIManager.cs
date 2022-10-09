@@ -88,7 +88,7 @@ namespace HotFix
             }
         }
 
-        public void Pop(UIBase ui)
+        public void Pop(UIBase ui, bool destroy = false)
         {
             string scriptName = ui.name;
             if (ui == null)
@@ -97,16 +97,30 @@ namespace HotFix
                 return;
             }
             stack.Remove(scriptName);
-            recyclePool.Add(scriptName, ui);
-            ui.gameObject.SetActive(false);
+            if (destroy == false)
+            {
+                recyclePool.Add(scriptName, ui);
+                ui.gameObject.SetActive(false);
+            }
+            else
+            {
+                Destroy(ui.gameObject);
+            }
         }
-        public void PopAll()
+        public void PopAll(bool destroy = false)
         {
             foreach (var item in stack)
             {
                 //Debug.Log($"{item.Key}---{item.Value.gameObject}");
-                recyclePool.Add(item.Key, item.Value);
-                item.Value.gameObject.SetActive(false);
+                if (destroy == false)
+                {
+                    recyclePool.Add(item.Key, item.Value);
+                    item.Value.gameObject.SetActive(false);
+                }
+                else
+                {
+                    Destroy(item.Value.gameObject);
+                }
             }
             stack.Clear();
         }
