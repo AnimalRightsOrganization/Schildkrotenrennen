@@ -590,11 +590,13 @@ namespace TcpChatServer
 
             var packet = new S2C_GameResultPacket { Rank = playerRank }; //key:座位号, value:排名
             serverRoom.SendAsync(PacketType.S2C_GameResult, packet);
+            TCPChatServer.m_RoomManager.RemoveServerRoom(serverRoom.RoomID);
 
+            // 打印
             string rankStr = string.Empty;
             for (int i = 0; i < playerRank.Count; i++)
             {
-                rankStr += $"{playerRank[i]}、";
+                rankStr += $"座位{i}排名{playerRank[i]}颜色；";
             }
             Debug.Print($"广播结算消息[{playerRank.Count}]：{rankStr}");
         }

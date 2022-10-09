@@ -21,38 +21,44 @@ namespace HotFix
             for (int i = 0; i < rankPanel.childCount; i++)
             {
                 var child = rankPanel.GetChild(i);
-                var script = child.GetComponent<Text>();
+                var script = child.GetComponentInChildren<Text>();
                 m_RankList.Add(script);
             }
         }
 
+
+        static List<string> ColorName = new List<string> { "红色", "黄色", "绿色", "蓝色", "紫色" };
         public void UpdateUI(List<int> rankList)
         {
+            var colorRank = TcpChatClient.m_ClientRoom.GetRank(); //5,3,2,4,1
+
             //dic[座位号] = 排名
-
-            ///* 打印
-            string rankStr = string.Empty;
-            for (int i = 0; i < rankList.Count; i++)
+            for (int i = 0; i < m_RankList.Count; i++)
             {
-                rankStr += $"座位{i}是第{rankList[i]}名；";
-            }
-            Debug.Log($"更新UI：{rankStr}");
-            //*/
+                Text txt_item = m_RankList[i];
+                var colorIndex = colorRank[i];
+                var colorCN = ColorName[colorIndex];
+                txt_item.text = $"{colorCN}:---";
 
-            for (int i = 0; i < rankList.Count; i++)
-            {
-                int seatId = rankList[i]; //排名i --- 座位seatId
+                for (int t = 0; t < rankList.Count; t++)
+                {
+                    int rank = rankList[t];
 
-                var rankItem = m_RankList[i]; //第i名
-                var playerData = TcpChatClient.m_ClientRoom.m_PlayerDic[seatId];
-                rankItem.text = playerData.NickName;
+                    if (rank == i)
+                    {
+                        var playerData = TcpChatClient.m_ClientRoom.m_PlayerDic[t];
+                        txt_item.text = $"{colorCN}:{playerData.NickName}";
+                    }
+                }
             }
         }
 
         void OnExitBtnClick()
         {
+            MapManager.Instance.Reset();
+            UIManager.Get().PopAll();
+            UIManager.Get().Push<UI_Login>();
             UIManager.Get().Push<UI_Main>();
-            this.Pop();
         }
     }
 }

@@ -35,6 +35,8 @@ namespace HotFix
         public static Vector3 orig_p = new Vector3(0, 18, -2);
         public static Vector3 orig_r = new Vector3(60, 0, 0);
 
+        protected bool Inited;
+
         public void InitAssets()
         {
             Map = transform.Find("Map");
@@ -53,6 +55,17 @@ namespace HotFix
                 Turtle[i] = item.gameObject.AddComponent<Item_Turtle>();
                 Turtle[i].InitData(i);
             }
+
+            Inited = true;
+        }
+        public void Reset()
+        {
+            Inited = false;
+
+            for (int i = 0; i < 5; i++)
+            {
+                Turtle[i].InitData(i);
+            }
         }
 
         public void Dispose()
@@ -67,6 +80,9 @@ namespace HotFix
 
         void Update()
         {
+            if (Inited == false)
+                return;
+
             if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
             {
                 // Check if finger is over a UI element

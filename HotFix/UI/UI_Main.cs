@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ET;
-using DG.Tweening;
 
 namespace HotFix
 {
@@ -118,6 +117,9 @@ namespace HotFix
         void Enter()
         {
             m_EnterAnime.SetBool("enter", true);
+
+            m_NameInput.text = string.Empty;
+            m_KeyInput.text = string.Empty;
 
             Page = 1;
             m_PageText.text = $"第{Page}页";

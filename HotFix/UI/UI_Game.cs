@@ -49,6 +49,7 @@ namespace HotFix
             map_manager.AddComponent<MapManager>();
             MapManager.Instance.InitAssets();
 
+
             m_MenuBtn = transform.Find("MenuBtn").GetComponent<Button>();
             m_MenuBtn.onClick.AddListener(OnMenuBtnClick);
 
@@ -432,6 +433,13 @@ namespace HotFix
         {
             var packet = (S2C_GameResultPacket)reader;
             Debug.Log($"[S2C] 结算消息: {packet.Rank.Count}");
+
+            string logStr = "打印结果：";
+            for (int i = 0; i < packet.Rank.Count; i++)
+            {
+                logStr += $"座位{i}排名{packet.Rank[i]}；";
+            }
+            Debug.Log(logStr);
 
             // 等待棋子走完，再弹出。
             m_Room.OnGameResult_Client();

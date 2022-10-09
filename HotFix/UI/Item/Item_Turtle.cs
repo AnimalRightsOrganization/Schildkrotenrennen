@@ -14,26 +14,19 @@ namespace HotFix
             return result;
         }
 
-        private MeshRenderer m_Render;
-        private Texture2D m_Texture;
         public TurtleColor mColor;
 
         private int CurrentPos; //当前所在格子[0～9]
         private bool IsLock; //移动中锁定
         private UI_Game ui_game;
 
-        void Awake()
-        {
-            m_Render = GetComponent<MeshRenderer>();
-        }
-
         public void InitData(int id)
         {
-            //m_Texture = ResManager.LoadTexture2D($"Sprites/{(TurtleColor)id}");
-            //m_Render.material.mainTexture = m_Texture;
-
             mColor = (TurtleColor)id;
             CurrentPos = 0;
+
+            var start_pos = MapManager.START_POS[(int)mColor];
+            transform.position = start_pos;
 
             IsLock = false;
         }

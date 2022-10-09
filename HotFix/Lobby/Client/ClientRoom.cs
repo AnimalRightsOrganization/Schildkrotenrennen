@@ -183,6 +183,21 @@ namespace HotFix
             }
             return null;
         }
+        // 获取排名
+        public List<int> GetRank()
+        {
+            var turtles = new List<int>();
+            for (int i = GridData.Count - 1; i >= 0; i--) //从终点开始遍历
+            {
+                var grid = GridData[i];
+                for (int t = 0; t < grid.Count; t++)
+                {
+                    int chess = (int)grid[t];
+                    turtles.Add(chess);
+                }
+            }
+            return turtles;
+        }
 
         void PrintHandCards()
         {
