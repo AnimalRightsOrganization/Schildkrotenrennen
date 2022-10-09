@@ -348,12 +348,14 @@ namespace HotFix
             var packet = (S2C_PlayCardPacket)reader;
             Debug.Log($"[S2C] 座位#{packet.SeatID}出牌{packet.CardID}/{packet.Color}，是第{handIndex}张手牌");
 
+            m_Room.gameStatus = TurtleAnime.Anime;
+
             // ①解析牌型
             int colorId = packet.Color;
             Card card = ClientRoom.lib.library[packet.CardID];
             var moveChessList = m_Room.OnGamePlay_Client(packet); //通知逻辑层
             int handCardCount = m_Room.HandCardDatas.Count; //我的手牌数。如果是别人出牌，这里不会减少。
-
+            
             // ②出牌动画
             // 放大0.2f，移动0.3f，停留1.0f，消失0.5f => 2.0f
             if (packet.SeatID != m_LocalPlayer.SeatId) //别人出牌
@@ -384,6 +386,8 @@ namespace HotFix
                 Debug.Log($"乌龟{index}移动。{(TurtleColor)index}：{chess.mColor}");
                 chess.Move((TurtleColor)index, step, i);
             }
+
+            m_Room.gameStatus = TurtleAnime.Wait;
 
             // ④结算面板，等待乌龟移动结束再弹出
             if (m_Room.gameStatus == TurtleAnime.End)

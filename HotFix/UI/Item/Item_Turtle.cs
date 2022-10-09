@@ -71,10 +71,12 @@ namespace HotFix
             tw.OnPlay(() =>
             {
                 IsLock = true;
+                ui_game.m_Room.gameStatus = TurtleAnime.Anime;
             });
             tw.OnComplete(() =>
             {
                 IsLock = false;
+                ui_game.m_Room.gameStatus = TurtleAnime.Wait;
             });
             return tw;
         }
