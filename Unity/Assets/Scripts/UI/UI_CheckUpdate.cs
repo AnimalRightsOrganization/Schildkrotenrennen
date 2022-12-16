@@ -121,7 +121,8 @@ public class UI_CheckUpdate : MonoBehaviour
 
     public static IEnumerator BeginDownLoad(string downloadfileName, string desFileName)
     {
-        HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(downloadfileName);
+        //Debug.Log($"BeginDownLoad: {downloadfileName}");
+        HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create($"http://{downloadfileName}");
         request.Timeout = 5000;
         WebResponse response = request.GetResponse();
         using (FileStream fs = new FileStream(desFileName, FileMode.Create))

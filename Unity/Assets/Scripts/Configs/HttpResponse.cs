@@ -78,10 +78,10 @@ public class Present
 {
     public Present()
     {
-        web = "moegijinka.cn";
+        web = "http://moegijinka.cn";
         gate = "moegijinka.cn"; //本地host配了域名
-        res_url = "moegijinka.cn";
-        res_url = $"app.moegijinka.cn/{UnityEngine.Application.productName}/res";
+        app_url = "http://moegijinka.cn";
+        res_url = $"http://app.moegijinka.cn/{UnityEngine.Application.productName}/res";
         app_version = "1.0.0";
         res_version = "1";
         notice = string.Empty;

@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine;
 using LitJson;
-using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -32,7 +31,8 @@ public class GameManager : MonoBehaviour
             // 绑定组件
             transform.Find("ILGlobal").gameObject.AddComponent<Client.ILGlobal>();
 
-            IPC_Login();
+            //if(官方渠道)
+            //IPC_Login();
 
 #if UNITY_EDITOR && !USE_ASSETBUNDLE
             // 不检查更新
