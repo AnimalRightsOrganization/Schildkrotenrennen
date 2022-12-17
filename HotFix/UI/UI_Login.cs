@@ -83,7 +83,6 @@ namespace HotFix
         {
             Debug.Log("ConnectToServer");
             m_OAuthBtn.gameObject.SetActive(false);
-            //TcpChatClient.Connect();
             KcpChatClient.Connect();
 
             UIManager.Get().Push<UI_Connect>();
@@ -112,7 +111,6 @@ namespace HotFix
             if (string.IsNullOrEmpty(password))
                 password = "123456";
 
-            //TcpChatClient.SendLogin(username, password);
             KcpChatClient.SendLogin(username, password);
         }
         void OnGoLoginBtnClick()
@@ -149,11 +147,12 @@ namespace HotFix
             }
             string username = m_SignUp_UserInput.text;
             string password = m_SignUp_Pwd2Input.text;
-            TcpChatClient.SendSignUp(username, password);
+            KcpChatClient.SendSignUp(username, password);
         }
         void OnOAuthBtnClick()
         {
-            if (TcpChatClient.IsConnected() == false)
+            Debug.Log("OnOAuthBtnClick");
+            if (KcpChatClient.IsConnected() == false)
             {
                 ConnectToServer();
                 return;
@@ -189,8 +188,8 @@ namespace HotFix
         }
         async void SendLoginByToken()
         {
-            //string token = GameManager.Token;
-            string token = "DE8FD617D94B7EFD67E79314B3F0C665";
+            string token = GameManager.Token;
+            //string token = "DE8FD617D94B7EFD67E79314B3F0C665";
             Debug.Log($"连接服务器成功，尝试读取Token：'{token}'");
 
             var connect = UIManager.Get().Push<UI_Connect>();
@@ -199,7 +198,6 @@ namespace HotFix
             // 使用Token登录
             if (!string.IsNullOrEmpty(token))
             {
-                //TcpChatClient.SendLogin(token);
                 KcpChatClient.SendLogin(token);
             }
             else
@@ -213,7 +211,7 @@ namespace HotFix
             var playerData = new BasePlayerData { UserName = packet.Username }; //没填的都是默认值
             var clientPlayer = new ClientPlayer(playerData);
             clientPlayer.ResetToLobby();
-            TcpChatClient.m_PlayerManager.AddClientPlayer(clientPlayer, true);
+            KcpChatClient.m_PlayerManager.AddClientPlayer(clientPlayer, true);
             UIManager.Get().Push<UI_Main>();
 
             var connect = UIManager.Get().GetUI<UI_Connect>();

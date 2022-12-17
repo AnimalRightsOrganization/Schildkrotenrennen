@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ET;
+using kcp2k.Examples;
 
 namespace HotFix
 {
@@ -51,13 +52,13 @@ namespace HotFix
                         ui_toast.Show("请输入密码");
                         return;
                     }
-                    TcpChatClient.SendJoinRoom(data.RoomID, ui_dialog.m_Input.text);
+                    KcpChatClient.SendJoinRoom(data.RoomID, ui_dialog.m_Input.text);
                     ui_dialog.Pop();
                 }, "确定");
                 return;
             }
 
-            TcpChatClient.SendJoinRoom(data.RoomID, string.Empty);
+            KcpChatClient.SendJoinRoom(data.RoomID, string.Empty);
         }
     }
 }

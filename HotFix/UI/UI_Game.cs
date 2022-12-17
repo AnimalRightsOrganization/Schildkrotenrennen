@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using ET;
+using kcp2k.Examples;
 
 namespace HotFix
 {
@@ -113,6 +114,7 @@ namespace HotFix
                 Button btn = m_ColorBtns[index];
                 btn.onClick.AddListener(() =>
                 {
+                    Debug.Log($"Click: {i}/{index}");
                     selectedCardColor = index;
                     Debug.Log($"彩色龟，选颜色{(TurtleColor)selectedCardColor}");
                     m_ColorSelected.SetParent(btn.transform);
@@ -141,8 +143,8 @@ namespace HotFix
         public void UpdateUI()
         {
             GameEndAction = null;
-            m_Room = TcpChatClient.m_ClientRoom;
-            m_LocalPlayer = TcpChatClient.m_PlayerManager.LocalPlayer;
+            m_Room = KcpChatClient.m_ClientRoom;
+            m_LocalPlayer = KcpChatClient.m_PlayerManager.LocalPlayer;
 
             // 绘制成员头像、昵称
             var players = m_Room.Players;
@@ -209,10 +211,11 @@ namespace HotFix
             else if (card.cardColor == CardColor.SLOWEST)
             {
                 List<TurtleColor> slowestArray = m_Room.GetSlowest(); //0~4
-                Debug.Log($"显示最慢选择: {slowestArray.Count}");
+                Debug.Log($"显示最慢选择: {slowestArray.Count}, {m_ColorBtns != null}/{m_ColorBtns.Length}");
                 for (int i = m_ColorBtns.Length - 1; i >= 0; i--)
                 {
                     var btn = m_ColorBtns[i];
+                    Debug.Log($"m_ColorBtns---{i}: {btn != null}");
                     bool available = slowestArray.Contains((TurtleColor)i);
                     btn.gameObject.SetActive(available);
 
@@ -232,10 +235,12 @@ namespace HotFix
         }
         public void HidePlayPanel()
         {
-            if (m_Room.gameStatus == TurtleAnime.Anime)
-            {
-                return; //上移动画没播完
-            }
+            Debug.Log("HidePlayPanel");
+            //DoTween Bug
+            //if (m_Room.gameStatus == TurtleAnime.Anime)
+            //{
+            //    return; //上移动画没播完
+            //}
             CancelAction?.Invoke();
             m_PlayPanel.SetActive(false);
         }
@@ -247,7 +252,7 @@ namespace HotFix
         {
             Card card = ClientRoom.lib.library[selectedCardId];
             Debug.Log($"[C] 点击出牌：{card.Log()}, selectedCardColor={selectedCardColor}");
-            TcpChatClient.SendGamePlay(card.id, selectedCardColor);
+            KcpChatClient.SendGamePlay(card.id, selectedCardColor);
         }
         #endregion
 

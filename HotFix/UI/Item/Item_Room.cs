@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using kcp2k.Examples;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace HotFix
@@ -34,13 +35,14 @@ namespace HotFix
                     () => { ui_dialog.Hide(); }, "取消",
                     () =>
                     {
-                        TcpChatClient.SendOperateSeat(SeatID, SeatOperate.ADD_BOT);
+                        KcpChatClient.SendOperateSeat(SeatID, SeatOperate.ADD_BOT);
+                        Debug.Log("Hide Dialog <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                         ui_dialog.Hide();
                     }, "确定");
             }
             else
             {
-                if (playerData.UserName == TcpChatClient.m_PlayerManager.LocalPlayer.UserName)
+                if (playerData.UserName == KcpChatClient.m_PlayerManager.LocalPlayer.UserName)
                 {
                     //Debug.Log($"#{SeatID}是自己，没效果");
                 }
@@ -52,7 +54,7 @@ namespace HotFix
                         () => { ui_dialog.Hide(); }, "取消",
                         () =>
                         {
-                            TcpChatClient.SendOperateSeat(SeatID, SeatOperate.KICK_PLAYER);
+                            KcpChatClient.SendOperateSeat(SeatID, SeatOperate.KICK_PLAYER);
                             ui_dialog.Hide();
                         }, "确定");
                 }

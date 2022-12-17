@@ -56,33 +56,33 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scenes\ServerOnly\Example\TestClient.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Example\KcpChatServer.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Server\ServerPlayerManager.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Lobby\Shared\CardConfig.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Lobby\Shared\GamePackets.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Server\ServerRoomManager.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Lobby\Shared\BaseRoom.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Server\ServerPlayer.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Server\ServerRoom.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Shared\BasePlayer.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Core\Object\ProtoObject.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Core\Message\JsonHelper.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\ProtobufHelper.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Core\MonoPool.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Lobby\Shared\CardConfig.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\MySQLTool.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Utils\UpdateManager.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Message\OuterMessage.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Example\TestClient.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\Message\IActorLocationMessage.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\PoolHelper.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\Message\MessageAttribute.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Example\KcpChatServer.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\Message\IMessage.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\Object\Object.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Core\Message\JsonHelper.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Core\Message\BaseAttribute.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Message\OuterOpcode.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Core\Object\ProtoObject.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\UserInfo.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\Message\ResponseTypeAttribute.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\Message\IActorMessage.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Message\OuterMessage.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Message\OuterOpcode.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Utils\UpdateManager.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\UserInfo.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\MySQLTool.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Lobby\Shared\BaseRoom.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Lobby\Shared\GamePackets.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Core\MonoPool.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Core\Message\BaseAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Scenes\ServerOnly\ServerOnly.asmdef" />
@@ -352,11 +352,20 @@
     <Reference Include="I18N.West">
       <HintPath>Assets\ThirdParty\MySQL\Plugins\I18N.West.dll</HintPath>
     </Reference>
+    <Reference Include="DemiLib">
+      <HintPath>Assets\ThirdParty\Demigiant\DemiLib\Core\DemiLib.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTweenProEditor">
+      <HintPath>Assets\ThirdParty\Demigiant\DOTweenPro\Editor\DOTweenProEditor.dll</HintPath>
+    </Reference>
     <Reference Include="DOTweenEditor">
       <HintPath>Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenEditor.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>Assets\Editor\ExcelTool\Plugins\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="DemiEditor">
+      <HintPath>Assets\ThirdParty\Demigiant\DemiLib\Core\Editor\DemiEditor.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus">
       <HintPath>Assets\Editor\ExcelTool\Plugins\EPPlus.dll</HintPath>
@@ -376,26 +385,17 @@
     <Reference Include="DOTween">
       <HintPath>Assets\ThirdParty\Demigiant\DOTween\DOTween.dll</HintPath>
     </Reference>
-    <Reference Include="DemiLib">
-      <HintPath>Assets\ThirdParty\Demigiant\DemiLib\DemiLib.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@3.0.2\Runtime\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="DemiEditor">
-      <HintPath>Assets\ThirdParty\Demigiant\DemiLib\Editor\DemiEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTween46">
-      <HintPath>Assets\ThirdParty\Demigiant\DOTween\DOTween46.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTween43">
-      <HintPath>Assets\ThirdParty\Demigiant\DOTween\DOTween43.dll</HintPath>
     </Reference>
     <Reference Include="Excel">
       <HintPath>Assets\Editor\ExcelTool\Plugins\Excel.dll</HintPath>
     </Reference>
-    <Reference Include="DOTween50">
-      <HintPath>Assets\ThirdParty\Demigiant\DOTween\DOTween50.dll</HintPath>
+    <Reference Include="DOTweenPro">
+      <HintPath>Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenPro.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTweenUpgradeManager">
+      <HintPath>Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenUpgradeManager.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Android.Types">
       <HintPath>D:\Program Files\Unity\2021.3.13f1c1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>

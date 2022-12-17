@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using kcp2k.Examples;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,7 +30,7 @@ namespace HotFix
         static List<string> ColorName = new List<string> { "红色", "黄色", "绿色", "蓝色", "紫色" };
         public void UpdateUI(List<int> rankList)
         {
-            var colorRank = TcpChatClient.m_ClientRoom.GetRank(); //5,3,2,4,1
+            var colorRank = KcpChatClient.m_ClientRoom.GetRank(); //5,3,2,4,1
 
             //dic[座位号] = 排名
             for (int i = 0; i < m_RankList.Count; i++)
@@ -45,7 +46,7 @@ namespace HotFix
 
                     if (rank == i)
                     {
-                        var playerData = TcpChatClient.m_ClientRoom.m_PlayerDic[t];
+                        var playerData = KcpChatClient.m_ClientRoom.m_PlayerDic[t];
                         txt_item.text = $"{colorCN}:{playerData.NickName}";
                     }
                 }

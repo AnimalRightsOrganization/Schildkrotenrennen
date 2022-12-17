@@ -115,9 +115,12 @@ namespace HotFix
 
         public void Hide()
         {
-            tw2 = m_CanvasGroup.DOFade(0, 0.2f);
-            tw2.Play();
-            tw2.OnComplete(Reset);
+            //tw2 = m_CanvasGroup.DOFade(0, 0.2f);
+            //tw2.Play();
+            //tw2.OnComplete(Reset);
+
+            Debug.Log($"{this.name}: DoTween Bug.");
+            Reset();
         }
     }
 }

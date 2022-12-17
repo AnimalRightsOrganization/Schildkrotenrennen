@@ -60,10 +60,16 @@
     <Compile Include="Assets\ThirdParty\ILRuntime\2.0.2\Demo\Scripts\Examples\09_Reflection\ReflectionDemo.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_NotSupportedException_Binding.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Meta\TypeModel.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenProShortcuts.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_Char_Binding.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\MapDecorator.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTween\Modules\DOTweenModulePhysics2D.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenAnimation.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\ListDecorator.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\ProtoBuf_Serializer_Binding.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenTextMeshPro.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenTk2d.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTweenPro\Editor\DOTweenAnimationInspector.cs" />
     <Compile Include="Assets\ThirdParty\kcp2k\highlevel\KcpServer.cs" />
     <Compile Include="Assets\ThirdParty\kcp2k\highlevel\KcpPeer.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\PropertyDecorator.cs" />
@@ -144,11 +150,13 @@
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_Collections_Generic_IList_1_ILTypeInstance_Binding.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\FieldDecorator.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\2.0.2\Demo\Scripts\Examples\11_ValueTypeBinding\Vector3Binder.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTween\Modules\DOTweenModulePhysics.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_Net_IPEndPoint_Binding.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_Byte_Binding.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\2.0.2\Demo\LitJson\JsonMockWrapper.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\2.0.2\Demo\Editor\ILRuntimeCrossBinding.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\SubItemToken.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTweenPro\Editor\DOTweenPreviewManager.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\DefaultValueDecorator.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\DataFormat.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Meta\SubType.cs" />
@@ -161,6 +169,9 @@
     <Compile Include="Assets\ThirdParty\kcp2k\highlevel\ErrorCode.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\IExtensible.cs" />
     <Compile Include="Assets\ThirdParty\kcp2k\highlevel\Common.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTween\Modules\DOTweenModuleUnityVersion.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTween\Modules\DOTweenModuleEPOOutline.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTween\Modules\DOTweenModuleSprite.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\SingleSerializer.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_Int32_Binding.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_Single_Binding.cs" />
@@ -180,10 +191,12 @@
     <Compile Include="Assets\ThirdParty\protobuf-net\Meta\MetaType.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Meta\AttributeMap.cs" />
     <Compile Include="Assets\ThirdParty\kcp2k\empty\KcpClientConnectionNonAlloc.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTween\Modules\DOTweenModuleUtils.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\NetObjectSerializer.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\ProtoDecoratorBase.cs" />
     <Compile Include="Assets\ThirdParty\kcp2k\highlevel\KcpConfig.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_Collections_Generic_ICollection_1_ILTypeInstance_Bindin.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTween\Modules\DOTweenModuleUI.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\TagDecorator.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\PrefixStyle.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\UInt32Serializer.cs" />
@@ -208,6 +221,7 @@
     <Compile Include="Assets\ThirdParty\kcp2k\kcp\AssemblyInfo.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Compiler\Local.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\2.0.2\Demo\Scripts\Examples\03_Delegate\DelegateDemo.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenDeAudio.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_Collections_Generic_Dictionary_2_Type_Queue_1_Object_Bi.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_Boolean_Binding.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\2.0.2\Demo\Scripts\Examples\11_ValueTypeBinding\ValueTypeBindingDemo.cs" />
@@ -239,6 +253,7 @@
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\UInt64Serializer.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\DiscriminatedUnion.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\EnumSerializer.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTween\Modules\DOTweenModuleAudio.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\UnityEngine_Object_Binding.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\ExtensibleUtil.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\System_Net_Sockets_SocketAsyncEventArgs_Binding.cs" />
@@ -255,6 +270,7 @@
     <Compile Include="Assets\ThirdParty\protobuf-net\PType.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\KeyValuePairProxy.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\DateTimeSerializer.cs" />
+    <Compile Include="Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenDeUnityExtended.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\UnityEngine_GameObject_Binding.cs" />
     <Compile Include="Assets\ThirdParty\kcp2k\highlevel\Log.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\UnityEngine_Events_UnityEvent_Binding.cs" />
@@ -280,27 +296,28 @@
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\UInt16Serializer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\ThirdParty\Demigiant\DOTween\DOTween43.xml" />
-    <None Include="Assets\ThirdParty\Demigiant\DOTween\DOTween46.xml" />
-    <None Include="Assets\ThirdParty\Demigiant\DOTween\DOTween50.xml" />
+    <None Include="Assets\ThirdParty\Demigiant\DemiLib\Core\Editor\DemiEditor.dll" />
     <None Include="Assets\ThirdParty\Demigiant\readme_DOTweenPro.txt" />
     <None Include="Assets\ThirdParty\Demigiant\DOTween\DOTween.XML" />
+    <None Include="Assets\ThirdParty\Demigiant\DemiLib\Core\DemiLib.dll" />
+    <None Include="Assets\ThirdParty\Demigiant\DemiLib\Core\Editor\DemiEditor.xml" />
     <None Include="Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenEditor.dll" />
-    <None Include="Assets\ThirdParty\Demigiant\DemiLib\DemiLib.dll" />
+    <None Include="Assets\ThirdParty\Demigiant\DOTweenPro\Editor\DOTweenProEditor.XML" />
+    <None Include="Assets\ThirdParty\Demigiant\DOTweenPro\Editor\DOTweenProEditor.dll" />
     <None Include="Assets\ThirdParty\MySQL\Plugins\MySql.Data.dll" />
-    <None Include="Assets\ThirdParty\Demigiant\DOTween\DOTween43.dll" />
-    <None Include="Assets\ThirdParty\Demigiant\DemiLib\Editor\DemiEditor.dll" />
     <None Include="Assets\ThirdParty\Demigiant\DOTween\DOTween.dll" />
-    <None Include="Assets\ThirdParty\Demigiant\DOTween\DOTween46.dll" />
-    <None Include="Assets\ThirdParty\Demigiant\DemiLib\DemiLib.xml" />
     <None Include="Assets\ThirdParty\kcp2k\LICENSE.txt" />
-    <None Include="Assets\ThirdParty\Demigiant\DemiLib\Editor\DemiEditor.XML" />
+    <None Include="Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenPro.dll" />
+    <None Include="Assets\ThirdParty\Demigiant\DOTweenPro\readme.txt" />
+    <None Include="Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenUpgradeManager.dll" />
+    <None Include="Assets\ThirdParty\Demigiant\DemiLib\Core\DemiLib.xml" />
+    <None Include="Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenPro.XML" />
     <None Include="Assets\ThirdParty\MySQL\Plugins\I18N.West.dll" />
     <None Include="Assets\ThirdParty\Demigiant\DOTween\readme.txt" />
+    <None Include="Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenUpgradeManager.XML" />
     <None Include="Assets\ThirdParty\kcp2k\VERSION.txt" />
     <None Include="Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenEditor.XML" />
     <None Include="Assets\ThirdParty\Unity.ThirdParty.asmdef" />
-    <None Include="Assets\ThirdParty\Demigiant\DOTween\DOTween50.dll" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -567,11 +584,20 @@
     <Reference Include="I18N.West">
       <HintPath>Assets\ThirdParty\MySQL\Plugins\I18N.West.dll</HintPath>
     </Reference>
+    <Reference Include="DemiLib">
+      <HintPath>Assets\ThirdParty\Demigiant\DemiLib\Core\DemiLib.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTweenProEditor">
+      <HintPath>Assets\ThirdParty\Demigiant\DOTweenPro\Editor\DOTweenProEditor.dll</HintPath>
+    </Reference>
     <Reference Include="DOTweenEditor">
       <HintPath>Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenEditor.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>Assets\Editor\ExcelTool\Plugins\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="DemiEditor">
+      <HintPath>Assets\ThirdParty\Demigiant\DemiLib\Core\Editor\DemiEditor.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus">
       <HintPath>Assets\Editor\ExcelTool\Plugins\EPPlus.dll</HintPath>
@@ -591,26 +617,17 @@
     <Reference Include="DOTween">
       <HintPath>Assets\ThirdParty\Demigiant\DOTween\DOTween.dll</HintPath>
     </Reference>
-    <Reference Include="DemiLib">
-      <HintPath>Assets\ThirdParty\Demigiant\DemiLib\DemiLib.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@3.0.2\Runtime\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="DemiEditor">
-      <HintPath>Assets\ThirdParty\Demigiant\DemiLib\Editor\DemiEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTween46">
-      <HintPath>Assets\ThirdParty\Demigiant\DOTween\DOTween46.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTween43">
-      <HintPath>Assets\ThirdParty\Demigiant\DOTween\DOTween43.dll</HintPath>
     </Reference>
     <Reference Include="Excel">
       <HintPath>Assets\Editor\ExcelTool\Plugins\Excel.dll</HintPath>
     </Reference>
-    <Reference Include="DOTween50">
-      <HintPath>Assets\ThirdParty\Demigiant\DOTween\DOTween50.dll</HintPath>
+    <Reference Include="DOTweenPro">
+      <HintPath>Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenPro.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTweenUpgradeManager">
+      <HintPath>Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenUpgradeManager.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Android.Types">
       <HintPath>D:\Program Files\Unity\2021.3.13f1c1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>

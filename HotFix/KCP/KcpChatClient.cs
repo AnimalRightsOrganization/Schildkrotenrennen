@@ -80,7 +80,7 @@ namespace kcp2k.Examples
             byte[] buffer = new byte[header.Length + body.Length];
             Array.Copy(header, 0, buffer, 0, header.Length);
             Array.Copy(body, 0, buffer, header.Length, body.Length);
-            //Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
+            Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},total:{buffer.Length},");
             return buffer;
         }
         private static void SendAsync(PacketType msgId, object cmd, KcpChannel channel = KcpChannel.Reliable)
@@ -92,11 +92,13 @@ namespace kcp2k.Examples
         // 业务
         public static void SendLogin(string token)
         {
+            Debug.Log("SendLogin.Start");
             if (string.IsNullOrEmpty(token))
             {
                 Debug.LogError($"token不能为空");
                 return;
             }
+            Debug.Log("SendLogin.Mid");
 
             var cmd = new C2S_LoginTokenPacket { Token = token };
             Debug.Log($"[C2S] {cmd.Token}");

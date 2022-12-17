@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ET;
+using kcp2k.Examples;
 
 namespace HotFix
 {
@@ -127,7 +128,7 @@ namespace HotFix
 
         void OnJoinBtnClick()
         {
-            TcpChatClient.SendGetRoomList(1);
+            KcpChatClient.SendGetRoomList(1);
 
             //弹出大厅列表
             m_ListPanel.SetActive(true);
@@ -175,7 +176,7 @@ namespace HotFix
         }
         void OnConfirmBtnClick()
         {
-            bool result = TcpChatClient.SendCreateRoom(m_NameInput.text, m_KeyInput.text, playerNum);
+            bool result = KcpChatClient.SendCreateRoom(m_NameInput.text, m_KeyInput.text, playerNum);
             //m_NameInput.placeholder.color = result ? FONT_BLUE : Color.red;
             if (!result)
             {
@@ -188,12 +189,11 @@ namespace HotFix
         {
             //Page--;
             //Page = Mathf.Max(1, Page);
-            //TcpChatClient.SendGetRoomList(Page);
-            TcpChatClient.SendGetRoomList(Page - 1);
+            KcpChatClient.SendGetRoomList(Page - 1);
         }
         void OnNextBtnClick()
         {
-            TcpChatClient.SendGetRoomList(Page + 1);
+            KcpChatClient.SendGetRoomList(Page + 1);
         }
         #endregion
 
@@ -239,24 +239,26 @@ namespace HotFix
                     RoomId = response.Room.RoomID,
                     SeatId = playerInfo.SeatID,
                 };
-                //Debug.Log($"创建用户数据--{i}--{playerData.SeatId}");
+                Debug.Log($"创建用户数据--{i}--{playerData.SeatId}");
                 roomData.Players.Add(playerData);
 
-                if (playerData.UserName == TcpChatClient.m_PlayerManager.LocalPlayer.UserName)
+                if (playerData.UserName == KcpChatClient.m_PlayerManager.LocalPlayer.UserName)
                 {
-                    TcpChatClient.m_PlayerManager.LocalPlayer.SetRoomID(roomData.RoomID).SetSeatID(playerData.SeatId).SetStatus(PlayerStatus.ROOM);
+                    KcpChatClient.m_PlayerManager.LocalPlayer.SetRoomID(roomData.RoomID).SetSeatID(playerData.SeatId).SetStatus(PlayerStatus.ROOM);
                 }
             }
-            //Debug.Log("新建ClientRoom");
-            TcpChatClient.m_ClientRoom = new ClientRoom(roomData);
+            Debug.Log("新建ClientRoom");
+            KcpChatClient.m_ClientRoom = new ClientRoom(roomData);
 
-            //Debug.Log("Push: UI_Room");
+            Debug.Log("Push: UI_Room");
             var ui_room = UIManager.Get().Push<UI_Room>();
-            //Debug.Log("更新: UI_Room.UpdateUI");
+            Debug.Log("更新: UI_Room.UpdateUI");
             ui_room.UpdateUI(roomData);
 
             m_CreatePanel.SetActive(false);
             m_ListPanel.SetActive(false);
+            var ui_dialog = UIManager.Get().GetUI<UI_Dialog>();
+            ui_dialog?.Hide();
         }
         void OnGetRoomList(object reader)
         {

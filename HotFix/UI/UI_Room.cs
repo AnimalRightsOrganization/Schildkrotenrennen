@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ET;
+using kcp2k.Examples;
 
 namespace HotFix
 {
@@ -56,11 +57,11 @@ namespace HotFix
         #region 按钮事件
         void OnSendLeaveRoom()
         {
-            TcpChatClient.SendLeaveRoom();
+            KcpChatClient.SendLeaveRoom();
         }
         void OnSendStartGame()
         {
-            TcpChatClient.SendGameStart();
+            KcpChatClient.SendGameStart();
         }
         void OnPwdBtnClick()
         {
@@ -82,12 +83,12 @@ namespace HotFix
         #region 网络事件
         public void UpdateUI(BaseRoomData roomData)
         {
-            //Debug.Log($"房间初始化：#{roomData.RoomID}，密码：{roomData.RoomPwd}，人数={roomData.Players.Count}/{roomData.RoomLimit}");
+            Debug.Log($"房间初始化：#{roomData.RoomID}，密码：{roomData.RoomPwd}，人数={roomData.Players.Count}/{roomData.RoomLimit}");
 
             m_NameText.text = roomData.RoomName;
             m_PwdText.text = roomData.RoomPwd;
             m_PwdBtn.gameObject.SetActive(!string.IsNullOrEmpty(roomData.RoomPwd));
-            bool isHost = roomData.Players[0].UserName == TcpChatClient.m_PlayerManager.LocalPlayer.UserName;
+            bool isHost = roomData.Players[0].UserName == KcpChatClient.m_PlayerManager.LocalPlayer.UserName;
             m_StartBtn.gameObject.SetActive(isHost);
 
             for (int i = 0; i < SeatList.Count; i++)
@@ -169,7 +170,7 @@ namespace HotFix
             var ui_toast = UIManager.Get().Push<UI_Toast>();
             ui_toast.Show(message);
 
-            TcpChatClient.m_PlayerManager.LocalPlayer.ResetToLobby();
+            KcpChatClient.m_PlayerManager.LocalPlayer.ResetToLobby();
         }
         void OnGetRoomInfo(object reader)
         {
@@ -199,7 +200,7 @@ namespace HotFix
                 roomData.Players.Add(playerData);
             }
             //Debug.Log("更新ClientRoom");
-            TcpChatClient.m_ClientRoom.UpdateData(roomData);
+            KcpChatClient.m_ClientRoom.UpdateData(roomData);
 
             //Debug.Log("更新: UI_Room.UpdateUI");
             UpdateUI(roomData);
@@ -207,7 +208,7 @@ namespace HotFix
         void OnGameStart(object reader)
         {
             var packet = (S2C_GameStartPacket)reader;
-            TcpChatClient.m_ClientRoom.OnGameStart_Client(packet);
+            KcpChatClient.m_ClientRoom.OnGameStart_Client(packet);
 
             UIManager.Get().PopAll();
             var ui_game = UIManager.Get().Push<UI_Game>();
