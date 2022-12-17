@@ -69,7 +69,6 @@
     <Compile Include="Assets\ThirdParty\ILRuntime\Generated\ProtoBuf_Serializer_Binding.cs" />
     <Compile Include="Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenTextMeshPro.cs" />
     <Compile Include="Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenTk2d.cs" />
-    <Compile Include="Assets\ThirdParty\Demigiant\DOTweenPro\Editor\DOTweenAnimationInspector.cs" />
     <Compile Include="Assets\ThirdParty\kcp2k\highlevel\KcpServer.cs" />
     <Compile Include="Assets\ThirdParty\kcp2k\highlevel\KcpPeer.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\PropertyDecorator.cs" />
@@ -156,7 +155,6 @@
     <Compile Include="Assets\ThirdParty\ILRuntime\2.0.2\Demo\LitJson\JsonMockWrapper.cs" />
     <Compile Include="Assets\ThirdParty\ILRuntime\2.0.2\Demo\Editor\ILRuntimeCrossBinding.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\SubItemToken.cs" />
-    <Compile Include="Assets\ThirdParty\Demigiant\DOTweenPro\Editor\DOTweenPreviewManager.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\DefaultValueDecorator.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\DataFormat.cs" />
     <Compile Include="Assets\ThirdParty\protobuf-net\Meta\SubType.cs" />
@@ -296,14 +294,8 @@
     <Compile Include="Assets\ThirdParty\protobuf-net\Serializers\UInt16Serializer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\ThirdParty\Demigiant\DemiLib\Core\Editor\DemiEditor.dll" />
-    <None Include="Assets\ThirdParty\Demigiant\readme_DOTweenPro.txt" />
     <None Include="Assets\ThirdParty\Demigiant\DOTween\DOTween.XML" />
     <None Include="Assets\ThirdParty\Demigiant\DemiLib\Core\DemiLib.dll" />
-    <None Include="Assets\ThirdParty\Demigiant\DemiLib\Core\Editor\DemiEditor.xml" />
-    <None Include="Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenEditor.dll" />
-    <None Include="Assets\ThirdParty\Demigiant\DOTweenPro\Editor\DOTweenProEditor.XML" />
-    <None Include="Assets\ThirdParty\Demigiant\DOTweenPro\Editor\DOTweenProEditor.dll" />
     <None Include="Assets\ThirdParty\MySQL\Plugins\MySql.Data.dll" />
     <None Include="Assets\ThirdParty\Demigiant\DOTween\DOTween.dll" />
     <None Include="Assets\ThirdParty\kcp2k\LICENSE.txt" />
@@ -312,9 +304,7 @@
     <None Include="Assets\ThirdParty\Demigiant\DemiLib\Core\DemiLib.xml" />
     <None Include="Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenPro.XML" />
     <None Include="Assets\ThirdParty\MySQL\Plugins\I18N.West.dll" />
-    <None Include="Assets\ThirdParty\Demigiant\DOTween\readme.txt" />
     <None Include="Assets\ThirdParty\kcp2k\VERSION.txt" />
-    <None Include="Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenEditor.XML" />
     <None Include="Assets\ThirdParty\Unity.ThirdParty.asmdef" />
   </ItemGroup>
   <ItemGroup>
@@ -585,17 +575,8 @@
     <Reference Include="DemiLib">
       <HintPath>Assets\ThirdParty\Demigiant\DemiLib\Core\DemiLib.dll</HintPath>
     </Reference>
-    <Reference Include="DOTweenProEditor">
-      <HintPath>Assets\ThirdParty\Demigiant\DOTweenPro\Editor\DOTweenProEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTweenEditor">
-      <HintPath>Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenEditor.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>Assets\Editor\ExcelTool\Plugins\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="DemiEditor">
-      <HintPath>Assets\ThirdParty\Demigiant\DemiLib\Core\Editor\DemiEditor.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus">
       <HintPath>Assets\Editor\ExcelTool\Plugins\EPPlus.dll</HintPath>
@@ -623,6 +604,15 @@
     </Reference>
     <Reference Include="DOTweenPro">
       <HintPath>Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenPro.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTweenProEditor">
+      <HintPath>Assets\Editor\Demigiant\DOTweenPro\Editor\DOTweenProEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTweenEditor">
+      <HintPath>Assets\Editor\Demigiant\DOTween\Editor\DOTweenEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="DemiEditor">
+      <HintPath>Assets\Editor\Demigiant\DemiLib\Core\Editor\DemiEditor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Android.Types">
       <HintPath>D:\Program Files\Unity\2021.3.13f1c1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>

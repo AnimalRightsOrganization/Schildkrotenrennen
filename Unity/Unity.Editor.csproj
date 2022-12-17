@@ -54,11 +54,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="D:\Documents\GitHub\TurtleRace\Unity\Assets\Editor\Demigiant\DOTween\Editor\DOTweenEditor.dll" />
+    <Analyzer Include="D:\Documents\GitHub\TurtleRace\Unity\Assets\Editor\Demigiant\DemiLib\Core\Editor\DemiEditor.dll" />
+    <Analyzer Include="D:\Documents\GitHub\TurtleRace\Unity\Assets\Editor\Demigiant\DOTweenPro\Editor\DOTweenProEditor.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Editor\Demigiant\DOTweenPro\Editor\DOTweenAnimationInspector.cs" />
     <Compile Include="Assets\Editor\AssetBundle\BundleTools.cs" />
     <Compile Include="Assets\Editor\CustomHierarchy.cs" />
     <Compile Include="Assets\Editor\AssetBundle\DeployTools.cs" />
+    <Compile Include="Assets\Editor\Demigiant\DOTweenPro\Editor\DOTweenPreviewManager.cs" />
     <Compile Include="Assets\Editor\AssetBundle\ZipTools.cs" />
     <Compile Include="Assets\Editor\ExcelTool\ExcelUtility.cs" />
     <Compile Include="Assets\Editor\ProtoTools.cs" />
@@ -67,10 +72,16 @@
     <Compile Include="Assets\Editor\CreateConfig.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Editor\Demigiant\DemiLib\Core\Editor\DemiEditor.dll" />
     <None Include="Assets\Editor\Unity.Editor.asmdef" />
+    <None Include="Assets\Editor\Demigiant\DemiLib\Core\Editor\DemiEditor.xml" />
+    <None Include="Assets\Editor\Demigiant\DOTween\Editor\DOTweenEditor.dll" />
+    <None Include="Assets\Editor\Demigiant\DOTweenPro\Editor\DOTweenProEditor.XML" />
     <None Include="Assets\Editor\ExcelTool\Plugins\EPPlus.dll" />
+    <None Include="Assets\Editor\Demigiant\DOTweenPro\Editor\DOTweenProEditor.dll" />
     <None Include="Assets\Editor\ExcelTool\Plugins\Excel.dll" />
     <None Include="Assets\Editor\ExcelTool\Plugins\ICSharpCode.SharpZipLib.dll" />
+    <None Include="Assets\Editor\Demigiant\DOTween\Editor\DOTweenEditor.XML" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -343,17 +354,8 @@
     <Reference Include="DemiLib">
       <HintPath>Assets\ThirdParty\Demigiant\DemiLib\Core\DemiLib.dll</HintPath>
     </Reference>
-    <Reference Include="DOTweenProEditor">
-      <HintPath>Assets\ThirdParty\Demigiant\DOTweenPro\Editor\DOTweenProEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTweenEditor">
-      <HintPath>Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenEditor.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>Assets\Editor\ExcelTool\Plugins\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="DemiEditor">
-      <HintPath>Assets\ThirdParty\Demigiant\DemiLib\Core\Editor\DemiEditor.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus">
       <HintPath>Assets\Editor\ExcelTool\Plugins\EPPlus.dll</HintPath>
@@ -381,6 +383,15 @@
     </Reference>
     <Reference Include="DOTweenPro">
       <HintPath>Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenPro.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTweenProEditor">
+      <HintPath>Assets\Editor\Demigiant\DOTweenPro\Editor\DOTweenProEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTweenEditor">
+      <HintPath>Assets\Editor\Demigiant\DOTween\Editor\DOTweenEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="DemiEditor">
+      <HintPath>Assets\Editor\Demigiant\DemiLib\Core\Editor\DemiEditor.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>Library\PackageCache\com.unity.ext.nunit@1.0.6\net35\unity-custom\nunit.framework.dll</HintPath>
