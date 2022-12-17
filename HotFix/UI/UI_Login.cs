@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ET;
+using kcp2k;
 
 namespace HotFix
 {
@@ -81,7 +82,8 @@ namespace HotFix
         void ConnectToServer()
         {
             m_OAuthBtn.gameObject.SetActive(false);
-            TcpChatClient.Connect();
+            //TcpChatClient.Connect();
+
             UIManager.Get().Push<UI_Connect>();
         }
         public void BackToLogin()

@@ -9,10 +9,10 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{8A0E6C70-4D71-8F15-B6E4-1F3BC3A15E7B}</ProjectGuid>
+    <ProjectGuid>{3C4A9574-F712-4DAA-DAB6-DD753A291FB1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Unity.Scripts</AssemblyName>
+    <AssemblyName>Example</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseDirectory>.</BaseDirectory>
@@ -26,7 +26,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169</NoWarn>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,7 +35,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169</NoWarn>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <NoConfig>true</NoConfig>
@@ -56,30 +56,12 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Managers\IPC.cs" />
-    <Compile Include="Assets\Scripts\Utils\UnitySingletonClass.cs" />
-    <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
-    <Compile Include="Assets\Scripts\Configs\ABInfo.cs" />
-    <Compile Include="Assets\Scripts\Utils\HttpHelper.cs" />
-    <Compile Include="Assets\Scripts\Adapter\ILMonoBehaviour.cs" />
-    <Compile Include="Assets\Scripts\Adapter\ILHelper.cs" />
-    <Compile Include="Assets\Scripts\Utils\FixShader.cs" />
-    <Compile Include="Assets\Scripts\Utils\Md5Utils.cs" />
-    <Compile Include="Assets\Scripts\UI\UI_CheckUpdate.cs" />
-    <Compile Include="Assets\Scripts\Adapter\AdaptHelper.cs" />
-    <Compile Include="Assets\Scripts\Adapter\IAsyncStateMachineAdapter.cs" />
-    <Compile Include="Assets\Scripts\Managers\ResManager.cs" />
     <Compile Include="Assets\Scripts\Server\Example\TestClient.cs" />
+    <Compile Include="Assets\Scripts\Server\Example\GUIConsole.cs" />
     <Compile Include="Assets\Scripts\Server\Example\TestServer.cs" />
-    <Compile Include="Assets\Scripts\Configs\HttpResponse.cs" />
-    <Compile Include="Assets\Scripts\Utils\ThreadDownload.cs" />
-    <Compile Include="Assets\Scripts\Configs\ConstValue.cs" />
-    <Compile Include="Assets\Scripts\Adapter\ILGlobal.cs" />
-    <Compile Include="Assets\Scripts\Utils\Utils.cs" />
-    <Compile Include="Assets\Scripts\Adapter\ILUIBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Scripts\Unity.Scripts.asmdef" />
+    <None Include="Assets\Scripts\Server\Example\Example.asmdef" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -343,9 +325,6 @@
     <Reference Include="UnityEditor.WindowsStandalone.Extensions">
       <HintPath>D:\Program Files\Unity\2021.3.13f1c1\Editor\Data\PlaybackEngines\WindowsStandaloneSupport\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="I18N.West">
-      <HintPath>Assets\ThirdParty\MySQL\Plugins\I18N.West.dll</HintPath>
-    </Reference>
     <Reference Include="DOTweenEditor">
       <HintPath>Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenEditor.dll</HintPath>
     </Reference>
@@ -360,9 +339,6 @@
     </Reference>
     <Reference Include="ILRuntime.Mono.Cecil">
       <HintPath>Library\PackageCache\com.ourpalm.ilruntime@2.0.2\Plugins\ILRuntime.Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="MySql.Data">
-      <HintPath>Assets\ThirdParty\MySQL\Plugins\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="ILRuntime.Mono.Cecil.Pdb">
       <HintPath>Library\PackageCache\com.ourpalm.ilruntime@2.0.2\Plugins\ILRuntime.Mono.Cecil.Pdb.dll</HintPath>
@@ -390,6 +366,12 @@
     </Reference>
     <Reference Include="DOTween50">
       <HintPath>Assets\ThirdParty\Demigiant\DOTween\DOTween50.dll</HintPath>
+    </Reference>
+    <Reference Include="I18N.West">
+      <HintPath>Assets\ThirdParty\MySQL\Plugins\I18N.West.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data">
+      <HintPath>Assets\ThirdParty\MySQL\Plugins\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Android.Types">
       <HintPath>D:\Program Files\Unity\2021.3.13f1c1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>
@@ -763,9 +745,6 @@
     <Reference Include="System.Xml.Serialization">
       <HintPath>D:\Program Files\Unity\2021.3.13f1c1\Editor\Data\NetStandard\compat\2.1.0\shims\netfx\System.Xml.Serialization.dll</HintPath>
     </Reference>
-    <Reference Include="ILRuntime">
-      <HintPath>Library\ScriptAssemblies\ILRuntime.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
@@ -774,9 +753,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Unity.ThirdParty.csproj">
-      <Project>{E15BADD2-3A26-309A-AB0F-DC5B08044350}</Project>
-      <Name>Unity.ThirdParty</Name>
+    <ProjectReference Include="kcp.csproj">
+      <Project>{A73E72F5-E8EA-E5EB-BC3A-3317E88AF1AA}</Project>
+      <Name>kcp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

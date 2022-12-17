@@ -54,22 +54,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
-    <Analyzer Include="D:\Documents\GitHub\TurtleRace\Unity\Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenEditor.dll" />
-    <Analyzer Include="D:\Documents\GitHub\TurtleRace\Unity\Assets\ThirdParty\Demigiant\DOTween\DOTween.dll" />
-    <Analyzer Include="D:\Documents\GitHub\TurtleRace\Unity\Assets\ThirdParty\Demigiant\DOTween\DOTween46.dll" />
-    <Analyzer Include="D:\Documents\GitHub\TurtleRace\Unity\Assets\ThirdParty\Demigiant\DOTween\DOTween43.dll" />
-    <Analyzer Include="D:\Documents\GitHub\TurtleRace\Unity\Assets\ThirdParty\Demigiant\DOTween\DOTween50.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Editor\AssetBundle\BundleTools.cs" />
     <Compile Include="Assets\Editor\CustomHierarchy.cs" />
     <Compile Include="Assets\Editor\AssetBundle\DeployTools.cs" />
     <Compile Include="Assets\Editor\AssetBundle\ZipTools.cs" />
+    <Compile Include="Assets\Editor\ExcelTool\ExcelUtility.cs" />
     <Compile Include="Assets\Editor\ProtoTools.cs" />
+    <Compile Include="Assets\Editor\ExcelTool\ExcelTools.cs" />
     <Compile Include="Assets\Editor\AssetBundle\BundleTools_Extension.cs" />
     <Compile Include="Assets\Editor\CreateConfig.cs" />
-    <Compile Include="Assets\Editor\ExcelTool\ExcelUtility.cs" />
-    <Compile Include="Assets\Editor\ExcelTool\ExcelTools.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Editor\Unity.Editor.asmdef" />
@@ -342,14 +337,26 @@
     <Reference Include="UnityEditor.WindowsStandalone.Extensions">
       <HintPath>D:\Program Files\Unity\2021.3.13f1c1\Editor\Data\PlaybackEngines\WindowsStandaloneSupport\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="I18N.West">
+      <HintPath>Assets\ThirdParty\MySQL\Plugins\I18N.West.dll</HintPath>
+    </Reference>
     <Reference Include="DOTweenEditor">
       <HintPath>Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>Assets\Editor\ExcelTool\Plugins\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus">
+      <HintPath>Assets\Editor\ExcelTool\Plugins\EPPlus.dll</HintPath>
     </Reference>
     <Reference Include="ILRuntime.Mono.Cecil.Mdb">
       <HintPath>Library\PackageCache\com.ourpalm.ilruntime@2.0.2\Plugins\ILRuntime.Mono.Cecil.Mdb.dll</HintPath>
     </Reference>
     <Reference Include="ILRuntime.Mono.Cecil">
       <HintPath>Library\PackageCache\com.ourpalm.ilruntime@2.0.2\Plugins\ILRuntime.Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data">
+      <HintPath>Assets\ThirdParty\MySQL\Plugins\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="ILRuntime.Mono.Cecil.Pdb">
       <HintPath>Library\PackageCache\com.ourpalm.ilruntime@2.0.2\Plugins\ILRuntime.Mono.Cecil.Pdb.dll</HintPath>
@@ -360,6 +367,9 @@
     <Reference Include="DemiLib">
       <HintPath>Assets\ThirdParty\Demigiant\DemiLib\DemiLib.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@3.0.2\Runtime\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="DemiEditor">
       <HintPath>Assets\ThirdParty\Demigiant\DemiLib\Editor\DemiEditor.dll</HintPath>
     </Reference>
@@ -369,20 +379,11 @@
     <Reference Include="DOTween43">
       <HintPath>Assets\ThirdParty\Demigiant\DOTween\DOTween43.dll</HintPath>
     </Reference>
-    <Reference Include="DOTween50">
-      <HintPath>Assets\ThirdParty\Demigiant\DOTween\DOTween50.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>Assets\Editor\ExcelTool\Plugins\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="EPPlus">
-      <HintPath>Assets\Editor\ExcelTool\Plugins\EPPlus.dll</HintPath>
-    </Reference>
     <Reference Include="Excel">
       <HintPath>Assets\Editor\ExcelTool\Plugins\Excel.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@3.0.2\Runtime\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="DOTween50">
+      <HintPath>Assets\ThirdParty\Demigiant\DOTween\DOTween50.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>Library\PackageCache\com.unity.ext.nunit@1.0.6\net35\unity-custom\nunit.framework.dll</HintPath>
