@@ -240,12 +240,14 @@ namespace NetCoreServer
             lib = new CardLib();
             nextIndex = 0;
             nextPlayerIndex = 0;
-            chessPos = new Dictionary<TurtleColor, int>();
-            chessPos.Add(TurtleColor.RED, 0);
-            chessPos.Add(TurtleColor.YELLOW, 0);
-            chessPos.Add(TurtleColor.GREEN, 0);
-            chessPos.Add(TurtleColor.BLUE, 0);
-            chessPos.Add(TurtleColor.PURPLE, 0);
+            chessPos = new Dictionary<TurtleColor, int>
+            {
+                { TurtleColor.RED, 0 },
+                { TurtleColor.YELLOW, 0 },
+                { TurtleColor.GREEN, 0 },
+                { TurtleColor.BLUE, 0 },
+                { TurtleColor.PURPLE, 0 }
+            };
             GridData = new Dictionary<int, List<TurtleColor>>();
             GridData.Add(0, new List<TurtleColor> { (TurtleColor)0, (TurtleColor)1, (TurtleColor)2, (TurtleColor)3, (TurtleColor)4 });
             for (int i = 1; i < 10; i++)
@@ -299,7 +301,7 @@ namespace NetCoreServer
                     Cards = CardToInt(player.handCards),
                 };
 
-                Debug.Log("[S2C_GameStart] 发牌");
+                Debug.Log($"[S2C_GameStart] 发牌 to ({player.SeatId})");
                 player.SendAsync(PacketType.S2C_GameStart, packet);
             }
         }
@@ -361,8 +363,6 @@ namespace NetCoreServer
                         temp.Add(chess);
                         GridData[dstPos].Add(chess);
                         Debug.Log($"{i}+++++++++将棋子{chess}移到{dstPos}, temp.count={temp.Count}");
-
-                        //moveChessList.Add((int)chess);
                     }
                 }
                 for (int i = 0; i < temp.Count; i++)
