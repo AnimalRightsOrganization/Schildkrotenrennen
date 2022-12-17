@@ -11,18 +11,12 @@ using Debug = UnityEngine.Debug;
 public partial class BundleTools : Editor
 {
     // 执行批处理文件
-    protected static void ExecuteBatch(string batFileName)
+    protected static void ExecuteBatch(string fileName, string args)
     {
-        string currDir = Directory.GetCurrentDirectory();
-        DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
-        string projRoot = currDirInfo.Parent.ToString();
-        Debug.Log(projRoot);
-
-        string filePath = $@"{projRoot}\{batFileName}";
-        Debug.Log(filePath);
         Process proc = new Process();
-        proc.StartInfo.WorkingDirectory = projRoot; //在文件所在位置执行
-        proc.StartInfo.FileName = filePath; //初始化可执行文件名
+        //proc.StartInfo.WorkingDirectory = projRoot; //在文件所在位置执行
+        proc.StartInfo.FileName = fileName; //初始化可执行文件名
+        proc.StartInfo.Arguments = args; //初始化可执行文件名
         proc.Start();
     }
 
@@ -155,8 +149,65 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/打包/编译 HotFix.sln %_F7", false, 1)]
     static void CompileHotFix()
     {
-        ExecuteBatch("compile_hotfix.bat");
+        string currDir = Directory.GetCurrentDirectory();
+        DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
+        string projRoot = currDirInfo.Parent.ToString();
+        //Debug.Log($"WorkingDirectory: {projRoot}");
+        string fileName = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\Common7\\IDE\\devenv.exe";
+        string args = "devenv D:\\Documents\\GitHub\\TurtleRace\\HotFix\\HotFix_Project.csproj /rebuild";
+        //Debug.Log($"WorkingDirectory: {fileName}");
+
+        bool finish = false;
+        float progress = 0;
+        EditorApplication.update += () =>
+        {
+            if (finish == false)
+            {
+                //每秒执行260-530次 //0.003s
+                progress += 0.0002f;
+                EditorUtility.DisplayProgressBar("Compiler", args, progress);
+                Debug.Log($"Now: {DateTime.Now.ToString("HH:mm:ss")}");
+            }
+            else
+            {
+                progress += 0.002f;
+                EditorUtility.DisplayProgressBar("Compiler", args, 1);
+                if (progress >= 1)
+                {
+                    EditorUtility.ClearProgressBar();
+                    EditorApplication.update = null;
+                    AssetDatabase.Refresh();
+                }
+            }
+        };
+
+        Task.Run(() =>
+        {
+            //ExecuteBatch(fileName, args);
+
+            Process proc = new Process();
+            proc.EnableRaisingEvents = true;
+            proc.StartInfo.FileName = fileName; //初始化可执行文件名
+            proc.StartInfo.Arguments = args; //初始化可执行文件名
+            proc.Exited += (object sender, EventArgs e) =>
+            {
+                finish = true;
+                Debug.Log(
+                    $"Exit time    : {proc.ExitTime}\n" +
+                    $"Exit code    : {proc.ExitCode}\n" +
+                    $"Elapsed time : {Math.Round((proc.ExitTime - proc.StartTime).TotalMilliseconds)}");
+            };
+            proc.Start();
+            proc.WaitForExit();
+            proc.Close();
+        });
     }
+    [MenuItem("Tools/打包/ClearProgressBar", false, 1)]
+    static void CancelProgress()
+    {
+        EditorUtility.ClearProgressBar();
+    }
+
     [MenuItem("Tools/打包/移动 HotFix.dll %_F8", false, 1)]
     static void MoveDLL()
     {
