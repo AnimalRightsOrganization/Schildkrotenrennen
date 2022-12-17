@@ -1,31 +1,15 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using UnityEngine;
-using LitJson;
-#if UNITY_EDITOR
 using UnityEditor;
-using System.Diagnostics;
+using UnityEditor.Build.Reporting;
+using UnityEditor.Build;
 using Debug = UnityEngine.Debug;
+
 public partial class BundleTools : Editor
 {
-    // 执行命令提示符
-    protected static void ExecuteCommand(string command)
-    {
-        /* cmd /c dir 是执行完dir命令后关闭命令窗口。
-         * cmd /k dir 是执行完dir命令后不关闭命令窗口。
-         * cmd /c start dir 会打开一个新窗口后执行dir指令，原窗口会关闭。
-         * cmd /k start dir 会打开一个新窗口后执行dir指令，原窗口不会关闭。*/
-
-        Process p = new Process();
-        ProcessStartInfo startInfo = new ProcessStartInfo();
-        startInfo.FileName = "cmd.exe";
-        startInfo.WorkingDirectory = @"C:\";
-        //startInfo.Arguments = @"/c " + command; // cmd.exe spesific implementation
-        startInfo.Arguments = @"/k " + command;
-        p.StartInfo = startInfo;
-        p.Start();
-        //p.WaitForExit(); //等待一定时间（ms）退出
-    }
     // 执行批处理文件
     protected static void ExecuteBatch(string batFileName)
     {
@@ -42,22 +26,20 @@ public partial class BundleTools : Editor
         proc.Start();
     }
 
-    #region 测试
-
+    #region 代码
     const string hotfixShared = @"HotFix\Lobby\Shared";
-    const string serverShared = @"NetCoreServer\NetCoreApp\Lobby\Shared";
+    const string serverShared = @"Unity\Assets\Scenes\ServerOnly\Lobby\Shared";
     const string hotfixCore = @"HotFix\Core";
-    const string serverCore = @"NetCoreServer\NetCoreApp\Core";
+    const string serverCore = @"Unity\Assets\Scenes\ServerOnly\Core";
     const int SLEEP_TIME = 1;
-
-    [MenuItem("Tools/测试/HotFix >> Server", false, 0)]
+    [MenuItem("Tools/覆盖/HotFix >> Server", false, 1)]
     static async void Sync_H2S()
     {
         string[] srcPaths = new string[] { hotfixCore, hotfixShared };
         string[] outPaths = new string[] { serverCore, serverShared };
         await Sync_SharedCode(srcPaths, outPaths);
     }
-    [MenuItem("Tools/测试/HotFix << Server", false, 0)]
+    [MenuItem("Tools/覆盖/HotFix << Server", false, 1)]
     static async void Sync_S2H()
     {
         string[] srcPaths = new string[] { serverCore, serverShared };
@@ -115,38 +97,31 @@ public partial class BundleTools : Editor
         await Task.Delay(SLEEP_TIME);
         EditorUtility.ClearProgressBar();
     }
-    [MenuItem("Tools/测试/CMD", true, 11)]
-    static void TestCMD()
+    [MenuItem("Assets/Open Server Project", false)]
+    static void OpenServerProject()
     {
-        ExecuteCommand(@"ipconfig /flushdns");
-        //ExecuteCommand(@"ping www.baidu.com");
+        string currDir = Directory.GetCurrentDirectory();
+        DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
+        //string projPath = $@"{currDirInfo.Parent}\NetCoreServer\NetCoreApp.sln";
+        string projPath = $@"{currDirInfo.Parent}\NetCoreServer";
+#if UNITY_STANDALONE_OSX
+        //MacOS只认[/]。但不能编译winform。
+        projPath = projPath.Replace(@"\", "/");
+#endif
+        Process proc = new Process();
+        proc.StartInfo.WorkingDirectory = projPath;
+        proc.StartInfo.FileName = "NetCoreApp.sln";
+        proc.Start();
     }
-    [MenuItem("Tools/测试/清理临时文件夹", true, 12)]
-    static void ClearTmpFolders()
-    {
-        // 两个需要清理的目录
-        // ./Assets/StreamingAssets/Bundles
-        // ./StandaloneWindows64/Android/iOS
-        string[] pathArray = new string[]
-        {
-            Path.Combine(Application.streamingAssetsPath, "Bundles"),
-            Path.Combine(ConstValue.GetUnityDir, ConstValue.PLATFORM_NAME),
-        };
-        for (int i = 0; i < pathArray.Length; i++)
-        {
-            var path = pathArray[i];
-            if (Directory.Exists(path))
-                Directory.Delete(path, true);
-        }
-        Debug.Log("清理完成");
-    }
-    [MenuItem("Tools/测试/取消读条", true, 13)]
-    static void CancelableProgressBar()
-    {
-        EditorUtility.ClearProgressBar();
-    }
-    [MenuItem("Tools/测试/启动客户端 %_F11", false, 100)]
-    static void StartTestApp()
+    #endregion
+
+    #region 运行
+    //% (ctrl on Windows and Linux, cmd on macOS),
+    //^ (ctrl on Windows, Linux, and macOS),
+    //# (shift),
+    //& (alt)
+    [MenuItem("Tools/运行/客户端 %_F11", false, 11)]
+    static void RunClient()
     {
         string currDir = Directory.GetCurrentDirectory();
         DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
@@ -157,8 +132,8 @@ public partial class BundleTools : Editor
         proc.StartInfo.FileName = "turtle.exe"; //初始化可执行文件名
         proc.Start();
     }
-    [MenuItem("Tools/测试/启动服务器 %_F12", false, 100)]
-    static void StartServer()
+    [MenuItem("Tools/运行/服务器 %_F12", false, 11)]
+    static void RunServer()
     {
         string currDir = Directory.GetCurrentDirectory();
         DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
@@ -169,26 +144,20 @@ public partial class BundleTools : Editor
         proc.StartInfo.FileName = "NetCoreServer.exe"; //初始化可执行文件名
         proc.Start();
     }
-
     #endregion
 
-    #region 热更新
-
-    [MenuItem("Tools/热更新/生成Proto", false, 21)]
+    #region 打包
+    [MenuItem("Tools/打包/生成 Proto.cs", false, 1)]
     static void ConvertProto()
     {
         ProtoTools.Proto2CS();
     }
-    [MenuItem("Tools/热更新/编译热更工程", false, 22)]
+    [MenuItem("Tools/打包/编译 HotFix.sln", false, 1)]
     static void CompileHotFix()
     {
         ExecuteBatch("compile_hotfix.bat");
     }
-    //% (ctrl on Windows and Linux, cmd on macOS),
-    //^ (ctrl on Windows, Linux, and macOS),
-    //# (shift),
-    //& (alt)
-    [MenuItem("Tools/热更新/MoveDLL %_F8", false, 23)]
+    [MenuItem("Tools/打包/移动 HotFix.dll %_F8", false, 1)]
     static void MoveDLL()
     {
         string dllPath = Path.Combine(Application.streamingAssetsPath, "HotFix.dll");
@@ -210,29 +179,94 @@ public partial class BundleTools : Editor
         AssetDatabase.Refresh();
         Debug.Log("移动完成");
     }
-
-    [MenuItem("Tools/Shader/重置IncludedShaders", true, 31)]
-    static void ResetIncludedShaders() { }
-    [MenuItem("Tools/Shader/设置IncludedShaders", true, 31)]
-    static void SetIncludedShaders() { }
-
-    [MenuItem("Assets/Open Server Project", false)]
-    static void OpenServerProject()
+    [MenuItem("Tools/打包/热更新", false, 1)]
+    static void BuildRes()
     {
-        string currDir = Directory.GetCurrentDirectory();
-        DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
-        //string projPath = $@"{currDirInfo.Parent}\NetCoreServer\NetCoreApp.sln";
-        string projPath = $@"{currDirInfo.Parent}\NetCoreServer";
-#if UNITY_STANDALONE_OSX
-        //MacOS只认[/]。但不能编译winform。
-        projPath = projPath.Replace(@"\", "/");
-#endif
-        Process proc = new Process();
-        proc.StartInfo.WorkingDirectory = projPath;
-        proc.StartInfo.FileName = "NetCoreApp.sln";
-        proc.Start();
+        BuildTarget target = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), ConstValue.PLATFORM_NAME);
+        Debug.Log($"打包{target}平台资源");
+        BundleTools.Build_Target(target);
     }
+    [MenuItem("Tools/打包/服务器", false, 1)]
+    static void BuildServer_Win64()
+    {
+        //EditorBuildSettings.scenes = new EditorBuildSettingsScene[] { new EditorBuildSettingsScene("Assets/Scenes/Server.unity", true) };
+        //EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Server, BuildTarget.StandaloneWindows64);
 
+        var curr_info = new DirectoryInfo(Environment.CurrentDirectory);
+        string builds_dir = $"{curr_info}/Builds/Server";
+
+        BuildPlayerOptions opt = new BuildPlayerOptions
+        {
+            scenes = new string[] { "Assets/Scenes/Server.unity" },
+            locationPathName = $"{builds_dir}/GameServer.exe",
+            target = BuildTarget.StandaloneWindows64,
+#if UNITY_2021_1_OR_NEWER
+            options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport,
+            subtarget = (int)StandaloneBuildSubtarget.Server,
+#else
+            options = BuildOptions.EnableHeadlessMode | BuildOptions.ShowBuiltPlayer | BuildOptions.Development
+#endif
+        };
+
+        BuildReport report = BuildPipeline.BuildPlayer(opt);
+
+        BuildSummary summary = report.summary;
+        if (summary.result == BuildResult.Succeeded)
+            Debug.Log($"打包成功: {opt.locationPathName}");
+        if (summary.result == BuildResult.Failed)
+            Debug.LogError("打包失败");
+    }
+    [MenuItem("Tools/打包/客户端", false, 1)]
+    static void BuildClient_Win64()
+    {
+        //EditorBuildSettings.scenes = new EditorBuildSettingsScene[] { new EditorBuildSettingsScene("Assets/Scenes/Client.unity", true) };
+        //EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64);
+
+        var curr_info = new DirectoryInfo(Environment.CurrentDirectory);
+        string builds_dir = $"{curr_info}/Builds/Client";
+
+        BuildPlayerOptions opt = new BuildPlayerOptions
+        {
+            scenes = new string[] { "Assets/Scenes/Client.unity" },
+            locationPathName = Path.Combine(builds_dir, "Client.exe"),
+            target = BuildTarget.StandaloneWindows64,
+            options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development,
+        };
+
+        BuildReport report = BuildPipeline.BuildPlayer(opt);
+
+        BuildSummary summary = report.summary;
+        if (summary.result == BuildResult.Succeeded)
+            Debug.Log($"打包成功: {opt.locationPathName}");
+        if (summary.result == BuildResult.Failed)
+            Debug.LogError("打包失败");
+    }
+    static void BuildClient_Android()
+    {
+        EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Android, BuildTarget.Android);
+
+        string defines = "USE_ASSETBUNDLE;CHANNEL_11011";
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, defines);
+        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.moegijinka.moefight"); //不同渠道包名不一样
+        //PlayerSettings.bundleVersion = string.Format("{0}.{1}.{2}", GameConfig.clientVersions[0],
+        //    GameConfig.clientVersions[1] * 100 + GameConfig.clientVersions[2], GameConfig.clientVersions[3]);
+    }
+    static void BuildClient_iOS()
+    {
+        EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.iOS, BuildTarget.iOS);
+
+        string defines = "USE_ASSETBUNDLE;CHANNEL_11011";
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.iOS, defines);
+        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, "com.moegijinka.moefight"); //不同渠道包名不一样
+        //PlayerSettings.bundleVersion = string.Format("{0}.{1}.{2}", GameConfig.clientVersions[0],
+        //    GameConfig.clientVersions[1] * 100 + GameConfig.clientVersions[2], GameConfig.clientVersions[3]);
+
+        int code;
+        if (int.TryParse(PlayerSettings.iOS.buildNumber, out code) == false)
+        {
+            code = 0;
+        }
+        PlayerSettings.iOS.buildNumber = (code + 1).ToString();
+    }
     #endregion
 }
-#endif

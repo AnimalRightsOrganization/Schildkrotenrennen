@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using LitJson;
+using Newtonsoft.Json;
 
 public class UI_CheckUpdate : MonoBehaviour
 {
@@ -18,8 +18,8 @@ public class UI_CheckUpdate : MonoBehaviour
 
     void Awake()
     {
-        cloudPath = Path.Combine(ConstValue.AB_URL, "assets.bytes");
-        localPath = Path.Combine(ConstValue.AB_FilePath, "assets.bytes");
+        cloudPath = Path.Combine(ConstValue.AB_WebURL, "assets.bytes");
+        localPath = Path.Combine(ConstValue.AB_AppPath, "assets.bytes");
 
         m_progressSlider = transform.Find("Slider").GetComponent<Slider>();
         m_progressText = transform.Find("Slider").Find("Text").GetComponent<Text>();
@@ -47,7 +47,8 @@ public class UI_CheckUpdate : MonoBehaviour
         }
         if (www.isDone)
         {
-            var r_assets_bytes = JsonMapper.ToObject<AssetsBytes>(www.text);
+            //var r_assets_bytes = JsonMapper.ToObject<AssetsBytes>(www.text);
+            var r_assets_bytes = JsonConvert.DeserializeObject<AssetsBytes>(www.text);
             cloudInfos = r_assets_bytes.ABInfoList;
             www.Dispose();
             for (int i = 0; i < cloudInfos.Length; i++)
@@ -62,12 +63,12 @@ public class UI_CheckUpdate : MonoBehaviour
         List<string> localList = new List<string>();
         for (int i = 0; i < cloudList.Count; i++)
         {
-            string _localPath = Path.Combine(ConstValue.AB_FilePath, cloudList[i] + ".unity3d");
+            string _localPath = Path.Combine(ConstValue.AB_AppPath, cloudList[i] + ".unity3d");
             bool _exist = File.Exists(_localPath);
             string _md5 = string.Empty;
             if (_exist)
             {
-                _md5 = Utils.GetFileMD5(_localPath);
+                _md5 = Md5Utils.GetFileMD5(_localPath);
                 //Debug.Log(cloudList[i] + "\n计算MD5:   " + _md5);
             }
             if (_exist && _md5 == cloudInfos[i].md5)
@@ -92,9 +93,8 @@ public class UI_CheckUpdate : MonoBehaviour
         fileCount = 0;
         for (int i = 0; i < diff.Length; i++)
         {
-            string abUrl = Path.Combine(ConstValue.AB_URL, diff[i] + ".unity3d");
-            string abDstPath = Path.Combine(ConstValue.AB_FilePath, diff[i] + ".unity3d");
-            //Debug.LogFormat("下载：{0}\n保存到：{1}", abUrl, abDstPath);
+            string abUrl = Path.Combine(ConstValue.AB_WebURL, diff[i] + ".unity3d");
+            string abDstPath = Path.Combine(ConstValue.AB_AppPath, diff[i] + ".unity3d");
             yield return BeginDownLoad(abUrl, abDstPath);
             fileCount++;
         }
@@ -121,8 +121,12 @@ public class UI_CheckUpdate : MonoBehaviour
 
     public static IEnumerator BeginDownLoad(string downloadfileName, string desFileName)
     {
-        //Debug.Log($"BeginDownLoad: {downloadfileName}");
-        HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create($"http://{downloadfileName}");
+        //Debug.Log($"BeginDownLoad: {downloadfileName}\nTo: {desFileName}");
+        if (downloadfileName.Contains("http") == false)
+        {
+            downloadfileName = $"http://{downloadfileName}";
+        }
+        HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(downloadfileName);
         request.Timeout = 5000;
         WebResponse response = request.GetResponse();
         using (FileStream fs = new FileStream(desFileName, FileMode.Create))

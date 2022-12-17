@@ -3,11 +3,11 @@ using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEditor;
-using LitJson;
+using Newtonsoft.Json;
 
 public class DeployTools : EditorWindow
 {
-    [MenuItem("Tools/Deploy")]
+    [MenuItem("Tools/打包/AllInOne", false)]
     static void AddWindow()
     {
         Rect rect = new Rect(0, 0, 600, 400);
@@ -192,7 +192,7 @@ public class DeployTools : EditorWindow
     // 打包
     static void BuildApp()
     {
-        BuildTarget buildTarget = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), ConstValue.PLATFORM_NAME);
+        BuildTarget target = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), ConstValue.PLATFORM_NAME);
         if (Directory.Exists(ConstValue.BuildDir))
             Directory.Delete(ConstValue.BuildDir, true);
         Directory.CreateDirectory(ConstValue.BuildDir);
@@ -200,7 +200,7 @@ public class DeployTools : EditorWindow
         BuildPlayerOptions opt = new BuildPlayerOptions();
         opt.scenes = new string[] { "Assets/Scenes/Init.unity" };
         opt.locationPathName = ConstValue.LocationPath;
-        opt.target = buildTarget;
+        opt.target = target;
         opt.options = BuildOptions.None;
 
         BuildPipeline.BuildPlayer(opt);
@@ -209,18 +209,15 @@ public class DeployTools : EditorWindow
     }
     static void BuildRes()
     {
-        BuildTarget type = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), ConstValue.PLATFORM_NAME);
-        BundleTools.Build_Target(type);
-        AssetDatabase.Refresh();
+        BuildTarget target = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), ConstValue.PLATFORM_NAME);
+        BundleTools.Build_Target(target);
     }
 
     // 压缩
     static async void PackAppZip()
     {
         string app_path = ConstValue.BuildDir;
-        //string file_name = Application.productName;
-        string file_name = ConstValue.PLATFORM_NAME;
-        string app_zip = Path.Combine(Environment.CurrentDirectory, $"{file_name}.app.zip").Replace("/", "\\");
+        string app_zip = Path.Combine(Environment.CurrentDirectory, $"{ConstValue.PLATFORM_NAME}.app.zip").Replace("/", "\\");
         Debug.Log($"压缩应用：{app_path} --->\n{app_zip}");
 
         EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0f);
@@ -239,9 +236,7 @@ public class DeployTools : EditorWindow
     static async void PackResZip()
     {
         string res_path = Path.Combine(Application.persistentDataPath, ConstValue.PLATFORM_NAME).Replace("/", "\\");
-        //string file_name = Application.productName;
-        string file_name = ConstValue.PLATFORM_NAME;
-        string res_zip = Path.Combine(Environment.CurrentDirectory, $"{file_name}.res.zip").Replace("/", "\\");
+        string res_zip = Path.Combine(Environment.CurrentDirectory, $"{ConstValue.PLATFORM_NAME}.res.zip").Replace("/", "\\");
         Debug.Log($"压缩资源：{res_path} --->\n{res_zip}");
 
         EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0f);
@@ -262,8 +257,15 @@ public class DeployTools : EditorWindow
     static async Task<string> GetVersionAsync()
     {
         string responseBody = await HttpHelper.TryGetAsync(ConstValue.GAME_DATA);
-        var obj = JsonMapper.ToObject<ServerResponse>(responseBody);
-        var model = JsonMapper.ToObject<DBApp>(obj.data);
+        if (string.IsNullOrEmpty(responseBody))
+        {
+            Debug.LogError("获取远程资源版本失败");
+            return null;
+        }
+        //var obj = JsonMapper.ToObject<ServerResponse>(responseBody);
+        //var model = JsonMapper.ToObject<DBApp>(obj.data);
+        var obj = JsonConvert.DeserializeObject<ServerResponse>(responseBody);
+        var model = JsonConvert.DeserializeObject<DBApp>(obj.data);
         Debug.Log(obj.data);
         r_app_version = model.app_version;
         r_res_version = model.res_version;
@@ -293,10 +295,12 @@ public class DeployTools : EditorWindow
             return null;
         }
         C2S_Deploy data = new C2S_Deploy { app_version = l_app_version, res_version = l_res_version };
-        string postJson = JsonMapper.ToJson(data);
+        //string postJson = JsonMapper.ToJson(data);
+        string postJson = JsonConvert.SerializeObject(data);
         string responseBody = await HttpHelper.TryPostAsync(ConstValue.PRESENT_DEPLOY, postJson);
         Debug.Log(responseBody);
-        var obj = JsonMapper.ToObject<ServerResponse>(responseBody);
+        //var obj = JsonMapper.ToObject<ServerResponse>(responseBody);
+        var obj = JsonConvert.DeserializeObject<ServerResponse>(responseBody);
         Debug.Log($"部署完成: {obj.msg}");
         return obj.msg;
     }
@@ -305,8 +309,9 @@ public class DeployTools : EditorWindow
         string src = @"C:\Users\Administrator\source\repos\QRCode\GameCenter\bin\Debug\net6.0-windows\Temp\StandaloneWindows64.zip";
         string dst = @"C:\Users\Administrator\source\repos\QRCode\GameCenter\bin\Debug\net6.0-windows\Applications\turtlerace2\";
         ZipTools.UnpackFiles(src, dst);
-        return;
+        await Task.CompletedTask;
+        //return;
 
-        await PostDeployRes();
+        //await PostDeployRes();
     }
 }

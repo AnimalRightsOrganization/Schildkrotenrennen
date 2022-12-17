@@ -62,8 +62,8 @@ public class GameManager : MonoBehaviour
     
     IEnumerator CheckUpdateAsync(System.Action action)
     {
-        if (!Directory.Exists(ConstValue.AB_FilePath))
-            Directory.CreateDirectory(ConstValue.AB_FilePath);
+        if (!Directory.Exists(ConstValue.AB_AppPath))
+            Directory.CreateDirectory(ConstValue.AB_AppPath);
 
         Transform root = GameObject.Find("Canvas").transform;
         var request = Resources.LoadAsync<GameObject>("UI_CheckUpdate");

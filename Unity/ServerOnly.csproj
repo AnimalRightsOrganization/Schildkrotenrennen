@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Server\ServerPlayerManager.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Server\ServerRoomManager.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Message\OuterOpcode.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Server\ServerPlayer.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Server\ServerRoom.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Shared\BasePlayer.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Shared\CardConfig.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\MySQLTool.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Utils\UpdateManager.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Message\OuterMessage.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Example\TestClient.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\Message\IActorLocationMessage.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\PoolHelper.cs" />
@@ -81,8 +83,6 @@
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Shared\GamePackets.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\MonoPool.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\Message\BaseAttribute.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Message\OuterOpcode.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Message\OuterMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Scenes\ServerOnly\ServerOnly.asmdef" />
@@ -355,8 +355,17 @@
     <Reference Include="DemiLib">
       <HintPath>Assets\ThirdParty\Demigiant\DemiLib\Core\DemiLib.dll</HintPath>
     </Reference>
+    <Reference Include="DOTweenProEditor">
+      <HintPath>Assets\Editor\Demigiant\DOTweenPro\Editor\DOTweenProEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTweenEditor">
+      <HintPath>Assets\Editor\Demigiant\DOTween\Editor\DOTweenEditor.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>Assets\Editor\ExcelTool\Plugins\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="DemiEditor">
+      <HintPath>Assets\Editor\Demigiant\DemiLib\Core\Editor\DemiEditor.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus">
       <HintPath>Assets\Editor\ExcelTool\Plugins\EPPlus.dll</HintPath>
@@ -384,15 +393,6 @@
     </Reference>
     <Reference Include="DOTweenPro">
       <HintPath>Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenPro.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTweenProEditor">
-      <HintPath>Assets\Editor\Demigiant\DOTweenPro\Editor\DOTweenProEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTweenEditor">
-      <HintPath>Assets\Editor\Demigiant\DOTween\Editor\DOTweenEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="DemiEditor">
-      <HintPath>Assets\Editor\Demigiant\DemiLib\Core\Editor\DemiEditor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Android.Types">
       <HintPath>D:\Program Files\Unity\2021.3.13f1c1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>

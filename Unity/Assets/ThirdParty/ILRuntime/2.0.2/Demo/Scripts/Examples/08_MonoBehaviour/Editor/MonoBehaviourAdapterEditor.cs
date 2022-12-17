@@ -1,14 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using ILRuntime.CLR.TypeSystem;
-using ILRuntime.CLR.Method;
-using ILRuntime.CLR.Utils;
-using ILRuntime.Runtime.Intepreter;
-using ILRuntime.Runtime.Stack;
-using ILRuntime.Runtime.Enviorment;
 
 #if UNITY_EDITOR
 [CustomEditor(typeof(MonoBehaviourAdapter.Adaptor), true)]
