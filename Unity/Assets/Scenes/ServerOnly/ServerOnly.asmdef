@@ -1,0 +1,16 @@
+{
+    "name": "ServerOnly",
+    "rootNamespace": "",
+    "references": [
+        "GUID:5e2444ede58c55a4dac88c7a300e017c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

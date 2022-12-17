@@ -111,7 +111,8 @@ namespace HotFix
             if (string.IsNullOrEmpty(password))
                 password = "123456";
 
-            TcpChatClient.SendLogin(username, password);
+            //TcpChatClient.SendLogin(username, password);
+            KcpChatClient.SendLogin(username, password);
         }
         void OnGoLoginBtnClick()
         {

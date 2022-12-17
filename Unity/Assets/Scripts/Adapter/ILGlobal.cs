@@ -97,6 +97,10 @@ namespace Client
                     ((System.Action<System.Boolean>)act)(arg0);
                 });
             });
+            // 注册Kcp委托
+            appdomain.DelegateManager.RegisterMethodDelegate<System.ArraySegment<System.Byte>, kcp2k.KcpChannel>();
+            appdomain.DelegateManager.RegisterMethodDelegate<kcp2k.ErrorCode, System.String>();
+
 
             LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(appdomain);
             ET.ILHelper.InitILRuntime(appdomain); //好像没啥用

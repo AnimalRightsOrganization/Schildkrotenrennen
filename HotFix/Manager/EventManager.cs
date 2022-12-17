@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using ET;
+using kcp2k.Examples;
 
 namespace HotFix
 {
@@ -25,11 +26,16 @@ namespace HotFix
 
         void Update()
         {
-            if (queue.Count > 0)
-            {
-                var data = queue.Dequeue();
-                Handle(data);
-            }
+            //if (queue.Count > 0)
+            //{
+            //    var data = queue.Dequeue();
+            //    Handle(data);
+            //}
+        }
+
+        void LateUpdate()
+        {
+            KcpChatClient.client.Tick();
         }
 
         void Handle(byte[] buffer)
