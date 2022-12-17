@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Diagnostics;
+﻿using System.Linq;
 using System.Collections.Generic;
 using HotFix;
 using ET;
+using Debug = UnityEngine.Debug;
 
 namespace NetCoreServer
 {
@@ -24,12 +23,12 @@ namespace NetCoreServer
             roomData.RoomID = roomId;
             if (dic_rooms.ContainsKey(roomId))
             {
-                Debug.Print("严重的错误，创建房间时，ID重复");
+                Debug.Log("严重的错误，创建房间时，ID重复");
                 return null;
             }
             if (Count >= MAX_INDEX)
             {
-                Debug.Print("大厅爆满，无法创建新房间");
+                Debug.Log("大厅爆满，无法创建新房间");
                 return null;
             }
             var serverRoom = new ServerRoom(hostPlayer, roomData);
@@ -44,12 +43,13 @@ namespace NetCoreServer
             {
                 var packet = new S2C_LeaveRoomPacket { RoomID = roomId, RoomName = serverRoom.m_Data.RoomName, LeaveBy = (int)LeaveRoomType.DISSOLVE };
                 serverRoom.SendAsync(PacketType.S2C_LeaveRoom, packet); //房间解散，群发离开
+                Debug.Log("玩家离开，移除玩家");
                 serverRoom.RemoveAll();
                 dic_rooms.Remove(roomId);
             }
             else
             {
-                Debug.Print("严重的错误，无法移除房间");
+                Debug.Log("严重的错误，无法移除房间");
             }
         }
         // 移除用户（如果移除的是房主，则关闭房间）
@@ -58,7 +58,7 @@ namespace NetCoreServer
             ServerRoom serverRoom = GetServerRoom(p.RoomId);
             if (serverRoom == null)
             {
-                Debug.Print($"找不到房间#{p.RoomId}");
+                Debug.Log($"找不到房间#{p.RoomId}");
                 return false;
             }
             if (serverRoom.hostPlayer.PeerId == p.PeerId)
@@ -90,7 +90,7 @@ namespace NetCoreServer
             ServerRoom serverRoom = null;
             if (dic_rooms.TryGetValue(roomId, out serverRoom) == false)
             {
-                Debug.Print("严重的错误，无法移除房间");
+                Debug.Log("严重的错误，无法移除房间");
             }
             return serverRoom;
         }

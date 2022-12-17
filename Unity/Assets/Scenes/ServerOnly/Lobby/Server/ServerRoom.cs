@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Random = System.Random;
-using Debug = System.Diagnostics.Debug;
+using Debug = UnityEngine.Debug;
 using HotFix;
 using ET;
 
@@ -20,7 +20,7 @@ namespace NetCoreServer
                 .SetStatus(PlayerStatus.ROOM);
         }
         public int CurCount => m_PlayerDic.Count;
-        public override Dictionary<int, BasePlayer> m_PlayerDic { get; protected set; }
+        public override Dictionary<int, BasePlayer> m_PlayerDic { get; set; }
         public override string ToString()
         {
             string playerStr = string.Empty;
@@ -36,7 +36,7 @@ namespace NetCoreServer
         {
             if (ContainsPlayer(p))
             {
-                Debug.Print("严重的错误，重复加入");
+                Debug.Log("严重的错误，重复加入");
                 return false;
             }
 
@@ -57,21 +57,22 @@ namespace NetCoreServer
         {
             if (ContainsPlayer(p))
             {
+                Debug.Log($"ContainsPlayer(p): {p.SeatId}");
                 m_PlayerDic.Remove(p.SeatId);
                 p.ResetToLobby();
                 return true;
             }
-            Debug.Print("严重的错误，无法移除房间");
+            Debug.Log("严重的错误，无法移除房间");
             return false;
         }
-        public bool RemoveAll()
+        public void RemoveAll()
         {
-            foreach (var p in m_PlayerDic)
+            foreach (KeyValuePair<int, BasePlayer> item in m_PlayerDic)
             {
-                //ServerPlayer serverPlayer = p.Value as ServerPlayer;
-                RemovePlayer(p.Value);
+                BasePlayer player = item.Value;
+                player.ResetToLobby();
             }
-            return false;
+            m_PlayerDic = new Dictionary<int, BasePlayer>();
         }
         public bool ContainsPlayer(BasePlayer p)
         {
@@ -80,7 +81,7 @@ namespace NetCoreServer
             {
                 if (p.PeerId != basePlayer.PeerId)
                 {
-                    Debug.Print("严重的错误，找错人了");
+                    Debug.Log("严重的错误，找错人了");
                     return false;
                 }
                 return true;
@@ -200,7 +201,7 @@ namespace NetCoreServer
         private void ShuffleStandard()
         {
             cardList = lib.Clone().standard;
-            //Debug.Print($"洗牌：{cardList[0].id}、{cardList[1].id}、{cardList[2].id}、{cardList[3].id}、{cardList[4].id}");
+            //Debug.Log($"洗牌：{cardList[0].id}、{cardList[1].id}、{cardList[2].id}、{cardList[3].id}、{cardList[4].id}");
         }
         private static byte[] AllotColor()
         {
@@ -304,7 +305,7 @@ namespace NetCoreServer
         {
             if (gameStatus == TurtleAnime.End)
             {
-                Debug.Print("比赛已经结束");
+                Debug.Log("比赛已经结束");
                 return true;
             }
 
@@ -323,7 +324,7 @@ namespace NetCoreServer
                 var slowestArray = GetSlowest();
                 if (slowestArray.Contains((TurtleColor)colorId) == false)
                 {
-                    Debug.Print($"玩家选的颜色{(TurtleColor)colorId}，不是最慢的");
+                    Debug.Log($"玩家选的颜色{(TurtleColor)colorId}，不是最慢的");
                     return false;
                 }
             }
@@ -336,7 +337,7 @@ namespace NetCoreServer
             }
             catch
             {
-                Debug.Print($"错误的key：{colorKey} / {chessPos.Count}");
+                Debug.Log($"错误的key：{colorKey} / {chessPos.Count}");
             }
             int dstPos = System.Math.Clamp(curPos + step, 0, 9); //前往位置
             if (curPos > 0)
@@ -357,7 +358,7 @@ namespace NetCoreServer
 
                         temp.Add(chess);
                         GridData[dstPos].Add(chess);
-                        Debug.Print($"{i}+++++++++将棋子{chess}移到{dstPos}, temp.count={temp.Count}");
+                        Debug.Log($"{i}+++++++++将棋子{chess}移到{dstPos}, temp.count={temp.Count}");
 
                         //moveChessList.Add((int)chess);
                     }
@@ -366,7 +367,7 @@ namespace NetCoreServer
                 {
                     TurtleColor chess = temp[i];
                     curGrid.Remove(chess);
-                    Debug.Print($"{i}---------从格子{curPos}移除{chess}, curGrid.count={curGrid.Count}");
+                    Debug.Log($"{i}---------从格子{curPos}移除{chess}, curGrid.count={curGrid.Count}");
                 }
             }
             else
@@ -383,7 +384,7 @@ namespace NetCoreServer
                 nextPlayerIndex = 0;
 
             // 检查是否到终点
-            Debug.Print($"检查是否到终点: {dstPos}");
+            Debug.Log($"检查是否到终点: {dstPos}");
             if (dstPos >= 9)
             {
                 OnGameResult();
@@ -416,7 +417,7 @@ namespace NetCoreServer
         }
         public List<int> OnGameResult()
         {
-            Debug.Print("给出结算");
+            //Debug.Log("给出结算");
             gameStatus = TurtleAnime.End;
             var turtles = new List<int>();
             for (int i = GridData.Count - 1; i >= 0; i--) //从终点开始遍历

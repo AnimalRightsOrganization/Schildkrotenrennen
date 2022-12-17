@@ -37,10 +37,8 @@ namespace kcp2k.Examples
             Log.Error = Debug.LogError;
 
             server = new KcpServer(OnConnected, OnData, OnDisonnected, OnError, config);
-
-            m_RoomManager = new ServerRoomManager();
-            m_PlayerManager = new ServerPlayerManager();
-            server.Start(Port);
+            
+            StartServer();
         }
 
         public void LateUpdate() => server.Tick();
@@ -51,12 +49,6 @@ namespace kcp2k.Examples
 
             GUILayout.BeginArea(new Rect(160, 5, 250, 400));
             GUILayout.Label("Server:");
-            if (GUILayout.Button("Start"))
-            {
-                m_RoomManager = new ServerRoomManager();
-                m_PlayerManager = new ServerPlayerManager();
-                server.Start(Port);
-            }
             if (GUILayout.Button("Send 0x01, 0x02 to " + firstclient))
             {
                 server.Send(firstclient, new ArraySegment<byte>(new byte[] { 0x01, 0x02 }), KcpChannel.Reliable);
@@ -69,11 +61,15 @@ namespace kcp2k.Examples
             {
                 server.Disconnect(firstclient);
             }
-            if (GUILayout.Button("Stop"))
+            if (GUILayout.Button("Log Dictionary"))
             {
-                server.Stop();
-                m_RoomManager = null;
-                m_PlayerManager = null;
+                var room = m_RoomManager.GetServerRoom(1);
+                Debug.Log(room?.ToString());
+            }
+            if (GUILayout.Button("RemoveAll"))
+            {
+                var room = m_RoomManager.GetServerRoom(1);
+                room?.RemoveAll();
             }
             GUILayout.EndArea();
         }
@@ -87,8 +83,7 @@ namespace kcp2k.Examples
         }
         void OnData(int connectionId, ArraySegment<byte> message, KcpChannel channel)
         {
-            Debug.Log($"KCP: OnServerDataReceived({connectionId}, {BitConverter.ToString(message.Array, message.Offset, message.Count)} @ {channel})");
-            
+            //Debug.Log($"KCP: OnServerDataReceived({connectionId}, {BitConverter.ToString(message.Array, message.Offset, message.Count)} @ {channel})");
             Handle(connectionId, message.ToArray());
         }
         void OnDisonnected(int connectionId)
@@ -100,6 +95,19 @@ namespace kcp2k.Examples
             Debug.LogWarning($"KCP: OnServerError({connectionId}, {error}, {reason}");
         }
 
+        void StartServer()
+        {
+            m_RoomManager = new ServerRoomManager();
+            m_PlayerManager = new ServerPlayerManager();
+            server.Start(Port);
+        }
+        void StopServer()
+        {
+            server.Stop();
+            m_RoomManager = null;
+            m_PlayerManager = null;
+        }
+
         public void SendAsync(int clientId, PacketType msgId, object cmd, KcpChannel channel = KcpChannel.Reliable)
         {
             byte[] header = new byte[1] { (byte)msgId };
@@ -107,7 +115,7 @@ namespace kcp2k.Examples
             byte[] buffer = new byte[header.Length + body.Length];
             Array.Copy(header, 0, buffer, 0, header.Length);
             Array.Copy(body, 0, buffer, header.Length, body.Length);
-            Debug.Log($"server send: {msgId} head={header.Length},body={body.Length},total={buffer.Length},");
+            //Debug.Log($"server send: {msgId} head={header.Length},body={body.Length},total={buffer.Length},");
             server.Send(clientId, new ArraySegment<byte>(buffer), channel);
         }
 
@@ -365,8 +373,6 @@ namespace kcp2k.Examples
             S2C_RoomInfo packet = new S2C_RoomInfo { Room = roomInfo };
             Debug.Log($"[S2C_RoomInfo] {roomInfo.ToString()}");
             p.SendAsync(PacketType.S2C_RoomInfo, packet);
-
-            //WinFormsApp1.MainForm.Instance.RefreshRoomNum();
         }
         protected void OnJoinRoom(int Id, MemoryStream ms)
         {
@@ -448,8 +454,6 @@ namespace kcp2k.Examples
                 serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet2);
                 Debug.Log("[S2C] 广播给房间内剩余人员，更新房间信息");
             }
-
-            //WinFormsApp1.MainForm.Instance.RefreshRoomNum();
         }
         protected void OnOperateSeat(int Id, MemoryStream ms)
         {
@@ -548,7 +552,7 @@ namespace kcp2k.Examples
         {
             Debug.Log($"[C2S] {p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}/{request.Color}");
 
-            ServerRoom serverRoom = KcpChatServer.m_RoomManager.GetServerRoom(p.RoomId);
+            ServerRoom serverRoom = m_RoomManager.GetServerRoom(p.RoomId);
             if (serverRoom == null)
             {
                 Debug.Log($"[Error] 房间已经解散");
@@ -603,8 +607,8 @@ namespace kcp2k.Examples
         }
         public void OnGameResult(int Id)
         {
-            ServerPlayer p = KcpChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
-            ServerRoom serverRoom = KcpChatServer.m_RoomManager.GetServerRoom(p.RoomId);
+            ServerPlayer p = m_PlayerManager.GetPlayerByPeerId(Id);
+            ServerRoom serverRoom = m_RoomManager.GetServerRoom(p.RoomId);
             List<int> turtleRank = serverRoom.OnGameResult(); //五只龟的顺序
 
             List<int> playerRank = new List<int>();
@@ -619,7 +623,7 @@ namespace kcp2k.Examples
 
             var packet = new S2C_GameResultPacket { Rank = playerRank }; //key:座位号, value:排名
             serverRoom.SendAsync(PacketType.S2C_GameResult, packet);
-            KcpChatServer.m_RoomManager.RemoveServerRoom(serverRoom.RoomID);
+            m_RoomManager.RemoveServerRoom(serverRoom.RoomID);
 
             // 打印
             string rankStr = string.Empty;
