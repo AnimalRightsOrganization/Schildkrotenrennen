@@ -26,11 +26,11 @@ namespace HotFix
 
         void Update()
         {
-            //if (queue.Count > 0)
-            //{
-            //    var data = queue.Dequeue();
-            //    Handle(data);
-            //}
+            if (queue.Count > 0)
+            {
+                var data = queue.Dequeue();
+                Handle(data);
+            }
         }
 
         void LateUpdate()

@@ -20,7 +20,7 @@ namespace NetCoreServer
             player.ResetToLobby();
         }
         // 登出/断线/踢人
-        public void RemovePlayer(System.Guid peerId)
+        public void RemovePlayer(int peerId)
         {
             var player = playerList.Find(x => x.PeerId == peerId);
             if (player == null) return;
@@ -37,7 +37,7 @@ namespace NetCoreServer
         }
 
         // 获取指定玩家
-        public ServerPlayer GetPlayerByPeerId(System.Guid peerId)
+        public ServerPlayer GetPlayerByPeerId(int peerId)
         {
             var player = playerList.Find(x => x.PeerId == peerId);
             return player;

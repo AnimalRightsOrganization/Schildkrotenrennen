@@ -3,6 +3,7 @@ using System.Net;
 using UnityEngine;
 using HotFix;
 using ET;
+using System.Linq;
 
 namespace kcp2k.Examples
 {
@@ -37,6 +38,8 @@ namespace kcp2k.Examples
         static void OnData(ArraySegment<byte> message, KcpChannel channel)
         {
             Debug.Log($"KCP: OnClientDataReceived({BitConverter.ToString(message.Array, message.Offset, message.Count)} @ {channel})");
+
+            EventManager.Get().queue.Enqueue(message.ToArray());
         }
         static void OnDisonnected()
         {
@@ -80,12 +83,10 @@ namespace kcp2k.Examples
             //Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
             return buffer;
         }
-        private static void Send(PacketType msgId, object cmd, KcpChannel channel)
+        private static void SendAsync(PacketType msgId, object cmd, KcpChannel channel = KcpChannel.Reliable)
         {
             byte[] buffer = MakeBuffer(msgId, cmd);
-            //client.Send(new ArraySegment<byte>(new byte[] { 0x01, 0x02 }), KcpChannel.Reliable);
-            //client.Send(new ArraySegment<byte>(new byte[] { 0x03, 0x04 }), KcpChannel.Unreliable);
-            client.Send(new ArraySegment<byte>(new byte[] { 0x01, 0x02 }), KcpChannel.Reliable);
+            client.Send(new ArraySegment<byte>(new byte[] { 0x01, 0x02 }), channel);
         }
 
         // 业务
@@ -99,7 +100,7 @@ namespace kcp2k.Examples
 
             var cmd = new C2S_LoginTokenPacket { Token = token };
             Debug.Log($"[C2S] {cmd.Token}");
-            Send(PacketType.C2S_LoginToken, cmd, KcpChannel.Reliable);
+            SendAsync(PacketType.C2S_LoginToken, cmd);
         }
         public static void SendLogin(string usr, string pwd)
         {
@@ -124,7 +125,7 @@ namespace kcp2k.Examples
 
             var cmd = new C2S_LoginPacket { Username = usr, Password = HotFix.Md5Utils.GetMD5String(pwd) };
             Debug.Log($"[C2S] {cmd.Username}, {cmd.Password}");
-            Send(PacketType.C2S_LoginReq, cmd, KcpChannel.Reliable);
+            SendAsync(PacketType.C2S_LoginReq, cmd);
         }
         public static void SendSignUp(string usr, string pwd)
         {
@@ -135,7 +136,72 @@ namespace kcp2k.Examples
             }
             var cmd = new C2S_LoginPacket { Username = usr, Password = pwd };
             Debug.Log($"[C2S] {cmd.Username}, {cmd.Password}");
-            Send(PacketType.C2S_RegisterReq, cmd, KcpChannel.Reliable);
+            SendAsync(PacketType.C2S_RegisterReq, cmd);
+        }
+        public static void SendChat(string message)
+        {
+            if (message.Length <= 0)
+            {
+                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                ui_toast.Show("内容为空");
+                return;
+            }
+
+            TheMsg cmd = new TheMsg { Name = "lala", Content = message };
+            SendAsync(PacketType.C2S_Chat, cmd);
+        }
+        public static void SendGetRoomList(int page)
+        {
+            var cmd = new C2S_RoomListPacket { Page = page };
+            SendAsync(PacketType.C2S_RoomList, cmd);
+        }
+        public static bool SendCreateRoom(string name, string pwd, int num)
+        {
+            if (name.Length < 3)
+            {
+                Debug.LogError($"房间名称至少3个字:{name.Length}");
+                var toast = UIManager.Get().Push<UI_Toast>();
+                toast.Show("房间名称至少3个字");
+                return false;
+            }
+
+            var cmd = new C2S_CreateRoomPacket { RoomName = name, RoomPwd = pwd, LimitNum = num };
+            SendAsync(PacketType.C2S_CreateRoom, cmd);
+            return true;
+        }
+        public static void SendJoinRoom(int roomId, string pwd)
+        {
+            var cmd = new C2S_JoinRoomPacket { RoomID = roomId, RoomPwd = pwd };
+            SendAsync(PacketType.C2S_JoinRoom, cmd);
+        }
+        public static void SendLeaveRoom()
+        {
+            EmptyPacket cmd = new EmptyPacket();
+            SendAsync(PacketType.C2S_LeaveRoom, cmd);
+        }
+        public static void SendGameStart()
+        {
+            if (m_ClientRoom.m_PlayerDic.Count < m_ClientRoom.RoomLimit)
+            {
+                Debug.LogError($"人数不足，请等待：{m_ClientRoom.m_PlayerDic.Count} < {m_ClientRoom.RoomLimit}");
+                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                ui_toast.Show("人数不足，请等待");
+                return;
+            }
+            //Debug.Log("[C2S] 请求开始比赛");
+            EmptyPacket cmd = new EmptyPacket();
+            SendAsync(PacketType.C2S_GameStart, cmd);
+        }
+        public static void SendOperateSeat(int seatId, SeatOperate op)
+        {
+            //Debug.Log($"对座位{seatId}，操作{op}");
+            var cmd = new C2S_OperateSeatPacket { SeatID = seatId, Operate = (int)op };
+            SendAsync(PacketType.C2S_OperateSeat, cmd);
+        }
+        public static void SendGamePlay(int cardId, int color = -1)
+        {
+            var cmd = new C2S_PlayCardPacket { CardID = cardId, Color = color };
+            SendAsync(PacketType.C2S_GamePlay, cmd);
         }
 
         public static void SendTestMessage1()

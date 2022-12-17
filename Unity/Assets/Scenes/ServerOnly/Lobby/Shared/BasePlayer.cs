@@ -6,7 +6,7 @@
         public BasePlayerData()
         {
             IsBot = false;
-            PeerId = System.Guid.Empty;
+            PeerId = 0;
             UserName = string.Empty;
             NickName = string.Empty;
             RoomId = -1;
@@ -14,7 +14,7 @@
             Status = PlayerStatus.LOBBY;
         }
         public bool IsBot;          //机器人标识
-        public System.Guid PeerId;  //房间ID
+        public int PeerId;          //ID
         public string UserName;     //登录名
         public string NickName;     //昵称
         public int RoomId;          //房间号
@@ -32,7 +32,7 @@
         protected BasePlayerData m_Data;
 
         public bool IsBot => m_Data.IsBot;
-        public System.Guid PeerId => m_Data.PeerId;
+        public int PeerId => m_Data.PeerId;
         public string UserName => m_Data.UserName;
         public string NickName => m_Data.NickName;
         public int RoomId => m_Data.RoomId;

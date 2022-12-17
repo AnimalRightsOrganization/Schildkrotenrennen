@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scenes\ServerOnly\Example\TestClient.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Example\TestServer.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Example\KcpChatServer.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Server\ServerPlayerManager.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Shared\CardConfig.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Shared\GamePackets.cs" />
@@ -80,6 +80,9 @@
     <Compile Include="Assets\Scenes\ServerOnly\Core\Message\IActorMessage.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Message\OuterMessage.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Message\OuterOpcode.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Utils\UpdateManager.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\UserInfo.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\MySQLTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Scenes\ServerOnly\ServerOnly.asmdef" />
