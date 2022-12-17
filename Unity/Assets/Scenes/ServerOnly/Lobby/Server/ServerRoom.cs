@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using Random = System.Random;
 using Debug = System.Diagnostics.Debug;
 using HotFix;
-//using ET;
-using System.Xml.Linq;
+using ET;
 
 namespace NetCoreServer
 {
@@ -99,7 +98,6 @@ namespace NetCoreServer
             return null;
         }
         // 组织房间数据
-        /*
         public RoomInfo GetRoomInfo()
         {
             var temp = new List<PlayerInfo>();
@@ -126,7 +124,6 @@ namespace NetCoreServer
             };
             return roomInfo;
         }
-        */
         // 检查空座位
         public bool IsAvailableSeat(int seatId)
         {
@@ -303,7 +300,6 @@ namespace NetCoreServer
                 //player.SendAsync(PacketType.S2C_GameStart, packet);
             }
         }
-        /*
         public bool OnGamePlay_Server(ServerPlayer p, C2S_PlayCardPacket request)
         {
             if (gameStatus == TurtleAnime.End)
@@ -392,11 +388,11 @@ namespace NetCoreServer
             Debug.Print($"检查是否到终点: {dstPos}");
             if (dstPos >= 9)
             {
-                //OnGameResult();
+                OnGameResult();
                 return true;
             }
             return false;
-        }*/
+        }
         public Card OnGameDeal_Server(ServerPlayer player)
         {
             var card = cardList[nextIndex];

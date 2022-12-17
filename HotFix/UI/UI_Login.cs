@@ -81,6 +81,7 @@ namespace HotFix
 
         void ConnectToServer()
         {
+            Debug.Log("ConnectToServer");
             m_OAuthBtn.gameObject.SetActive(false);
             //TcpChatClient.Connect();
             KcpChatClient.Connect();
@@ -188,9 +189,9 @@ namespace HotFix
         }
         async void SendLoginByToken()
         {
-            string token = GameManager.Token;
-            //string token = "DE8FD617D94B7EFD67E79314B3F0C665";
-            Debug.Log($"连接服务器成功，尝试读取Token：{token}");
+            //string token = GameManager.Token;
+            string token = "DE8FD617D94B7EFD67E79314B3F0C665";
+            Debug.Log($"连接服务器成功，尝试读取Token：'{token}'");
 
             var connect = UIManager.Get().Push<UI_Connect>();
             await Task.Delay(500);
@@ -198,7 +199,8 @@ namespace HotFix
             // 使用Token登录
             if (!string.IsNullOrEmpty(token))
             {
-                TcpChatClient.SendLogin(token);
+                //TcpChatClient.SendLogin(token);
+                KcpChatClient.SendLogin(token);
             }
             else
             {

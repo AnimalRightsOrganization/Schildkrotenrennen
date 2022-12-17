@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using UnityEngine;
 using HotFix;
 using ET;
-using System.Linq;
 
 namespace kcp2k.Examples
 {
@@ -78,15 +78,15 @@ namespace kcp2k.Examples
             byte[] header = new byte[1] { (byte)msgId };
             byte[] body = ProtobufHelper.ToBytes(cmd);
             byte[] buffer = new byte[header.Length + body.Length];
-            System.Array.Copy(header, 0, buffer, 0, header.Length);
-            System.Array.Copy(body, 0, buffer, header.Length, body.Length);
+            Array.Copy(header, 0, buffer, 0, header.Length);
+            Array.Copy(body, 0, buffer, header.Length, body.Length);
             //Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
             return buffer;
         }
         private static void SendAsync(PacketType msgId, object cmd, KcpChannel channel = KcpChannel.Reliable)
         {
             byte[] buffer = MakeBuffer(msgId, cmd);
-            client.Send(new ArraySegment<byte>(new byte[] { 0x01, 0x02 }), channel);
+            client.Send(new ArraySegment<byte>(buffer), channel);
         }
 
         // 业务

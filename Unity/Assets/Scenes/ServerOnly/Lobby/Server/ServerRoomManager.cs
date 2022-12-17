@@ -3,7 +3,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 using HotFix;
-//using ET;
+using ET;
 
 namespace NetCoreServer
 {
@@ -42,10 +42,10 @@ namespace NetCoreServer
             ServerRoom serverRoom = null;
             if (dic_rooms.TryGetValue(roomId, out serverRoom))
             {
-                //var packet = new S2C_LeaveRoomPacket { RoomID = roomId, RoomName = serverRoom.m_Data.RoomName, LeaveBy = (int)LeaveRoomType.DISSOLVE };
-                //serverRoom.SendAsync(PacketType.S2C_LeaveRoom, packet); //房间解散，群发离开
-                //serverRoom.RemoveAll();
-                //dic_rooms.Remove(roomId);
+                var packet = new S2C_LeaveRoomPacket { RoomID = roomId, RoomName = serverRoom.m_Data.RoomName, LeaveBy = (int)LeaveRoomType.DISSOLVE };
+                serverRoom.SendAsync(PacketType.S2C_LeaveRoom, packet); //房间解散，群发离开
+                serverRoom.RemoveAll();
+                dic_rooms.Remove(roomId);
             }
             else
             {
@@ -69,9 +69,9 @@ namespace NetCoreServer
             else
             {
                 bool result = serverRoom.RemovePlayer(p);
-                //var roomInfo = serverRoom.GetRoomInfo(); //客位关闭游戏，移除用户
-                //S2C_RoomInfo packet = new S2C_RoomInfo { Room = roomInfo };
-                //serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet);
+                var roomInfo = serverRoom.GetRoomInfo(); //客位关闭游戏，移除用户
+                S2C_RoomInfo packet = new S2C_RoomInfo { Room = roomInfo };
+                serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet);
                 return result;
             }
         }
