@@ -152,7 +152,7 @@ public partial class BundleTools : Editor
     {
         ProtoTools.Proto2CS();
     }
-    [MenuItem("Tools/打包/编译 HotFix.sln", false, 1)]
+    [MenuItem("Tools/打包/编译 HotFix.sln %_F7", false, 1)]
     static void CompileHotFix()
     {
         ExecuteBatch("compile_hotfix.bat");

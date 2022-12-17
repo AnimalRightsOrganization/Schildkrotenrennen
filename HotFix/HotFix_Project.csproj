@@ -34,23 +34,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DemiLib">
-      <HintPath>..\Unity\Assets\ThirdParty\Demigiant\DemiLib\DemiLib.dll</HintPath>
+      <HintPath>..\Unity\Assets\ThirdParty\Demigiant\DemiLib\Core\DemiLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DOTween">
       <HintPath>..\Unity\Assets\ThirdParty\Demigiant\DOTween\DOTween.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DOTween43">
-      <HintPath>..\Unity\Assets\ThirdParty\Demigiant\DOTween\DOTween43.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="DOTween46">
-      <HintPath>..\Unity\Assets\ThirdParty\Demigiant\DOTween\DOTween46.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="DOTween50">
-      <HintPath>..\Unity\Assets\ThirdParty\Demigiant\DOTween\DOTween50.dll</HintPath>
+    <Reference Include="DOTweenPro">
+      <HintPath>..\Unity\Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenPro.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -75,6 +67,7 @@
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">
       <HintPath>Libs\UnityEngine.AnimationModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
       <HintPath>Libs\UnityEngine.AudioModule.dll</HintPath>
@@ -82,6 +75,7 @@
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>Libs\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.Physics2DModule">
       <HintPath>Libs\UnityEngine.Physics2DModule.dll</HintPath>

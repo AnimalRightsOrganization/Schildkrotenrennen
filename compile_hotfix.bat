@@ -18,3 +18,6 @@ rem devenv %result% /build
 
 echo compile ok.
 pause
+
+rem cd C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE
+rem devenv D:\Documents\GitHub\TurtleRace\HotFix\HotFix_Project.csproj /rebuild
