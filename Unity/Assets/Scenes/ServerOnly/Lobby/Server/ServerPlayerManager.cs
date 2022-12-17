@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using HotFix;
 
 namespace NetCoreServer
@@ -13,20 +13,20 @@ namespace NetCoreServer
             playerList = new List<ServerPlayer>();
         }
 
-        // µÇÂ¼³É¹¦
+        // ç™»å½•æˆåŠŸ
         public void AddPlayer(ServerPlayer player)
         {
             playerList.Add(player);
             player.ResetToLobby();
         }
-        // µÇ³ö/¶ÏÏß/ÌßÈË
+        // ç™»å‡º/æ–­çº¿/è¸¢äºº
         public void RemovePlayer(int peerId)
         {
             var player = playerList.Find(x => x.PeerId == peerId);
             if (player == null) return;
             playerList.Remove(player);
         }
-        // ¹Ø·þ
+        // å…³æœ
         public void RemoveAll()
         {
             for (int i = playerList.Count - 1; i >= 0; i--)
@@ -36,18 +36,18 @@ namespace NetCoreServer
             }
         }
 
-        // »ñÈ¡Ö¸¶¨Íæ¼Ò
+        // èŽ·å–æŒ‡å®šçŽ©å®¶
         public ServerPlayer GetPlayerByPeerId(int peerId)
         {
             var player = playerList.Find(x => x.PeerId == peerId);
             return player;
         }
-        // »ñÈ¡ËùÓÐÍæ¼Ò
+        // èŽ·å–æ‰€æœ‰çŽ©å®¶
         public ServerPlayer[] GetPlayersAll()
         {
             return playerList.ToArray();
         }
-        // »ñÈ¡´óÌüÄÚÍæ¼Ò
+        // èŽ·å–å¤§åŽ…å†…çŽ©å®¶
         public ServerPlayer[] GetPlayersByLobby()
         {
             return playerList.FindAll(x => x.Status == PlayerStatus.LOBBY).ToArray();

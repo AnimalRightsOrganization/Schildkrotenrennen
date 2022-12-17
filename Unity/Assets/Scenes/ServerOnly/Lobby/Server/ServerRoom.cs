@@ -292,12 +292,12 @@ namespace NetCoreServer
             for (int i = 0; i < CurCount; i++)
             {
                 var player = (ServerPlayer)m_PlayerDic[i];
-                //S2C_GameStartPacket packet = new S2C_GameStartPacket
-                //{
-                //    Color = (int)player.chessColor,
-                //    Cards = CardToInt(player.handCards),
-                //};
-                //player.SendAsync(PacketType.S2C_GameStart, packet);
+                S2C_GameStartPacket packet = new S2C_GameStartPacket
+                {
+                    Color = (int)player.chessColor,
+                    Cards = CardToInt(player.handCards),
+                };
+                player.SendAsync(PacketType.S2C_GameStart, packet);
             }
         }
         public bool OnGamePlay_Server(ServerPlayer p, C2S_PlayCardPacket request)
@@ -375,8 +375,6 @@ namespace NetCoreServer
 
                 GridData[curPos].Remove(colorKey);
                 GridData[dstPos].Add(colorKey);
-
-                //moveChessList.Add((int)colorKey);
             }
 
             // 下个出牌人

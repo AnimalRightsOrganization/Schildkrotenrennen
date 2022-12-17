@@ -8,11 +8,14 @@ using ET;
 using NetCoreServer;
 using NetCoreServer.Utils;
 using UnityEditor.Search;
+using System.Threading.Tasks;
 
 namespace kcp2k.Examples
 {
     public class KcpChatServer : MonoBehaviour
     {
+        public static KcpChatServer Get;
+
         // configuration
         public ushort Port = 7777;
         public KcpConfig config = new KcpConfig();
@@ -26,12 +29,18 @@ namespace kcp2k.Examples
         // MonoBehaviour ///////////////////////////////////////////////////////
         void Awake()
         {
+            Get = this;
+
             // logging
             Log.Info = Debug.Log;
             Log.Warning = Debug.LogWarning;
             Log.Error = Debug.LogError;
 
             server = new KcpServer(OnConnected, OnData, OnDisonnected, OnError, config);
+
+            m_RoomManager = new ServerRoomManager();
+            m_PlayerManager = new ServerPlayerManager();
+            server.Start(Port);
         }
 
         public void LateUpdate() => server.Tick();
@@ -44,6 +53,8 @@ namespace kcp2k.Examples
             GUILayout.Label("Server:");
             if (GUILayout.Button("Start"))
             {
+                m_RoomManager = new ServerRoomManager();
+                m_PlayerManager = new ServerPlayerManager();
                 server.Start(Port);
             }
             if (GUILayout.Button("Send 0x01, 0x02 to " + firstclient))
@@ -61,6 +72,8 @@ namespace kcp2k.Examples
             if (GUILayout.Button("Stop"))
             {
                 server.Stop();
+                m_RoomManager = null;
+                m_PlayerManager = null;
             }
             GUILayout.EndArea();
         }
@@ -87,14 +100,14 @@ namespace kcp2k.Examples
             Debug.LogWarning($"KCP: OnServerError({connectionId}, {error}, {reason}");
         }
 
-        private void SendAsync(int clientId, PacketType msgId, object cmd, KcpChannel channel = KcpChannel.Reliable)
+        public void SendAsync(int clientId, PacketType msgId, object cmd, KcpChannel channel = KcpChannel.Reliable)
         {
             byte[] header = new byte[1] { (byte)msgId };
             byte[] body = ProtobufHelper.ToBytes(cmd);
             byte[] buffer = new byte[header.Length + body.Length];
             Array.Copy(header, 0, buffer, 0, header.Length);
             Array.Copy(body, 0, buffer, header.Length, body.Length);
-            //Debug.Log($"header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
+            Debug.Log($"server send: {msgId} head={header.Length},body={body.Length},total={buffer.Length},");
             server.Send(clientId, new ArraySegment<byte>(buffer), channel);
         }
 
@@ -103,10 +116,10 @@ namespace kcp2k.Examples
             // 解析msgId
             byte msgId = buffer[0];
             int size = buffer.Length - 1;
-            byte[] body = new byte[size - 1];
+            byte[] body = new byte[size];
             try
             {
-                Array.Copy(buffer, 1, body, 0, size - 1);
+                Array.Copy(buffer, 1, body, 0, size);
             }
             catch (Exception e)
             {
@@ -114,7 +127,7 @@ namespace kcp2k.Examples
             }
             MemoryStream ms = new MemoryStream(body, 0, body.Length);
             PacketType type = (PacketType)msgId;
-            Debug.Log($"msgType={type}, from {connectionId}");
+            Debug.Log($"msgType={type}, from peer:{connectionId}, len:{buffer.Length}");
 
             switch (type)
             {
@@ -138,22 +151,22 @@ namespace kcp2k.Examples
                     OnGetRoomList(connectionId, ms);
                     break;
                 case PacketType.C2S_CreateRoom:
-                    //OnCreateRoom(connectionId, ms);
+                    OnCreateRoom(connectionId, ms);
                     break;
                 case PacketType.C2S_JoinRoom:
-                    //OnJoinRoom(connectionId, ms);
+                    OnJoinRoom(connectionId, ms);
                     break;
                 case PacketType.C2S_LeaveRoom:
-                    //OnLeaveRoom(connectionId);
+                    OnLeaveRoom(connectionId);
                     break;
                 case PacketType.C2S_OperateSeat:
-                    //OnOperateSeat(connectionId, ms);
+                    OnOperateSeat(connectionId, ms);
                     break;
                 case PacketType.C2S_GameStart:
-                    //OnGameStart(connectionId);
+                    OnGameStart(connectionId);
                     break;
                 case PacketType.C2S_GamePlay:
-                    //OnGamePlay(connectionId, ms);
+                    OnGamePlay(connectionId, ms);
                     break;
                 default:
                     Debug.Log($"无法识别的消息: {type}");
@@ -166,7 +179,7 @@ namespace kcp2k.Examples
             var request = ProtobufHelper.Deserialize<C2S_LoginTokenPacket>(ms); //解包
             if (request == null)
             {
-                Debug.Log("Token.空数据");
+                Debug.Log($"Token.空数据:{ms.Length}");
                 return;
             }
             Debug.Log($"[C2S] Token={request.Token} by {Id}");
@@ -202,7 +215,7 @@ namespace kcp2k.Examples
             var request = ProtobufHelper.Deserialize<C2S_LoginPacket>(ms); //解包
             if (request == null)
             {
-                Debug.Log("OnLoginReq.空数据");
+                Debug.Log($"OnLoginReq.空数据:{ms.Length}");
                 return;
             }
             Debug.Log($"[C2S] Username={request.Username}, Password={request.Password} by {Id}");
@@ -238,7 +251,7 @@ namespace kcp2k.Examples
             var request = ProtobufHelper.Deserialize<C2S_LoginPacket>(ms); //解包
             if (request == null)
             {
-                Debug.Log("OnSignUpReq.空数据");
+                Debug.Log($"OnSignUpReq.空数据:{ms.Length}");
                 return;
             }
 
@@ -514,12 +527,107 @@ namespace kcp2k.Examples
             if (serverRoom.m_PlayerDic.Count < serverRoom.RoomLimit)
             {
                 Debug.Log("ERROR: 房间未满员");
-                //ErrorPacket response = new ErrorPacket { Code = 0, Message = "ERROR: 房间未满员" };
-                //p.SendAsync(PacketType.S2C_ErrorOperate, response);
                 return;
             }
 
             serverRoom.OnGameStart_Server();
+        }
+        // 收到消息（只对真人）
+        protected void OnGamePlay(int Id, MemoryStream ms)
+        {
+            var request = ProtobufHelper.Deserialize<C2S_PlayCardPacket>(ms);
+            if (request == null)
+            {
+                Debug.Log("OnGamePlay.空数据");
+                return;
+            }
+            ServerPlayer p = m_PlayerManager.GetPlayerByPeerId(Id);
+            OnGamePlay(Id, request, p);
+        }
+        protected async void OnGamePlay(int Id, C2S_PlayCardPacket request, ServerPlayer p)
+        {
+            Debug.Log($"[C2S] {p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}/{request.Color}");
+
+            ServerRoom serverRoom = KcpChatServer.m_RoomManager.GetServerRoom(p.RoomId);
+            if (serverRoom == null)
+            {
+                Debug.Log($"[Error] 房间已经解散");
+                return;
+            }
+
+            if (p.SeatId != serverRoom.nextPlayerIndex)
+            {
+                Debug.Log($"顺序错误，不允许座位#{p.SeatId}出牌，等待座位#{serverRoom.nextPlayerIndex}");
+            }
+            bool end = serverRoom.OnGamePlay_Server(p, request);
+
+            // 房间内广播出牌结果
+            var packet1 = new S2C_PlayCardPacket
+            {
+                CardID = request.CardID,
+                Color = request.Color,
+                SeatID = p.SeatId,
+            };
+            serverRoom.SendAsync(PacketType.S2C_GamePlay, packet1);
+            Debug.Log($"[S2C] 广播出牌消息：座位#{packet1.SeatID}出{packet1.CardID}");
+
+            if (end)
+            {
+                Debug.Log("到达终点，不再发牌");
+                OnGameResult(Id);
+                return;
+            }
+
+            // 给出牌者发送新发的牌
+            Card card = serverRoom.OnGameDeal_Server(p);
+            var packet2 = new S2C_DealPacket { CardID = card.id, SeatID = p.SeatId };
+            p.SendAsync(PacketType.S2C_GameDeal, packet2);
+            Debug.Log($"[S2C] 单发发牌消息：{packet2.CardID}给座位#{packet2.SeatID}");
+
+            // 广播下轮出牌人
+            int nextSeatId = serverRoom.nextPlayerIndex;
+            var packet3 = new S2C_NextTurnPacket { SeatID = nextSeatId };
+            serverRoom.SendAsync(PacketType.S2C_YourTurn, packet3);
+            Debug.Log($"[S2C] 广播下轮出牌人，座位#{nextSeatId}");
+
+            ServerPlayer nextPlayer = serverRoom.GetPlayer(nextSeatId);
+            if (nextPlayer.IsBot)
+            {
+                // 下个是机器人，计算后发出牌消息
+                Debug.Log($"下个出牌的是机器人，等待五秒（动画时间）---{System.DateTime.Now.ToString("HH:mm:ss")}");
+                await Task.Delay(5000);
+                Debug.Log($"Done---{System.DateTime.Now.ToString("HH:mm:ss")}");
+                var bot_request = nextPlayer.Bot_PlayCardPacket();
+                OnGamePlay(Id, bot_request, nextPlayer);
+            }
+        }
+        public void OnGameResult(int Id)
+        {
+            ServerPlayer p = KcpChatServer.m_PlayerManager.GetPlayerByPeerId(Id);
+            ServerRoom serverRoom = KcpChatServer.m_RoomManager.GetServerRoom(p.RoomId);
+            List<int> turtleRank = serverRoom.OnGameResult(); //五只龟的顺序
+
+            List<int> playerRank = new List<int>();
+            Debug.Log($"结算：人数={serverRoom.m_PlayerDic.Count}");
+            for (int i = 0; i < serverRoom.m_PlayerDic.Count; i++)
+            {
+                var serverPlayer = serverRoom.GetPlayer(i);
+                int color = (int)serverPlayer.chessColor;
+                int rank = turtleRank.IndexOf(color);
+                playerRank.Add(rank);
+            }
+
+            var packet = new S2C_GameResultPacket { Rank = playerRank }; //key:座位号, value:排名
+            serverRoom.SendAsync(PacketType.S2C_GameResult, packet);
+            KcpChatServer.m_RoomManager.RemoveServerRoom(serverRoom.RoomID);
+
+            // 打印
+            string rankStr = string.Empty;
+            for (int i = 0; i < playerRank.Count; i++)
+            {
+                rankStr += $"座位{i}排名{playerRank[i]}颜色；";
+            }
+            Debug.Log($"广播结算消息[{playerRank.Count}]：{rankStr}");
         }
     }
 }

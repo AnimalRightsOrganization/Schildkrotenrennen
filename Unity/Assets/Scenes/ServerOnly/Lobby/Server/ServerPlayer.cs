@@ -1,49 +1,42 @@
-using System.Collections.Generic;
-//using TcpChatServer;
+ï»¿using System.Collections.Generic;
+using kcp2k.Examples;
 using HotFix;
-//using ET;
+using ET;
 using Random = System.Random;
 using Debug = System.Diagnostics.Debug;
 
 namespace NetCoreServer
 {
-    /* Ô¶³ÌÓÃ»§ */
     public class ServerPlayer : BasePlayer
     {
-        //public readonly TcpSession Session; //ÓÃÀ´Ö±½ÓSendÏûÏ¢
+        public readonly int peerId;
 
         public ServerPlayer(BasePlayerData data) : base(data)
         {
-            //Session = TCPChatServer.server.FindSession(data.PeerId);
+            peerId = base.PeerId;
         }
 
         public void SendAsync(PacketType msgId, object cmd)
         {
             if (m_Data.IsBot)
-                return; //¶Ô»úÆ÷ÈË²»·¢ËÍ
-            byte[] header = new byte[1] { (byte)msgId };
-            //byte[] body = ProtobufHelper.ToBytes(cmd);
-            //byte[] buffer = new byte[header.Length + body.Length];
-            //System.Array.Copy(header, 0, buffer, 0, header.Length);
-            //System.Array.Copy(body, 0, buffer, header.Length, body.Length);
-            //Debug.Print($"header:{header.Length},body:{body.Length},buffer:{buffer.Length},");
-            //Session.SendAsync(buffer);
+                return; //å¯¹æœºå™¨äººä¸å‘é€
+            KcpChatServer.Get.SendAsync(peerId, msgId, cmd);
         }
 
-        // ±£´æ×Ô¼ºµÄÑÕÉ«ºÍÊÖÅÆ
+        // ä¿å­˜è‡ªå·±çš„é¢œè‰²å’Œæ‰‹ç‰Œ
         public TurtleColor chessColor;
-        public List<Card> handCards; //³¤¶ÈÓÀÔ¶ÊÇ5
+        public List<Card> handCards; //é•¿åº¦æ°¸è¿œæ˜¯5
         public void Init()
         {
-            chessColor = TurtleColor.NONE; //¿Õ£¬µÈ´ıÖ¸¶¨
-            handCards = new List<Card>(); //¿Õ£¬µÈ´ı·¢ÅÆ
+            chessColor = TurtleColor.NONE; //ç©ºï¼Œç­‰å¾…æŒ‡å®š
+            handCards = new List<Card>(); //ç©ºï¼Œç­‰å¾…å‘ç‰Œ
         }
 
-        #region »úÆ÷ÈË
-        /*
+        #region æœºå™¨äºº
+        ///*
         public C2S_PlayCardPacket Bot_PlayCardPacket()
         {
-            Debug.Print($"µÈ´ı½áÊø¡£»úÆ÷ÈËµÄÊÖÅÆ£º{handCards[0].id},{handCards[1].id},{handCards[2].id},{handCards[3].id},{handCards[4].id}");
+            Debug.Print($"ç­‰å¾…ç»“æŸã€‚æœºå™¨äººçš„æ‰‹ç‰Œï¼š{handCards[0].id},{handCards[1].id},{handCards[2].id},{handCards[3].id},{handCards[4].id}");
 
             int index = new Random().Next(0, 5); //[,)
             Card card = handCards[index];
@@ -54,7 +47,7 @@ namespace NetCoreServer
             }
             else if (card.cardColor == CardColor.SLOWEST)
             {
-                var serverRoom = TCPChatServer.m_RoomManager.GetServerRoom(RoomId);
+                var serverRoom = KcpChatServer.m_RoomManager.GetServerRoom(RoomId);
                 var list = serverRoom.GetSlowest();
                 int rd = new Random().Next(0, list.Count);
                 color = (int)list[rd];
@@ -66,7 +59,8 @@ namespace NetCoreServer
                 Color = color,
             };
             return request;
-        }*/
+        }
+        //*/
         #endregion
     }
 }
