@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using ET;
 using kcp2k.Examples;
+using System;
 
 namespace HotFix
 {
@@ -114,9 +115,9 @@ namespace HotFix
                 Button btn = m_ColorBtns[index];
                 btn.onClick.AddListener(() =>
                 {
-                    Debug.Log($"Click: {i}/{index}");
+                    //Debug.Log($"Click:{index} Card:{i}");
                     selectedCardColor = index;
-                    Debug.Log($"彩色龟，选颜色{(TurtleColor)selectedCardColor}");
+                    //Debug.Log($"彩色龟，选颜色{(TurtleColor)selectedCardColor}");
                     m_ColorSelected.SetParent(btn.transform);
                     m_ColorSelected.anchoredPosition = Vector2.zero;
                 });
@@ -182,7 +183,6 @@ namespace HotFix
         }
         public void ShowPlayPanel(int carcdid, System.Action noAction, System.Action yesAction)
         {
-            //selectedCardColor = -1;
             selectedCardColor = 0;
 
             selectedCardId = carcdid;
@@ -190,7 +190,7 @@ namespace HotFix
             PlayAction = yesAction;
             m_PlayPanel.SetActive(true);
             Card card = ClientRoom.lib.library[selectedCardId];
-            Debug.Log($"显示：{card.Log()}");
+            //Debug.Log($"显示：{card.Log()}");
 
             if (card.cardColor == CardColor.COLOR)
             {
@@ -215,7 +215,7 @@ namespace HotFix
                 for (int i = m_ColorBtns.Length - 1; i >= 0; i--)
                 {
                     var btn = m_ColorBtns[i];
-                    Debug.Log($"m_ColorBtns---{i}: {btn != null}");
+                    //Debug.Log($"m_ColorBtns---{i}: {btn != null}");
                     bool available = slowestArray.Contains((TurtleColor)i);
                     btn.gameObject.SetActive(available);
 
@@ -346,12 +346,17 @@ namespace HotFix
             NextIcon.anchoredPosition = Vector3.zero;
 
             //TODO: 手牌激活
+            //for (int i = 0; i < HandCardViews.Count; i++)
+            //{
+            //    var handCard = HandCardViews[i];
+            //    handCard.SetAvalible(true);
+            //}
         }
         // 出牌消息
         async void OnPlay(object reader)
         {
             var packet = (S2C_PlayCardPacket)reader;
-            Debug.Log($"[S2C] 座位#{packet.SeatID}出牌{packet.CardID}/{packet.Color}，是第{handIndex}张手牌");
+            Debug.Log($"[S2C_PlayCard] Seat{packet.SeatID} 出 Card{packet.CardID}, 是第{handIndex}张手牌");
 
             m_Room.gameStatus = TurtleAnime.Anime;
 
@@ -380,6 +385,11 @@ namespace HotFix
             }
 
             //TODO: 手牌熄灭
+            for (int i = 0; i < HandCardViews.Count; i++)
+            {
+                var handCard = HandCardViews[i];
+                handCard.SetAvalible(false);
+            }
 
             await Task.Delay(2000);
 
@@ -397,6 +407,7 @@ namespace HotFix
             m_Room.gameStatus = TurtleAnime.Wait;
 
             // ④结算面板，等待乌龟移动结束再弹出
+            Debug.Log($"OnPlay: {m_Room.gameStatus}");
             if (m_Room.gameStatus == TurtleAnime.End)
             {
                 await Task.Delay(1500);
@@ -423,6 +434,13 @@ namespace HotFix
                     newCard.transform.SetParent(slot);
                     HandCardViews.Add(newCard);
                     GetNewCard = false;
+
+                    //TODO: 手牌激活
+                    //for (int i = 0; i < HandCardViews.Count; i++)
+                    //{
+                    //    var handCard = HandCardViews[i];
+                    //    handCard.SetAvalible(true);
+                    //}
                 });
             }
         }
@@ -443,7 +461,7 @@ namespace HotFix
         void OnGameResult(object reader)
         {
             var packet = (S2C_GameResultPacket)reader;
-            Debug.Log($"[S2C] 结算消息: {packet.Rank.Count}");
+            Debug.Log($"[S2C_GameResult] {packet.Rank.Count}");
 
             string logStr = "打印结果：";
             for (int i = 0; i < packet.Rank.Count; i++)

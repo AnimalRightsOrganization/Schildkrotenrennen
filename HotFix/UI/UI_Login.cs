@@ -151,7 +151,6 @@ namespace HotFix
         }
         void OnOAuthBtnClick()
         {
-            Debug.Log("OnOAuthBtnClick");
             if (KcpChatClient.IsConnected() == false)
             {
                 ConnectToServer();

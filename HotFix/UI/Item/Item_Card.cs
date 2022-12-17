@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using System;
 
 namespace HotFix
 {
@@ -51,7 +52,9 @@ namespace HotFix
                 ui_game = UIManager.Get().GetUI<UI_Game>();
 
             if (ui_game.m_Room.gameStatus == TurtleAnime.Anime)
+            //if (DOTween.Sequence().IsPlaying())
             {
+                Debug.Log("取消动画没播完");
                 return; //取消动画没播完
             }
             if (ui_game.IsMyTurn == false)
@@ -67,6 +70,7 @@ namespace HotFix
                 return;
             }
 
+            
             // 实例化创建出来的，要在创建完成后获取坐标
             src = transform.position;
             float dest_pos_y = ui_game.HandSlotRoot.position.y;
@@ -119,6 +123,13 @@ namespace HotFix
 
             // 被Pool回收
             ui_game.DespawnCard(this);
+        }
+
+        public void SetAvalible(bool value)
+        {
+            string content = value ? "激活" : "熄灭";
+            m_SelfBtn.interactable = value;
+            //Debug.Log($"{content}: {DateTime.Now.ToString("HH:mm:ss.fff")}");
         }
     }
 }

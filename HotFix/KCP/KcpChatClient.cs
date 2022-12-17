@@ -43,6 +43,12 @@ namespace kcp2k.Examples
         static void OnDisonnected()
         {
             Debug.Log($"KCP: OnDisonnected");
+
+            UIManager.Get().PopAll();
+            var ui_login = UIManager.Get().Push<UI_Login>();
+            ui_login.BackToLogin();
+            var ui_toast = UIManager.Get().Push<UI_Toast>();
+            ui_toast.Show("与服务器断开连接");
         }
         static void OnError(ErrorCode error, string reason)
         {
