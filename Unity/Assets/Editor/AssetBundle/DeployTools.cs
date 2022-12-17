@@ -198,7 +198,7 @@ public class DeployTools : EditorWindow
         Directory.CreateDirectory(ConstValue.BuildDir);
 
         BuildPlayerOptions opt = new BuildPlayerOptions();
-        opt.scenes = new string[] { "Assets/Scenes/Init.unity" };
+        opt.scenes = new string[] { "Assets/Scenes/Client.unity" };
         opt.locationPathName = ConstValue.LocationPath;
         opt.target = target;
         opt.options = BuildOptions.None;

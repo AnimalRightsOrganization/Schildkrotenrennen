@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEditor.Build;
 using Debug = UnityEngine.Debug;
+using static DG.DemiEditor.DeEditorUtils;
 
 public partial class BundleTools : Editor
 {
@@ -224,7 +225,7 @@ public partial class BundleTools : Editor
         AssetDatabase.Refresh();
         Debug.Log("移动完成");
     }
-    [MenuItem("Tools/打包/热更新", false, 1)]
+    [MenuItem("Tools/打包/AssetBundle", false, 1)]
     static void BuildRes()
     {
         BuildTarget target = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), ConstValue.PLATFORM_NAME);
@@ -234,16 +235,19 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/打包/服务器", false, 1)]
     static void BuildServer_Win64()
     {
-        //EditorBuildSettings.scenes = new EditorBuildSettingsScene[] { new EditorBuildSettingsScene("Assets/Scenes/Server.unity", true) };
-        //EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Server, BuildTarget.StandaloneWindows64);
+        RemoveIcon();
 
-        var curr_info = new DirectoryInfo(Environment.CurrentDirectory);
-        string builds_dir = $"{curr_info}/Builds/Server";
+        if (Directory.Exists(ConstValue.BuildDir) == false)
+            Directory.CreateDirectory(ConstValue.BuildDir);
+
+        string build_server = $"{ConstValue.BuildDir}/Server";
+        if (Directory.Exists(build_server) == false)
+            Directory.CreateDirectory(build_server);
 
         BuildPlayerOptions opt = new BuildPlayerOptions
         {
             scenes = new string[] { "Assets/Scenes/Server.unity" },
-            locationPathName = $"{builds_dir}/GameServer.exe",
+            locationPathName = $"{build_server}/GameServer.exe",
             target = BuildTarget.StandaloneWindows64,
 #if UNITY_2021_1_OR_NEWER
             options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport,
@@ -264,16 +268,19 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/打包/客户端", false, 1)]
     static void BuildClient_Win64()
     {
-        //EditorBuildSettings.scenes = new EditorBuildSettingsScene[] { new EditorBuildSettingsScene("Assets/Scenes/Client.unity", true) };
-        //EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64);
+        SetIcon();
 
-        var curr_info = new DirectoryInfo(Environment.CurrentDirectory);
-        string builds_dir = $"{curr_info}/Builds/Client";
+        if (Directory.Exists(ConstValue.BuildDir) == false)
+            Directory.CreateDirectory(ConstValue.BuildDir);
+
+        string build_client = $"{ConstValue.BuildDir}/Client";
+        if (Directory.Exists(build_client) == false)
+            Directory.CreateDirectory(build_client);
 
         BuildPlayerOptions opt = new BuildPlayerOptions
         {
             scenes = new string[] { "Assets/Scenes/Client.unity" },
-            locationPathName = Path.Combine(builds_dir, "Client.exe"),
+            locationPathName = Path.Combine(build_client, "Client.exe"),
             target = BuildTarget.StandaloneWindows64,
             options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development,
         };
@@ -312,6 +319,31 @@ public partial class BundleTools : Editor
             code = 0;
         }
         PlayerSettings.iOS.buildNumber = (code + 1).ToString();
+    }
+    [MenuItem("Tools/图标/SetIcon", true)]
+    static void SetIcon()
+    {
+        string filePath = $"Assets/Arts/Textures/Icon.png";
+        Texture2D t2d = AssetDatabase.LoadAssetAtPath<Texture2D>(filePath);
+
+        Texture2D[] array_1 = new Texture2D[] { t2d };
+        PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, array_1); //default
+
+        Texture2D[] array_8 = new Texture2D[] { t2d, t2d, t2d, t2d, t2d, t2d, t2d, t2d };
+        //PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Standalone, array_8); //override, 会覆盖
+
+        AssetDatabase.Refresh();
+    }
+    [MenuItem("Tools/图标/RemoveIcon", true)]
+    static void RemoveIcon()
+    {
+        Texture2D[] array_1 = new Texture2D[] { null };
+        PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, null); //default
+
+        Texture2D[] array_8 = new Texture2D[] { null, null, null, null, null, null, null, null };
+        //PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Standalone, array_8); //override, 会覆盖
+
+        AssetDatabase.Refresh();
     }
     #endregion
 }

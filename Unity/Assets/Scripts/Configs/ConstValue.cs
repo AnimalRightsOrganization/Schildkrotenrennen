@@ -112,7 +112,7 @@ public class ConstValue
     public static string LocationPath = BuildDir;
 #else
     public const string PLATFORM_NAME = "StandaloneWindows64";
-    public static string LocationPath =  $"{BuildDir}\\{Application.productName}.exe";
+    public static string LocationPath =  $"{BuildDir}\\Client\\{Application.productName}.exe";
 #endif
     #endregion
 
