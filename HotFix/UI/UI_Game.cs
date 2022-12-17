@@ -1,16 +1,35 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using ET;
 using kcp2k.Examples;
-using System;
 
 namespace HotFix
 {
+    public delegate void SetHandCard(bool value);
+
     public class UI_Game : UIBase
     {
+        private Action CancelAction;
+        private Action PlayAction;
+        private Action GameEndAction;
+        public static Action<bool> onSetHandCard;
+        //public static SetHandCard onSetHandCard;
+        void SetHandCard(bool value)
+        {
+            string content = value ? "<color=green>激活</color>" : "<color=red>熄灭</color>";
+            Debug.Log($"{content}:下轮是我？{IsMyTurn}----{DateTime.Now.ToString("HH:mm:ss.fff")}");
+
+            for (int i = 0; i < HandCardViews.Count; i++)
+            {
+                var handCard = HandCardViews[i];
+                handCard.SetInteractable(value && IsMyTurn);
+            }
+        }
+
         public Transform[] m_Rocks; //地图
         public Item_Turtle[] m_Turtles; //棋子（按颜色索引存、取）
 
@@ -22,9 +41,6 @@ namespace HotFix
         public Text[] m_SeatNames; //所有玩家名字
         public Image m_MyTurtleColor; //我的身份色卡
 
-        System.Action CancelAction;
-        System.Action PlayAction;
-        System.Action GameEndAction;
         public int selectedCardId; //选中手牌，出列
         public GameObject m_PlayPanel; //选中手牌，出牌或选颜色
         public Button m_CancelBtn; //点击背景，取消选中
@@ -126,6 +142,8 @@ namespace HotFix
         void Start()
         {
             NetPacketManager.RegisterEvent(OnNetCallback);
+
+            onSetHandCard = SetHandCard;
 
             NextIcon.SetParent(m_SeatNames[0].transform);
             NextIcon.anchoredPosition = Vector3.zero;
@@ -249,7 +267,7 @@ namespace HotFix
         void OnPlayBtnClick()
         {
             Card card = ClientRoom.lib.library[selectedCardId];
-            Debug.Log($"[C] 点击出牌：{card.Log()}, selectedCardColor={selectedCardColor}");
+            Debug.Log($">>[C2S_GamePlay]>> 我出牌 {card.Log()} 彩色牌？{selectedCardColor}");
             KcpChatClient.SendGamePlay(card.id, selectedCardColor);
         }
         #endregion
@@ -340,34 +358,26 @@ namespace HotFix
         void OnYourTurn(object reader)
         {
             var packet = (S2C_NextTurnPacket)reader;
-            Debug.Log($"[S2C_YourTurn] 下轮出牌的是座位#{packet.SeatID}");
+            Debug.Log($"[S2C_YourTurn] 下轮出牌的是 Seat{packet.SeatID}----{DateTime.Now.ToString("HH:mm:ss.fff")}");
             m_Room.NextTurn = packet.SeatID;
             NextIcon.SetParent(m_SeatNames[packet.SeatID].transform);
             NextIcon.anchoredPosition = Vector3.zero;
-
-            //TODO: 手牌激活
-            //for (int i = 0; i < HandCardViews.Count; i++)
-            //{
-            //    var handCard = HandCardViews[i];
-            //    handCard.SetAvalible(true);
-            //}
         }
         // 出牌消息
         async void OnPlay(object reader)
         {
             var packet = (S2C_PlayCardPacket)reader;
-            Debug.Log($"[S2C_PlayCard] Seat{packet.SeatID} 出 Card{packet.CardID}, 是第{handIndex}张手牌");
-
-            m_Room.gameStatus = TurtleAnime.Anime;
+            Debug.Log($"<color=yellow><<[S2C_PlayCard] Seat{packet.SeatID} 出 Card{packet.CardID}, 是第{handIndex}张手牌----{DateTime.Now.ToString("HH:mm:ss.fff")}</color>");
 
             // ①解析牌型
             int colorId = packet.Color;
             Card card = ClientRoom.lib.library[packet.CardID];
             var moveChessList = m_Room.OnGamePlay_Client(packet); //通知逻辑层
             int handCardCount = m_Room.HandCardDatas.Count; //我的手牌数。如果是别人出牌，这里不会减少。
-            
+
             // ②出牌动画
             // 放大0.2f，移动0.3f，停留1.0f，消失0.5f => 2.0f
+            m_Room.SetStatus(TurtleAnime.Anime);//出牌动画开始
             if (packet.SeatID != m_LocalPlayer.SeatId) //别人出牌
             {
                 var srcSeat = m_Seats[packet.SeatID].transform;
@@ -384,13 +394,6 @@ namespace HotFix
                 m_PlayPanel.SetActive(false);
             }
 
-            //TODO: 手牌熄灭
-            for (int i = 0; i < HandCardViews.Count; i++)
-            {
-                var handCard = HandCardViews[i];
-                handCard.SetAvalible(false);
-            }
-
             await Task.Delay(2000);
 
             // ③乌龟移动（0.5s）
@@ -400,14 +403,12 @@ namespace HotFix
             {
                 int index = moveChessList[i];
                 var chess = m_Turtles[index];
-                Debug.Log($"乌龟{index}移动。{(TurtleColor)index}：{chess.mColor}");
+                Debug.Log($"[开始移动]乌龟{index}[{(TurtleColor)index}/{chess.mColor}]。----{DateTime.Now.ToString("HH:mm:ss.fff")}");
                 chess.Move((TurtleColor)index, step, i);
             }
 
-            m_Room.gameStatus = TurtleAnime.Wait;
-
             // ④结算面板，等待乌龟移动结束再弹出
-            Debug.Log($"OnPlay: {m_Room.gameStatus}");
+            Debug.Log($"OnPlay: {m_Room.gameStatus}----{DateTime.Now.ToString("HH:mm:ss.fff")}");
             if (m_Room.gameStatus == TurtleAnime.End)
             {
                 await Task.Delay(1500);
@@ -416,9 +417,7 @@ namespace HotFix
 
             //⑤发牌动画
             //Debug.Log($"是否播放发牌动画？我的手牌数={handCardCount}");
-            if (handCardCount == 5)
-                return;
-            if (GetNewCard)
+            if (GetNewCard && handCardCount < 5)
             {
                 await Task.Delay(500); //等待出牌和走棋动画
                 int index = HandSlots.Length - 1;
@@ -428,19 +427,14 @@ namespace HotFix
                 newCard.Index = index;
                 var slot = HandSlots[index];
                 Vector3 dst = slot.transform.position;
+
                 Tweener tw1 = newCard.transform.DOMove(dst, 0.3f);
                 tw1.OnComplete(() =>
                 {
                     newCard.transform.SetParent(slot);
                     HandCardViews.Add(newCard);
                     GetNewCard = false;
-
-                    //TODO: 手牌激活
-                    //for (int i = 0; i < HandCardViews.Count; i++)
-                    //{
-                    //    var handCard = HandCardViews[i];
-                    //    handCard.SetAvalible(true);
-                    //}
+                    newCard.SetInteractable(false);
                 });
             }
         }
@@ -453,7 +447,7 @@ namespace HotFix
 
             // ①解析牌型
             Card card = ClientRoom.lib.library[packet.CardID];
-            Debug.Log($"我收到一张新牌：{card.Log()}");
+            Debug.Log($"<<[S2C_GameDeal]<< 我收到一张新牌：{card.Log()}");
             m_Room.OnGameDeal_Client(card); //存入数据层
             GetNewCard = true;
         }
@@ -461,7 +455,7 @@ namespace HotFix
         void OnGameResult(object reader)
         {
             var packet = (S2C_GameResultPacket)reader;
-            Debug.Log($"[S2C_GameResult] {packet.Rank.Count}");
+            Debug.Log($"<<[S2C_GameResult]<< {packet.Rank.Count}");
 
             string logStr = "打印结果：";
             for (int i = 0; i < packet.Rank.Count; i++)

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using kcp2k.Examples;
 
 namespace HotFix
 {
@@ -44,10 +45,12 @@ namespace HotFix
             if (dest_id == CurrentPos)
             {
                 Debug.Log($"原地不动：{CurrentPos} → {dest_id}");
+                UI_Game.onSetHandCard?.Invoke(true);
+                KcpChatClient.m_ClientRoom.SetStatus(TurtleAnime.Wait);
                 return tw;
             }
             CurrentPos = dest_id;
-            Debug.Log($"目标格子:{dest_id}");
+            Debug.Log($"目标格子: {dest_id}/9");
 
             Vector3 dest_pos = ui_game.m_Rocks[dest_id].position;
             if (dest_id == 0) //退回起点，读取配置
@@ -67,17 +70,21 @@ namespace HotFix
                 dest_pos.y = TURTLE_Y(myLayer);
             }
 
-            tw = transform.DOMove(dest_pos, 0.5f);
-            tw.OnPlay(() =>
-            {
-                IsLock = true;
-                ui_game.m_Room.gameStatus = TurtleAnime.Anime;
-            });
-            tw.OnComplete(() =>
-            {
-                IsLock = false;
-                ui_game.m_Room.gameStatus = TurtleAnime.Wait;
-            });
+            tw = transform.DOMove(dest_pos, 0.5f)
+                .OnPlay(() =>
+                {
+                    IsLock = true;
+                    ui_game.m_Room.SetStatus(TurtleAnime.Anime);//乌龟移动开始
+                })
+                .OnComplete(() =>
+                {
+                    IsLock = false;
+                    ui_game.m_Room.SetStatus(TurtleAnime.Wait);//乌龟移动结束
+
+                    Debug.Log($"{mColor}乌龟移动完成----{System.DateTime.Now.ToString("HH: mm:ss.fff")}");
+                    UI_Game.onSetHandCard?.Invoke(true);
+                    KcpChatClient.m_ClientRoom.SetStatus(TurtleAnime.Wait);//出牌动画结束
+                });
             return tw;
         }
         public void Move(TurtleColor colorKey, int step, int layer)
@@ -87,24 +94,24 @@ namespace HotFix
 
             if (colorKey != mColor)
                 Debug.LogError($"{gameObject.name}移动错误，颜色不一致{mColor}:{colorKey}");
-            Debug.Log($"乌龟{Card.LogColor(colorKey, step)}，走{step}步。");
+            Debug.Log($"[[移动中]]乌龟{Card.LogColor(colorKey, step)}，走{step}步。");
 
             if (step == 2) //+2
             {
-                Debug.Log("+2，第一次移动");
-                var tw = MoveOnce(1, layer);
+                Debug.Log("移动+2步: 1/2");
                 //这里再次注册委托，相当于把Move1里面的委托覆盖了
-                tw.OnPlay(() =>
-                {
-                    IsLock = true;
-                });
-                tw.OnComplete(() =>
-                {
-                    IsLock = false;
+                var tw = MoveOnce(1, layer)
+                    .OnPlay(() =>
+                    {
+                        IsLock = true;
+                    })
+                    .OnComplete(() =>
+                    {
+                        IsLock = false;
 
-                    Debug.Log("+2，第二次移动");
-                    MoveOnce(1, layer);
-                });
+                        Debug.Log("移动+2步: 2/2");
+                        MoveOnce(1, layer);
+                    });
             }
             else //+1, -1
             {

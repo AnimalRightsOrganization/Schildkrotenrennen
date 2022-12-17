@@ -47,19 +47,30 @@ namespace HotFix
         public TurtleColor myTurtleColor; //我的颜色
         public List<Card> HandCardDatas; //key:顺序, value:我的手牌（数据）
         public int NextTurn; //下回出牌的座位号
-        public TurtleAnime gameStatus; //流程控制
+        public TurtleAnime gameStatus { get; protected set; } //流程控制
+        public void SetStatus(TurtleAnime state)
+        {
+            if (gameStatus == TurtleAnime.End)
+            {
+                Debug.LogError("结束了，无法再设置");
+            }
+            Debug.Log($"<color=yellow>{gameStatus}==========>>{state}</color>");
+            gameStatus = state;
+        }
 
         // 初始化
         private void Init()
         {
             lib = new CardLib();
 
-            TurtlePos = new Dictionary<TurtleColor, int>();
-            TurtlePos.Add(TurtleColor.RED, 0);
-            TurtlePos.Add(TurtleColor.YELLOW, 0);
-            TurtlePos.Add(TurtleColor.GREEN, 0);
-            TurtlePos.Add(TurtleColor.BLUE, 0);
-            TurtlePos.Add(TurtleColor.PURPLE, 0);
+            TurtlePos = new Dictionary<TurtleColor, int>
+            {
+                { TurtleColor.RED, 0 },
+                { TurtleColor.YELLOW, 0 },
+                { TurtleColor.GREEN, 0 },
+                { TurtleColor.BLUE, 0 },
+                { TurtleColor.PURPLE, 0 }
+            };
 
             GridData = new Dictionary<int, List<TurtleColor>>();
             GridData.Add(0, new List<TurtleColor> { (TurtleColor)0, (TurtleColor)1, (TurtleColor)2, (TurtleColor)3, (TurtleColor)4 });
@@ -71,7 +82,7 @@ namespace HotFix
             myTurtleColor = TurtleColor.NONE; //空，等待指定
             HandCardDatas = new List<Card>(); //空，等待发牌
             NextTurn = 0; //从房主开始
-            gameStatus = TurtleAnime.Wait;
+            SetStatus(TurtleAnime.Wait); //初始化
         }
         // 在房间等待，收到消息，跳转比赛
         public void OnGameStart_Client(S2C_GameStartPacket packet)
@@ -171,7 +182,7 @@ namespace HotFix
         // 结算
         public void OnGameResult_Client()
         {
-            gameStatus = TurtleAnime.End; //只操作对自身变量有影响的，其他操作归UI
+            SetStatus(TurtleAnime.End); //只操作对自身变量有影响的，其他操作归UI
         }
         // 获取最慢的牌
         public List<TurtleColor> GetSlowest()

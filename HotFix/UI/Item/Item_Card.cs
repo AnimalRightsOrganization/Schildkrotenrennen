@@ -52,10 +52,9 @@ namespace HotFix
                 ui_game = UIManager.Get().GetUI<UI_Game>();
 
             if (ui_game.m_Room.gameStatus == TurtleAnime.Anime)
-            //if (DOTween.Sequence().IsPlaying())
             {
                 Debug.Log("取消动画没播完");
-                return; //取消动画没播完
+                return;
             }
             if (ui_game.IsMyTurn == false)
             {
@@ -75,11 +74,11 @@ namespace HotFix
             src = transform.position;
             float dest_pos_y = ui_game.HandSlotRoot.position.y;
             m_SelfBtn.interactable = false;
-            ui_game.m_Room.gameStatus = TurtleAnime.Anime;
+            ui_game.m_Room.SetStatus(TurtleAnime.Anime); //选中牌开始
             Tweener tw_show = transform.DOMoveY(dest_pos_y, 0.2f);
             tw_show.OnComplete(()=>
             {
-                ui_game.m_Room.gameStatus = TurtleAnime.Wait;
+                ui_game.m_Room.SetStatus(TurtleAnime.Wait); //选中牌结束
                 m_SelfBtn.interactable = true;
             });
 
@@ -88,36 +87,41 @@ namespace HotFix
         }
         void CancelCardAnime()
         {
-            ui_game.m_Room.gameStatus = TurtleAnime.Anime;
+            Debug.Log(111);
+            ui_game.m_Room.SetStatus(TurtleAnime.Anime);//取消选中牌
             Tweener tw_hide = transform.DOMove(src, 0.3f);
             tw_hide.OnComplete(() =>
             {
-                ui_game.m_Room.gameStatus = TurtleAnime.Wait;
+                Debug.Log(222);
+                ui_game.m_Room.SetStatus(TurtleAnime.Wait);//取消选中结束
             });
         }
         public async void PlayCardAnime()
         {
+            Debug.Log($"[[[出牌动画开始----{DateTime.Now.ToString("HH: mm:ss.fff")}"); //此时不要熄灭
             if (ui_game == null)
                 ui_game = UIManager.Get().GetUI<UI_Game>();
 
             transform.localScale = Vector3.one;
             Tweener tw1 = transform.DOScale(1.1f, 0.2f);
             await Task.Delay(200);
-            //Debug.Log("tw1.等待0.2秒");
 
             Vector3 dest_pos = ui_game.transform.position; //屏幕中心
             Tweener tw2 = transform.DOMove(dest_pos, 0.3f);
-            await Task.Delay(1300);
-            //Debug.Log("tw2.等待1.3秒");
+            await Task.Delay(300);
+            Debug.Log($"移动结束]]]----{DateTime.Now.ToString("HH: mm:ss.fff")}");
+            UI_Game.onSetHandCard?.Invoke(false); //只有我的手牌，才熄灭
+            m_SelfBtn.interactable = true;
+
 
             //如果是我出牌，此时整理一遍手牌
+            await Task.Delay(1000);
             this.transform.SetParent(null); //移出Slot
             ui_game.HandCardViews.Remove(this); //移出实体列表
             ui_game.SortHandCards(); //整理手牌
 
             Tweener tw3 = m_Group.DOFade(0, 0.5f);
             await Task.Delay(500);
-            //Debug.Log("tw3.等待0.5秒");
             transform.localScale = Vector3.one;
             gameObject.SetActive(false);
 
@@ -125,11 +129,9 @@ namespace HotFix
             ui_game.DespawnCard(this);
         }
 
-        public void SetAvalible(bool value)
+        public void SetInteractable(bool value)
         {
-            string content = value ? "激活" : "熄灭";
             m_SelfBtn.interactable = value;
-            //Debug.Log($"{content}: {DateTime.Now.ToString("HH:mm:ss.fff")}");
         }
     }
 }
