@@ -1,4 +1,4 @@
-﻿namespace ET
+﻿namespace HotFix
 {
     public interface IActorLocationMessage: IActorRequest
     {

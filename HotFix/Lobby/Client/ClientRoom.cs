@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using ET;
 using kcp2k.Examples;
 
 namespace HotFix

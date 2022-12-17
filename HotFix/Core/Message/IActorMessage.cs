@@ -1,4 +1,4 @@
-﻿namespace ET
+﻿namespace HotFix
 {
     // 不需要返回消息
     public interface IActorMessage: IMessage

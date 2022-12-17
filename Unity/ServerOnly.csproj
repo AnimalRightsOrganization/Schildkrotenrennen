@@ -66,7 +66,6 @@
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Shared\CardConfig.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\MySQLTool.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Utils\UpdateManager.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Message\OuterMessage.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Example\TestClient.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\Message\IActorLocationMessage.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\PoolHelper.cs" />
@@ -74,7 +73,6 @@
     <Compile Include="Assets\Scenes\ServerOnly\Example\KcpChatServer.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\Message\IMessage.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\Object\Object.cs" />
-    <Compile Include="Assets\Scenes\ServerOnly\Message\OuterOpcode.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\Object\ProtoObject.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\UserInfo.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\Message\ResponseTypeAttribute.cs" />
@@ -83,6 +81,8 @@
     <Compile Include="Assets\Scenes\ServerOnly\Lobby\Shared\GamePackets.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\MonoPool.cs" />
     <Compile Include="Assets\Scenes\ServerOnly\Core\Message\BaseAttribute.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Message\OuterOpcode.cs" />
+    <Compile Include="Assets\Scenes\ServerOnly\Message\OuterMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Scenes\ServerOnly\ServerOnly.asmdef" />

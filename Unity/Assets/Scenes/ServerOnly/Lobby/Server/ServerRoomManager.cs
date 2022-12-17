@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using HotFix;
-using ET;
 using Debug = UnityEngine.Debug;
 
 namespace NetCoreServer

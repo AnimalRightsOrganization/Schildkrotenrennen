@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Random = System.Random;
 using Debug = UnityEngine.Debug;
 using HotFix;
-using ET;
 
 namespace NetCoreServer
 {

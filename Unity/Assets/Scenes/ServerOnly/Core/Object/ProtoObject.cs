@@ -3,7 +3,7 @@ using System;
 using System.ComponentModel;
 #endif
 
-namespace ET
+namespace HotFix
 {
 #if !NOT_UNITY
     public interface ISupportInitialize

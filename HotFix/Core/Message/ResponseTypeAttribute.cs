@@ -1,6 +1,6 @@
 using System;
 
-namespace ET
+namespace HotFix
 {
     public class ResponseTypeAttribute: BaseAttribute
     {

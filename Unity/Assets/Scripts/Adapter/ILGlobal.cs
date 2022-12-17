@@ -103,7 +103,7 @@ namespace Client
 
 
             LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(appdomain);
-            ET.ILHelper.InitILRuntime(appdomain); //好像没啥用
+            HotFix.ILHelper.InitILRuntime(appdomain); //好像没啥用
 
             // HelloWorld，第一次方法调用
             //appdomain.Invoke("HotFix.Main", "Proto", gameObject, null); //实例方法

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using kcp2k.Examples;
 using HotFix;
-using ET;
 using Random = System.Random;
 using Debug = System.Diagnostics.Debug;
 

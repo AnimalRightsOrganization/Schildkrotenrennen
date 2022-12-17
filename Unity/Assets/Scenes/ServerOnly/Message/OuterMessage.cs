@@ -1,7 +1,6 @@
-using ET;
 using ProtoBuf;
 using System.Collections.Generic;
-namespace ET
+namespace HotFix
 {
 //option csharp_namespace = "HotFix";
 // 错误码

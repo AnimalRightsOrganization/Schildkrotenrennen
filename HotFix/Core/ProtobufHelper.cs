@@ -8,7 +8,7 @@ using System.IO;
 using ProtoBuf;
 using ProtoBuf.Meta;
 
-namespace ET
+namespace HotFix
 {
 	public static class ProtobufHelper
 	{

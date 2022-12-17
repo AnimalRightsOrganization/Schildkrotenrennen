@@ -6,7 +6,7 @@ using ILRuntime.Runtime.Intepreter;
 using ProtoBuf;
 using UnityEngine;
 
-namespace ET
+namespace HotFix
 {
     public static class ILHelper
     {

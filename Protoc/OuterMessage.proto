@@ -1,5 +1,5 @@
 syntax = "proto3";
-package ET;
+package HotFix;
 //option csharp_namespace = "HotFix";
 
 // 错误码

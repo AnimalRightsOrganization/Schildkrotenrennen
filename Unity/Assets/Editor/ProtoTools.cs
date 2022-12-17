@@ -18,6 +18,7 @@ public static class ProtoTools
     public const int InnerMinOpcode = 100;
     public const int MongoMinOpcode = 1000;
     public const int OuterMinOpcode = 10000;
+    public const string NAME_SPACE = "HotFix";
 
     public static void Proto2CS()
     {
@@ -25,15 +26,18 @@ public static class ProtoTools
         string projPath = Directory.GetParent(root_unity).ToString();
         string protoSrc = $"{projPath}/Protoc/OuterMessage.proto";
         string clientMessagePath = $"{projPath}/HotFix/Message/";
-        string serverMessagePath = $"{projPath}/NetCoreServer/NetCoreApp/Message/";
+        //D:\Documents\GitHub\TurtleRace/HotFix/Message/OuterMessage.cs
+        //string serverMessagePath = $"{projPath}/NetCoreServer/NetCoreApp/Message/"; //NetCoreServer
+        //D:\Documents\GitHub\TurtleRace\Unity\Assets\Scenes\ServerOnly\Message\
+        string serverMessagePath = $"{projPath}/Unity/Assets/Scenes/ServerOnly/Message/"; //KcpServer
 
         // 输出到服务器
-        Proto2CS("ET", protoSrc, serverMessagePath, "OuterOpcode", OuterMinOpcode);
-        GenerateOpcode("ET", "OuterOpcode", serverMessagePath);
+        Proto2CS(NAME_SPACE, protoSrc, serverMessagePath, "OuterOpcode", OuterMinOpcode);
+        GenerateOpcode(NAME_SPACE, "OuterOpcode", serverMessagePath);
 
         // 输出到客户端
-        Proto2CS("ET", protoSrc, clientMessagePath, "OuterOpcode", OuterMinOpcode);
-        GenerateOpcode("ET", "OuterOpcode", clientMessagePath);
+        Proto2CS(NAME_SPACE, protoSrc, clientMessagePath, "OuterOpcode", OuterMinOpcode);
+        GenerateOpcode(NAME_SPACE, "OuterOpcode", clientMessagePath);
     }
 
     public static void Proto2CS(string ns, string protoName, string outputPath, string opcodeClassName, int startOpcode)
@@ -50,7 +54,7 @@ public static class ProtoTools
         string s = File.ReadAllText(protoName);
 
         StringBuilder sb = new StringBuilder();
-        sb.Append("using ET;\n");
+        //sb.Append("using ET;\n");
         sb.Append("using ProtoBuf;\n");
         sb.Append("using System.Collections.Generic;\n");
         sb.Append($"namespace {ns}\n");

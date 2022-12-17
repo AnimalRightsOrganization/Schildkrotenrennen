@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using HotFix;
-using ET;
 using NetCoreServer;
 using NetCoreServer.Utils;
 

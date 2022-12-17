@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using UnityEngine;
 using HotFix;
-using ET;
 
 namespace kcp2k.Examples
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ET
+namespace HotFix
 {
     public static class JsonHelper
     {

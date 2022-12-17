@@ -1,4 +1,4 @@
-﻿namespace ET
+﻿namespace HotFix
 {
     public abstract class Object
     {

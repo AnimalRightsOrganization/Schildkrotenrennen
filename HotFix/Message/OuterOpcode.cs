@@ -1,4 +1,4 @@
-namespace ET
+namespace HotFix
 {
 	public static partial class OuterOpcode
 	{
