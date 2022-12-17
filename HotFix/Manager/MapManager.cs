@@ -4,6 +4,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using DG.Tweening;
+using kcp2k.Examples;
 
 namespace HotFix
 {
@@ -77,7 +78,7 @@ namespace HotFix
                     string _name = hit.transform.name.Split('_')[1];
                     int index = int.Parse(_name);
 
-                    var data = TcpChatClient.m_ClientRoom.GridData[index];
+                    var data = KcpChatClient.m_ClientRoom.GridData[index];
 
                     if (index > 0 && data.Count > 1)
                     {

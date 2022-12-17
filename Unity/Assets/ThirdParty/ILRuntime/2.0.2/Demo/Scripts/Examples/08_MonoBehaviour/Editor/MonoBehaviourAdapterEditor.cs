@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -32,8 +33,10 @@ public class MonoBehaviourAdapterEditor : UnityEditor.UI.GraphicEditor
                 index++;
 
                 var cType = type.TypeForCLR;
-                //if (cType.IsPublic == false)
-                //    continue; //非公开不显示
+                if (cType.IsPublic == false)
+                {
+                    instance[i.Value] = "Private Value";
+                }
                 if (cType.IsPrimitive)//如果是基础类型（boolean、char、byte、short、int、long、float、double）
                 {
                     if (cType == typeof(float))
@@ -49,7 +52,10 @@ public class MonoBehaviourAdapterEditor : UnityEditor.UI.GraphicEditor
                         instance[i.Value] = EditorGUILayout.Toggle(name, i.Value == 1);
                     }
                     else
-                        throw new System.NotImplementedException();//剩下的大家自己补吧
+                    {
+                        //throw new System.NotImplementedException();//剩下的大家自己补吧
+                        instance[i.Value] = cType.ToString();
+                    }
                 }
                 else
                 {
@@ -95,6 +101,16 @@ public class MonoBehaviourAdapterEditor : UnityEditor.UI.GraphicEditor
                 }
             }
         }
+    }
+
+    protected override void OnEnable()
+    {
+
+    }
+
+    protected override void OnDisable()
+    {
+        //SceneView.duringSceneGui = null; 不要再SceneView中绘制，否则报错
     }
 }
 #endif

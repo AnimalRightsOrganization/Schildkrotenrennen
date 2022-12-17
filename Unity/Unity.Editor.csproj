@@ -382,9 +382,6 @@
     <Reference Include="DOTweenPro">
       <HintPath>Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenPro.dll</HintPath>
     </Reference>
-    <Reference Include="DOTweenUpgradeManager">
-      <HintPath>Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenUpgradeManager.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>Library\PackageCache\com.unity.ext.nunit@1.0.6\net35\unity-custom\nunit.framework.dll</HintPath>
     </Reference>

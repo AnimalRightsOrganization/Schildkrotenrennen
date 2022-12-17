@@ -165,31 +165,29 @@ namespace HotFix
                         var packet = (S2C_LoginResultPacket)reader;
                         if (packet.Code == 0)
                         {
-                            //ReconnectTimes = 2; //登录成功，补充重连次数
-                            //TcpChatClient.m_PlayerManager.LocalPlayer.ResetToLobby();
                             KcpChatClient.m_PlayerManager.LocalPlayer.ResetToLobby();
                         }
                         break;
                     }
                 case PacketType.S2C_GameStart:
                     {
-                        TcpChatClient.m_PlayerManager.LocalPlayer.SetStatus(PlayerStatus.GAME);
+                        KcpChatClient.m_PlayerManager.LocalPlayer.SetStatus(PlayerStatus.GAME);
                         break;
                     }
                 case PacketType.S2C_GameResult:
                     {
-                        TcpChatClient.m_PlayerManager.LocalPlayer.ResetToLobby();
+                        KcpChatClient.m_PlayerManager.LocalPlayer.ResetToLobby();
                         break;
                     }
             }
-            UserEventManager.Trigger(TcpChatClient.m_PlayerManager.LocalPlayer.Status); //通知给UI
+            UserEventManager.Trigger(KcpChatClient.m_PlayerManager.LocalPlayer.Status); //通知给UI
         }
 
         // 自己登出
         void OnLogoutResult(object reader)
         {
-            Debug.Log($"<color=red>[C] {TcpChatClient.m_PlayerManager.LocalPlayer.UserName}登出重置</color>");
-            TcpChatClient.m_PlayerManager.Reset();
+            Debug.Log($"<color=red>[C] {KcpChatClient.m_PlayerManager.LocalPlayer.UserName}登出重置</color>");
+            KcpChatClient.m_PlayerManager.Reset();
         }
 
         void OnErrorOperate(object reader)

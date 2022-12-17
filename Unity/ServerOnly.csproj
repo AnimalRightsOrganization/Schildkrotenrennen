@@ -394,9 +394,6 @@
     <Reference Include="DOTweenPro">
       <HintPath>Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenPro.dll</HintPath>
     </Reference>
-    <Reference Include="DOTweenUpgradeManager">
-      <HintPath>Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenUpgradeManager.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.Android.Types">
       <HintPath>D:\Program Files\Unity\2021.3.13f1c1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>
     </Reference>

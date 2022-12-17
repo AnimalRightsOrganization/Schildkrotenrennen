@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using ET;
+using kcp2k.Examples;
 
 namespace HotFix
 {
@@ -100,7 +101,7 @@ namespace HotFix
             int step = (int)card.cardNum; //走几步
 
             // 如果是自己出的，移除手牌
-            if (packet.SeatID == TcpChatClient.m_PlayerManager.LocalPlayer.SeatId)
+            if (packet.SeatID == KcpChatClient.m_PlayerManager.LocalPlayer.SeatId)
             {
                 //PrintHandCards();
                 HandCardDatas.Remove(card);

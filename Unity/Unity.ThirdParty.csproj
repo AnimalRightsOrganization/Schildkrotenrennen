@@ -309,12 +309,10 @@
     <None Include="Assets\ThirdParty\kcp2k\LICENSE.txt" />
     <None Include="Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenPro.dll" />
     <None Include="Assets\ThirdParty\Demigiant\DOTweenPro\readme.txt" />
-    <None Include="Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenUpgradeManager.dll" />
     <None Include="Assets\ThirdParty\Demigiant\DemiLib\Core\DemiLib.xml" />
     <None Include="Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenPro.XML" />
     <None Include="Assets\ThirdParty\MySQL\Plugins\I18N.West.dll" />
     <None Include="Assets\ThirdParty\Demigiant\DOTween\readme.txt" />
-    <None Include="Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenUpgradeManager.XML" />
     <None Include="Assets\ThirdParty\kcp2k\VERSION.txt" />
     <None Include="Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenEditor.XML" />
     <None Include="Assets\ThirdParty\Unity.ThirdParty.asmdef" />
@@ -625,9 +623,6 @@
     </Reference>
     <Reference Include="DOTweenPro">
       <HintPath>Assets\ThirdParty\Demigiant\DOTweenPro\DOTweenPro.dll</HintPath>
-    </Reference>
-    <Reference Include="DOTweenUpgradeManager">
-      <HintPath>Assets\ThirdParty\Demigiant\DOTween\Editor\DOTweenUpgradeManager.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Android.Types">
       <HintPath>D:\Program Files\Unity\2021.3.13f1c1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>

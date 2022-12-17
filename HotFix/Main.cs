@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using kcp2k.Examples;
+using UnityEngine;
 
 namespace HotFix
 {
@@ -40,7 +41,7 @@ namespace HotFix
 
         public static void Dispose()
         {
-            TcpChatClient.Dispose(); //关闭网络线程
+            KcpChatClient.Disconnect(); //关闭网络线程
         }
     }
 }
