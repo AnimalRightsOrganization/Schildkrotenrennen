@@ -2,7 +2,8 @@
     "name": "ServerOnly",
     "rootNamespace": "",
     "references": [
-        "GUID:5e2444ede58c55a4dac88c7a300e017c"
+        "GUID:5e2444ede58c55a4dac88c7a300e017c",
+        "GUID:e1710960a978ea64aa10f7685663201b"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

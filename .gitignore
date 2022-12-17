@@ -9,7 +9,9 @@ Temp/
 UserSettings/
 Output/
 /out
-StreamingAssets/
+*StreamingAssets/
+*StreamingAssets.meta
+*Generated/
 Build/
 Xcode/
 *.DS_Store

@@ -778,6 +778,10 @@
       <Project>{E15BADD2-3A26-309A-AB0F-DC5B08044350}</Project>
       <Name>Unity.ThirdParty</Name>
     </ProjectReference>
+    <ProjectReference Include="Unity.Scripts.csproj">
+      <Project>{8A0E6C70-4D71-8F15-B6E4-1F3BC3A15E7B}</Project>
+      <Name>Unity.Scripts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

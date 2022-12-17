@@ -163,10 +163,9 @@ public partial class BundleTools : Editor
         {
             if (finish == false)
             {
-                //每秒执行260-530次 //0.003s
                 progress += 0.0002f;
                 EditorUtility.DisplayProgressBar("Compiler", args, progress);
-                Debug.Log($"Now: {DateTime.Now.ToString("HH:mm:ss")}");
+                //Debug.Log($"Now: {DateTime.Now.ToString("HH:mm:ss")}"); //每秒执行260-530次 //0.003s
             }
             else
             {
@@ -201,11 +200,6 @@ public partial class BundleTools : Editor
             proc.WaitForExit();
             proc.Close();
         });
-    }
-    [MenuItem("Tools/打包/ClearProgressBar", false, 1)]
-    static void CancelProgress()
-    {
-        EditorUtility.ClearProgressBar();
     }
 
     [MenuItem("Tools/打包/移动 HotFix.dll %_F8", false, 1)]

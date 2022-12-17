@@ -19,7 +19,7 @@ public class ILRuntimeCLRBinding
 
             //Crossbind Adapter is needed to generate the correct binding code
             InitILRuntime(domain);
-            ILRuntime.Runtime.CLRBinding.BindingCodeGenerator.GenerateBindingCode(domain, "Assets/ThirdParty/ILRuntime/Generated");
+            ILRuntime.Runtime.CLRBinding.BindingCodeGenerator.GenerateBindingCode(domain, "Assets/Scripts/ILRuntime/Generated");
         }
 
         AssetDatabase.Refresh();
@@ -31,6 +31,7 @@ public class ILRuntimeCLRBinding
         domain.RegisterCrossBindingAdaptor(new MonoBehaviourAdapter());
         domain.RegisterCrossBindingAdaptor(new CoroutineAdapter());
         domain.RegisterCrossBindingAdaptor(new TestClassBaseAdapter());
+        domain.RegisterCrossBindingAdaptor(new IAsyncStateMachineAdapter());
         domain.RegisterValueTypeBinder(typeof(Vector3), new Vector3Binder());
         domain.RegisterValueTypeBinder(typeof(Vector2), new Vector2Binder());
         domain.RegisterValueTypeBinder(typeof(Quaternion), new QuaternionBinder());
