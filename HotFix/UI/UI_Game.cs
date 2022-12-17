@@ -235,12 +235,10 @@ namespace HotFix
         }
         public void HidePlayPanel()
         {
-            Debug.Log("HidePlayPanel");
-            //DoTween Bug
-            //if (m_Room.gameStatus == TurtleAnime.Anime)
-            //{
-            //    return; //上移动画没播完
-            //}
+            if (m_Room.gameStatus == TurtleAnime.Anime)
+            {
+                return; //上移动画没播完
+            }
             CancelAction?.Invoke();
             m_PlayPanel.SetActive(false);
         }
@@ -346,6 +344,8 @@ namespace HotFix
             m_Room.NextTurn = packet.SeatID;
             NextIcon.SetParent(m_SeatNames[packet.SeatID].transform);
             NextIcon.anchoredPosition = Vector3.zero;
+
+            //TODO: 手牌激活
         }
         // 出牌消息
         async void OnPlay(object reader)
@@ -378,6 +378,8 @@ namespace HotFix
                 PlayAction?.Invoke(); //也是PlayCardAnime()
                 m_PlayPanel.SetActive(false);
             }
+
+            //TODO: 手牌熄灭
 
             await Task.Delay(2000);
 

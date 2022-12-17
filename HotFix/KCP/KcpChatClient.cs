@@ -37,8 +37,7 @@ namespace kcp2k.Examples
         }
         static void OnData(ArraySegment<byte> message, KcpChannel channel)
         {
-            Debug.Log($"KCP: OnClientDataReceived({BitConverter.ToString(message.Array, message.Offset, message.Count)} @ {channel})");
-
+            //Debug.Log($"KCP: OnClientDataReceived({BitConverter.ToString(message.Array, message.Offset, message.Count)} @ {channel})");
             EventManager.Get().queue.Enqueue(message.ToArray());
         }
         static void OnDisonnected()
@@ -80,7 +79,7 @@ namespace kcp2k.Examples
             byte[] buffer = new byte[header.Length + body.Length];
             Array.Copy(header, 0, buffer, 0, header.Length);
             Array.Copy(body, 0, buffer, header.Length, body.Length);
-            Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},total:{buffer.Length},");
+            //Debug.Log($"[SendAsync] header:{header.Length},body:{body.Length},total:{buffer.Length},");
             return buffer;
         }
         private static void SendAsync(PacketType msgId, object cmd, KcpChannel channel = KcpChannel.Reliable)

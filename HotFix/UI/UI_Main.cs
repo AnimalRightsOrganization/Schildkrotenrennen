@@ -247,12 +247,12 @@ namespace HotFix
                     KcpChatClient.m_PlayerManager.LocalPlayer.SetRoomID(roomData.RoomID).SetSeatID(playerData.SeatId).SetStatus(PlayerStatus.ROOM);
                 }
             }
-            Debug.Log("新建ClientRoom");
+            //Debug.Log("新建ClientRoom");
             KcpChatClient.m_ClientRoom = new ClientRoom(roomData);
 
-            Debug.Log("Push: UI_Room");
+            //Debug.Log("Push: UI_Room");
             var ui_room = UIManager.Get().Push<UI_Room>();
-            Debug.Log("更新: UI_Room.UpdateUI");
+            //Debug.Log("更新: UI_Room.UpdateUI");
             ui_room.UpdateUI(roomData);
 
             m_CreatePanel.SetActive(false);
