@@ -1,14 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using HotFix;
 using ET;
 using NetCoreServer;
 using NetCoreServer.Utils;
-using UnityEditor.Search;
-using System.Threading.Tasks;
 
 namespace kcp2k.Examples
 {
@@ -49,22 +48,10 @@ namespace kcp2k.Examples
 
             GUILayout.BeginArea(new Rect(160, 5, 250, 400));
             GUILayout.Label("Server:");
-            if (GUILayout.Button("Send 0x01, 0x02 to " + firstclient))
+            foreach (var item in m_RoomManager.GetAll())
             {
-                server.Send(firstclient, new ArraySegment<byte>(new byte[] { 0x01, 0x02 }), KcpChannel.Reliable);
-            }
-            if (GUILayout.Button("Send 0x03, 0x04 to " + firstclient + " unreliable"))
-            {
-                server.Send(firstclient, new ArraySegment<byte>(new byte[] { 0x03, 0x04 }), KcpChannel.Unreliable);
-            }
-            if (GUILayout.Button("Disconnect connection " + firstclient))
-            {
-                server.Disconnect(firstclient);
-            }
-            if (GUILayout.Button("Log Dictionary"))
-            {
-                var room = m_RoomManager.GetServerRoom(1);
-                Debug.Log(room?.ToString());
+                GUILayout.Label($"{item.ToString()}");
+                GUILayout.Label("------------------");
             }
             if (GUILayout.Button("RemoveAll"))
             {
@@ -89,6 +76,11 @@ namespace kcp2k.Examples
         void OnDisonnected(int connectionId)
         {
             Debug.Log($"KCP: OnDisonnected({connectionId}");
+
+            var player = m_PlayerManager.GetPlayerByPeerId(connectionId);
+            m_PlayerManager.RemovePlayer(connectionId);
+            int roomId = player.RoomId;
+            m_RoomManager.RemoveServerRoom(roomId);
         }
         void OnError(int connectionId, ErrorCode error, string reason)
         {
@@ -135,8 +127,7 @@ namespace kcp2k.Examples
             }
             MemoryStream ms = new MemoryStream(body, 0, body.Length);
             PacketType type = (PacketType)msgId;
-            Debug.Log($"msgType={type}, from peer:{connectionId}, len:{buffer.Length}");
-
+            //Debug.Log($"msgType={type}, from peer:{connectionId}, len:{buffer.Length}");
             switch (type)
             {
                 case PacketType.Connected:
@@ -226,7 +217,7 @@ namespace kcp2k.Examples
                 Debug.Log($"OnLoginReq.空数据:{ms.Length}");
                 return;
             }
-            Debug.Log($"[C2S] Username={request.Username}, Password={request.Password} by {Id}");
+            //Debug.Log($"[C2S] Username={request.Username}, Password={request.Password} by {Id}");
 
             UserInfo result = await MySQLTool.GetUserInfo(request.Username, request.Password);
             if (result == null)
@@ -345,7 +336,7 @@ namespace kcp2k.Examples
                 Debug.Log("OnCreateRoom.空数据");
                 return;
             }
-            Debug.Log($"[C2S] Name={request.RoomName}, Pwd={request.RoomPwd}, playerNum={request.LimitNum} by {Id}");
+            Debug.Log($"[C2S_CreateRoom] Name={request.RoomName}, Pwd={request.RoomPwd}, playerNum={request.LimitNum} by {Id}");
             ServerPlayer p = m_PlayerManager.GetPlayerByPeerId(Id);
 
             // 验证合法性（总数是否超过等），在服务器创建房间
@@ -466,7 +457,7 @@ namespace kcp2k.Examples
             ServerPlayer p = m_PlayerManager.GetPlayerByPeerId(Id);
             ServerRoom serverRoom = m_RoomManager.GetServerRoom(p.RoomId);
             BaseRoomData roomData = serverRoom.m_Data;
-            Debug.Log($"[C2S] {p.UserName}在房间#{p.RoomId}对座位#{request.SeatID}添加操作：{(SeatOperate)request.Operate}");
+            Debug.Log($"[C2S_OperateSeat] {p.UserName}在房间#{p.RoomId}对座位#{request.SeatID}添加操作：{(SeatOperate)request.Operate}");
 
             // 都要房主权限
             if (p.SeatId != 0)
@@ -517,7 +508,7 @@ namespace kcp2k.Examples
 
             var roomInfo = serverRoom.GetRoomInfo(); //房主操作客位
             var packet1 = new S2C_RoomInfo { Room = roomInfo };
-            Debug.Log($"[S2C] {roomInfo.ToString()}");
+            Debug.Log($"[S2C_RoomInfo] {roomInfo.ToString()}");
             // 房间内广播，更新房间信息
             serverRoom.SendAsync(PacketType.S2C_RoomInfo, packet1);
         }
@@ -525,7 +516,7 @@ namespace kcp2k.Examples
         {
             ServerPlayer p = m_PlayerManager.GetPlayerByPeerId(Id);
             ServerRoom serverRoom = m_RoomManager.GetServerRoom(p.RoomId);
-            Debug.Log($"{p.UserName}请求开始比赛，房间#{p.RoomId}({serverRoom.m_PlayerDic.Count}/{serverRoom.RoomLimit})");
+            Debug.Log($"[C2S_GameStart] {p.UserName}请求开始, Room{p.RoomId}({serverRoom.m_PlayerDic.Count}/{serverRoom.RoomLimit})");
 
             // 校验房间人数。
             if (serverRoom.m_PlayerDic.Count < serverRoom.RoomLimit)
@@ -550,7 +541,7 @@ namespace kcp2k.Examples
         }
         protected async void OnGamePlay(int Id, C2S_PlayCardPacket request, ServerPlayer p)
         {
-            Debug.Log($"[C2S] {p.UserName}，在房间#{p.RoomId}，座位#{p.SeatId}，出牌：{request.CardID}/{request.Color}");
+            Debug.Log($"<color=green>[C2S_GamePlay] {p.UserName} 出 Card{request.CardID}</color>");
 
             ServerRoom serverRoom = m_RoomManager.GetServerRoom(p.RoomId);
             if (serverRoom == null)
@@ -573,7 +564,7 @@ namespace kcp2k.Examples
                 SeatID = p.SeatId,
             };
             serverRoom.SendAsync(PacketType.S2C_GamePlay, packet1);
-            Debug.Log($"[S2C] 广播出牌消息：座位#{packet1.SeatID}出{packet1.CardID}");
+            Debug.Log($"[S2C_GamePlay.广播] Seat{packet1.SeatID} 出 Card{packet1.CardID}");
 
             if (end)
             {
@@ -586,13 +577,13 @@ namespace kcp2k.Examples
             Card card = serverRoom.OnGameDeal_Server(p);
             var packet2 = new S2C_DealPacket { CardID = card.id, SeatID = p.SeatId };
             p.SendAsync(PacketType.S2C_GameDeal, packet2);
-            Debug.Log($"[S2C] 单发发牌消息：{packet2.CardID}给座位#{packet2.SeatID}");
+            Debug.Log($"[S2C_GameDeal.广播] Card{packet2.CardID} 给座位 Seat{packet2.SeatID}");
 
             // 广播下轮出牌人
             int nextSeatId = serverRoom.nextPlayerIndex;
             var packet3 = new S2C_NextTurnPacket { SeatID = nextSeatId };
             serverRoom.SendAsync(PacketType.S2C_YourTurn, packet3);
-            Debug.Log($"[S2C] 广播下轮出牌人，座位#{nextSeatId}");
+            Debug.Log($"[S2C_YourTurn.单发] 轮到Seat{nextSeatId}的回合");
 
             ServerPlayer nextPlayer = serverRoom.GetPlayer(nextSeatId);
             if (nextPlayer.IsBot)
@@ -607,6 +598,7 @@ namespace kcp2k.Examples
         }
         public void OnGameResult(int Id)
         {
+            Debug.Log("<color=green>结算</color>");
             ServerPlayer p = m_PlayerManager.GetPlayerByPeerId(Id);
             ServerRoom serverRoom = m_RoomManager.GetServerRoom(p.RoomId);
             List<int> turtleRank = serverRoom.OnGameResult(); //五只龟的顺序
@@ -622,8 +614,16 @@ namespace kcp2k.Examples
             }
 
             var packet = new S2C_GameResultPacket { Rank = playerRank }; //key:座位号, value:排名
-            serverRoom.SendAsync(PacketType.S2C_GameResult, packet);
+            for (int i = 0; i < serverRoom.m_PlayerDic.Count; i++)
+            {
+                var serverPlayer = serverRoom.GetPlayer(i);
+                serverPlayer.SendAsync(PacketType.S2C_GameResult, packet);
+                Debug.Log($"Send to Seat{i}");
+            }
+            Debug.Log($"Send Over: {Id}");
+            //serverRoom.SendAsync(PacketType.S2C_GameResult, packet);
             m_RoomManager.RemoveServerRoom(serverRoom.RoomID);
+            Debug.Log($"Remove Over: {Id}");
 
             // 打印
             string rankStr = string.Empty;
@@ -631,7 +631,7 @@ namespace kcp2k.Examples
             {
                 rankStr += $"座位{i}排名{playerRank[i]}颜色；";
             }
-            Debug.Log($"广播结算消息[{playerRank.Count}]：{rankStr}");
+            Debug.Log($"Log结算消息[{playerRank.Count}]：{rankStr}");
         }
     }
 }

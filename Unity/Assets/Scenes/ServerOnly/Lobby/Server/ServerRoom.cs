@@ -298,6 +298,8 @@ namespace NetCoreServer
                     Color = (int)player.chessColor,
                     Cards = CardToInt(player.handCards),
                 };
+
+                Debug.Log("[S2C_GameStart] 发牌");
                 player.SendAsync(PacketType.S2C_GameStart, packet);
             }
         }
@@ -384,7 +386,7 @@ namespace NetCoreServer
                 nextPlayerIndex = 0;
 
             // 检查是否到终点
-            Debug.Log($"检查是否到终点: {dstPos}");
+            Debug.Log($"检查是否到终点: {dstPos} / 9 : {dstPos >= 9}");
             if (dstPos >= 9)
             {
                 OnGameResult();
