@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ET;
-using kcp2k;
+using kcp2k.Examples;
 
 namespace HotFix
 {
@@ -83,6 +83,7 @@ namespace HotFix
         {
             m_OAuthBtn.gameObject.SetActive(false);
             //TcpChatClient.Connect();
+            KcpChatClient.Connect();
 
             UIManager.Get().Push<UI_Connect>();
         }

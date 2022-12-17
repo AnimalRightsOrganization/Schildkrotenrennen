@@ -113,6 +113,27 @@
     <Compile Include="Core\Object\ProtoObject.cs" />
     <Compile Include="Core\PoolHelper.cs" />
     <Compile Include="Core\ProtobufHelper.cs" />
+    <Compile Include="KCP\kcp2k\empty\KcpClientConnection.cs" />
+    <Compile Include="KCP\kcp2k\empty\KcpClientConnectionNonAlloc.cs" />
+    <Compile Include="KCP\kcp2k\empty\KcpClientNonAlloc.cs" />
+    <Compile Include="KCP\kcp2k\empty\KcpServerConnectionNonAlloc.cs" />
+    <Compile Include="KCP\kcp2k\empty\KcpServerNonAlloc.cs" />
+    <Compile Include="KCP\kcp2k\highlevel\Common.cs" />
+    <Compile Include="KCP\kcp2k\highlevel\ErrorCode.cs" />
+    <Compile Include="KCP\kcp2k\highlevel\Extensions.cs" />
+    <Compile Include="KCP\kcp2k\highlevel\KcpChannel.cs" />
+    <Compile Include="KCP\kcp2k\highlevel\KcpClient.cs" />
+    <Compile Include="KCP\kcp2k\highlevel\KcpConfig.cs" />
+    <Compile Include="KCP\kcp2k\highlevel\KcpHeader.cs" />
+    <Compile Include="KCP\kcp2k\highlevel\KcpPeer.cs" />
+    <Compile Include="KCP\kcp2k\highlevel\KcpServer.cs" />
+    <Compile Include="KCP\kcp2k\highlevel\KcpServerConnection.cs" />
+    <Compile Include="KCP\kcp2k\highlevel\Log.cs" />
+    <Compile Include="KCP\kcp2k\kcp\AssemblyInfo.cs" />
+    <Compile Include="KCP\kcp2k\kcp\Kcp.cs" />
+    <Compile Include="KCP\kcp2k\kcp\Pool.cs" />
+    <Compile Include="KCP\kcp2k\kcp\Segment.cs" />
+    <Compile Include="KCP\kcp2k\kcp\Utils.cs" />
     <Compile Include="KCP\KcpChatClient.cs" />
     <Compile Include="Manager\MapManager.cs" />
     <Compile Include="Manager\MD5Utils.cs" />
@@ -147,6 +168,10 @@
     <Compile Include="UI\UI_Login.cs" />
     <Compile Include="UI\UI_Settings.cs" />
     <Compile Include="UI\UI_Toast.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="KCP\kcp2k\LICENSE.txt" />
+    <Content Include="KCP\kcp2k\VERSION.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
