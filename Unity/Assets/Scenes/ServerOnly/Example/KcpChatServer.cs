@@ -223,8 +223,16 @@ namespace kcp2k.Examples
             {
                 Debug.Log($"用户名或密码错误");
                 var tempData = new BasePlayerData { PeerId = Id, };
-                var tempPlayer = new ServerPlayer(tempData);
+                ServerPlayer tempPlayer = new ServerPlayer(tempData);
                 ErrorPacket err_packet = new ErrorPacket { Code = (int)HotFix.ErrorCode.LOGIN_FAILED, Message = "用户名或密码错误" };
+                tempPlayer.SendAsync(PacketType.S2C_ErrorOperate, err_packet);
+                return;
+            }
+            if (m_PlayerManager.GetPlayersAll().Where(x => x.UserName == request.Username).ToList().Count > 0)
+            {
+                var tempData = new BasePlayerData { PeerId = Id, };
+                ServerPlayer tempPlayer = new ServerPlayer(tempData);
+                ErrorPacket err_packet = new ErrorPacket { Code = (int)HotFix.ErrorCode.HAS_LOGIN, Message = "账号已在别处登录" };
                 tempPlayer.SendAsync(PacketType.S2C_ErrorOperate, err_packet);
                 return;
             }
@@ -416,6 +424,13 @@ namespace kcp2k.Examples
                 Debug.Log("比赛中投降，结算时判负");
                 //接下来比赛会跳过该用户回合
                 //判断剩下几人，如果只剩一个真实玩家，直接弹出结算。
+                List<int> playerRank = new List<int>();
+                for (int i = 0; i < serverRoom.Players.Count; i++)
+                {
+                    playerRank.Add(i);
+                }
+                var packet = new S2C_GameResultPacket { Rank = playerRank };
+                serverRoom.SendAsync( PacketType.S2C_GameResult, packet);
                 return;
             }
             Debug.Log($"验证成功，可以离开房间#{p.RoomId}，座位#{p.SeatId}"); //-1, -1

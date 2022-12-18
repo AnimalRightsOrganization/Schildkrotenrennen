@@ -64,16 +64,16 @@ namespace HotFix
             var map_manager = Instantiate(map_asset);
             map_manager.name = "MapManager";
             map_manager.AddComponent<MapManager>();
-            MapManager.Instance.InitAssets();
+            MapManager.Get.InitAssets();
 
 
             m_MenuBtn = transform.Find("MenuBtn").GetComponent<Button>();
             m_MenuBtn.onClick.AddListener(OnMenuBtnClick);
 
             // 地图
-            m_Rocks = MapManager.Instance.Rock;
+            m_Rocks = MapManager.Get.Rock;
             // 棋子
-            m_Turtles = MapManager.Instance.Turtle;
+            m_Turtles = MapManager.Get.Turtle;
 
             // 成员
             idSprites = ResManager.LoadSprite("Sprites/identify");
@@ -259,10 +259,15 @@ namespace HotFix
             CancelAction?.Invoke();
             m_PlayPanel.SetActive(false);
         }
+        // 游戏菜单
         void OnMenuBtnClick()
         {
-            Debug.Log("游戏菜单");
+            var ui_dialog = UIManager.Get().Push<UI_Dialog>();
+            ui_dialog.Show("是否退出？",
+                () => { ui_dialog.Pop(); }, "否",
+                () => { KcpChatClient.SendLeaveRoom(); }, "是");
         }
+        // 出牌按钮
         void OnPlayBtnClick()
         {
             Card card = ClientRoom.lib.library[selectedCardId];

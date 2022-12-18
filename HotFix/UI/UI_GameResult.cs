@@ -55,7 +55,7 @@ namespace HotFix
 
         void OnExitBtnClick()
         {
-            Destroy(MapManager.Instance.gameObject);
+            MapManager.Get.Dispose();
             UIManager.Get().PopAll(true);
             UIManager.Get().Push<UI_Login>();
             UIManager.Get().Push<UI_Main>();

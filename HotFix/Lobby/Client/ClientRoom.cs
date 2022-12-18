@@ -53,7 +53,7 @@ namespace HotFix
             {
                 Debug.LogError("结束了，无法再设置");
             }
-            Debug.Log($"<color=yellow>{gameStatus}==========>>{state}</color>");
+            //Debug.Log($"<color=yellow>{gameStatus}==========>>{state}</color>");
             gameStatus = state;
         }
 

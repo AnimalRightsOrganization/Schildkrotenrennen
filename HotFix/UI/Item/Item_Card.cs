@@ -87,12 +87,10 @@ namespace HotFix
         }
         void CancelCardAnime()
         {
-            Debug.Log(111);
             ui_game.m_Room.SetStatus(TurtleAnime.Anime);//取消选中牌
             Tweener tw_hide = transform.DOMove(src, 0.3f);
             tw_hide.OnComplete(() =>
             {
-                Debug.Log(222);
                 ui_game.m_Room.SetStatus(TurtleAnime.Wait);//取消选中结束
             });
         }

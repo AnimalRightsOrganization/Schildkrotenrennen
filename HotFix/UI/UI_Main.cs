@@ -37,6 +37,8 @@ namespace HotFix
         public GameObject m_Notice;
         public Transform m_RoomRoot;
 
+        public Text m_NameText;
+
         private int Page;
         #endregion
 
@@ -90,6 +92,8 @@ namespace HotFix
                 var item_room = roomObj.AddComponent<Item_Lobby>();
                 m_Rooms[i] = item_room;
             }
+
+            m_NameText = transform.Find("UserPanel/NameText").GetComponent<Text>();
         }
         void OnEnable()
         {
@@ -123,6 +127,7 @@ namespace HotFix
 
             Page = 1;
             m_PageText.text = $"第{Page}页";
+            m_NameText.text = $"用户名:{KcpChatClient.m_PlayerManager.LocalPlayer.UserName}\n昵称:{KcpChatClient.m_PlayerManager.LocalPlayer.NickName}";
         }
 
         void OnJoinBtnClick()

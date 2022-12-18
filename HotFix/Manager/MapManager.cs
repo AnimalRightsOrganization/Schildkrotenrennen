@@ -11,7 +11,7 @@ namespace HotFix
     public class MapManager : MonoBehaviour
     {
         static MapManager _instance;
-        public static MapManager Instance
+        public static MapManager Get
         {
             get
             {
@@ -54,6 +54,11 @@ namespace HotFix
                 Turtle[i] = item.gameObject.AddComponent<Item_Turtle>();
                 Turtle[i].InitData(i);
             }
+        }
+        public void Dispose()
+        {
+            if (gameObject != null)
+                Destroy(gameObject);
         }
 
         void Update()

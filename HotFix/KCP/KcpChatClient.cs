@@ -43,6 +43,7 @@ namespace kcp2k.Examples
         {
             Debug.Log($"KCP: OnDisonnected");
 
+            MapManager.Get.Dispose();
             UIManager.Get().PopAll();
             var ui_login = UIManager.Get().Push<UI_Login>();
             ui_login.BackToLogin();

@@ -102,13 +102,7 @@ namespace HotFix
         void OnLoginBtnClick()
         {
             string username = m_Login_UserInput.text;
-            if (string.IsNullOrEmpty(username))
-                username = "admin";
-
             string password = m_Login_PwdInput.text;
-            if (string.IsNullOrEmpty(password))
-                password = "123456";
-
             KcpChatClient.SendLogin(username, password);
         }
         void OnGoLoginBtnClick()
@@ -205,7 +199,11 @@ namespace HotFix
         void OnLoginResult(object reader)
         {
             var packet = (S2C_LoginResultPacket)reader;
-            var playerData = new BasePlayerData { UserName = packet.Username }; //没填的都是默认值
+            var playerData = new BasePlayerData
+            {
+                UserName = packet.Username,
+                NickName = packet.Nickname,
+            }; //没填的都是默认值
             var clientPlayer = new ClientPlayer(playerData);
             clientPlayer.ResetToLobby();
             KcpChatClient.m_PlayerManager.AddClientPlayer(clientPlayer, true);

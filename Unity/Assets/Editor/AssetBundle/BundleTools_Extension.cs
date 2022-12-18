@@ -135,14 +135,13 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/运行/服务器 %_F12", false, 11)]
     static void RunServer()
     {
-        string currDir = Directory.GetCurrentDirectory();
-        DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
-        string exePath = $@"{currDirInfo.Parent}\NetCoreServer\NetCoreApp\bin\Debug\netcoreapp3.1\";
-
-        Process proc = new Process();
-        proc.StartInfo.WorkingDirectory = exePath; //在文件所在位置执行
-        proc.StartInfo.FileName = "NetCoreServer.exe"; //初始化可执行文件名
-        proc.Start();
+        string filePath = Path.Combine(ConstValue.UnityDir, "Build/Server/GameServer.exe");
+        Process.Start(filePath);
+        Debug.Log(filePath);
+        //Process proc = new Process();
+        ////proc.StartInfo.WorkingDirectory = filePath; //在文件所在位置执行
+        //proc.StartInfo.FileName = "GameServer.exe"; //初始化可执行文件名
+        //proc.Start();
     }
     #endregion
 
@@ -285,7 +284,7 @@ public partial class BundleTools : Editor
         BuildPlayerOptions opt = new BuildPlayerOptions
         {
             scenes = new string[] { "Assets/Scenes/Client.unity" },
-            locationPathName = Path.Combine(build_client, "Client.exe"),
+            locationPathName = Path.Combine(build_client, "GameClient.exe"),
             target = BuildTarget.StandaloneWindows64,
             options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development,
         };
