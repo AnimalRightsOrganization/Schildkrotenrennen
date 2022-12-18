@@ -21,12 +21,13 @@ public class GameManager : MonoBehaviour
 
             // 系统设置
             Time.timeScale = 1.0f;
-            Time.fixedDeltaTime = 0.002f;
-            Screen.fullScreen = false;
-            //Screen.SetResolution(540, 960);
-            Screen.sleepTimeout = SleepTimeout.NeverSleep;
+            Time.fixedDeltaTime = 0.002f; //50fps
             Application.targetFrameRate = 60; //30帧Dotween看起来卡
             QualitySettings.vSyncCount = 0;
+            Screen.fullScreen = false;
+            Screen.SetResolution(540, 960, false);
+            Screen.sleepTimeout = SleepTimeout.NeverSleep;
+            //Debug.unityLogger.logEnabled = false; //release版关闭
 
             // 绑定组件
             transform.Find("ILGlobal").gameObject.AddComponent<Client.ILGlobal>();
