@@ -7,6 +7,7 @@
         ROOM_PWD_ERR,       //房间密码错误
         USERNAME_USED,      //账号已经注册
         LOGIN_FAILED,       //用户名或密码错误
+        HAS_LOGIN,          //账号游戏中
         BE_KICKED,          //被踢了（顶号/GM）
     }
 

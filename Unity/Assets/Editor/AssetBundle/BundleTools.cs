@@ -137,7 +137,7 @@ public partial class BundleTools : Editor
     #endregion
 
     #region 打包
-    private static void BuildAssetBundles()
+    private static void BuildAssetBundles(BuildTarget target)
     {
         //设置标签
         SetLabels();
@@ -148,7 +148,9 @@ public partial class BundleTools : Editor
         Directory.CreateDirectory(ConstValue.outputPath1st);
 
         //打包
-        BuildPipeline.BuildAssetBundles(ConstValue.outputPath1st, 0, EditorUserBuildSettings.activeBuildTarget);
+        //BuildPipeline.BuildAssetBundles(ConstValue.outputPath1st, 0, BuildTarget.Android);
+        //BuildPipeline.BuildAssetBundles(ConstValue.outputPath1st, 0, EditorUserBuildSettings.activeBuildTarget);
+        BuildPipeline.BuildAssetBundles(ConstValue.outputPath1st, 0, target);
         Debug.Log($"第一次打包到: {ConstValue.outputPath1st}");
 
         //清理标签
@@ -258,7 +260,7 @@ public partial class BundleTools : Editor
             return;
         }
 
-        BuildAssetBundles();
+        BuildAssetBundles(target);
 
         Deploy(target);
 

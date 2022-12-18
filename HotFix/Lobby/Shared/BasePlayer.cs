@@ -14,7 +14,7 @@
             Status = PlayerStatus.LOBBY;
         }
         public bool IsBot;          //机器人标识
-        public int PeerId;  //房间ID
+        public int PeerId;          //ID
         public string UserName;     //登录名
         public string NickName;     //昵称
         public int RoomId;          //房间号

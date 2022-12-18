@@ -4,10 +4,9 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEditor;
-using UnityEditor.Build.Reporting;
 using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
 using Debug = UnityEngine.Debug;
-using static DG.DemiEditor.DeEditorUtils;
 
 public partial class BundleTools : Editor
 {
@@ -21,20 +20,20 @@ public partial class BundleTools : Editor
         proc.Start();
     }
 
-    #region 代码
+    #region 开发
     const string hotfixShared = @"HotFix\Lobby\Shared";
     const string serverShared = @"Unity\Assets\Scenes\ServerOnly\Lobby\Shared";
     const string hotfixCore = @"HotFix\Core";
     const string serverCore = @"Unity\Assets\Scenes\ServerOnly\Core";
     const int SLEEP_TIME = 1;
-    [MenuItem("Tools/覆盖/HotFix >> Server", false, 1)]
+    [MenuItem("Tools/共享代码/HotFix → Server", false, 1)]
     static async void Sync_H2S()
     {
         string[] srcPaths = new string[] { hotfixCore, hotfixShared };
         string[] outPaths = new string[] { serverCore, serverShared };
         await Sync_SharedCode(srcPaths, outPaths);
     }
-    [MenuItem("Tools/覆盖/HotFix << Server", false, 1)]
+    [MenuItem("Tools/共享代码/HotFix ← Server", false, 1)]
     static async void Sync_S2H()
     {
         string[] srcPaths = new string[] { serverCore, serverShared };
@@ -107,41 +106,6 @@ public partial class BundleTools : Editor
         proc.StartInfo.WorkingDirectory = projPath;
         proc.StartInfo.FileName = "NetCoreApp.sln";
         proc.Start();
-    }
-    #endregion
-
-    #region 运行
-    //% (ctrl on Windows and Linux, cmd on macOS),
-    //^ (ctrl on Windows, Linux, and macOS),
-    //# (shift),
-    //& (alt)
-    [MenuItem("Tools/运行/命令面板 %_F10", false)]
-    static void RunEditor()
-    {
-        TestWindow.ShowWindow();
-    }
-    [MenuItem("Tools/运行/客户端 %_F11", false, 11)]
-    static void RunClient()
-    {
-        string currDir = Directory.GetCurrentDirectory();
-        DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
-        string exePath = $@"{currDirInfo.Parent}\Unity\Build\";
-
-        Process proc = new Process();
-        proc.StartInfo.WorkingDirectory = exePath; //在文件所在位置执行
-        proc.StartInfo.FileName = "turtle.exe"; //初始化可执行文件名
-        proc.Start();
-    }
-    [MenuItem("Tools/运行/服务器 %_F12", false, 11)]
-    static void RunServer()
-    {
-        string filePath = Path.Combine(ConstValue.UnityDir, "Build/Server/GameServer.exe");
-        Process.Start(filePath);
-        Debug.Log(filePath);
-        //Process proc = new Process();
-        ////proc.StartInfo.WorkingDirectory = filePath; //在文件所在位置执行
-        //proc.StartInfo.FileName = "GameServer.exe"; //初始化可执行文件名
-        //proc.Start();
     }
     #endregion
 
@@ -234,7 +198,7 @@ public partial class BundleTools : Editor
     {
         BuildTarget target = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), ConstValue.PLATFORM_NAME);
         Debug.Log($"打包{target}平台资源");
-        BundleTools.Build_Target(target);
+        Build_Target(target);
     }
     [MenuItem("Tools/打包/服务器", false, 1)]
     static void BuildServer_Win64()
@@ -272,7 +236,9 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/打包/客户端", false, 1)]
     static void BuildClient_Win64()
     {
+        EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Standalone, BuildTarget.StandaloneWindows64);
         SetIcon();
+        return;
 
         if (Directory.Exists(ConstValue.BuildDir) == false)
             Directory.CreateDirectory(ConstValue.BuildDir);
@@ -300,7 +266,31 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/打包/安卓", false, 1)]
     static void BuildClient_Android()
     {
-        EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Android, BuildTarget.Android);
+        //EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Android, BuildTarget.Android);
+        SetIcon();
+
+        if (Directory.Exists(ConstValue.BuildDir) == false)
+            Directory.CreateDirectory(ConstValue.BuildDir);
+
+        string build_apk = $"{ConstValue.BuildDir}/Android";
+        if (Directory.Exists(build_apk) == false)
+            Directory.CreateDirectory(build_apk);
+
+        BuildPlayerOptions opt = new BuildPlayerOptions
+        {
+            scenes = new string[] { "Assets/Scenes/Client.unity" },
+            locationPathName = Path.Combine(build_apk, "android.exe"),
+            target = BuildTarget.Android,
+            options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development,
+        };
+
+        BuildReport report = BuildPipeline.BuildPlayer(opt);
+
+        BuildSummary summary = report.summary;
+        if (summary.result == BuildResult.Succeeded)
+            Debug.Log($"打包成功: {opt.locationPathName}");
+        if (summary.result == BuildResult.Failed)
+            Debug.LogError("打包失败");
     }
     static void BuildClient_iOS()
     {
@@ -343,6 +333,32 @@ public partial class BundleTools : Editor
         //PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Standalone, array_8); //override, 会覆盖
 
         AssetDatabase.Refresh();
+    }
+    #endregion
+
+    #region 运行
+    //% (ctrl on Windows and Linux, cmd on macOS),
+    //^ (ctrl on Windows, Linux, and macOS),
+    //# (shift),
+    //& (alt)
+    [MenuItem("Tools/运行/命令面板 %_F10", false, 11)]
+    static void RunEditor()
+    {
+        TestWindow.ShowWindow();
+    }
+    [MenuItem("Tools/运行/客户端 %_F11", false, 11)]
+    static void RunClient()
+    {
+        string filePath = Path.Combine(ConstValue.UnityDir, "Build/Client/GameClient.exe");
+        Process.Start(filePath);
+        Debug.Log(filePath);
+    }
+    [MenuItem("Tools/运行/服务器 %_F12", false, 11)]
+    static void RunServer()
+    {
+        string filePath = Path.Combine(ConstValue.UnityDir, "Build/Server/GameServer.exe");
+        Process.Start(filePath);
+        Debug.Log(filePath);
     }
     #endregion
 }

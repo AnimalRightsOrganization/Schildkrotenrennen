@@ -2,9 +2,8 @@
 
 namespace HotFix
 {
-    public class BaseRoomData : System.Object
+    public class BaseRoomData
     {
-        // 初值
         public BaseRoomData()
         {
             RoomID = -1;
@@ -44,7 +43,7 @@ namespace HotFix
         public int RoomLimit => m_Data.RoomLimit;   //限定人数
         public List<BasePlayerData> Players => m_Data.Players; //成员
 
-        public virtual Dictionary<int, BasePlayer> m_PlayerDic { get; protected set; } //int是座位号
+        public virtual Dictionary<int, BasePlayer> m_PlayerDic { get; set; } //int是座位号
         public virtual BasePlayer hostPlayer => m_PlayerDic[0];
 
         public override string ToString()
