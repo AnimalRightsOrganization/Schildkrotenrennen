@@ -15,6 +15,7 @@ Output/
 Build/
 Xcode/
 *.DS_Store
+*.csproj
 
 
 # UI资源

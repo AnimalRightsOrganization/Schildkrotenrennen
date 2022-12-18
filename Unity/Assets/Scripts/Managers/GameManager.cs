@@ -31,8 +31,9 @@ public class GameManager : MonoBehaviour
             // 绑定组件
             transform.Find("ILGlobal").gameObject.AddComponent<Client.ILGlobal>();
 
-            //if(官方渠道)
-            //IPC_Login();
+#if CHANNEL_1000 //官方大厅渠道
+            IPC_Login();
+#endif
 
 #if UNITY_EDITOR && !USE_ASSETBUNDLE
             // 不检查更新
@@ -53,7 +54,7 @@ public class GameManager : MonoBehaviour
     async void GetConfig()
     {
         string text = await HttpHelper.TryGetAsync(ConstValue.PRESENT_GET);
-        //Debug.Log($"success: {text}");
+        Debug.Log($"success: {text}");
         var obj = JsonMapper.ToObject<ServerResponse>(text);
         present = JsonMapper.ToObject<Present>(obj.data);
 

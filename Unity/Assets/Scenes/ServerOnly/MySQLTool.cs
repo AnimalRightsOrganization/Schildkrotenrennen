@@ -1,9 +1,9 @@
-using MySql.Data.MySqlClient;
 using System;
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
 using UnityEngine;
+using MySql.Data.MySqlClient;
 
 namespace NetCoreServer.Utils
 {

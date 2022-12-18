@@ -115,6 +115,11 @@ public partial class BundleTools : Editor
     //^ (ctrl on Windows, Linux, and macOS),
     //# (shift),
     //& (alt)
+    [MenuItem("Tools/运行/命令面板 %_F10", false)]
+    static void RunEditor()
+    {
+        TestWindow.ShowWindow();
+    }
     [MenuItem("Tools/运行/客户端 %_F11", false, 11)]
     static void RunClient()
     {
@@ -293,15 +298,10 @@ public partial class BundleTools : Editor
         if (summary.result == BuildResult.Failed)
             Debug.LogError("打包失败");
     }
+    [MenuItem("Tools/打包/安卓", false, 1)]
     static void BuildClient_Android()
     {
         EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Android, BuildTarget.Android);
-
-        string defines = "USE_ASSETBUNDLE;CHANNEL_11011";
-        PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, defines);
-        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, "com.moegijinka.moefight"); //不同渠道包名不一样
-        //PlayerSettings.bundleVersion = string.Format("{0}.{1}.{2}", GameConfig.clientVersions[0],
-        //    GameConfig.clientVersions[1] * 100 + GameConfig.clientVersions[2], GameConfig.clientVersions[3]);
     }
     static void BuildClient_iOS()
     {
@@ -309,7 +309,7 @@ public partial class BundleTools : Editor
 
         string defines = "USE_ASSETBUNDLE;CHANNEL_11011";
         PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.iOS, defines);
-        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, "com.moegijinka.moefight"); //不同渠道包名不一样
+        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, "com.moegijinka.turtlerace"); //不同渠道包名不一样
         //PlayerSettings.bundleVersion = string.Format("{0}.{1}.{2}", GameConfig.clientVersions[0],
         //    GameConfig.clientVersions[1] * 100 + GameConfig.clientVersions[2], GameConfig.clientVersions[3]);
 

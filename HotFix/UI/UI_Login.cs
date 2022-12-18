@@ -80,7 +80,6 @@ namespace HotFix
 
         void ConnectToServer()
         {
-            Debug.Log("ConnectToServer");
             m_OAuthBtn.gameObject.SetActive(false);
             KcpChatClient.Connect();
 

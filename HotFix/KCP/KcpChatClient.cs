@@ -10,7 +10,7 @@ namespace kcp2k.Examples
     {
         // configuration
         public const ushort Port = 7777;
-        public static string Address = "127.0.0.1";
+        public static string Address;
         public static KcpConfig config = new KcpConfig();
 
         public static ClientPlayerManager m_PlayerManager;
@@ -61,6 +61,19 @@ namespace kcp2k.Examples
         public static void Connect()
         {
             m_PlayerManager = new ClientPlayerManager();
+
+            Debug.Log($"读取配置文件:{Main.present.gate}");
+            IPAddress IPAddr;
+            if (IPAddress.TryParse(Main.present.gate, out IPAddr))
+            {
+                Address = Main.present.gate;
+                Debug.Log($"是IP:{Address}");
+            }
+            else
+            {
+                Address = GetHostEntry(Main.present.gate).ToString();
+                Debug.Log($"域名转IP:{Main.present.gate}→{Address}");
+            }
 
             client.Connect(Address, Port, config);
             Debug.Log($"Connect to: {Address}:{Port}");

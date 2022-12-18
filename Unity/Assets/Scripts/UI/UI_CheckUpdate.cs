@@ -42,6 +42,7 @@ public class UI_CheckUpdate : MonoBehaviour
         yield return www;
         if (!string.IsNullOrEmpty(www.error))
         {
+            Debug.Log(cloudPath);
             Debug.LogError(www.error);
             yield break;
         }
