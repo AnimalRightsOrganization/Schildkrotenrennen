@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Text;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -253,6 +252,7 @@ public partial class BundleTools : Editor
     #region 目标平台
     public static void Build_Target(BuildTarget target)
     {
+        Debug.Log($"打包{target}平台资源");
         if (!EditorUserBuildSettings.activeBuildTarget.Equals(target))
         {
             Debug.LogError("请先切换平台");

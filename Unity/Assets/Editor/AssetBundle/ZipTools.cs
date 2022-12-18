@@ -5,9 +5,9 @@ using ICSharpCode.SharpZipLib.Zip;
 
 public class ZipTools : Editor
 {
-    static string sourceDir = @"C:\Users\Administrator\Desktop\dump\"; //不会创建新的目录，zip根目录下直接是dump里的东西。
-    static string zipFilePath = @"C:\Users\Administrator\Desktop\dump.zip";
-    static string extractDir = @"C:\Users\Administrator\Desktop\dump2\"; //与dump一致。
+    const string sourceDir = @"C:\Users\Administrator\Desktop\dump\"; //不会创建新的目录，zip根目录下直接是dump里的东西。
+    const string zipFilePath = @"C:\Users\Administrator\Desktop\dump.zip";
+    const string extractDir = @"C:\Users\Administrator\Desktop\dump2\"; //与dump一致。
 
     [MenuItem("Tools/ZIP/Pack", true, 0)]
     public static void Pack()

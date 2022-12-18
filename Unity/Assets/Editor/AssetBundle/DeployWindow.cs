@@ -5,13 +5,13 @@ using UnityEngine;
 using UnityEditor;
 using Newtonsoft.Json;
 
-public class DeployTools : EditorWindow
+public class DeployWindow : EditorWindow
 {
     [MenuItem("Tools/打包/AllInOne", false)]
     static void AddWindow()
     {
         Rect rect = new Rect(0, 0, 600, 400);
-        DeployTools window = (DeployTools)GetWindowWithRect(typeof(DeployTools), rect, true, "部署");
+        DeployWindow window = (DeployWindow)GetWindowWithRect(typeof(DeployWindow), rect, true, "部署");
         window.Show();
     }
 

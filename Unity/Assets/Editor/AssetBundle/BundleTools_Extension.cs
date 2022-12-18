@@ -7,6 +7,8 @@ using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using Debug = UnityEngine.Debug;
+using System.Collections.Generic;
+using System.Text;
 
 public partial class BundleTools : Editor
 {
@@ -26,14 +28,14 @@ public partial class BundleTools : Editor
     const string hotfixCore = @"HotFix\Core";
     const string serverCore = @"Unity\Assets\Scenes\ServerOnly\Core";
     const int SLEEP_TIME = 1;
-    [MenuItem("Tools/共享代码/HotFix → Server", false, 1)]
+    [MenuItem("Tools/同步代码/HotFix → Server", false, 1)]
     static async void Sync_H2S()
     {
         string[] srcPaths = new string[] { hotfixCore, hotfixShared };
         string[] outPaths = new string[] { serverCore, serverShared };
         await Sync_SharedCode(srcPaths, outPaths);
     }
-    [MenuItem("Tools/共享代码/HotFix ← Server", false, 1)]
+    [MenuItem("Tools/同步代码/HotFix ← Server", false, 1)]
     static async void Sync_S2H()
     {
         string[] srcPaths = new string[] { serverCore, serverShared };
@@ -91,31 +93,75 @@ public partial class BundleTools : Editor
         await Task.Delay(SLEEP_TIME);
         EditorUtility.ClearProgressBar();
     }
-    [MenuItem("Assets/Open Server Project", false)]
-    static void OpenServerProject()
-    {
-        string currDir = Directory.GetCurrentDirectory();
-        DirectoryInfo currDirInfo = new DirectoryInfo(currDir);
-        //string projPath = $@"{currDirInfo.Parent}\NetCoreServer\NetCoreApp.sln";
-        string projPath = $@"{currDirInfo.Parent}\NetCoreServer";
-#if UNITY_STANDALONE_OSX
-        //MacOS只认[/]。但不能编译winform。
-        projPath = projPath.Replace(@"\", "/");
-#endif
-        Process proc = new Process();
-        proc.StartInfo.WorkingDirectory = projPath;
-        proc.StartInfo.FileName = "NetCoreApp.sln";
-        proc.Start();
-    }
     #endregion
 
     #region 打包
-    [MenuItem("Tools/打包/生成 Proto.cs", false, 1)]
+    [MenuItem("Tools/打包/配置表", false, 0)]
+    static void GenerateJson()
+    {
+        int indexOfFormat = 0; //输出格式索引
+        int indexOfEncoding = 0; //编码索引
+        bool keepSource = true; //是否保留原始文件
+        string configs_dir = $"{Application.dataPath}/Bundles/Configs";
+
+        string excel_root = $"{Directory.GetParent(System.Environment.CurrentDirectory)}/Excel";
+        string[] array = Directory.GetFiles(excel_root);
+        List<string> excelList = new List<string>(array); //Excel文件列表
+
+        foreach (string excelPath in excelList)
+        {
+            string srcName = (new FileInfo(excelPath)).Name;
+            string output = $"{configs_dir}/{srcName.Replace(".xlsx", ".bytes")}";
+
+            //构造Excel工具类
+            ExcelUtility excel = new ExcelUtility(excelPath);
+
+            //判断编码类型
+            Encoding encoding = null;
+            if (indexOfEncoding == 0 || indexOfEncoding == 3)
+            {
+                encoding = Encoding.GetEncoding("utf-8");
+            }
+            else if (indexOfEncoding == 1)
+            {
+                encoding = Encoding.GetEncoding("gb2312");
+            }
+
+            //判断输出类型
+            if (indexOfFormat == 0)
+            {
+                excel.ConvertToJson(output, encoding);
+            }
+            else if (indexOfFormat == 1)
+            {
+                excel.ConvertToCSV(output, encoding);
+            }
+            else if (indexOfFormat == 2)
+            {
+                excel.ConvertToXml(output);
+            }
+            else if (indexOfFormat == 3)
+            {
+                excel.ConvertToLua(output, encoding);
+            }
+
+            //判断是否保留源文件
+            if (!keepSource)
+            {
+                FileUtil.DeleteFileOrDirectory(excelPath);
+            }
+
+            //刷新本地资源
+            AssetDatabase.Refresh();
+        }
+        Debug.Log($"导出{array.Length}个配置到: {configs_dir}");
+    }
+    [MenuItem("Tools/打包/生成 Proto.cs", false, 0)]
     static void ConvertProto()
     {
         ProtoTools.Proto2CS();
     }
-    [MenuItem("Tools/打包/编译 HotFix.sln %_F7", false, 1)]
+    [MenuItem("Tools/打包/编译 HotFix.sln %_F7", false, 0)]
     static void CompileHotFix()
     {
         string currDir = Directory.GetCurrentDirectory();
@@ -170,8 +216,7 @@ public partial class BundleTools : Editor
             proc.Close();
         });
     }
-
-    [MenuItem("Tools/打包/移动 HotFix.dll %_F8", false, 1)]
+    [MenuItem("Tools/打包/移动 HotFix.dll %_F8", false, 0)]
     static void MoveDLL()
     {
         string dllPath = Path.Combine(Application.streamingAssetsPath, "HotFix.dll");
@@ -193,14 +238,25 @@ public partial class BundleTools : Editor
         AssetDatabase.Refresh();
         Debug.Log("移动完成");
     }
-    [MenuItem("Tools/打包/AssetBundle", false, 1)]
-    static void BuildRes()
+
+    [MenuItem("Tools/打包/资源/Windows", false, 1)]
+    static void BuildRes_Win64()
     {
-        BuildTarget target = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), ConstValue.PLATFORM_NAME);
-        Debug.Log($"打包{target}平台资源");
-        Build_Target(target);
+        //BuildTarget target = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), ConstValue.PLATFORM_NAME);
+        Build_Target(BuildTarget.StandaloneWindows64);
     }
-    [MenuItem("Tools/打包/服务器", false, 1)]
+    [MenuItem("Tools/打包/资源/Android", false, 1)]
+    static void BuildRes_Android()
+    {
+        Build_Target(BuildTarget.Android);
+    }
+    [MenuItem("Tools/打包/资源/iOS", false, 1)]
+    static void BuildRes_iOS()
+    {
+        Build_Target(BuildTarget.iOS);
+    }
+
+    [MenuItem("Tools/打包/服务器/Windows", false, 2)]
     static void BuildServer_Win64()
     {
         RemoveIcon();
@@ -233,54 +289,55 @@ public partial class BundleTools : Editor
         if (summary.result == BuildResult.Failed)
             Debug.LogError("打包失败");
     }
-    [MenuItem("Tools/打包/客户端", false, 1)]
+    [MenuItem("Tools/打包/服务器/Linux", false, 2)]
+    static void BuildServer_Linux() { }
+
+    [MenuItem("Tools/打包/客户端/Windows", false, 3)]
     static void BuildClient_Win64()
     {
-        EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Standalone, BuildTarget.StandaloneWindows64);
-        SetIcon();
-        return;
-
-        if (Directory.Exists(ConstValue.BuildDir) == false)
-            Directory.CreateDirectory(ConstValue.BuildDir);
-
-        string build_client = $"{ConstValue.BuildDir}/Client";
-        if (Directory.Exists(build_client) == false)
-            Directory.CreateDirectory(build_client);
-
-        BuildPlayerOptions opt = new BuildPlayerOptions
-        {
-            scenes = new string[] { "Assets/Scenes/Client.unity" },
-            locationPathName = Path.Combine(build_client, "GameClient.exe"),
-            target = BuildTarget.StandaloneWindows64,
-            options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development,
-        };
-
-        BuildReport report = BuildPipeline.BuildPlayer(opt);
-
-        BuildSummary summary = report.summary;
-        if (summary.result == BuildResult.Succeeded)
-            Debug.Log($"打包成功: {opt.locationPathName}");
-        if (summary.result == BuildResult.Failed)
-            Debug.LogError("打包失败");
+        BuildClient(BuildTarget.StandaloneWindows64);
     }
-    [MenuItem("Tools/打包/安卓", false, 1)]
+    [MenuItem("Tools/打包/客户端/Android", false, 3)]
     static void BuildClient_Android()
     {
-        //EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Android, BuildTarget.Android);
+        BuildClient(BuildTarget.Android);
+    }
+    [MenuItem("Tools/打包/客户端/iOS", false, 3)]
+    static void BuildClient_iOS()
+    {
+        BuildClient(BuildTarget.iOS);
+    }
+    static void BuildClient(BuildTarget target)
+    {
+        //EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Standalone, BuildTarget.StandaloneWindows64);
         SetIcon();
 
         if (Directory.Exists(ConstValue.BuildDir) == false)
             Directory.CreateDirectory(ConstValue.BuildDir);
 
-        string build_apk = $"{ConstValue.BuildDir}/Android";
-        if (Directory.Exists(build_apk) == false)
-            Directory.CreateDirectory(build_apk);
+        string build_dir = $"{ConstValue.BuildDir}/{target}";
+        if (Directory.Exists(build_dir) == false)
+            Directory.CreateDirectory(build_dir);
+
+        string ext = string.Empty;
+        switch (target)
+        {
+            case BuildTarget.StandaloneWindows64:
+                ext = "exe";
+                break;
+            case BuildTarget.Android:
+                ext = "apk";
+                break;
+            case BuildTarget.iOS:
+                ext = "ipa";
+                break;
+        }
 
         BuildPlayerOptions opt = new BuildPlayerOptions
         {
             scenes = new string[] { "Assets/Scenes/Client.unity" },
-            locationPathName = Path.Combine(build_apk, "android.exe"),
-            target = BuildTarget.Android,
+            locationPathName = Path.Combine(build_dir, $"GameClient.{ext}"),
+            target = target,
             options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development,
         };
 
@@ -292,23 +349,7 @@ public partial class BundleTools : Editor
         if (summary.result == BuildResult.Failed)
             Debug.LogError("打包失败");
     }
-    static void BuildClient_iOS()
-    {
-        EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.iOS, BuildTarget.iOS);
 
-        string defines = "USE_ASSETBUNDLE;CHANNEL_11011";
-        PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.iOS, defines);
-        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, "com.moegijinka.turtlerace"); //不同渠道包名不一样
-        //PlayerSettings.bundleVersion = string.Format("{0}.{1}.{2}", GameConfig.clientVersions[0],
-        //    GameConfig.clientVersions[1] * 100 + GameConfig.clientVersions[2], GameConfig.clientVersions[3]);
-
-        int code;
-        if (int.TryParse(PlayerSettings.iOS.buildNumber, out code) == false)
-        {
-            code = 0;
-        }
-        PlayerSettings.iOS.buildNumber = (code + 1).ToString();
-    }
     [MenuItem("Tools/图标/SetIcon", true)]
     static void SetIcon()
     {
