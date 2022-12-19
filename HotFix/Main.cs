@@ -1,5 +1,6 @@
-﻿using kcp2k.Examples;
+﻿using System;
 using UnityEngine;
+using kcp2k.Examples;
 
 namespace HotFix
 {
@@ -52,6 +53,19 @@ namespace HotFix
 
             Debug.Log("创建UI");
             UIManager.Get().Push<UI_Login>();
+
+            // 检查App版本
+            var remote = new Version(present.app_version);
+            var local = new Version(Application.version);
+            if (remote > local)
+            {
+                var ui_dialog = UIManager.Get().Push<UI_Dialog>();
+                ui_dialog.Show("请更新客户端", () =>
+                {
+                    Application.OpenURL(present.app_url);
+                    Application.Quit();
+                }, "确定");
+            }
         }
 
         public static void Dispose()

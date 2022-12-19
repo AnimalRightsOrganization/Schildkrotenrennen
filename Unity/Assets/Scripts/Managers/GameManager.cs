@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        Debug.Log("Quit");
+        //Debug.Log("Quit");
         Initialized = false;
     }
 
