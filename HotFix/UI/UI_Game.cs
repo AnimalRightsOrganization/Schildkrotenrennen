@@ -60,10 +60,11 @@ namespace HotFix
         #region 内置方法
         void Awake()
         {
-            var map_asset = ResManager.LoadPrefab("Prefabs/MapManager");
-            var map_manager = Instantiate(map_asset);
-            map_manager.name = "MapManager";
-            map_manager.AddComponent<MapManager>();
+            //var map_asset = ResManager.LoadPrefab("Prefabs/MapManager");
+            //var map_manager = Instantiate(map_asset);
+            //map_manager.name = "MapManager";
+            //map_manager.AddComponent<MapManager>();
+            PoolManager.Get.Spawn("MapManager");
             MapManager.Get.InitAssets();
 
 

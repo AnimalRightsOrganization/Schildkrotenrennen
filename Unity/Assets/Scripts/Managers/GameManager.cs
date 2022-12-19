@@ -51,6 +51,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void OnApplicationQuit()
+    {
+        Debug.Log("Quit");
+        Initialized = false;
+    }
+
     // 请求游戏配置
     async void GetConfig()
     {

@@ -5,117 +5,114 @@ namespace HotFix
 {
     public class PoolManager : MonoBehaviour
     {
-        static PoolManager _instance;
-        public static PoolManager Get
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = FindObjectOfType<PoolManager>();
-                return _instance;
-            }
-        }
+        public static PoolManager Get;
 
-        private Dictionary<string, List<GameObject>> dic_inactive;
-        private Dictionary<string, List<GameObject>> dic_active;
+        public Dictionary<string, List<GameObject>> dic_active;
+        public Dictionary<string, List<GameObject>> dic_inactive;
 
         void Awake()
         {
-            dic_inactive = new Dictionary<string, List<GameObject>>();
+            Get = this;
+
             dic_active = new Dictionary<string, List<GameObject>>();
-
-            //int count = ConfigManager.Get().m_CharacterList.Length;
-            //int count = Enum.GetValues(typeof(CharacterName)).Length;
-            int count = 0;
-            //Debug.Log($"角色总数={count}"); //从0开始
-            for (int i = 0; i < count; i++)
-            {
-                //string charaName = ((CharacterName)i).ToString();
-                string charaName = "";
-                //Debug.Log($"{i}---{charaName}");
-
-                var prefab = ResManager.LoadPrefab($"Prefabs/{charaName}");
-                var lst = new List<GameObject>();
-
-                var asset1 = Instantiate(prefab, transform);
-                asset1.name = charaName;
-                lst.Add(asset1);
-                asset1.SetActive(false);
-
-                var asset2 = Instantiate(prefab, transform);
-                asset2.name = charaName;
-                lst.Add(asset2);
-                asset2.SetActive(false);
-
-                dic_inactive.Add(charaName, lst);
-            }
+            dic_inactive = new Dictionary<string, List<GameObject>>();
         }
 
+        // 预创建，关闭显示
+        public GameObject Prespawn(string value)
+        {
+            var obj = Spawn(value);
+            obj.SetActive(false);
+            return obj;
+        }
+        //inactive→active
         public GameObject Spawn(string value)
         {
             GameObject obj = null;
-            if (dic_inactive.ContainsKey(value))
+            List<GameObject> list_inactive = null;
+            List<GameObject> list_active = null;
+
+            //①没有缓存，新建key-value，新建obj
+            Debug.Log("①①①");
+            if (dic_inactive.TryGetValue(value, out list_inactive) == false)
             {
-                var lst = dic_inactive[value];
-                if (lst.Count > 0)
-                {
-                    obj = lst[0];
-                    obj.SetActive(true);
-                    lst.RemoveAt(0);
+                Debug.Log("AAA");
+                //Debug.Log($"list_inactive: {list_inactive != null}"); //False, 就是null
+                list_inactive = new List<GameObject>();
+                dic_inactive.Add(value, list_inactive);
 
-                }
-                else
-                {
-                    var prefab = ResManager.LoadPrefab($"Prefabs/{value}");
-                    obj = Instantiate(prefab, transform);
-                    obj.name = value;
-                    obj.SetActive(true);
-                    lst.Add(obj);
-                }
+                var prefab = ResManager.LoadPrefab($"Prefabs/{value}");
+                obj = Instantiate(prefab, transform);
+                obj.name = value;
+                list_inactive.Add(obj);
 
-                if (dic_active.ContainsKey(value))
-                {
-                    var active_list = dic_active[value];
-                    active_list.Add(obj);
-                }
-                else
-                {
-                    var active_list = new List<GameObject>();
-                    active_list.Add(obj);
-                    dic_active.Add(value, active_list);
-                }
+                //Debug.Log($"inactive.第一次创建: key={value}, value count={list_inactive.Count}");
             }
+
+            //②有缓存，用完了
+            Debug.Log("②②②");
+            if (list_inactive.Count == 0)
+            {
+                Debug.Log("BBB");
+                var prefab = ResManager.LoadPrefab($"Prefabs/{value}");
+                obj = Instantiate(prefab, transform);
+                obj.name = value;
+                list_inactive.Add(obj);
+
+                //Debug.Log($"inactive.扩建: key={value}, value count={list_inactive.Count}");
+            }
+            else
+            {
+                Debug.Log("CCC");
+                obj = list_inactive[0];
+
+                //Debug.Log($"inactive.使用缓存: key={value}, value count={list_inactive.Count}");
+            }
+            obj.SetActive(true);
+            list_inactive.RemoveAt(0);
+
+
+            //③记录加入active
+            Debug.Log("③③③");
+            if (dic_active.TryGetValue(value, out list_active) == false)
+            {
+                Debug.Log("DDD");
+                list_active = new List<GameObject>();
+                dic_active.Add(value, list_active);
+
+                //Debug.Log($"active.第一次创建: key={value}, value count={list_active.Count}");
+            }
+            list_active.Add(obj);
+
+            //Debug.Log($"{value} / active:{dic_active.Count} / inactive:{dic_inactive.Count}");
+
             return obj;
         }
-
-        public void Despawn(GameObject value)
+        //active→inactive
+        public void Despawn(GameObject obj)
         {
-            if (value == null) return;
-            string charaName = value.gameObject.name;
-            dic_inactive[charaName].Add(value);
-            value.transform.position = Vector3.zero;
-            value.transform.localScale = Vector3.one;
-            value.transform.SetParent(transform);
-            value.SetActive(false);
+            if (obj == null) return;
+            string charaName = obj.name;
+            //Debug.Log($"Despawn: key={charaName}, count={dic_inactive.ContainsKey(charaName)}");
+            //List<GameObject> lst = new List<GameObject>();
+            //dic_inactive.TryGetValue(charaName, out lst);
 
-            //dic_active[charaName].RemoveAt(0);
-            dic_active[charaName].Remove(value);
-            //Debug.Log($"Despawn: {charaName}");
+            dic_inactive[charaName].Add(obj);
+            obj.transform.position = Vector3.zero;
+            obj.transform.localScale = Vector3.one;
+            obj.transform.SetParent(transform);
+            obj.SetActive(false);
+
+            dic_active[charaName].Remove(obj);
         }
-
         public void DespawnAll()
         {
             foreach (var item in dic_active)
             {
-                //string charaName = item.Key;
                 var active_list = item.Value;
                 for (int i = active_list.Count - 1; i >= 0; i--)
                 {
                     var obj = active_list[i];
-                    //Debug.Log($"{i}: {obj.gameObject.name}");
-
-                    //active_list.Remove(obj);
-                    //dic_inactive[charaName].Add(obj);
                     Despawn(obj);
                 }
             }

@@ -7,12 +7,14 @@ using ILRuntime.Runtime.Intepreter;
 
 namespace Client
 {
-    public class ILGlobal : UnitySingletonClass<ILGlobal>
+    public class ILGlobal : MonoBehaviour
     {
+        public static ILGlobal Instance;
         public AppDomain appdomain;
 
         void Awake()
         {
+            Instance = this;
             appdomain = new AppDomain();
         }
 
@@ -115,6 +117,7 @@ namespace Client
         {
             IL_InitAdapter("UIManager");
             IL_InitAdapter("EventManager");
+            //IL_InitAdapter("PoolManager");
 
             // IL热更加载UI
             appdomain.Invoke("HotFix.Main", "Init", gameObject, GameManager.present); //static方法

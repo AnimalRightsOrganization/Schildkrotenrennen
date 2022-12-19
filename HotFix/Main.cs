@@ -34,13 +34,23 @@ namespace HotFix
 
         public static void Init(Present p)
         {
+            Debug.Log($"控制权转交ILRuntime:{p}");
             present = p;
-            //Debug.Log(p.ToString());
-            Debug.Log("控制权转交ILRuntime");
 
             Debug.Log("创建对象池");
-            //PoolManager.Get.Spawn("");
+            var ILGlobal = GameObject.Find("ILGlobal").transform;
+            var poolManager = new GameObject("IL_PoolManager");
+            poolManager.transform.SetParent(ILGlobal);
+            poolManager.AddComponent<PoolManager>();
 
+
+            GameObject map_manager = PoolManager.Get.Spawn("MapManager");
+            map_manager.AddComponent<MapManager>();
+            MapManager.Get.InitAssets();
+            PoolManager.Get.Despawn(map_manager);
+
+
+            Debug.Log("创建UI");
             UIManager.Get().Push<UI_Login>();
         }
 

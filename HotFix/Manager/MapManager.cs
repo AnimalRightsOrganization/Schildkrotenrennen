@@ -1,7 +1,4 @@
-﻿/* UI层解析消息后，传给本3d对象管理器。
- * 本管理器执行那种颜色，走几步的操作。
- */
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using DG.Tweening;
 using kcp2k.Examples;
@@ -21,10 +18,10 @@ namespace HotFix
             }
         }
 
-        public Transform Map;
+        private Transform Map;
         public Transform[] Rock;
         public Item_Turtle[] Turtle;
-        public const float TURTLE_HEIGHT = 0.25f;
+        //public const float TURTLE_HEIGHT = 0.25f;
         public static Vector3[] START_POS = new Vector3[]
         {
             new Vector3(1, 0.25f, 1.6f),
@@ -57,8 +54,8 @@ namespace HotFix
         }
         public void Dispose()
         {
-            if (gameObject != null)
-                Destroy(gameObject);
+            InitAssets();
+            PoolManager.Get.Despawn(gameObject);
         }
 
         void Update()
