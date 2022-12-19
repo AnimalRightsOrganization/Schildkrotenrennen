@@ -54,8 +54,8 @@ namespace HotFix
         }
         public void Dispose()
         {
-            InitAssets();
             PoolManager.Get.Despawn(gameObject);
+            InitAssets();
         }
 
         void Update()

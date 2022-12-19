@@ -26,7 +26,7 @@ namespace NetCoreServer
             foreach (var item in m_PlayerDic)
             {
                 var player = item.Value;
-                playerStr += $"\n[{item.Key}]---{player.UserName}({player.NickName})(bot:{player.IsBot}), at{player.SeatId})";
+                playerStr += $"\n[{item.Key}]---{player.UserName}({player.NickName})(bot:{player.IsBot}), seat:{player.SeatId}), status:{player.Status}";
             }
             return $"#{RoomID}[{RoomName}:{RoomPwd}] {CurCount}/{RoomLimit}: {playerStr}";
         }
@@ -175,7 +175,7 @@ namespace NetCoreServer
         private TurtleAnime gameStatus;
         public DateTime createTime;
 
-        // TODO: 机器人随机出牌。优先选自己的+。优先选玩家的颜色-。
+        //TODO: 机器人随机出牌。优先选自己的+。优先选玩家的颜色-。
         private static List<int> CardToInt(List<Card> cards)
         {
             var list = new List<int>();
@@ -255,6 +255,12 @@ namespace NetCoreServer
             }
             gameStatus = TurtleAnime.Wait;
             createTime = DateTime.Now;
+
+            // 设置用户状态
+            foreach (var p in m_PlayerDic)
+            {
+                p.Value.SetStatus(PlayerStatus.GAME);
+            }
         }
         public void OnGameStart_Server()
         {

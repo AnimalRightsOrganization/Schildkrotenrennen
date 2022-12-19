@@ -23,10 +23,7 @@ namespace Client
             appdomain.Invoke("HotFix.Main", "Dispose", null, null);
         }
 
-        void OnDestroy()
-        {
-
-        }
+        void OnDestroy() { }
 
         public void GlobalInit()
         {
@@ -54,8 +51,10 @@ namespace Client
             appdomain.UnityMainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
 #endif
 
+#if !UNITY_EDITOR && !USE_ASSETBUNDLE
             // CLR绑定（当需要绑定代码时）
             //ILRuntime.Runtime.Generated.CLRBindings.Initialize(appdomain);
+#endif
 
             // 这里做一些ILRuntime的注册
             appdomain.RegisterCrossBindingAdaptor(new MonoBehaviourAdapter()); //注册跨域继承（HotFix的Class需要继承Unity工程代码的类时）
@@ -117,7 +116,6 @@ namespace Client
         {
             IL_InitAdapter("UIManager");
             IL_InitAdapter("EventManager");
-            //IL_InitAdapter("PoolManager");
 
             // IL热更加载UI
             appdomain.Invoke("HotFix.Main", "Init", gameObject, GameManager.present); //static方法
@@ -132,15 +130,15 @@ namespace Client
             script.Run();
         }
 
-        #region C#调用HotFix的方法
+#region C#调用HotFix的方法
         [ContextMenu("LoadJson")]
         void LoadJson()
         {
             appdomain.Invoke("HotFix_Project.DemoLoader", "LoadJson", null, null);
         }
-        #endregion
+#endregion
 
-        #region HotFix调用C#的方法
+#region HotFix调用C#的方法
         [ContextMenu("EnterUI_UI_PDKBattle")]
         public void EnterUI_UI_PDKBattle()
         {
@@ -155,6 +153,6 @@ namespace Client
             //    UI.EnterUI<UI_PDKBattle>(GameEnum.PDK).InitData();
             //}
         }
-        #endregion
+#endregion
     }
 }

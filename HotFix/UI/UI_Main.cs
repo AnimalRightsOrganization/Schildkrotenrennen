@@ -99,9 +99,7 @@ namespace HotFix
         {
             Debug.Log("UI_Main.OnEnable");
             Enter();
-        }
-        void Start()
-        {
+
             playerNum = 2;
             RefreshPlayerNum();
             m_CreatePanel.SetActive(false);
@@ -111,7 +109,7 @@ namespace HotFix
 
             Enter();
         }
-        void OnDestroy()
+        void OnDisable()
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
         }
@@ -152,11 +150,7 @@ namespace HotFix
                 () => { ui_dialog.Hide(); }, "取消",
                 () =>
                 {
-                    var login = UIManager.Get().Push<UI_Login>();
-                    login.BackToLogin();
-                    m_EnterAnime.SetBool("enter", false);
-                    this.Pop();
-                    ui_dialog.Hide();
+                    KcpChatClient.SendLogout();
                 }, "确定");
         }
 
@@ -216,6 +210,9 @@ namespace HotFix
                     break;
                 case PacketType.S2C_RoomList:
                     OnGetRoomList(reader);
+                    break;
+                case PacketType.S2C_LogoutResult:
+                    OnLogout(reader);
                     break;
             }
         }
@@ -294,6 +291,12 @@ namespace HotFix
                     }
                 }
             }
+        }
+        void OnLogout(object reader)
+        {
+            m_EnterAnime.SetBool("enter", false);
+            UIManager.Get().PopAll();
+            UIManager.Get().Push<UI_Login>();
         }
         #endregion
     }

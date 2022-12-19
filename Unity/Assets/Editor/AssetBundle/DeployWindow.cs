@@ -268,8 +268,6 @@ public class DeployWindow : EditorWindow
             Debug.LogError("获取远程资源版本失败");
             return null;
         }
-        //var obj = JsonMapper.ToObject<ServerResponse>(responseBody);
-        //var model = JsonMapper.ToObject<DBApp>(obj.data);
         var obj = JsonConvert.DeserializeObject<ServerResponse>(responseBody);
         var model = JsonConvert.DeserializeObject<DBApp>(obj.data);
         Debug.Log(obj.data);

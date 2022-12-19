@@ -139,7 +139,7 @@ namespace HotFix
                 });
             }
         }
-        void Start()
+        void OnEnable()
         {
             NetPacketManager.RegisterEvent(OnNetCallback);
 
@@ -148,7 +148,7 @@ namespace HotFix
             NextIcon.SetParent(m_SeatNames[0].transform);
             NextIcon.anchoredPosition = Vector3.zero;
         }
-        void OnDestroy()
+        void OnDisable()
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
 
@@ -476,6 +476,12 @@ namespace HotFix
                 var ui_result = UIManager.Get().Push<UI_GameResult>();
                 ui_result.UpdateUI(packet.Rank);
             };
+
+
+            var ui_dialog = UIManager.Get().GetUI<UI_Dialog>();
+            if (ui_dialog != null)
+                GameEndAction?.Invoke();
+            ui_dialog?.Pop();
         }
         #endregion
     }

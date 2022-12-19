@@ -38,11 +38,11 @@ namespace HotFix
             m_PwdText = transform.Find("PwdBtn/ActiveMessages/Circle/NumberText").GetComponent<Text>();
             m_PwdBtn.onClick.AddListener(OnPwdBtnClick);
         }
-        void Start()
+        void OnEnable()
         {
             NetPacketManager.RegisterEvent(OnNetCallback);
         }
-        void OnDestroy()
+        void OnDisable()
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
 

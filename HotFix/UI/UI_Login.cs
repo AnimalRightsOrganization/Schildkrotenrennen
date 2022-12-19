@@ -34,6 +34,8 @@ namespace HotFix
         #region 内置方法
         void Awake()
         {
+            Debug.Log("UI_Login.Awake");
+
             m_Foreground = transform.Find("Foreground").gameObject;
             m_VersionText = transform.Find("Foreground/Version").GetComponent<Text>();
 
@@ -64,34 +66,38 @@ namespace HotFix
             m_Login_Panel.SetActive(false);
             m_SignUp_Panel.SetActive(false);
         }
-
-        void Start()
+        void OnEnable()
         {
+            Debug.Log("UI_Login.OnEnable");
+
             NetPacketManager.RegisterEvent(OnNetCallback);
 
-            ConnectToServer();
-        }
+            if (KcpChatClient.IsConnected() == false)
+            {
+                ConnectToServer();
+                return;
+            }
 
-        void OnDestroy()
+            m_OAuthBtn.gameObject.SetActive(true);
+        }
+        void Start()
+        {
+            Debug.Log("UI_Login.Start");
+        }
+        void OnDisable()
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
         }
         #endregion
 
+        #region 按钮事件
         void ConnectToServer()
         {
+            Debug.Log("ConnectToServer");
             m_OAuthBtn.gameObject.SetActive(false);
             KcpChatClient.Connect();
-            Debug.Log(111);
             UIManager.Get().Push<UI_Connect>();
-            Debug.Log(222);
         }
-        public void BackToLogin()
-        {
-            m_OAuthBtn.gameObject.SetActive(true);
-        }
-
-        #region 按钮事件
         void OnCloseSignUpPanel()
         {
             m_SignUp_Panel.SetActive(false);
@@ -214,10 +220,11 @@ namespace HotFix
             if (connect != null)
                 connect.Pop();
 
-            m_Foreground.SetActive(false);
-            m_Login_Panel.SetActive(false);
-            m_SignUp_Panel.SetActive(false);
-            m_OAuthBtn.gameObject.SetActive(false);
+            //m_Foreground.SetActive(false);
+            //m_Login_Panel.SetActive(false);
+            //m_SignUp_Panel.SetActive(false);
+            //m_OAuthBtn.gameObject.SetActive(false);
+            this.Pop();
         }
         #endregion
     }

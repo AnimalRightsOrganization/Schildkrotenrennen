@@ -45,11 +45,10 @@ namespace kcp2k.Examples
 
             if (MapManager.Get != null)
                 MapManager.Get.Dispose();
-            Debug.Log("AAA");
+
             UIManager.Get().PopAll();
-            var ui_login = UIManager.Get().Push<UI_Login>();
-            Debug.Log("BBB");
-            ui_login.BackToLogin();
+            UIManager.Get().Push<UI_Login>();
+
             var ui_toast = UIManager.Get().Push<UI_Toast>();
             ui_toast.Show("与服务器断开连接");
         }
@@ -122,7 +121,7 @@ namespace kcp2k.Examples
             Debug.Log("SendLogin.Mid");
 
             var cmd = new C2S_LoginTokenPacket { Token = token };
-            Debug.Log($"[C2S] {cmd.Token}");
+            Debug.Log($"[C2S_LoginToken] {cmd.Token}");
             SendAsync(PacketType.C2S_LoginToken, cmd);
         }
         public static void SendLogin(string usr, string pwd)
@@ -147,8 +146,14 @@ namespace kcp2k.Examples
             }
 
             var cmd = new C2S_LoginPacket { Username = usr, Password = HotFix.Md5Utils.GetMD5String(pwd) };
-            Debug.Log($"[C2S] {cmd.Username}, {cmd.Password}");
+            Debug.Log($"[C2S_LoginReq] {cmd.Username}, {cmd.Password}");
             SendAsync(PacketType.C2S_LoginReq, cmd);
+        }
+        public static void SendLogout()
+        {
+            Debug.Log("SendLogout");
+            var cmd = new EmptyPacket();
+            SendAsync(PacketType.C2S_LogoutReq, cmd);
         }
         public static void SendSignUp(string usr, string pwd)
         {
@@ -158,7 +163,7 @@ namespace kcp2k.Examples
                 return;
             }
             var cmd = new C2S_LoginPacket { Username = usr, Password = pwd };
-            Debug.Log($"[C2S] {cmd.Username}, {cmd.Password}");
+            Debug.Log($"[C2S_RegisterReq] {cmd.Username}, {cmd.Password}");
             SendAsync(PacketType.C2S_RegisterReq, cmd);
         }
         public static void SendChat(string message)

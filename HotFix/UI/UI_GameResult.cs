@@ -53,12 +53,14 @@ namespace HotFix
             }
         }
 
+        // 返回大厅
         void OnExitBtnClick()
         {
             MapManager.Get.Dispose();
-            UIManager.Get().PopAll(true);
-            UIManager.Get().Push<UI_Login>();
+            UIManager.Get().PopAll();
+            //UIManager.Get().Push<UI_Login>();
             UIManager.Get().Push<UI_Main>();
+            //this.Pop();
         }
     }
 }

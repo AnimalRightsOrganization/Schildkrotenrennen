@@ -142,6 +142,9 @@ namespace kcp2k.Examples
                 case PacketType.C2S_RegisterReq:
                     OnSignUpReq(connectionId, ms);
                     break;
+                case PacketType.C2S_LogoutReq:
+                    OnLogoutReq(connectionId, ms);
+                    break;
                 case PacketType.C2S_Chat:
                     OnChat(connectionId, ms);
                     break;
@@ -288,6 +291,12 @@ namespace kcp2k.Examples
                 serverPlayer.SendAsync(PacketType.S2C_ErrorOperate, err_packet);
             }
         }
+        protected void OnLogoutReq(int Id, MemoryStream ms)
+        {
+            ServerPlayer p = m_PlayerManager.GetPlayerByPeerId(Id);
+            p.SendAsync(PacketType.S2C_LogoutResult, new EmptyPacket());
+            m_PlayerManager.RemovePlayer(p.peerId);
+        }
         protected void OnChat(int Id, MemoryStream ms)
         {
             var request = ProtobufHelper.Deserialize<TheMsg>(ms);
@@ -431,6 +440,7 @@ namespace kcp2k.Examples
                 }
                 var packet = new S2C_GameResultPacket { Rank = playerRank };
                 serverRoom.SendAsync( PacketType.S2C_GameResult, packet);
+                m_RoomManager.RemoveServerRoom(serverRoom.RoomID);
                 return;
             }
             Debug.Log($"验证成功，可以离开房间#{p.RoomId}，座位#{p.SeatId}"); //-1, -1
