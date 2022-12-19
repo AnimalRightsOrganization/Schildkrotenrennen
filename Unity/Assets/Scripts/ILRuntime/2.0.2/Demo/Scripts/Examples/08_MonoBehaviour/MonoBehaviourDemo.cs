@@ -92,7 +92,7 @@ public class MonoBehaviourDemo : MonoBehaviour
         //这里做一些ILRuntime的注册
         appdomain.RegisterCrossBindingAdaptor(new MonoBehaviourAdapter());
         appdomain.RegisterValueTypeBinder(typeof(Vector3), new Vector3Binder());
-        ILRuntime.Runtime.Generated.CLRBindings.Initialize(appdomain); //是否使用绑定代码
+        //ILRuntime.Runtime.Generated.CLRBindings.Initialize(appdomain); //是否使用绑定代码
         appdomain.DelegateManager.RegisterFunctionDelegate<UnityEngine.GameObject, System.Boolean>();
         appdomain.DelegateManager.RegisterDelegateConvertor<System.Predicate<UnityEngine.GameObject>>((act) =>
         {
@@ -218,6 +218,7 @@ public class MonoBehaviourDemo : MonoBehaviour
                 res = clrInstance.ILInstance;//交给ILRuntime的实例应该为ILInstance
 
                 clrInstance.Awake();//因为Unity调用这个方法时还没准备好所以这里补调一次
+                clrInstance.OnEnable();
             }
 
             return ILIntepreter.PushObject(ptr, __mStack, res);

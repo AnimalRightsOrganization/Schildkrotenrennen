@@ -120,6 +120,7 @@ namespace Client
                     res = clrInstance.ILInstance;//交给ILRuntime的实例应该为ILInstance
 
                     clrInstance.Awake();//因为Unity调用这个方法时还没准备好所以这里补调一次
+                    clrInstance.OnEnable();
                 }
 
                 return ILIntepreter.PushObject(ptr, __mStack, res);

@@ -73,7 +73,7 @@ public class MonoBehaviourAdapter : CrossBindingAdaptor
         
         IMethod mOnEnableMethod;
         bool mOnEnableMethodGot;
-        void OnEnable()
+        public void OnEnable()
         {
             if (instance != null)
             {
