@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
 using Debug = UnityEngine.Debug;
+using Client;
 
 public class TestWindow : EditorWindow
 {
@@ -32,6 +33,11 @@ public class TestWindow : EditorWindow
             usrInput.text = "test6";
             var pwdInput = ui_login.transform.Find("LoginPanel/PwdInput").GetComponent<InputField>();
             pwdInput.text = "123456";
+        }
+        if (GUILayout.Button("Push<UI>"))
+        {
+            //ILGlobal.Instance.appdomain.Invoke("HotFix.Main", "PushUI", ILGlobal.Instance.gameObject, null);
+            ILGlobal.Instance.appdomain.Invoke("HotFix.Main", "PushUI", null, null); //没有对象，静态
         }
         if (GUILayout.Button("SnapShot"))
         {

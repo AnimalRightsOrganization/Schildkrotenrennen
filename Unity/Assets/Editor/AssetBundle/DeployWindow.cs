@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 public class DeployWindow : EditorWindow
 {
-    [MenuItem("Tools/打包/AllInOne", false)]
+    [MenuItem("Tools/打包/部署", false)]
     static void AddWindow()
     {
         Rect rect = new Rect(0, 0, 600, 400);

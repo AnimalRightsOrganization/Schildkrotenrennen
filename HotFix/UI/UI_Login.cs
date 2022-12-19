@@ -82,8 +82,9 @@ namespace HotFix
         {
             m_OAuthBtn.gameObject.SetActive(false);
             KcpChatClient.Connect();
-
+            Debug.Log(111);
             UIManager.Get().Push<UI_Connect>();
+            Debug.Log(222);
         }
         public void BackToLogin()
         {

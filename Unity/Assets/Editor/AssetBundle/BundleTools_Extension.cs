@@ -96,7 +96,7 @@ public partial class BundleTools : Editor
     #endregion
 
     #region 打包
-    [MenuItem("Tools/打包/配置表", false, 0)]
+    [MenuItem("Tools/打包/导表", false, 0)]
     static void GenerateJson()
     {
         int indexOfFormat = 0; //输出格式索引
@@ -378,6 +378,14 @@ public partial class BundleTools : Editor
     #endregion
 
     #region 运行
+    const string notepad = @"C:\Program Files\Notepad++\notepad++.exe";
+    const string hosts_path = @"C:\Windows\System32\drivers\etc\hosts";
+    [MenuItem("Tools/运行/开发环境", false)]
+    static void ModifyHost()
+    {
+        //Process.Start("notepad.exe", hosts_path); //系统记事本
+        Process.Start(notepad, hosts_path); //notepad++
+    }
     //% (ctrl on Windows and Linux, cmd on macOS),
     //^ (ctrl on Windows, Linux, and macOS),
     //# (shift),

@@ -108,6 +108,7 @@
     <Compile Include="Core\PoolHelper.cs" />
     <Compile Include="Core\ProtobufHelper.cs" />
     <Compile Include="KCP\KcpChatClient.cs" />
+    <Compile Include="Manager\PoolManager.cs" />
     <Compile Include="Manager\MapManager.cs" />
     <Compile Include="Manager\MD5Utils.cs" />
     <Compile Include="UI\Item\Item_Card.cs" />

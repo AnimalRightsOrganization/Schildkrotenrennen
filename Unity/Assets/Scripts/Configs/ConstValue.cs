@@ -118,8 +118,7 @@ public class ConstValue
 
 
     #region URL
-    //public const string PRESENT_URL = "http://app.moegijinka.cn/turtlerace/present.json"; //（不要文件配置了，使用Http请求）
-    public const string API_BASE = "http://restapi.moegijinka.cn";
+    public const string API_BASE = "http://restapi.moegijinka.cn"; //使用Http请求
     public const string GAME_DATA = "api/v1/GameCenter/game_data";
     public const string PRESENT_GET = "turtlerace/v1/GetPresent/get";
     public const string PRESENT_DEPLOY = "turtlerace/v1/GetPresent/deploy";

@@ -13,5 +13,10 @@
 - 1. 
 ### 接口说明
 
-- 1. 
+- 1. 主工程向HotFix发消息。
+
+```C#
+appdomain.Invoke("HotFix.Main", "Init", gameObject, GameManager.present);
+appdomain.Invoke("HotFix.Main", "Init", null, GameManager.present); //static方法
+```
 
