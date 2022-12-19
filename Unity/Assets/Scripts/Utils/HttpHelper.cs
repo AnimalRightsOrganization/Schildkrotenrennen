@@ -12,7 +12,7 @@ public class HttpHelper
 
     public static async Task<string> TryGetAsync(string api, string token = "")
     {
-        string url = $"{ConstValue.API_BASE}/{api}?platform=pc";
+        string url = $"{ConstValue.API_DOMAIN}/{api}?platform=pc";
         string responseBody = string.Empty;
         try
         {
@@ -33,7 +33,7 @@ public class HttpHelper
     }
     public static async Task<string> TryPostAsync(string api, string json, string token = "")
     {
-        string url = $"{ConstValue.API_BASE}/{api}?platform=pc";
+        string url = $"{ConstValue.API_DOMAIN}/{api}?platform=pc";
         string responseBody = string.Empty;
         try
         {

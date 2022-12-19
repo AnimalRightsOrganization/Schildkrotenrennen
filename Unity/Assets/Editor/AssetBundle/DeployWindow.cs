@@ -40,6 +40,8 @@ public class DeployWindow : EditorWindow
         }
     }
 
+    int targetPlatform= 0;
+
     void OnGUI()
     {
         GUILayout.Space(10);
@@ -123,6 +125,7 @@ public class DeployWindow : EditorWindow
         GUILayout.BeginHorizontal();
         GUILayout.Space(10);
         GUILayout.Box("打包", GUILayout.Width(100));
+        targetPlatform = GUILayout.SelectionGrid(targetPlatform, new string[] { "Windows", "Android", "iOS" }, 1); //一行几个
         GUILayout.Space(55);
         if (GUILayout.Button("打包应用", GUILayout.Width(175))) { BuildApp(); return; }
         GUILayout.Space(55);
@@ -213,6 +216,9 @@ public class DeployWindow : EditorWindow
         BundleTools.Build_Target(target);
     }
 
+    // 远程目录结构：
+    // (afk/fight/turtlerace)/(app/res)/(iOS/Android/StandaloneWindows64)
+
     // 压缩
     static async void PackAppZip()
     {
@@ -295,11 +301,9 @@ public class DeployWindow : EditorWindow
             return null;
         }
         C2S_Deploy data = new C2S_Deploy { app_version = l_app_version, res_version = l_res_version };
-        //string postJson = JsonMapper.ToJson(data);
         string postJson = JsonConvert.SerializeObject(data);
         string responseBody = await HttpHelper.TryPostAsync(ConstValue.PRESENT_DEPLOY, postJson);
         Debug.Log(responseBody);
-        //var obj = JsonMapper.ToObject<ServerResponse>(responseBody);
         var obj = JsonConvert.DeserializeObject<ServerResponse>(responseBody);
         Debug.Log($"部署完成: {obj.msg}");
         return obj.msg;
@@ -307,7 +311,7 @@ public class DeployWindow : EditorWindow
     static async void DeployRes()
     {
         string src = @"C:\Users\Administrator\source\repos\QRCode\GameCenter\bin\Debug\net6.0-windows\Temp\StandaloneWindows64.zip";
-        string dst = @"C:\Users\Administrator\source\repos\QRCode\GameCenter\bin\Debug\net6.0-windows\Applications\turtlerace2\";
+        string dst = @"C:\Users\Administrator\source\repos\QRCode\GameCenter\bin\Debug\net6.0-windows\Applications\turtlerace\";
         ZipTools.UnpackFiles(src, dst);
         await Task.CompletedTask;
         //return;

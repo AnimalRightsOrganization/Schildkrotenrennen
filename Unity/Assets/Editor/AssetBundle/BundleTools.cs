@@ -281,7 +281,7 @@ public partial class BundleTools : Editor
         CopyFolder(ConstValue.outputPath2nd, appPath);
         Debug.Log($"本地部署完成\n{ConstValue.outputPath2nd}--->\n{appPath}");
 
-        //远程部署
+        //局域网部署
         string wwwPath = $@"{ConstValue.GetDeployRes}\{target}";
         if (Directory.Exists(wwwPath))
             Directory.Delete(wwwPath, true);

@@ -16,7 +16,6 @@ namespace NetCoreServer.Utils
                 var bd = new MySqlConnectionStringBuilder
                 {
                     Server = "localhost",
-                    //Database = "turtlerace",
                     Database = "db_user",
                     UserID = "seol",
                     Password = "123456",
