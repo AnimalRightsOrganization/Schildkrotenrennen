@@ -41,13 +41,14 @@ namespace kcp2k.Examples
         }
         static void OnDisonnected()
         {
-            Debug.Log($"KCP: OnDisonnected");
+            Debug.LogError($"KCP: OnDisonnected");
 
             if (MapManager.Get != null)
                 MapManager.Get.Dispose();
 
             UIManager.Get().PopAll();
             UIManager.Get().Push<UI_Login>();
+            UIManager.Get().Push<UI_Connect>();
 
             var ui_toast = UIManager.Get().Push<UI_Toast>();
             ui_toast.Show("与服务器断开连接");

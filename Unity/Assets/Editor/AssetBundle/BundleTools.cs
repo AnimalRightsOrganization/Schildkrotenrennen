@@ -253,12 +253,12 @@ public partial class BundleTools : Editor
     public static void Build_Target(BuildTarget target)
     {
         Debug.Log($"打包{target}平台资源");
-        if (!EditorUserBuildSettings.activeBuildTarget.Equals(target))
-        {
-            Debug.LogError("请先切换平台");
-            EditorUtility.DisplayDialog("目标平台与当前平台不一致，请先进行平台转换", "当前平台：" + EditorUserBuildSettings.activeBuildTarget + $"\n目标平台：{target}", "OK");
-            return;
-        }
+        //if (!EditorUserBuildSettings.activeBuildTarget.Equals(target))
+        //{
+        //    Debug.LogError("请先切换平台");
+        //    EditorUtility.DisplayDialog("目标平台与当前平台不一致，请先进行平台转换", "当前平台：" + EditorUserBuildSettings.activeBuildTarget + $"\n目标平台：{target}", "OK");
+        //    return;
+        //}
 
         BuildAssetBundles(target);
 

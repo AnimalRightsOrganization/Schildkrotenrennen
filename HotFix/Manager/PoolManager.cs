@@ -36,7 +36,6 @@ namespace HotFix
             Debug.Log("①①①");
             if (dic_inactive.TryGetValue(value, out list_inactive) == false)
             {
-                Debug.Log("AAA");
                 //Debug.Log($"list_inactive: {list_inactive != null}"); //False, 就是null
                 list_inactive = new List<GameObject>();
                 dic_inactive.Add(value, list_inactive);
@@ -53,7 +52,6 @@ namespace HotFix
             Debug.Log("②②②");
             if (list_inactive.Count == 0)
             {
-                Debug.Log("BBB");
                 var prefab = ResManager.LoadPrefab($"Prefabs/{value}");
                 obj = Instantiate(prefab, transform);
                 obj.name = value;
@@ -63,7 +61,6 @@ namespace HotFix
             }
             else
             {
-                Debug.Log("CCC");
                 obj = list_inactive[0];
 
                 //Debug.Log($"inactive.使用缓存: key={value}, value count={list_inactive.Count}");
@@ -76,7 +73,6 @@ namespace HotFix
             Debug.Log("③③③");
             if (dic_active.TryGetValue(value, out list_active) == false)
             {
-                Debug.Log("DDD");
                 list_active = new List<GameObject>();
                 dic_active.Add(value, list_active);
 

@@ -32,10 +32,10 @@ namespace HotFix
         #endregion
 
         #region 内置方法
+        private int try_times = 0;
+        private bool trying = false;
         void Awake()
         {
-            Debug.Log("UI_Login.Awake");
-
             m_Foreground = transform.Find("Foreground").gameObject;
             m_VersionText = transform.Find("Foreground/Version").GetComponent<Text>();
 
@@ -69,20 +69,17 @@ namespace HotFix
         void OnEnable()
         {
             Debug.Log("UI_Login.OnEnable");
+            m_VersionText.text = $"v{GameManager.present.app_version}.{GameManager.present.res_version}";
 
             NetPacketManager.RegisterEvent(OnNetCallback);
 
-            if (KcpChatClient.IsConnected() == false)
+            if (KcpChatClient.IsConnected() == false && trying == false)
             {
-                ConnectToServer();
+                TryConnect();
                 return;
             }
 
             m_OAuthBtn.gameObject.SetActive(true);
-        }
-        void Start()
-        {
-            Debug.Log("UI_Login.Start");
         }
         void OnDisable()
         {
@@ -91,12 +88,32 @@ namespace HotFix
         #endregion
 
         #region 按钮事件
-        void ConnectToServer()
+        async void TryConnect()
         {
-            Debug.Log("ConnectToServer");
+            trying = true;
+            while (true)
+            {
+                await ConnectToServer();
+
+                if (try_times >= 3 || KcpChatClient.IsConnected())
+                {
+                    Debug.Log($"Finish: {try_times}");
+                    trying = false;
+                    var ui_connect = UIManager.Get().GetUI<UI_Connect>();
+                    ui_connect?.Pop();
+                    break;
+                }
+            }
+        }
+        async Task ConnectToServer()
+        {
             m_OAuthBtn.gameObject.SetActive(false);
             KcpChatClient.Connect();
             UIManager.Get().Push<UI_Connect>();
+
+            try_times++;
+            Debug.Log($"Connect: {try_times}");
+            await Task.Delay(3000);
         }
         void OnCloseSignUpPanel()
         {
@@ -150,9 +167,11 @@ namespace HotFix
         }
         void OnOAuthBtnClick()
         {
-            if (KcpChatClient.IsConnected() == false)
+            try_times = 0;
+
+            if (KcpChatClient.IsConnected() == false && trying == false)
             {
-                ConnectToServer();
+                TryConnect();
                 return;
             }
 

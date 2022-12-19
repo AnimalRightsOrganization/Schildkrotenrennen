@@ -34,7 +34,7 @@ namespace HotFix
 
         public static void Init(Present p)
         {
-            Debug.Log($"控制权转交ILRuntime:{p}");
+            Debug.Log($"控制权转交ILRuntime:{p.ToString()}");
             present = p;
 
             Debug.Log("创建对象池");

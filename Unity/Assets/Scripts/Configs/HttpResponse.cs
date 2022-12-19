@@ -93,6 +93,11 @@ public class Present
     public string app_version;  //服务器资源版本
     public string res_version;  //服务器资源版本
     public string notice;       //公告
+    public override string ToString()
+    {
+        string content = $"\n[web] {web}\n[gate] {gate}\n[app_url] {app_url}\n[res_url] {res_url}\n[app_version] {app_version}\n[res_version] {res_version}\n[notice] {notice}";
+        return content;
+    }
 }
 public class C2S_Deploy
 {
