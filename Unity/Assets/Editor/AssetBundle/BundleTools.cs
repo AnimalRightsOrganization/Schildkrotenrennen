@@ -290,6 +290,10 @@ public partial class BundleTools : Editor
 
         //删除输出目录
         Directory.Delete(ConstValue.outputPath2nd, true);
+
+        // 浏览目录
+        //System.Diagnostics.Process.Start("explorer", appPath);
+        System.Diagnostics.Process.Start("explorer", wwwPath);
     }
     private static void CopyFolder(string strFromPath, string strToPath)
     {

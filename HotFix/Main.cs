@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using kcp2k.Examples;
 
@@ -38,17 +39,33 @@ namespace HotFix
             Debug.Log($"控制权转交ILRuntime:{p.ToString()}");
             present = p;
 
-            Debug.Log("创建对象池");
+            Debug.Log("创建对象池.1");
             var ILGlobal = GameObject.Find("ILGlobal").transform;
             var poolManager = new GameObject("IL_PoolManager");
             poolManager.transform.SetParent(ILGlobal);
-            poolManager.AddComponent<PoolManager>();
-
-
+            if (poolManager.GetComponent<PoolManager>() == false)
+                poolManager.AddComponent<PoolManager>();
+            //MapManager
             GameObject map_manager = PoolManager.Get.Spawn("MapManager");
-            map_manager.AddComponent<MapManager>();
+            if (map_manager.GetComponent<MapManager>() == false)
+                map_manager.AddComponent<MapManager>();
             MapManager.Get.InitAssets();
             PoolManager.Get.Despawn(map_manager);
+            //Card
+            List<GameObject> card_cache = new List<GameObject>();
+            for (int i = 0; i < 10; i++)
+            {
+                GameObject card_item = PoolManager.Get.Spawn("Card");
+                if (card_item.GetComponent<Item_Card>() == false)
+                    card_item.AddComponent<Item_Card>();
+                card_cache.Add(card_item);
+            }
+            for (int i = card_cache.Count - 1; i >=0 ; i--)
+            {
+                GameObject card_item = card_cache[i];
+                PoolManager.Get.Despawn(card_item);
+                card_cache.RemoveAt(i);
+            }
 
 
             Debug.Log("创建UI");
@@ -57,6 +74,7 @@ namespace HotFix
             // 检查App版本
             var remote = new Version(present.app_version);
             var local = new Version(Application.version);
+            Debug.Log($"{present.app_version} vs {Application.version}");
             if (remote > local)
             {
                 var ui_dialog = UIManager.Get().Push<UI_Dialog>();

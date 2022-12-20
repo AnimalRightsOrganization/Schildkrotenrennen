@@ -277,22 +277,26 @@ namespace HotFix
         }
         #endregion
 
-        private GameObject cardPrefab;
         private Transform DeskCards;
         private List<Item_Card> m_CardPool;
         private void InitCardPool()
         {
-            cardPrefab = ResManager.LoadPrefab("Prefabs/Card");
+            //cardPrefab = ResManager.LoadPrefab("Prefabs/Card");
             DeskCards = transform.Find("DeskCards");
 
             m_CardPool = new List<Item_Card>();
             for (int i = 0; i < 10; i++)
             {
-                var card_obj = Instantiate(cardPrefab, DeskCards);
-                var card_item = card_obj.AddComponent<Item_Card>();
-                m_CardPool.Add(card_item);
+                //var card_obj = Instantiate(cardPrefab, DeskCards);
+                var card_obj = PoolManager.Get.Spawn("Card");
+                card_obj.transform.SetParent(DeskCards);
+                card_obj.transform.localScale = Vector3.one;
+                if (card_obj.GetComponent<Item_Card>() == false)
+                    card_obj.AddComponent<Item_Card>();
+                var script = card_obj.GetComponent<Item_Card>();
+                m_CardPool.Add(script);
                 card_obj.SetActive(false);
-                card_item.m_Group.alpha = 0;
+                script.m_Group.alpha = 0;
             }
         }
         private Item_Card SpawnCard()
@@ -305,8 +309,13 @@ namespace HotFix
             }
             else
             {
-                var card_obj = Instantiate(cardPrefab, DeskCards);
-                script = card_obj.AddComponent<Item_Card>();
+                var card_obj = PoolManager.Get.Spawn("Card");
+                card_obj.transform.SetParent(DeskCards);
+                card_obj.transform.localScale = Vector3.one;
+                //var card_obj = Instantiate(cardPrefab, DeskCards);
+                if (card_obj.GetComponent<Item_Card>() == false)
+                    card_obj.AddComponent<Item_Card>();
+                script = card_obj.GetComponent<Item_Card>();
             }
             script.gameObject.SetActive(true);
             script.m_Group.alpha = 1;

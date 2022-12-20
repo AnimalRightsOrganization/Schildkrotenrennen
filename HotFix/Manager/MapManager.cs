@@ -48,7 +48,9 @@ namespace HotFix
             for (int i = 0; i < turtles.childCount; i++)
             {
                 var item = turtles.GetChild(i);
-                Turtle[i] = item.gameObject.AddComponent<Item_Turtle>();
+                if(item.gameObject.GetComponent<Item_Turtle>() == false)
+                    item.gameObject.AddComponent<Item_Turtle>();
+                Turtle[i] = item.gameObject.GetComponent<Item_Turtle>();
                 Turtle[i].InitData(i);
             }
         }

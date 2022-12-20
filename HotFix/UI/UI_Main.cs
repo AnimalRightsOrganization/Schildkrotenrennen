@@ -89,7 +89,9 @@ namespace HotFix
             for (int i = 0; i < 10; i++)
             {
                 var roomObj = m_RoomRoot.GetChild(i).gameObject;
-                var item_room = roomObj.AddComponent<Item_Lobby>();
+                if(roomObj.GetComponent<Item_Lobby>() == false)
+                    roomObj.AddComponent<Item_Lobby>();
+                var item_room = roomObj.GetComponent<Item_Lobby>();
                 m_Rooms[i] = item_room;
             }
 

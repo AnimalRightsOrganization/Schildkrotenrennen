@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
 #endif
 
 #if UNITY_EDITOR && !USE_ASSETBUNDLE
-            // 不检查更新
+            Debug.Log("不检查更新");
             present = new Present();
             OnInited();
 #else
@@ -68,7 +68,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(CheckUpdateAsync(OnInited));
     }
     
-    IEnumerator CheckUpdateAsync(System.Action action)
+    IEnumerator CheckUpdateAsync(System.Action onComplete)
     {
         if (!Directory.Exists(ConstValue.AB_AppPath))
             Directory.CreateDirectory(ConstValue.AB_AppPath);
@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
         GameObject prefab = Instantiate(asset, root);
         var ui_checkupdate = prefab.AddComponent<UI_CheckUpdate>();
 
-        yield return ui_checkupdate.StartCheck(action);
+        yield return ui_checkupdate.StartCheck(onComplete);
     }
 
     // 初始化完成，控制权移交ILR

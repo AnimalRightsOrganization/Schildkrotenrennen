@@ -24,7 +24,9 @@ namespace HotFix
             for (int i = 0; i < seatRoot.childCount; i++)
             {
                 var seatItem = seatRoot.GetChild(i).GetComponent<Button>();
-                var script = seatItem.gameObject.AddComponent<Item_Room>();
+                if (seatItem.gameObject.GetComponent<Item_Room>() == false)
+                    seatItem.gameObject.AddComponent<Item_Room>();
+                var script = seatItem.gameObject.GetComponent<Item_Room>();
                 SeatList.Add(script);
             }
 

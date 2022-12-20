@@ -32,7 +32,7 @@ public class UI_CheckUpdate : MonoBehaviour
         m_progressText.text = string.Format("{0}%", (progress * 100).ToString("f0"));
     }
 
-    public IEnumerator StartCheck(System.Action action)
+    public IEnumerator StartCheck(System.Action onComplete)
     {
         // 1. 下载远程的(assets.bytes)
         ABInfo[] cloudInfos = new ABInfo[] { };
@@ -48,7 +48,6 @@ public class UI_CheckUpdate : MonoBehaviour
         }
         if (www.isDone)
         {
-            //var r_assets_bytes = JsonMapper.ToObject<AssetsBytes>(www.text);
             var r_assets_bytes = JsonConvert.DeserializeObject<AssetsBytes>(www.text);
             cloudInfos = r_assets_bytes.ABInfoList;
             www.Dispose();
@@ -109,7 +108,7 @@ public class UI_CheckUpdate : MonoBehaviour
         Debug.Log("<color=green>更新完成</color>");
 
         // 6. 显示下一级界面
-        action?.Invoke();
+        onComplete?.Invoke();
         Destroy(gameObject);
     }
 

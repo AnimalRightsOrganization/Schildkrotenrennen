@@ -33,7 +33,7 @@ namespace HotFix
             List<GameObject> list_active = null;
 
             //①没有缓存，新建key-value，新建obj
-            Debug.Log("①①①");
+            Debug.Log($"①①①:{value}");
             if (dic_inactive.TryGetValue(value, out list_inactive) == false)
             {
                 //Debug.Log($"list_inactive: {list_inactive != null}"); //False, 就是null
@@ -49,7 +49,6 @@ namespace HotFix
             }
 
             //②有缓存，用完了
-            Debug.Log("②②②");
             if (list_inactive.Count == 0)
             {
                 var prefab = ResManager.LoadPrefab($"Prefabs/{value}");
@@ -70,7 +69,6 @@ namespace HotFix
 
 
             //③记录加入active
-            Debug.Log("③③③");
             if (dic_active.TryGetValue(value, out list_active) == false)
             {
                 list_active = new List<GameObject>();
