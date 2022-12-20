@@ -47,11 +47,10 @@ namespace HotFix
         void OnDisable()
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
-
-            m_CloseBtn.onClick.RemoveListener(OnSendLeaveRoom);
-            m_StartBtn.onClick.RemoveListener(OnSendStartGame);
-            m_CloseBtn = null;
-            m_StartBtn = null;
+            //m_CloseBtn.onClick.RemoveListener(OnSendLeaveRoom);
+            //m_StartBtn.onClick.RemoveListener(OnSendStartGame);
+            //m_CloseBtn = null;
+            //m_StartBtn = null;
         }
         #endregion
 
@@ -208,6 +207,7 @@ namespace HotFix
         }
         void OnGameStart(object reader)
         {
+            Debug.Log("[S2C_GameStart]");
             var packet = (S2C_GameStartPacket)reader;
             KcpChatClient.m_ClientRoom.OnGameStart_Client(packet);
 

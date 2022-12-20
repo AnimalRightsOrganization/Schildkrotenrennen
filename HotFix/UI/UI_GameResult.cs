@@ -56,11 +56,10 @@ namespace HotFix
         // 返回大厅
         void OnExitBtnClick()
         {
-            MapManager.Get.Dispose();
+            //MapManager.Get.Dispose();
+            PoolManager.Get.DespawnAll();
             UIManager.Get().PopAll();
-            //UIManager.Get().Push<UI_Login>();
             UIManager.Get().Push<UI_Main>();
-            //this.Pop();
         }
     }
 }

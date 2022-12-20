@@ -43,8 +43,9 @@ namespace kcp2k.Examples
         {
             Debug.LogError($"KCP: OnDisonnected");
 
-            if (MapManager.Get != null)
-                MapManager.Get.Dispose();
+            //if (MapManager.Get != null)
+            //    MapManager.Get.Dispose();
+            PoolManager.Get.DespawnAll();
 
             UIManager.Get().PopAll();
             UIManager.Get().Push<UI_Login>();

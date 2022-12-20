@@ -8,7 +8,7 @@ using kcp2k.Examples;
 
 namespace HotFix
 {
-    public delegate void SetHandCard(bool value);
+    //public delegate void SetHandCard(bool value);
 
     public class UI_Game : UIBase
     {
@@ -16,7 +16,6 @@ namespace HotFix
         private Action PlayAction;
         private Action GameEndAction;
         public static Action<bool> onSetHandCard;
-        //public static SetHandCard onSetHandCard;
         void SetHandCard(bool value)
         {
             string content = value ? "<color=green>激活</color>" : "<color=red>熄灭</color>";
@@ -60,24 +59,21 @@ namespace HotFix
         #region 内置方法
         void Awake()
         {
-            //var map_asset = ResManager.LoadPrefab("Prefabs/MapManager");
-            //var map_manager = Instantiate(map_asset);
-            //map_manager.name = "MapManager";
-            //map_manager.AddComponent<MapManager>();
-            PoolManager.Get.Spawn("MapManager");
-            MapManager.Get.InitAssets();
-
-
             m_MenuBtn = transform.Find("MenuBtn").GetComponent<Button>();
             m_MenuBtn.onClick.AddListener(OnMenuBtnClick);
 
+
+            ///////////////////////////////////////////
+            PoolManager.Get.Spawn("MapManager");
+            MapManager.Get.InitAssets();
             // 地图
             m_Rocks = MapManager.Get.Rock;
             // 棋子
             m_Turtles = MapManager.Get.Turtle;
-
             // 成员
             idSprites = ResManager.LoadSprite("Sprites/identify");
+            ///////////////////////////////////////////
+
             NextIcon = transform.Find("NextIcon").GetComponent<RectTransform>();
             var seatPanel = transform.Find("SeatPanel");
             int length = seatPanel.childCount;
@@ -92,11 +88,14 @@ namespace HotFix
             m_MyTurtleColor = transform.Find("MyTurtleColor").GetComponent<Image>();
 
             // 卡牌
+            DeskCards = transform.Find("DeskCards");
             InitCardPool();
             handIndex = 0;
             HandSlots = new RectTransform[5];
-            HandCardViews = new List<Item_Card>();
             HandSlotRoot = transform.Find("HandSlots");
+
+            ///////////////////////////////////////////
+            HandCardViews = new List<Item_Card>();
             for (int i = 0; i < HandSlotRoot.childCount; i++)
             {
                 var slot = HandSlotRoot.GetChild(i);
@@ -107,14 +106,16 @@ namespace HotFix
                 handCard.transform.localPosition = Vector3.zero;
                 HandCardViews.Add(handCard);
             }
-
             // 出牌面板
             selectedCardId = 0;
             CancelAction = null;
             PlayAction = null;
             GameEndAction = null;
+            ///////////////////////////////////////////
+
+
             m_PlayPanel = transform.Find("PlayPanel").gameObject;
-            m_PlayPanel.SetActive(false);
+            //m_PlayPanel.SetActive(false);
             m_CancelBtn = m_PlayPanel.GetComponent<Button>();
             m_PlayBtn = transform.Find("PlayPanel/PlayBtn").GetComponent<Button>();
             m_CancelBtn.onClick.AddListener(HidePlayPanel);
@@ -122,7 +123,7 @@ namespace HotFix
             // 彩色选项
             selectedCardColor = 0;
             m_ColorPanel = transform.Find("PlayPanel/ColorPanel").gameObject;
-            m_ColorPanel.SetActive(false);
+            //m_ColorPanel.SetActive(false);
             m_ColorBtns = transform.Find("PlayPanel/ColorPanel").GetComponentsInChildren<Button>();
             m_ColorSelected = transform.Find("PlayPanel/Selected").GetComponent<RectTransform>();
             for (int i = 0; i < m_ColorBtns.Length; i++)
@@ -147,6 +148,8 @@ namespace HotFix
 
             NextIcon.SetParent(m_SeatNames[0].transform);
             NextIcon.anchoredPosition = Vector3.zero;
+            m_PlayPanel.SetActive(false);
+            m_ColorPanel.SetActive(false);
         }
         void OnDisable()
         {
@@ -281,9 +284,6 @@ namespace HotFix
         private List<Item_Card> m_CardPool;
         private void InitCardPool()
         {
-            //cardPrefab = ResManager.LoadPrefab("Prefabs/Card");
-            DeskCards = transform.Find("DeskCards");
-
             m_CardPool = new List<Item_Card>();
             for (int i = 0; i < 10; i++)
             {
@@ -446,6 +446,7 @@ namespace HotFix
                 tw1.OnComplete(() =>
                 {
                     newCard.transform.SetParent(slot);
+                    newCard.transform.localScale = Vector3.one;
                     HandCardViews.Add(newCard);
                     GetNewCard = false;
                     newCard.SetInteractable(false);
