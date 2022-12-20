@@ -23,6 +23,7 @@ public class ResManager
     {
         string assetsPath = $"{Application.persistentDataPath}/{ConstValue.PLATFORM_NAME}/assets.bytes"; //解析文件
         string assetsJson = File.ReadAllText(assetsPath);
+        Debug.Log(assetsJson);
         _assetsBytes = JsonMapper.ToObject<AssetsBytes>(assetsJson);
     }
 
@@ -45,7 +46,7 @@ public class ResManager
         for (int i = 0; i < depends.Length; i++)
         {
             string dependPath = GetFilePath(depends[i]);
-            Debug.Log($"读取依赖：{i}---{dependPath}");
+            Debug.Log($"{fileName}, 读取依赖：{i}---{dependPath}");
             AssetBundle dependAsset = AssetBundle.LoadFromFile(dependPath.ToLower());
             dependBundles.Add(dependAsset);
         }
@@ -108,6 +109,7 @@ public class ResManager
 #else
         string fileName = "configs/hotfix";
         string filePath = GetFilePath($"{fileName}.unity3d"); //文件名是加密子串
+        Debug.Log($"LoadDLL:" + filePath);
         AssetBundle asset = AssetBundle.LoadFromFile(filePath);
         TextAsset textAsset = asset.LoadAllAssets()[0] as TextAsset;
         asset.Unload(false);

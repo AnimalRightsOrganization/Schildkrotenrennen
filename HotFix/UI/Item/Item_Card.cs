@@ -39,7 +39,7 @@ namespace HotFix
         {
             card = data;
             if (ui_game == null)
-                ui_game = UIManager.Get().GetUI<UI_Game>();
+                ui_game = UIManager.Get.GetUI<UI_Game>();
 
             string combName = (data.cardColor.ToString().ToLower() + "" + (data.cardNum > 0 ? "+" : "") + (int)data.cardNum);
             //Debug.Log($"初始化新牌Item_Card: {combName}");
@@ -49,7 +49,7 @@ namespace HotFix
         void OnSelect()
         {
             if (ui_game == null)
-                ui_game = UIManager.Get().GetUI<UI_Game>();
+                ui_game = UIManager.Get.GetUI<UI_Game>();
 
             if (ui_game.m_Room.gameStatus == TurtleAnime.Anime)
             {
@@ -58,13 +58,13 @@ namespace HotFix
             }
             if (ui_game.IsMyTurn == false)
             {
-                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                var ui_toast = UIManager.Get.Push<UI_Toast>();
                 ui_toast.Show("不是你的回合，请等待");
                 return;
             }
             if (ui_game.m_Room.gameStatus == TurtleAnime.End)
             {
-                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                var ui_toast = UIManager.Get.Push<UI_Toast>();
                 ui_toast.Show("已经结束嘞");
                 return;
             }
@@ -98,7 +98,7 @@ namespace HotFix
         {
             Debug.Log($"[[[出牌动画开始----{DateTime.Now.ToString("HH: mm:ss.fff")}"); //此时不要熄灭
             if (ui_game == null)
-                ui_game = UIManager.Get().GetUI<UI_Game>();
+                ui_game = UIManager.Get.GetUI<UI_Game>();
 
             transform.localScale = Vector3.one;
             Tweener tw1 = transform.DOScale(1.1f, 0.2f);

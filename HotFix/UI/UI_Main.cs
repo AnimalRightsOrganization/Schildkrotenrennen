@@ -143,11 +143,11 @@ namespace HotFix
         }
         void OnSettingsBtnClick()
         {
-            UIManager.Get().Push<UI_Settings>();
+            UIManager.Get.Push<UI_Settings>();
         }
         void OnExitBtnClick()
         {
-            var ui_dialog = UIManager.Get().Push<UI_Dialog>();
+            var ui_dialog = UIManager.Get.Push<UI_Dialog>();
             ui_dialog.Show("确定退出吗？",
                 () => { ui_dialog.Hide(); }, "取消",
                 () =>
@@ -254,13 +254,13 @@ namespace HotFix
             KcpChatClient.m_ClientRoom = new ClientRoom(roomData);
 
             //Debug.Log("Push: UI_Room");
-            var ui_room = UIManager.Get().Push<UI_Room>();
+            var ui_room = UIManager.Get.Push<UI_Room>();
             //Debug.Log("更新: UI_Room.UpdateUI");
             ui_room.UpdateUI(roomData);
 
             m_CreatePanel.SetActive(false);
             m_ListPanel.SetActive(false);
-            var ui_dialog = UIManager.Get().GetUI<UI_Dialog>();
+            var ui_dialog = UIManager.Get.GetUI<UI_Dialog>();
             ui_dialog?.Hide();
         }
         void OnGetRoomList(object reader)
@@ -297,8 +297,8 @@ namespace HotFix
         void OnLogout(object reader)
         {
             m_EnterAnime.SetBool("enter", false);
-            UIManager.Get().PopAll();
-            UIManager.Get().Push<UI_Login>();
+            UIManager.Get.PopAll();
+            UIManager.Get.Push<UI_Login>();
         }
         #endregion
     }

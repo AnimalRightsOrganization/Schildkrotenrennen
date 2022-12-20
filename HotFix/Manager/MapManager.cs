@@ -7,16 +7,7 @@ namespace HotFix
 {
     public class MapManager : MonoBehaviour
     {
-        static MapManager _instance;
-        public static MapManager Get
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = FindObjectOfType<MapManager>();
-                return _instance;
-            }
-        }
+        public static MapManager Get;
 
         private Transform Map;
         public Transform[] Rock;
@@ -33,31 +24,9 @@ namespace HotFix
         public static Vector3 orig_p = new Vector3(0, 18, -2);
         public static Vector3 orig_r = new Vector3(60, 0, 0);
 
-        public void InitAssets()
+        void Awake()
         {
-            Map = transform.Find("Map");
-            Rock = new Transform[10];
-            for (int i = 0; i < Map.childCount; i++)
-            {
-                var item = Map.GetChild(i);
-                Rock[i] = item;
-            }
-
-            Turtle = new Item_Turtle[5];
-            var turtles = transform.Find("Turtles");
-            for (int i = 0; i < turtles.childCount; i++)
-            {
-                var item = turtles.GetChild(i);
-                if(item.gameObject.GetComponent<Item_Turtle>() == false)
-                    item.gameObject.AddComponent<Item_Turtle>();
-                Turtle[i] = item.gameObject.GetComponent<Item_Turtle>();
-                Turtle[i].InitData(i);
-            }
-        }
-        public void Dispose()
-        {
-            PoolManager.Get.Despawn(gameObject);
-            InitAssets();
+            Get = this;
         }
 
         void Update()
@@ -102,6 +71,31 @@ namespace HotFix
                         });
                     }
                 }
+            }
+        }
+
+        public void InitAssets()
+        {
+            Debug.Log($"InitAssets---{gameObject.name}");
+
+            Map = transform.Find("Map");
+
+            Rock = new Transform[10];
+            for (int i = 0; i < Map.childCount; i++)
+            {
+                var item = Map.GetChild(i);
+                Rock[i] = item;
+            }
+
+            Turtle = new Item_Turtle[5];
+            var turtles = transform.Find("Turtles");
+            for (int i = 0; i < turtles.childCount; i++)
+            {
+                var item = turtles.GetChild(i);
+                if (item.gameObject.GetComponent<Item_Turtle>() == false)
+                    item.gameObject.AddComponent<Item_Turtle>();
+                Turtle[i] = item.gameObject.GetComponent<Item_Turtle>();
+                Turtle[i].InitData(i);
             }
         }
     }

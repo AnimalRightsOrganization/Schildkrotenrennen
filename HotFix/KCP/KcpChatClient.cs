@@ -37,7 +37,7 @@ namespace kcp2k.Examples
         static void OnData(ArraySegment<byte> message, KcpChannel channel)
         {
             //Debug.Log($"KCP: OnClientDataReceived({BitConverter.ToString(message.Array, message.Offset, message.Count)} @ {channel})");
-            EventManager.Get().queue.Enqueue(message.ToArray());
+            EventManager.Get.queue.Enqueue(message.ToArray());
         }
         static void OnDisonnected()
         {
@@ -47,11 +47,11 @@ namespace kcp2k.Examples
             //    MapManager.Get.Dispose();
             PoolManager.Get.DespawnAll();
 
-            UIManager.Get().PopAll();
-            UIManager.Get().Push<UI_Login>();
-            UIManager.Get().Push<UI_Connect>();
+            UIManager.Get.PopAll();
+            UIManager.Get.Push<UI_Login>();
+            UIManager.Get.Push<UI_Connect>();
 
-            var ui_toast = UIManager.Get().Push<UI_Toast>();
+            var ui_toast = UIManager.Get.Push<UI_Toast>();
             ui_toast.Show("与服务器断开连接");
         }
         static void OnError(ErrorCode error, string reason)
@@ -133,7 +133,7 @@ namespace kcp2k.Examples
                 string err_str = "用户名或密码不能为空";
                 Debug.LogError(err_str);
 
-                var toast = UIManager.Get().Push<UI_Toast>();
+                var toast = UIManager.Get.Push<UI_Toast>();
                 toast.Show(err_str);
                 return;
             }
@@ -142,7 +142,7 @@ namespace kcp2k.Examples
                 string err_str = "密码长度过短";
                 Debug.LogError(err_str);
 
-                var toast = UIManager.Get().Push<UI_Toast>();
+                var toast = UIManager.Get.Push<UI_Toast>();
                 toast.Show(err_str);
                 return;
             }
@@ -172,7 +172,7 @@ namespace kcp2k.Examples
         {
             if (message.Length <= 0)
             {
-                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                var ui_toast = UIManager.Get.Push<UI_Toast>();
                 ui_toast.Show("内容为空");
                 return;
             }
@@ -190,7 +190,7 @@ namespace kcp2k.Examples
             if (name.Length < 3)
             {
                 Debug.LogError($"房间名称至少3个字:{name.Length}");
-                var toast = UIManager.Get().Push<UI_Toast>();
+                var toast = UIManager.Get.Push<UI_Toast>();
                 toast.Show("房间名称至少3个字");
                 return false;
             }
@@ -214,7 +214,7 @@ namespace kcp2k.Examples
             if (m_ClientRoom.m_PlayerDic.Count < m_ClientRoom.RoomLimit)
             {
                 Debug.LogError($"人数不足，请等待：{m_ClientRoom.m_PlayerDic.Count} < {m_ClientRoom.RoomLimit}");
-                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                var ui_toast = UIManager.Get.Push<UI_Toast>();
                 ui_toast.Show("人数不足，请等待");
                 return;
             }

@@ -8,8 +8,6 @@ using kcp2k.Examples;
 
 namespace HotFix
 {
-    //public delegate void SetHandCard(bool value);
-
     public class UI_Game : UIBase
     {
         private Action CancelAction;
@@ -61,18 +59,7 @@ namespace HotFix
         {
             m_MenuBtn = transform.Find("MenuBtn").GetComponent<Button>();
             m_MenuBtn.onClick.AddListener(OnMenuBtnClick);
-
-
-            ///////////////////////////////////////////
-            PoolManager.Get.Spawn("MapManager");
-            MapManager.Get.InitAssets();
-            // 地图
-            m_Rocks = MapManager.Get.Rock;
-            // 棋子
-            m_Turtles = MapManager.Get.Turtle;
-            // 成员
-            idSprites = ResManager.LoadSprite("Sprites/identify");
-            ///////////////////////////////////////////
+            idSprites = ResManager.LoadSprite("Sprites/identify"); //成员
 
             NextIcon = transform.Find("NextIcon").GetComponent<RectTransform>();
             var seatPanel = transform.Find("SeatPanel");
@@ -93,37 +80,19 @@ namespace HotFix
             handIndex = 0;
             HandSlots = new RectTransform[5];
             HandSlotRoot = transform.Find("HandSlots");
-
-            ///////////////////////////////////////////
-            HandCardViews = new List<Item_Card>();
             for (int i = 0; i < HandSlotRoot.childCount; i++)
             {
                 var slot = HandSlotRoot.GetChild(i);
                 HandSlots[i] = slot.GetComponent<RectTransform>();
-
-                var handCard = SpawnCard();
-                handCard.transform.SetParent(slot);
-                handCard.transform.localPosition = Vector3.zero;
-                HandCardViews.Add(handCard);
             }
-            // 出牌面板
-            selectedCardId = 0;
-            CancelAction = null;
-            PlayAction = null;
-            GameEndAction = null;
-            ///////////////////////////////////////////
-
 
             m_PlayPanel = transform.Find("PlayPanel").gameObject;
-            //m_PlayPanel.SetActive(false);
             m_CancelBtn = m_PlayPanel.GetComponent<Button>();
             m_PlayBtn = transform.Find("PlayPanel/PlayBtn").GetComponent<Button>();
             m_CancelBtn.onClick.AddListener(HidePlayPanel);
             m_PlayBtn.onClick.AddListener(OnPlayBtnClick);
             // 彩色选项
-            selectedCardColor = 0;
             m_ColorPanel = transform.Find("PlayPanel/ColorPanel").gameObject;
-            //m_ColorPanel.SetActive(false);
             m_ColorBtns = transform.Find("PlayPanel/ColorPanel").GetComponentsInChildren<Button>();
             m_ColorSelected = transform.Find("PlayPanel/Selected").GetComponent<RectTransform>();
             for (int i = 0; i < m_ColorBtns.Length; i++)
@@ -139,17 +108,12 @@ namespace HotFix
                     m_ColorSelected.anchoredPosition = Vector2.zero;
                 });
             }
+
+            Debug.Log("UI_Game.Awake.done.");
         }
         void OnEnable()
         {
             NetPacketManager.RegisterEvent(OnNetCallback);
-
-            onSetHandCard = SetHandCard;
-
-            NextIcon.SetParent(m_SeatNames[0].transform);
-            NextIcon.anchoredPosition = Vector3.zero;
-            m_PlayPanel.SetActive(false);
-            m_ColorPanel.SetActive(false);
         }
         void OnDisable()
         {
@@ -162,9 +126,39 @@ namespace HotFix
         #endregion
 
         #region 按钮事件
-        public void UpdateUI()
+        public void InitUI()
         {
+            Debug.Log("UI_Game.InitUI.start.");
+            ///////////////////////////////////////////
+            PoolManager.Get.Spawn("MapManager");
+            MapManager.Get.InitAssets();
+            m_Rocks = MapManager.Get.Rock; //地图
+            m_Turtles = MapManager.Get.Turtle; //棋子
+            ///////////////////////////////////////////
+
+            // 出牌面板
+            selectedCardId = 0;
+            selectedCardColor = 0;
+            CancelAction = null;
+            PlayAction = null;
             GameEndAction = null;
+            onSetHandCard = SetHandCard;
+
+            NextIcon.SetParent(m_SeatNames[0].transform);
+            NextIcon.anchoredPosition = Vector3.zero;
+            m_PlayPanel.SetActive(false);
+            m_ColorPanel.SetActive(false);
+
+            HandCardViews = new List<Item_Card>();
+            for (int i = 0; i < HandSlots.Length; i++)
+            {
+                var slot = HandSlots[i];
+                var handCard = SpawnCard();
+                handCard.transform.SetParent(slot);
+                handCard.transform.localPosition = Vector3.zero;
+                HandCardViews.Add(handCard);
+            }
+
             m_Room = KcpChatClient.m_ClientRoom;
             m_LocalPlayer = KcpChatClient.m_PlayerManager.LocalPlayer;
 
@@ -266,7 +260,7 @@ namespace HotFix
         // 游戏菜单
         void OnMenuBtnClick()
         {
-            var ui_dialog = UIManager.Get().Push<UI_Dialog>();
+            var ui_dialog = UIManager.Get.Push<UI_Dialog>();
             ui_dialog.Show("是否退出？",
                 () => { ui_dialog.Pop(); }, "否",
                 () => { KcpChatClient.SendLeaveRoom(); }, "是");
@@ -287,7 +281,6 @@ namespace HotFix
             m_CardPool = new List<Item_Card>();
             for (int i = 0; i < 10; i++)
             {
-                //var card_obj = Instantiate(cardPrefab, DeskCards);
                 var card_obj = PoolManager.Get.Spawn("Card");
                 card_obj.transform.SetParent(DeskCards);
                 card_obj.transform.localScale = Vector3.one;
@@ -312,7 +305,6 @@ namespace HotFix
                 var card_obj = PoolManager.Get.Spawn("Card");
                 card_obj.transform.SetParent(DeskCards);
                 card_obj.transform.localScale = Vector3.one;
-                //var card_obj = Instantiate(cardPrefab, DeskCards);
                 if (card_obj.GetComponent<Item_Card>() == false)
                     card_obj.AddComponent<Item_Card>();
                 script = card_obj.GetComponent<Item_Card>();
@@ -483,14 +475,17 @@ namespace HotFix
             m_Room.OnGameResult_Client();
             GameEndAction = () =>
             {
-                var ui_result = UIManager.Get().Push<UI_GameResult>();
+                var ui_result = UIManager.Get.Push<UI_GameResult>();
                 ui_result.UpdateUI(packet.Rank);
             };
 
 
-            var ui_dialog = UIManager.Get().GetUI<UI_Dialog>();
+            var ui_dialog = UIManager.Get.GetUI<UI_Dialog>();
             if (ui_dialog != null)
+            {
                 GameEndAction?.Invoke();
+                GameEndAction = null;
+            }
             ui_dialog?.Pop();
         }
         #endregion

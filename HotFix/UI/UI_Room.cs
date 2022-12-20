@@ -65,7 +65,7 @@ namespace HotFix
         }
         void OnPwdBtnClick()
         {
-            var dialog = UIManager.Get().Push<UI_Dialog>();
+            var dialog = UIManager.Get.Push<UI_Dialog>();
             dialog.ShowInput(m_PwdText.text,
             () =>
             {
@@ -147,8 +147,8 @@ namespace HotFix
         }
         void OnLeaveRoom(object reader)
         {
-            UIManager.Get().Pop(this);
-            UIManager.Get().Push<UI_Main>();
+            UIManager.Get.Pop(this);
+            UIManager.Get.Push<UI_Main>();
 
             var packet = (S2C_LeaveRoomPacket)reader;
             string message = string.Empty;
@@ -167,7 +167,7 @@ namespace HotFix
                     message = "游戏结束";
                     break;
             }
-            var ui_toast = UIManager.Get().Push<UI_Toast>();
+            var ui_toast = UIManager.Get.Push<UI_Toast>();
             ui_toast.Show(message);
 
             KcpChatClient.m_PlayerManager.LocalPlayer.ResetToLobby();
@@ -211,9 +211,9 @@ namespace HotFix
             var packet = (S2C_GameStartPacket)reader;
             KcpChatClient.m_ClientRoom.OnGameStart_Client(packet);
 
-            UIManager.Get().PopAll();
-            var ui_game = UIManager.Get().Push<UI_Game>();
-            ui_game.UpdateUI();
+            UIManager.Get.PopAll();
+            var ui_game = UIManager.Get.Push<UI_Game>();
+            ui_game.InitUI();
         }
         #endregion
     }

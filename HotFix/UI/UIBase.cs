@@ -6,7 +6,7 @@ namespace HotFix
     {
         public virtual void Pop()
         {
-            UIManager.Get().Pop(this);
+            UIManager.Get.Pop(this);
         }
         public virtual void ApplyLanguage() { }
     }

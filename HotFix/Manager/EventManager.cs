@@ -9,17 +9,14 @@ namespace HotFix
     // 处理子线程的推送
     public class EventManager : MonoBehaviour
     {
-        static EventManager _instance;
-        public static EventManager Get()
-        {
-            return _instance;
-        }
+        public static EventManager Get;
 
         public Queue<byte[]> queue;
 
         void Awake()
         {
-            _instance = this;
+            Get = this;
+
             queue = new Queue<byte[]>();
         }
 
@@ -59,24 +56,24 @@ namespace HotFix
                 case PacketType.Disconnect: //被动断开（服务器没开等原因）
                     {
                         Debug.Log("<color=red>与服务器断开连接</color>");
-                        var dialog = UIManager.Get().Push<UI_Dialog>();
+                        var dialog = UIManager.Get.Push<UI_Dialog>();
                         dialog.Show("与服务器断开连接", () =>
                         {
-                            UIManager.Get().PopAll();
-                            UIManager.Get().Push<UI_Login>();
+                            UIManager.Get.PopAll();
+                            UIManager.Get.Push<UI_Login>();
                         }, "确定");
                         break;
                     }
                 case PacketType.Reconnect:
                     {
                         Debug.Log("<color=orange>重连中</color>");
-                        UIManager.Get().Push<UI_Connect>();
+                        UIManager.Get.Push<UI_Connect>();
                         break;
                     }
                 case PacketType.S2C_ErrorOperate:
                     {
                         var packet = ProtobufHelper.Deserialize<ErrorPacket>(stream);
-                        var toast = UIManager.Get().Push<UI_Toast>();
+                        var toast = UIManager.Get.Push<UI_Toast>();
                         toast.Show(packet.Message);
                         break;
                     }
@@ -193,7 +190,7 @@ namespace HotFix
             ErrorPacket packet = (ErrorPacket)reader;
             Debug.Log($"错误操作：{(ErrorCode)packet.Code}");
 
-            var toast = UIManager.Get().Push<UI_Toast>();
+            var toast = UIManager.Get.Push<UI_Toast>();
             toast.Show($"{(ErrorCode)packet.Code}");
         }
     }

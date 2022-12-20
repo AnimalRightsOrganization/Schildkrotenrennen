@@ -6,11 +6,7 @@ namespace HotFix
 {
     public class UIManager : MonoBehaviour
     {
-        static UIManager _instance;
-        public static UIManager Get()
-        {
-            return _instance;
-        }
+        public static UIManager Get;
 
         public Transform Parent;
 
@@ -20,7 +16,8 @@ namespace HotFix
 
         void Awake()
         {
-            _instance = this;
+            Get = this;
+
             Parent = GameObject.Find("Canvas").transform;
             stack = new Dictionary<string, UIBase>();
             recyclePool = new Dictionary<string, UIBase>();

@@ -19,9 +19,9 @@ namespace Client
         void Awake()
         {
 #if USE_ASSETBUNDLE
-            Debug.Log("使用热更");
+            Debug.Log($"使用热更 Initialized:{Initialized}");
 #else
-        Debug.Log("不是热更");
+            Debug.Log($"不是热更 Initialized:{Initialized}");
 #endif
 
             if (!Initialized)

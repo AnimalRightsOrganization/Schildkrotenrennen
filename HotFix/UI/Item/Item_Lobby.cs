@@ -37,7 +37,7 @@ namespace HotFix
             if (data.HasPwd)
             {
                 // 弹出密码输入框
-                var ui_dialog = UIManager.Get().Push<UI_Dialog>();
+                var ui_dialog = UIManager.Get.Push<UI_Dialog>();
                 ui_dialog.ShowInput("输入密码",
                 () =>
                 {
@@ -47,7 +47,7 @@ namespace HotFix
                 {
                     if (string.IsNullOrEmpty(ui_dialog.m_Input.text))
                     {
-                        var ui_toast = UIManager.Get().Push<UI_Toast>();
+                        var ui_toast = UIManager.Get.Push<UI_Toast>();
                         ui_toast.Show("请输入密码");
                         return;
                     }

@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace HotFix
 {
     public class AudioManager : MonoBehaviour
     {
-        //static AudioManager _instance;
+        public static AudioManager Get;
+
+        void Awake()
+        {
+            Get = this;
+        }
     }
 }

@@ -11,6 +11,7 @@ namespace HotFix
 
         public Dictionary<string, List<GameObject>> dic_active;
         public Dictionary<string, List<GameObject>> dic_inactive;
+        public Dictionary<string, Sprite> dic_sprite;
 
         void Awake()
         {
@@ -78,34 +79,35 @@ namespace HotFix
             return (list_active);
         }
         //inactive→active
-        public GameObject Spawn(string value)
+        public GameObject Spawn(string assetName)
         {
             GameObject obj = null;
             List<GameObject> list_inactive = null;
             List<GameObject> list_active = null;
 
             //①没有缓存，新建key-value，新建obj
-            Debug.Log($"①①①:{value}");
-            if (dic_inactive.TryGetValue(value, out list_inactive) == false)
+            Debug.Log($"①①①:{assetName}, {dic_inactive.ContainsKey(assetName)}");
+            if (dic_inactive.TryGetValue(assetName, out list_inactive) == false)
             {
                 //Debug.Log($"list_inactive: {list_inactive != null}"); //False, 就是null
                 list_inactive = new List<GameObject>();
-                dic_inactive.Add(value, list_inactive);
+                dic_inactive.Add(assetName, list_inactive);
 
-                var prefab = ResManager.LoadPrefab($"Prefabs/{value}");
+                var prefab = ResManager.LoadPrefab($"Prefabs/{assetName}");
                 obj = Instantiate(prefab, transform);
-                obj.name = value;
+                obj.name = assetName;
                 list_inactive.Add(obj);
 
                 //Debug.Log($"inactive.第一次创建: key={value}, value count={list_inactive.Count}");
             }
 
             //②有缓存，用完了
+            Debug.Log($"②②②:{list_inactive.Count}");
             if (list_inactive.Count == 0)
             {
-                var prefab = ResManager.LoadPrefab($"Prefabs/{value}");
+                var prefab = ResManager.LoadPrefab($"Prefabs/{assetName}");
                 obj = Instantiate(prefab, transform);
-                obj.name = value;
+                obj.name = assetName;
                 list_inactive.Add(obj);
 
                 //Debug.Log($"inactive.扩建: key={value}, value count={list_inactive.Count}");
@@ -121,10 +123,11 @@ namespace HotFix
 
 
             //③记录加入active
-            if (dic_active.TryGetValue(value, out list_active) == false)
+            Debug.Log($"③③③:{dic_active.ContainsKey(assetName)}");
+            if (dic_active.TryGetValue(assetName, out list_active) == false)
             {
                 list_active = new List<GameObject>();
-                dic_active.Add(value, list_active);
+                dic_active.Add(assetName, list_active);
 
                 //Debug.Log($"active.第一次创建: key={value}, value count={list_active.Count}");
             }
@@ -134,6 +137,7 @@ namespace HotFix
 
             return obj;
         }
+
         //active→inactive
         public void Despawn(GameObject obj)
         {
@@ -171,6 +175,24 @@ namespace HotFix
                     Despawn(obj);
                 }
             }
+        }
+
+        public void Print()
+        {
+            Debug.Log($"<color=green>dic_active: {dic_active.Count}</color>");
+            foreach (var item in dic_active)
+            {
+                Debug.Log($"---item_active: {item.Key}:{item.Value.Count}");
+            }
+            Debug.Log($"<color=red>dic_inactive: {dic_inactive.Count}</color>");
+            foreach (var item in dic_inactive)
+            {
+                Debug.Log($"---item_inactive: {item.Key}:{item.Value.Count}");
+            }
+        }
+        public static void StaticPrint()
+        {
+            Debug.Log("StaticPrint.2");
         }
     }
 }

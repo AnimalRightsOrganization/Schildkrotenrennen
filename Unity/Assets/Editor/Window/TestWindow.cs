@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
-using Debug = UnityEngine.Debug;
 using Client;
 
 public class TestWindow : EditorWindow
@@ -21,6 +20,7 @@ public class TestWindow : EditorWindow
         if (GUILayout.Button("test5"))
         {
             var ui_login = GameObject.Find("UI_Login");
+            if (ui_login == null) return;
             var usrInput = ui_login.transform.Find("LoginPanel/UserInput").GetComponent<InputField>();
             usrInput.text = "test5";
             var pwdInput = ui_login.transform.Find("LoginPanel/PwdInput").GetComponent<InputField>();
@@ -29,6 +29,7 @@ public class TestWindow : EditorWindow
         if (GUILayout.Button("test6"))
         {
             var ui_login = GameObject.Find("UI_Login");
+            if (ui_login == null) return;
             var usrInput = ui_login.transform.Find("LoginPanel/UserInput").GetComponent<InputField>();
             usrInput.text = "test6";
             var pwdInput = ui_login.transform.Find("LoginPanel/PwdInput").GetComponent<InputField>();
@@ -40,6 +41,12 @@ public class TestWindow : EditorWindow
             ScreenCapture.CaptureScreenshot(fileName);
             Debug.Log(fileName);
             AssetDatabase.Refresh();
+        }
+        if (GUILayout.Button("Print HotFix"))
+        {
+            var pool_manager = GameObject.Find("IL_PoolManager");
+            //Debug.Assert(pool_manager);
+            ILGlobal.Instance.callHotFix("HotFix.Main", "Print", null, null);
         }
     }
 }

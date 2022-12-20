@@ -66,7 +66,7 @@ namespace HotFix
                 // 如果中间格子有龟，则也返回-1。取到dest_count，使经过时走在最顶上
                 int index = dest_turtles.IndexOf(mColor);
                 int myLayer = index == -1 ? (dest_count == 0 ? layer : dest_count) : index;
-                Debug.Log($"移动完成后，我是第几层？？myLayer={myLayer}");
+                //Debug.Log($"移动完成后，我是第几层？？myLayer={myLayer}");
                 dest_pos.y = TURTLE_Y(myLayer);
             }
 
@@ -90,7 +90,7 @@ namespace HotFix
         public void Move(TurtleColor colorKey, int step, int layer)
         {
             if (ui_game == null)
-                ui_game = UIManager.Get().GetUI<UI_Game>();
+                ui_game = UIManager.Get.GetUI<UI_Game>();
 
             if (colorKey != mColor)
                 Debug.LogError($"{gameObject.name}移动错误，颜色不一致{mColor}:{colorKey}");

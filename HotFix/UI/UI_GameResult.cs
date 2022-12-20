@@ -58,8 +58,8 @@ namespace HotFix
         {
             //MapManager.Get.Dispose();
             PoolManager.Get.DespawnAll();
-            UIManager.Get().PopAll();
-            UIManager.Get().Push<UI_Main>();
+            UIManager.Get.PopAll();
+            UIManager.Get.Push<UI_Main>();
         }
     }
 }

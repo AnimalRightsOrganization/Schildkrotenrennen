@@ -110,19 +110,19 @@ namespace HotFix
                 string.IsNullOrEmpty(m_SignUp_PwdInput.text) ||
                 string.IsNullOrEmpty(m_SignUp_Pwd2Input.text))
             {
-                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                var ui_toast = UIManager.Get.Push<UI_Toast>();
                 ui_toast.Show("用户名和密码不能为空");
                 return;
             }
             if (m_SignUp_PwdInput.text.Equals(m_SignUp_Pwd2Input.text) == false)
             {
-                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                var ui_toast = UIManager.Get.Push<UI_Toast>();
                 ui_toast.Show("两次密码输入不一致");
                 return;
             }
             if (m_SignUp_PwdInput.text.Length < 6)
             {
-                var ui_toast = UIManager.Get().Push<UI_Toast>();
+                var ui_toast = UIManager.Get.Push<UI_Toast>();
                 ui_toast.Show("密码长度过短");
                 return;
             }
@@ -160,7 +160,7 @@ namespace HotFix
         }
         void OnConnected()
         {
-            var connect = UIManager.Get().GetUI<UI_Connect>();
+            var connect = UIManager.Get.GetUI<UI_Connect>();
             connect.Pop();
             m_OAuthBtn.gameObject.SetActive(true);
 
@@ -172,7 +172,7 @@ namespace HotFix
             //string token = "DE8FD617D94B7EFD67E79314B3F0C665";
             Debug.Log($"连接服务器成功，尝试读取Token：'{token}'");
 
-            var connect = UIManager.Get().Push<UI_Connect>();
+            var connect = UIManager.Get.Push<UI_Connect>();
             await Task.Delay(500);
 
             // 使用Token登录
@@ -196,9 +196,9 @@ namespace HotFix
             var clientPlayer = new ClientPlayer(playerData);
             clientPlayer.ResetToLobby();
             KcpChatClient.m_PlayerManager.AddClientPlayer(clientPlayer, true);
-            UIManager.Get().Push<UI_Main>();
+            UIManager.Get.Push<UI_Main>();
 
-            var connect = UIManager.Get().GetUI<UI_Connect>();
+            var connect = UIManager.Get.GetUI<UI_Connect>();
             if (connect != null)
                 connect.Pop();
 

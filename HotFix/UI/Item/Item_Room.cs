@@ -30,7 +30,7 @@ namespace HotFix
         {
             if (playerData == null)
             {
-                var ui_dialog = UIManager.Get().Push<UI_Dialog>();
+                var ui_dialog = UIManager.Get.Push<UI_Dialog>();
                 ui_dialog.Show("是否加入机器人？",
                     () => { ui_dialog.Hide(); }, "取消",
                     () =>
@@ -49,7 +49,7 @@ namespace HotFix
                 else
                 {
                     Debug.Log($"#{SeatID}是别人，踢人");
-                    var ui_dialog = UIManager.Get().Push<UI_Dialog>();
+                    var ui_dialog = UIManager.Get.Push<UI_Dialog>();
                     ui_dialog.Show("是否移除该用户？",
                         () => { ui_dialog.Hide(); }, "取消",
                         () =>

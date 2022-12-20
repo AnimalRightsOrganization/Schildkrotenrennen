@@ -116,6 +116,7 @@ namespace Client
         {
             IL_InitAdapter("UIManager");
             IL_InitAdapter("EventManager");
+            IL_InitAdapter("PoolManager");
 
             // IL热更加载UI
             appdomain.Invoke("HotFix.Main", "Init", gameObject, GameManager.present); //static方法
@@ -131,27 +132,22 @@ namespace Client
         }
 
 #region C#调用HotFix的方法
-        [ContextMenu("LoadJson")]
-        void LoadJson()
+        public void callHotFix(string type, string method, object instance, params object[] p)
         {
-            appdomain.Invoke("HotFix_Project.DemoLoader", "LoadJson", null, null);
+            //Debug.Log("C# → HotFix");
+            appdomain.Invoke(type, method, instance, p);
+
+            //appdomain.Invoke("HotFix.PoolManager", "StaticPrint", null, null); //static
+            //var manager = transform.Find("IL_PoolManager").gameObject;
+            //Debug.Assert(manager);
+            //appdomain.Invoke("HotFix.PoolManager", "Print", null, gameObject);
         }
 #endregion
 
 #region HotFix调用C#的方法
-        [ContextMenu("EnterUI_UI_PDKBattle")]
-        public void EnterUI_UI_PDKBattle()
+        public void callCsharp()
         {
-            Debug.Log("跑得快登录成功");
-            //UI.ExitAllUI();
-            //if (PDKGameManager.SortId >= PDKGameConfig.DoubleMatchSortId && PDKGameManager.SortId < PDKGameConfig.JJCLeastSortId)
-            //{
-            //    UI.EnterUI<UI_PDKDoubleMatch>(GameEnum.PDK).InitData();
-            //}
-            //else
-            //{
-            //    UI.EnterUI<UI_PDKBattle>(GameEnum.PDK).InitData();
-            //}
+            //Debug.Log("HotFix → C#");
         }
 #endregion
     }
