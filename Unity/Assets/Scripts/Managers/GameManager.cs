@@ -1,36 +1,37 @@
 ﻿using System.IO;
-using System.Collections;
 using UnityEngine;
 using LitJson;
 
-public class GameManager : MonoBehaviour
+namespace Client
 {
-    public static GameManager Instance;
-
-    private static bool Initialized = false;
-    public static Present present; //通过请求返回
-    private readonly IPC _ipc = new IPC { ReceiveTimeout = 10 };
-    public static string Token { get; private set; }
-
-    void Awake()
+    public class GameManager : MonoBehaviour
     {
-        if (!Initialized)
+        public static GameManager Instance;
+
+        private static bool Initialized = false;
+        public static Present present; //通过请求返回
+        private readonly IPC _ipc = new IPC { ReceiveTimeout = 10 };
+        public static string Token { get; private set; }
+
+        private Transform sceneRoot;
+        public UI_CheckUpdate ui_check;
+
+        void Awake()
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
+#if USE_ASSETBUNDLE
+            Debug.Log("使用热更");
+#else
+        Debug.Log("不是热更");
+#endif
 
-            // 系统设置
-            Time.timeScale = 1.0f;
-            Time.fixedDeltaTime = 0.002f; //50fps
-            Application.targetFrameRate = 60; //30帧Dotween看起来卡
-            QualitySettings.vSyncCount = 0;
-            Screen.fullScreen = false;
-            Screen.SetResolution(540, 960, false);
-            Screen.sleepTimeout = SleepTimeout.NeverSleep;
-            //Debug.unityLogger.logEnabled = false; //release版关闭
+            if (!Initialized)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
 
-            // 绑定组件
-            transform.Find("ILGlobal").gameObject.AddComponent<Client.ILGlobal>();
+                SystemSetting();
+
+                BindAssets();
 
 #if CHANNEL_1000 //官方大厅渠道
             IPC_Login();
@@ -41,68 +42,90 @@ public class GameManager : MonoBehaviour
             present = new Present();
             OnInited();
 #else
-            // 加载配置（需要启动资源服务器）
-            GetConfig();
+                // 请求配置（需要启动资源服务器）
+                RequestConfig();
 #endif
+            }
+            else
+            {
+                OnInited();
+            }
         }
-        else
+
+        void OnApplicationQuit()
         {
-            OnInited();
+            //Debug.Log("Quit");
+            Initialized = false;
         }
-    }
 
-    void OnApplicationQuit()
-    {
-        //Debug.Log("Quit");
-        Initialized = false;
-    }
-
-    // 请求游戏配置
-    async void GetConfig()
-    {
-        string text = await HttpHelper.TryGetAsync(ConstValue.PRESENT_GET);
-        Debug.Log($"success: {text}");
-        var obj = JsonMapper.ToObject<ServerResponse>(text);
-        present = JsonMapper.ToObject<Present>(obj.data);
-
-        StartCoroutine(CheckUpdateAsync(OnInited));
-    }
-    
-    IEnumerator CheckUpdateAsync(System.Action onComplete)
-    {
-        if (!Directory.Exists(ConstValue.AB_AppPath))
-            Directory.CreateDirectory(ConstValue.AB_AppPath);
-
-        Transform root = GameObject.Find("Canvas").transform;
-        var request = Resources.LoadAsync<GameObject>("UI_CheckUpdate");
-        yield return request;
-
-        var asset = request.asset as GameObject;
-        GameObject prefab = Instantiate(asset, root);
-        var ui_checkupdate = prefab.AddComponent<UI_CheckUpdate>();
-
-        yield return ui_checkupdate.StartCheck(onComplete);
-    }
-
-    // 初始化完成，控制权移交ILR
-    void OnInited()
-    {
-        Initialized = true;
-
-        Client.ILGlobal.Instance.GlobalInit(); //加载dll
-    }
-
-    async void IPC_Login()
-    {
-        try
+        // 系统设置
+        void SystemSetting()
         {
-            string result = await _ipc.Send("Login 0");
-            Token = result;
-            Debug.Log($"IPC返回：{result}");
+            Time.timeScale = 1.0f;
+            Time.fixedDeltaTime = 0.002f; //50fps
+            Application.targetFrameRate = 60; //30帧Dotween看起来卡
+            QualitySettings.vSyncCount = 0;
+            Screen.fullScreen = false;
+            Screen.SetResolution(540, 960, false);
+            Screen.sleepTimeout = SleepTimeout.NeverSleep;
+            //Debug.unityLogger.logEnabled = false; //release版关闭
         }
-        catch (System.Exception e)
+
+        // 绑定组件
+        void BindAssets()
         {
-            Debug.Log($"未启动大厅：{e.Message}");
+            if (!Directory.Exists(ConstValue.AB_AppPath))
+                Directory.CreateDirectory(ConstValue.AB_AppPath);
+
+            transform.Find("ILGlobal").gameObject.AddComponent<Client.ILGlobal>();
+            sceneRoot = GameObject.Find("Canvas").transform;
+            Debug.Assert(sceneRoot);
+
+            string ui_name = "UI_CheckUpdate";
+            GameObject asset = Resources.Load<GameObject>(ui_name);
+            Debug.Assert(asset);
+
+            GameObject obj = Instantiate(asset, sceneRoot);
+            Debug.Assert(obj);
+
+            obj.name = ui_name;
+            if (obj.GetComponent<UI_CheckUpdate>() == false)
+                obj.AddComponent<UI_CheckUpdate>();
+            ui_check = obj.GetComponent<UI_CheckUpdate>();
+            Debug.Assert(ui_check);
+        }
+
+        // 请求游戏配置
+        async void RequestConfig()
+        {
+            string text = await HttpHelper.TryGetAsync(ConstValue.PRESENT_GET);
+            Debug.Log($"success: {text}");
+            ServerResponse resp = JsonMapper.ToObject<ServerResponse>(text);
+            present = JsonMapper.ToObject<Present>(resp.data);
+
+            StartCoroutine(ui_check.StartCheck(OnInited));
+        }
+
+        // 初始化完成，控制权移交ILR
+        void OnInited()
+        {
+            Initialized = true;
+
+            ILGlobal.Instance.GlobalInit(); //加载dll
+        }
+
+        async void IPC_Login()
+        {
+            try
+            {
+                string result = await _ipc.Send("Login 0");
+                Token = result;
+                Debug.Log($"IPC返回：{result}");
+            }
+            catch (System.Exception e)
+            {
+                Debug.Log($"未启动大厅：{e.Message}");
+            }
         }
     }
 }

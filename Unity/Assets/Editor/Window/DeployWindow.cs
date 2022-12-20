@@ -51,7 +51,7 @@ public class DeployWindow : EditorWindow
 
         GUILayout.BeginHorizontal();
         GUILayout.Space(10);
-        GUILayout.Box("应用输出", GUILayout.Width(100));
+        GUILayout.Box("安装包输出", GUILayout.Width(100));
         GUILayout.Space(10);
         if (GUILayout.Button(ConstValue.BuildDir, GUILayout.Width(450)))
         {
@@ -63,7 +63,7 @@ public class DeployWindow : EditorWindow
         GUILayout.Space(10);
         GUILayout.BeginHorizontal();
         GUILayout.Space(10);
-        GUILayout.Box("远程资源", GUILayout.Width(100));
+        GUILayout.Box("局域网资源", GUILayout.Width(100));
         GUILayout.Space(10);
         if (GUILayout.Button(ConstValue.GetDeployRoot, GUILayout.Width(450)))
         {

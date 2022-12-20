@@ -66,7 +66,7 @@ public class ConstValue
         {
             if (string.IsNullOrEmpty(ab_url))
             {
-                ab_url = Path.Combine(GameManager.present.res_url, PLATFORM_NAME);
+                ab_url = Path.Combine(Client.GameManager.present.res_url, PLATFORM_NAME);
             }
             return ab_url;
         }

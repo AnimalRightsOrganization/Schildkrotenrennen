@@ -69,7 +69,7 @@ namespace HotFix
         void OnEnable()
         {
             Debug.Log("UI_Login.OnEnable");
-            m_VersionText.text = $"v{GameManager.present.app_version}.{GameManager.present.res_version}";
+            m_VersionText.text = $"v{Client.GameManager.present.app_version}.{Client.GameManager.present.res_version}";
 
             NetPacketManager.RegisterEvent(OnNetCallback);
 
@@ -205,7 +205,7 @@ namespace HotFix
         }
         async void SendLoginByToken()
         {
-            string token = GameManager.Token;
+            string token = Client.GameManager.Token;
             //string token = "DE8FD617D94B7EFD67E79314B3F0C665";
             Debug.Log($"连接服务器成功，尝试读取Token：'{token}'");
 

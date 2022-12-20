@@ -39,6 +39,13 @@ namespace HotFix
             Debug.Log($"控制权转交ILRuntime:{p.ToString()}");
             present = p;
 
+            Debug.Log("创建UI");
+            //UIManager.Get().Push<UI_Login>();
+            var ui_loading = UIManager.Get().Push<UI_Loading>();
+            //ui_loading.Listen();
+            Client.GameManager.Instance.ui_check.gameObject.SetActive(false);
+
+            /*
             Debug.Log("创建对象池.1");
             var ILGlobal = GameObject.Find("ILGlobal").transform;
             var poolManager = new GameObject("IL_PoolManager");
@@ -66,10 +73,7 @@ namespace HotFix
                 PoolManager.Get.Despawn(card_item);
                 card_cache.RemoveAt(i);
             }
-
-
-            Debug.Log("创建UI");
-            UIManager.Get().Push<UI_Login>();
+            */
 
             // 检查App版本
             var remote = new Version(present.app_version);
