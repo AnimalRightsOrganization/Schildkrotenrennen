@@ -33,14 +33,14 @@ namespace Client
 
                 BindAssets();
 
-#if CHANNEL_1000 //官方大厅渠道
-            IPC_Login();
+#if Channel_101 //官方大厅渠道
+                //IPC_Login();
 #endif
 
 #if UNITY_EDITOR && !USE_ASSETBUNDLE
-            Debug.Log("不检查更新");
-            present = new Present();
-            OnInited();
+                Debug.Log("不检查更新");
+                present = new Present();
+                OnInited();
 #else
                 // 请求配置（需要启动资源服务器）
                 RequestConfig();
@@ -66,7 +66,9 @@ namespace Client
             Application.targetFrameRate = 60; //30帧Dotween看起来卡
             QualitySettings.vSyncCount = 0;
             Screen.fullScreen = false;
-            Screen.SetResolution(540, 960, false);
+            Debug.Log($"{Application.platform}: {Screen.width}x{Screen.height}"); //WindowsEditor: 1125x2436
+            //Screen.SetResolution(540, 960, false);
+            Screen.SetResolution(Screen.width, Screen.height, false);
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             //Debug.unityLogger.logEnabled = false; //release版关闭
         }

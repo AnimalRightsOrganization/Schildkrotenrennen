@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
 using Client;
@@ -35,17 +34,17 @@ public class TestWindow : EditorWindow
             var pwdInput = ui_login.transform.Find("LoginPanel/PwdInput").GetComponent<InputField>();
             pwdInput.text = "123456";
         }
-        if (GUILayout.Button("SnapShot"))
-        {
-            string fileName = $"{Application.streamingAssetsPath}/Actor_{DateTime.Now.ToString("yyyyMMddhhmmss")}.png";
-            ScreenCapture.CaptureScreenshot(fileName);
-            Debug.Log(fileName);
-            AssetDatabase.Refresh();
-        }
-        if (GUILayout.Button("Print HotFix"))
+        //if (GUILayout.Button("SnapShot"))
+        //{
+        //    string fileName = $"{Application.streamingAssetsPath}/Actor_{System.DateTime.Now.ToString("yyyyMMddhhmmss")}.png";
+        //    ScreenCapture.CaptureScreenshot(fileName);
+        //    Debug.Log(fileName);
+        //    AssetDatabase.Refresh();
+        //}
+        if (GUILayout.Button("Call HotFix"))
         {
             var pool_manager = GameObject.Find("IL_PoolManager");
-            //Debug.Assert(pool_manager);
+            Debug.Assert(pool_manager);
             ILGlobal.Instance.callHotFix("HotFix.Main", "Print", null, null);
         }
     }

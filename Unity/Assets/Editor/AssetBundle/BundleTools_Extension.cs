@@ -239,18 +239,17 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/打包/资源/Windows", false, 1)]
     static void BuildRes_Win64()
     {
-        //BuildTarget target = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), ConstValue.PLATFORM_NAME);
-        Build_Target(BuildTarget.StandaloneWindows64);
+        BuildRes(BuildTarget.StandaloneWindows64);
     }
     [MenuItem("Tools/打包/资源/Android", false, 1)]
     static void BuildRes_Android()
     {
-        Build_Target(BuildTarget.Android);
+        BuildRes(BuildTarget.Android);
     }
     [MenuItem("Tools/打包/资源/iOS", false, 1)]
     static void BuildRes_iOS()
     {
-        Build_Target(BuildTarget.iOS);
+        BuildRes(BuildTarget.iOS);
     }
 
     [MenuItem("Tools/打包/服务器/Windows", false, 2)]
@@ -292,19 +291,19 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/打包/客户端/Windows", false, 3)]
     static void BuildClient_Win64()
     {
-        BuildClient(BuildTarget.StandaloneWindows64);
+        BuildClient(BuildTarget.StandaloneWindows64, 101);
     }
     [MenuItem("Tools/打包/客户端/Android", false, 3)]
     static void BuildClient_Android()
     {
-        BuildClient(BuildTarget.Android);
+        BuildClient(BuildTarget.Android, 102);
     }
     [MenuItem("Tools/打包/客户端/iOS", false, 3)]
     static void BuildClient_iOS()
     {
-        BuildClient(BuildTarget.iOS);
+        BuildClient(BuildTarget.iOS, 103);
     }
-    static void BuildClient(BuildTarget target)
+    public static void BuildClient(BuildTarget target, int channel = 101)
     {
         //EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Standalone, BuildTarget.StandaloneWindows64);
         SetIcon();
@@ -335,6 +334,7 @@ public partial class BundleTools : Editor
             scenes = new string[] { "Assets/Scenes/Client.unity" },
             locationPathName = Path.Combine(build_dir, $"GameClient.{ext}"),
             target = target,
+            extraScriptingDefines = new string[] { $"Channel_{channel}" },
             options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development,
         };
 
@@ -345,6 +345,11 @@ public partial class BundleTools : Editor
             Debug.Log($"打包成功: {opt.locationPathName}");
         if (summary.result == BuildResult.Failed)
             Debug.LogError("打包失败");
+    }
+    [MenuItem("Tools/打包/部署 %_F9", false, 3)]
+    static void ModifyHost()
+    {
+        DeployWindow.ShowWindow();
     }
 
     [MenuItem("Tools/图标/SetIcon", true)]
@@ -375,11 +380,6 @@ public partial class BundleTools : Editor
     #endregion
 
     #region 运行
-    [MenuItem("Tools/运行/开发环境 %_F9", false, 11)]
-    static void ModifyHost()
-    {
-        EnvWindow.ShowWindow();
-    }
     //% (ctrl on Windows and Linux, cmd on macOS),
     //^ (ctrl on Windows, Linux, and macOS),
     //# (shift),

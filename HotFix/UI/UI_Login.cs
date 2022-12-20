@@ -66,16 +66,16 @@ namespace HotFix
         }
         void OnEnable()
         {
-            Debug.Log("UI_Login.OnEnable");
-            m_VersionText.text = $"v{Client.GameManager.present.app_version}.{Client.GameManager.present.res_version}";
-
             NetPacketManager.RegisterEvent(OnNetCallback);
 
+            m_VersionText.text = $"v{Client.GameManager.present.app_version}.{Client.GameManager.present.res_version}";
             m_OAuthBtn.gameObject.SetActive(true);
         }
         void OnDisable()
         {
             NetPacketManager.UnRegisterEvent(OnNetCallback);
+
+            m_Login_Panel.SetActive(false);
         }
         #endregion
 
@@ -202,10 +202,6 @@ namespace HotFix
             if (connect != null)
                 connect.Pop();
 
-            //m_Foreground.SetActive(false);
-            //m_Login_Panel.SetActive(false);
-            //m_SignUp_Panel.SetActive(false);
-            //m_OAuthBtn.gameObject.SetActive(false);
             this.Pop();
         }
         #endregion

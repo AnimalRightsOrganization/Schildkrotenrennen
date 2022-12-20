@@ -36,7 +36,6 @@ namespace HotFix
                     () =>
                     {
                         KcpChatClient.SendOperateSeat(SeatID, SeatOperate.ADD_BOT);
-                        Debug.Log("Hide Dialog <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                         ui_dialog.Hide();
                     }, "确定");
             }

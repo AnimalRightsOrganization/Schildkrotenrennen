@@ -102,7 +102,7 @@ namespace HotFix
             }
 
             //②有缓存，用完了
-            Debug.Log($"②②②:{list_inactive.Count}");
+            //Debug.Log($"②②②:{list_inactive.Count}");
             if (list_inactive.Count == 0)
             {
                 var prefab = ResManager.LoadPrefab($"Prefabs/{assetName}");
@@ -123,7 +123,7 @@ namespace HotFix
 
 
             //③记录加入active
-            Debug.Log($"③③③:{dic_active.ContainsKey(assetName)}");
+            //Debug.Log($"③③③:{dic_active.ContainsKey(assetName)}");
             if (dic_active.TryGetValue(assetName, out list_active) == false)
             {
                 list_active = new List<GameObject>();

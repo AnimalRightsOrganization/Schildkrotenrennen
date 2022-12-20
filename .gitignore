@@ -13,6 +13,8 @@ Output/
 *StreamingAssets.meta
 *Generated/
 Build/
+Builds/
+Deploy/
 Xcode/
 *.DS_Store
 *.csproj

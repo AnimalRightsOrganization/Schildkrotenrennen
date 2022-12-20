@@ -1,31 +1,38 @@
 ﻿using System;
 using System.IO;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.Build;
 using Newtonsoft.Json;
+using Debug = UnityEngine.Debug;
 
 public class DeployWindow : EditorWindow
 {
-    [MenuItem("Tools/打包/部署", false)]
-    static void AddWindow()
-    {
-        Rect rect = new Rect(0, 0, 600, 400);
-        DeployWindow window = (DeployWindow)GetWindowWithRect(typeof(DeployWindow), rect, true, "部署");
-        window.Show();
-    }
+    // 远程目录结构：
+    // (afk/fight/turtlerace)/(app/res)/(iOS/Android/StandaloneWindows64)
+
+    //const string readme = "说明：" +
+    //    "\n[线上版本] 请求服务器查询线上当前运营的应用和资源版本。" +
+    //    "\n[打包版本] 指的是执行完打包，准备上传到服务器的安装包和资源包。" +
+    //    "\n[打包] 执行了资源打包+部署资源到模拟的本地和服务器，还需要实际上传包体，并更新SQL记录。" +
+    //    "\n[压缩] 把安装包和资源包打包称 *.zip 文件上传。" +
+    //    "\n[部署] 通过POST通知PHP执行更新SQL，同时生成一条部署记录。";
 
     static string r_app_version = string.Empty;
     static string r_res_version = string.Empty;
     static string l_app_version = string.Empty;
     static string l_res_version = string.Empty;
 
-    const string readme = "说明：" +
-        "\n[线上版本] 请求服务器查询线上当前运营的应用和资源版本。" +
-        "\n[打包版本] 指的是执行完打包，准备上传到服务器的安装包和资源包。" +
-        "\n[压缩] 把安装包和资源包打包称 *.zip 文件上传。" +
-        "\n[打包] 执行了资源打包+部署资源到模拟的本地和服务器，还需要实际上传包体，并更新SQL记录。" +
-        "\n[部署] 通过POST通知PHP执行更新SQL，同时生成一条部署记录。";
+    static int targetPlatform = 0;
+
+    public static void ShowWindow()
+    {
+        Rect rect = new Rect(0, 0, 600, 350);
+        DeployWindow window = (DeployWindow)GetWindowWithRect(typeof(DeployWindow), rect, true, "部署");
+        window.Show();
+    }
 
     void OnEnable()
     {
@@ -38,61 +45,44 @@ public class DeployWindow : EditorWindow
             l_res_version = PlayerPrefs.GetString("l_res_version");
             //Debug.Log("读取PlayerPrefs");
         }
+        CheckNetwork();
+        CheckUseAB();
     }
-
-    int targetPlatform= 0;
+    void OnFocus()
+    {
+        if (is_editing == true)
+        {
+            Debug.Log("Focus: 检查网络");
+            is_editing = false;
+            CheckNetwork();
+        }
+    }
+    void OnLostFocus() { }
 
     void OnGUI()
     {
+        targetPlatform = GUILayout.SelectionGrid(targetPlatform, new string[] { "打包", "环境" }, 2, GUILayout.Height(30)); //一行几个
         GUILayout.Space(10);
-        GUILayout.Box($"目标平台：{ConstValue.PLATFORM_NAME}");
-        GUILayout.Space(10);
+        if (targetPlatform == 0)
+            Page0();
+        else
+            Page1();
 
-
-        GUILayout.BeginHorizontal();
-        GUILayout.Space(10);
-        GUILayout.Box("安装包输出", GUILayout.Width(100));
-        GUILayout.Space(10);
-        if (GUILayout.Button(ConstValue.BuildDir, GUILayout.Width(450)))
-        {
-            if (Directory.Exists(ConstValue.BuildDir) == false)
-                Directory.CreateDirectory(ConstValue.BuildDir);
-            System.Diagnostics.Process.Start("explorer", ConstValue.BuildDir);
-        }
-        GUILayout.EndHorizontal();
-        GUILayout.Space(10);
-        GUILayout.BeginHorizontal();
-        GUILayout.Space(10);
-        GUILayout.Box("局域网资源", GUILayout.Width(100));
-        GUILayout.Space(10);
-        if (GUILayout.Button(ConstValue.GetDeployRoot, GUILayout.Width(450)))
-        {
-            System.Diagnostics.Process.Start("explorer", ConstValue.GetDeployRes);
-        }
-        GUILayout.EndHorizontal();
-        GUILayout.Space(10);
-        GUILayout.BeginHorizontal();
-        GUILayout.Space(10);
-        GUILayout.Box("本地资源", GUILayout.Width(100));
-        GUILayout.Space(10);
-        string path = Application.persistentDataPath.Replace("/", "\\");
-        if (GUILayout.Button(path, GUILayout.Width(450)))
-        {
-            System.Diagnostics.Process.Start("explorer", path);
-        }
-        GUILayout.EndHorizontal();
-        GUILayout.Space(10);
-
-
+        //GUILayout.Space(10);
+        //GUILayout.Box($"目标平台：{ConstValue.PLATFORM_NAME}");
+    }
+    // 打包
+    static void Page0()
+    {
         GUILayout.BeginHorizontal();
         GUILayout.Space(10); //左10
         if (GUILayout.Button("线上版本", GUILayout.Width(100))) { GetVersion(); }
         GUILayout.Space(10);
         GUILayout.Label("应用:", GUILayout.Width(40));
-        GUILayout.TextField(r_app_version, GUILayout.Width(175));
+        GUILayout.Box(r_app_version, GUILayout.Width(175));
         GUILayout.Space(10);
         GUILayout.Label("资源:", GUILayout.Width(40));
-        GUILayout.TextField(r_res_version, GUILayout.Width(175));
+        GUILayout.Box(r_res_version, GUILayout.Width(175));
         GUILayout.Space(10);
         GUILayout.EndHorizontal();
         GUILayout.Space(10);
@@ -100,7 +90,7 @@ public class DeployWindow : EditorWindow
 
         GUILayout.BeginHorizontal();
         GUILayout.Space(10);
-        if (GUILayout.Button("打包版本", GUILayout.Width(100))) { GetVersion(); }
+        GUILayout.Box("打包版本", GUILayout.Width(100));
         GUILayout.Space(10);
         GUILayout.Label("应用:", GUILayout.Width(40));
         l_app_version = GUILayout.TextField(l_app_version, GUILayout.Width(80));
@@ -119,44 +109,200 @@ public class DeployWindow : EditorWindow
         }
         GUILayout.Space(10);
         GUILayout.EndHorizontal();
-        GUILayout.Space(10);
 
-
+        // 表格
+        GUILayout.Space(30);
         GUILayout.BeginHorizontal();
         GUILayout.Space(10);
-        GUILayout.Box("打包", GUILayout.Width(100));
-        targetPlatform = GUILayout.SelectionGrid(targetPlatform, new string[] { "Windows", "Android", "iOS" }, 1); //一行几个
-        GUILayout.Space(55);
-        if (GUILayout.Button("打包应用", GUILayout.Width(175))) { BuildApp(); return; }
-        GUILayout.Space(55);
-        if (GUILayout.Button("打包资源", GUILayout.Width(175))) { BuildRes(); }
+        GUILayout.Box("渠道打包", GUILayout.Width(100));
+        GUILayout.Box("PC", GUILayout.Width(100));
+        GUILayout.Box("安卓", GUILayout.Width(100));
+        GUILayout.Box("苹果", GUILayout.Width(100));
+        GUILayout.Box("全部", GUILayout.Width(100));
         GUILayout.EndHorizontal();
-        GUILayout.Space(10);
-
-
+        // 行
         GUILayout.BeginHorizontal();
         GUILayout.Space(10);
-        GUILayout.Box("压缩", GUILayout.Width(100));
-        GUILayout.Space(55);
-        if (GUILayout.Button("压缩应用", GUILayout.Width(175))) { PackAppZip(); }
-        GUILayout.Space(55);
-        if (GUILayout.Button("压缩资源", GUILayout.Width(175))) { PackResZip(); }
+        GUILayout.Box("内测", GUILayout.Width(100));
+        if (GUILayout.Button("101", GUILayout.Width(100)))
+        {
+            //BuildApp(); //打包应用
+            //BuildRes(); //打包资源
+            return;
+        }
+        if (GUILayout.Button("102", GUILayout.Width(100)))
+        {
+            return;
+        }
+        if (GUILayout.Button("103", GUILayout.Width(100)))
+        {
+            return;
+        }
+        if (GUILayout.Button("全部", GUILayout.Width(100)))
+        {
+            BuildAll(101);
+            return;
+        }
         GUILayout.EndHorizontal();
-        GUILayout.Space(10);
-
-
+        // 行
         GUILayout.BeginHorizontal();
         GUILayout.Space(10);
-        if (GUILayout.Button("部署", GUILayout.Width(100))) { DeployRes(); }
+        GUILayout.Box("官方", GUILayout.Width(100));
+        if (GUILayout.Button("1001", GUILayout.Width(100))) { }
+        if (GUILayout.Button("1002", GUILayout.Width(100))) { }
+        if (GUILayout.Button("1003", GUILayout.Width(100))) { }
+        if (GUILayout.Button("全部", GUILayout.Width(100))) { }
+        GUILayout.EndHorizontal();
+        // 行
+        GUILayout.BeginHorizontal();
         GUILayout.Space(10);
+        GUILayout.Box("Steam", GUILayout.Width(100));
+        if (GUILayout.Button("1011", GUILayout.Width(100))) { }
+        GUILayout.Box("", GUILayout.Width(100));
+        GUILayout.Box("", GUILayout.Width(100));
+        GUILayout.Box("", GUILayout.Width(100));
+        GUILayout.EndHorizontal();
+        // 行
+        GUILayout.BeginHorizontal();
+        GUILayout.Space(10);
+        GUILayout.Box("华为", GUILayout.Width(100));
+        GUILayout.Box("", GUILayout.Width(100));
+        if (GUILayout.Button("1022", GUILayout.Width(100))) { }
+        GUILayout.Box("", GUILayout.Width(100));
+        GUILayout.Box("", GUILayout.Width(100));
+        GUILayout.EndHorizontal();
+
+        //GUILayout.Box("压缩", GUILayout.Width(100));
+        //if (GUILayout.Button("压缩应用", GUILayout.Width(175))) { PackAppZip(); }
+        //if (GUILayout.Button("压缩资源", GUILayout.Width(175))) { PackResZip(); }
+
+        GUILayout.Space(10);
+        GUILayout.BeginHorizontal();
+        GUILayout.Space(10);
+        if (GUILayout.Button("部署", GUILayout.Width(100), GUILayout.Height(30))) { DeployRes(); }
+        GUILayout.Space(10);
+        GUILayout.EndHorizontal();
+    }
+    // 环境
+    static void Page1()
+    {
+        //GUILayout.Label("2/2");
+        GUILayout.BeginHorizontal();
+        GUILayout.Space(10);
+        GUILayout.Box("安装包输出", GUILayout.Width(100));
+        GUILayout.Space(10);
+        if (GUILayout.Button(ConstValue.BuildDir, GUILayout.Width(450)))
+        {
+            if (Directory.Exists(ConstValue.BuildDir) == false)
+                Directory.CreateDirectory(ConstValue.BuildDir);
+            System.Diagnostics.Process.Start("explorer", ConstValue.BuildDir);
+        }
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(10);
+        GUILayout.BeginHorizontal();
+        GUILayout.Space(10);
+        GUILayout.Box("局域网资源", GUILayout.Width(100));
+        GUILayout.Space(10);
+        if (GUILayout.Button(ConstValue.GetDeployRoot, GUILayout.Width(450)))
+        {
+            System.Diagnostics.Process.Start("explorer", ConstValue.GetDeployRes);
+        }
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(10);
+        GUILayout.BeginHorizontal();
+        GUILayout.Space(10);
+        GUILayout.Box("本地资源", GUILayout.Width(100));
+        GUILayout.Space(10);
+        string path = Application.persistentDataPath.Replace("/", "\\");
+        if (GUILayout.Button(path, GUILayout.Width(450)))
+        {
+            System.Diagnostics.Process.Start("explorer", path);
+        }
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(10);
+        GUILayout.BeginHorizontal();
+        GUILayout.Space(10);
+        GUILayout.Box("REST", GUILayout.Width(100));
+        GUILayout.Space(10);
+        string restapi = "https://restapi.moegijinka.cn";
+        GUILayout.Box(restapi, GUILayout.Width(450));
+        GUILayout.Space(10);
+        GUILayout.EndHorizontal();
+
+
+        // 说明
+        //GUILayout.Space(10);
+        //GUILayout.BeginHorizontal();
+        //GUILayout.Space(10);
+        //GUILayout.TextArea(readme, GUILayout.Width(580), GUILayout.Height(100));
+        //GUILayout.Space(10);
+        //GUILayout.EndHorizontal();
+
+
+        GUILayout.Space(10);
+        GUILayout.BeginHorizontal();
+        {
+            GUILayout.Space(10);
+            GUILayout.Box("当前网络", GUILayout.Width(100));
+            GUILayout.Space(10);
+            if (is_www)
+            {
+                if (GUILayout.Button("外网", GUILayout.Width(90)))
+                {
+                    CheckNetwork();
+                    Debug.Log("刷新");
+                }
+            }
+            else
+            {
+                if (GUILayout.Button("内网", GUILayout.Width(90)))
+                {
+                    CheckNetwork();
+                    Debug.Log("刷新");
+                }
+            }
+            GUILayout.Space(10);
+            if (GUILayout.Button("修改", GUILayout.Width(80)))
+            {
+                ChangeNetwork();
+            }
+            GUILayout.Space(10);
+        }
         GUILayout.EndHorizontal();
 
 
         GUILayout.Space(10);
         GUILayout.BeginHorizontal();
-        GUILayout.Space(10);
-        GUILayout.TextArea(readme, GUILayout.Width(580), GUILayout.Height(100));
-        GUILayout.Space(10);
+        {
+            GUILayout.Space(10);
+            GUILayout.Box("是否用热更新", GUILayout.Width(100));
+            GUILayout.Space(10);
+            if (use_ab)
+            {
+                if (GUILayout.Button("使用热更新", GUILayout.Width(90)))
+                {
+                    CheckUseAB();
+                    Debug.Log("刷新");
+                }
+            }
+            else
+            {
+                if (GUILayout.Button("不用热更新", GUILayout.Width(90)))
+                {
+                    CheckUseAB();
+                    Debug.Log("刷新");
+                }
+            }
+            GUILayout.Space(10);
+            if (GUILayout.Button("修改", GUILayout.Width(80)))
+            {
+                ChangeUseAB();
+            }
+            GUILayout.Space(10);
+        }
         GUILayout.EndHorizontal();
     }
 
@@ -192,33 +338,6 @@ public class DeployWindow : EditorWindow
         AssetDatabase.Refresh();
     }
 
-    // 打包
-    static void BuildApp()
-    {
-        BuildTarget target = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), ConstValue.PLATFORM_NAME);
-        if (Directory.Exists(ConstValue.BuildDir))
-            Directory.Delete(ConstValue.BuildDir, true);
-        Directory.CreateDirectory(ConstValue.BuildDir);
-
-        BuildPlayerOptions opt = new BuildPlayerOptions();
-        opt.scenes = new string[] { "Assets/Scenes/Client.unity" };
-        opt.locationPathName = ConstValue.LocationPath;
-        opt.target = target;
-        opt.options = BuildOptions.None;
-
-        BuildPipeline.BuildPlayer(opt);
-
-        Debug.Log("打包成功!");
-    }
-    static void BuildRes()
-    {
-        BuildTarget target = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), ConstValue.PLATFORM_NAME);
-        BundleTools.Build_Target(target);
-    }
-
-    // 远程目录结构：
-    // (afk/fight/turtlerace)/(app/res)/(iOS/Android/StandaloneWindows64)
-
     // 压缩
     static async void PackAppZip()
     {
@@ -239,19 +358,23 @@ public class DeployWindow : EditorWindow
         EditorUtility.ClearProgressBar();
         Debug.Log("压缩成功");
     }
+    [MenuItem("Tools/测试", false)]
     static async void PackResZip()
     {
-        string res_path = Path.Combine(Application.persistentDataPath, ConstValue.PLATFORM_NAME).Replace("/", "\\");
-        string res_zip = Path.Combine(Environment.CurrentDirectory, $"{ConstValue.PLATFORM_NAME}.res.zip").Replace("/", "\\");
+        // 本地资源目录有杂项，使用局域网资源目录
+        string res_path = Path.Combine(ConstValue.GetDeployRoot, "res").Replace("/", "\\");
+        //string res_path = Path.Combine(Application.persistentDataPath, ConstValue.PLATFORM_NAME).Replace("/", "\\");
+        string res_zip = Path.Combine(Environment.CurrentDirectory, "res.zip").Replace("/", "\\");
         Debug.Log($"压缩资源：{res_path} --->\n{res_zip}");
+        return;
 
         EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0f);
         await Task.Delay(100);
-        File.Delete(res_zip);
+        File.Delete(res_zip); //若已存在，删除
 
         EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0.5f);
         await Task.Delay(100);
-        ZipTools.PackFiles(res_zip, res_path);
+        ZipTools.PackFiles(res_zip, res_path); //生成.zip
 
         EditorUtility.DisplayProgressBar("压缩", "压缩中...", 1f);
         await Task.Delay(100);
@@ -315,5 +438,69 @@ public class DeployWindow : EditorWindow
         //return;
 
         //await PostDeployRes();
+    }
+
+    // 某渠道三个安装包、三份资源，压缩
+    static void BuildAll(int channel)
+    {
+        // 所有渠道的资源，都共用一份！
+        BundleTools.BuildRes(BuildTarget.StandaloneWindows64);
+        BundleTools.BuildRes(BuildTarget.Android);
+        PackResZip(); //../res/
+
+        BundleTools.BuildClient(BuildTarget.StandaloneWindows64, channel);
+        PackAppZip();
+        BundleTools.BuildClient(BuildTarget.Android, channel + 1);
+        //BundleTools.BuildClient(BuildTarget.iOS, channel + 2);
+        //PackAppZip(); //../app/
+    }
+
+
+
+    const string notepad_exe = @"C:\Program Files\Notepad++\notepad++.exe";
+    const string hosts_path = @"C:\Windows\System32\drivers\etc\hosts";
+    static bool is_www = true; //默认
+    static bool is_editing = false; //是否正在编辑
+
+    const string yes_use_ab = "USE_ASSETBUNDLE";
+    const string not_use_ab = "";
+    static NamedBuildTarget target = NamedBuildTarget.Standalone;
+    static bool use_ab = false; //默认
+
+    static async void CheckNetwork()
+    {
+        string[] lines = await File.ReadAllLinesAsync(hosts_path);
+        // 默认有四行，从追加的开始读
+        is_www = true;
+        for (int i = 4; i < lines.Length; i++)
+        {
+            string line = lines[i];
+            if (line.StartsWith("##") == false)
+            {
+                is_www = false;
+                break;
+            }
+        }
+    }
+    static void ChangeNetwork()
+    {
+        is_editing = true;
+        Process.Start(notepad_exe, hosts_path); //notepad++
+    }
+    static bool CheckUseAB()
+    {
+        string cur_use_ab = PlayerSettings.GetScriptingDefineSymbols(target);
+        use_ab = cur_use_ab.Contains(yes_use_ab);
+        return use_ab;
+    }
+    static void ChangeUseAB()
+    {
+        CheckUseAB();
+
+        use_ab = !use_ab;
+        string dst_use_ab = use_ab ? yes_use_ab : not_use_ab;
+
+        PlayerSettings.SetScriptingDefineSymbols(target, dst_use_ab);
+        AssetDatabase.Refresh();
     }
 }

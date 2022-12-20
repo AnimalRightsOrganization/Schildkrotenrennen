@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ConstValue
 {
-    #region AssetBundle
+#region AssetBundle
     public const string PATCH_NAME = "Bundles";
     // ab打包源文件
     static string _srcPath;
@@ -97,18 +97,12 @@ public class ConstValue
         }
     }
     public static string GetDeployRes { get { return $"{GetDeployRoot}\\res"; } }
-    #endregion
+#endregion
 
 
-    #region Application
+#region Application
     public const string APP_NANE = "turtlerace";
     public const string COMPANY_NANE = "moegijinka";
-#if CHANNEL_1000 //官方PC大厅渠道
-#elif CHANNEL_1001 //官方PC独立渠道
-#elif CHANNEL_1011 //官方Android大厅渠道
-#elif CHANNEL_1012 //官方Android独立渠道
-#else //开发测试渠道
-#endif
 
 #if UNITY_ANDROID
     public const string PLATFORM_NAME = "Android";

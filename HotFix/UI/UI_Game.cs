@@ -108,8 +108,6 @@ namespace HotFix
                     m_ColorSelected.anchoredPosition = Vector2.zero;
                 });
             }
-
-            Debug.Log("UI_Game.Awake.done.");
         }
         void OnEnable()
         {
@@ -128,7 +126,6 @@ namespace HotFix
         #region 按钮事件
         public void InitUI()
         {
-            Debug.Log("UI_Game.InitUI.start.");
             ///////////////////////////////////////////
             PoolManager.Get.Spawn("MapManager");
             MapManager.Get.InitAssets();
