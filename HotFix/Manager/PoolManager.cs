@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace HotFix
@@ -18,12 +20,62 @@ namespace HotFix
             dic_inactive = new Dictionary<string, List<GameObject>>();
         }
 
-        // 预创建，关闭显示
-        public GameObject Prespawn(string value)
+        // 一次性创建多个，优化Bundle载入次数
+        public async Task<List<GameObject>> SpawnNum<T>(
+            string assetName, int num, Action action = null) where T : MonoBehaviour
         {
-            var obj = Spawn(value);
-            obj.SetActive(false);
-            return obj;
+            List<GameObject> list_inactive = null;
+            List<GameObject> list_active = null;
+            var prefab = ResManager.LoadPrefab($"Prefabs/{assetName}");
+
+            for (int i = 0; i < num; i++)
+            {
+                GameObject obj = null;
+
+                //①没有缓存，新建key-value，新建obj
+                Debug.Log($"①①①:{assetName}");
+                if (dic_inactive.TryGetValue(assetName, out list_inactive) == false)
+                {
+                    list_inactive = new List<GameObject>();
+                    dic_inactive.Add(assetName, list_inactive);
+
+                    //var prefab = ResManager.LoadPrefab($"Prefabs/{assetName}");
+                    obj = Instantiate(prefab, transform);
+                    obj.name = assetName;
+                    list_inactive.Add(obj);
+                }
+
+                //②有缓存，用完了
+                if (list_inactive.Count == 0)
+                {
+                    //var prefab = ResManager.LoadPrefab($"Prefabs/{value}");
+                    obj = Instantiate(prefab, transform);
+                    obj.name = assetName;
+                    list_inactive.Add(obj);
+                }
+                else
+                {
+                    obj = list_inactive[0];
+                }
+                obj.SetActive(true);
+                list_inactive.RemoveAt(0);
+
+                //③记录加入active
+                if (dic_active.TryGetValue(assetName, out list_active) == false)
+                {
+                    list_active = new List<GameObject>();
+                    dic_active.Add(assetName, list_active);
+                }
+                list_active.Add(obj);
+
+                if (obj.GetComponent<T>() == false)
+                    obj.AddComponent<T>();
+                await Task.Delay(1);
+
+                action?.Invoke();
+            }
+
+            return (list_active);
         }
         //inactive→active
         public GameObject Spawn(string value)
@@ -87,9 +139,6 @@ namespace HotFix
         {
             if (obj == null) return;
             string charaName = obj.name;
-            //Debug.Log($"Despawn: key={charaName}, count={dic_inactive.ContainsKey(charaName)}");
-            //List<GameObject> lst = new List<GameObject>();
-            //dic_inactive.TryGetValue(charaName, out lst);
 
             dic_inactive[charaName].Add(obj);
             obj.transform.position = Vector3.zero;
@@ -98,6 +147,18 @@ namespace HotFix
             obj.SetActive(false);
 
             dic_active[charaName].Remove(obj);
+        }
+        public void DespawnType(string key)
+        {
+            List<GameObject> list = new List<GameObject>();
+            if (dic_active.TryGetValue(key, out list))
+            {
+                for (int i = list.Count - 1; i >= 0; i--)
+                {
+                    var obj = list[i];
+                    Despawn(obj);
+                }
+            }
         }
         public void DespawnAll()
         {

@@ -34,11 +34,6 @@ public class TestWindow : EditorWindow
             var pwdInput = ui_login.transform.Find("LoginPanel/PwdInput").GetComponent<InputField>();
             pwdInput.text = "123456";
         }
-        if (GUILayout.Button("Push<UI>"))
-        {
-            //ILGlobal.Instance.appdomain.Invoke("HotFix.Main", "PushUI", ILGlobal.Instance.gameObject, null);
-            ILGlobal.Instance.appdomain.Invoke("HotFix.Main", "PushUI", null, null); //没有对象，静态
-        }
         if (GUILayout.Button("SnapShot"))
         {
             string fileName = $"{Application.streamingAssetsPath}/Actor_{DateTime.Now.ToString("yyyyMMddhhmmss")}.png";

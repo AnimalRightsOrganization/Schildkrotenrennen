@@ -14,29 +14,29 @@ namespace Client
         internal static event System.Action OnUnZipCompletedEvent; //解压完成事件
         internal static event System.Action OnDownloadCompleteEvent; //下载完成事件
 
-        private Slider m_progressSlider;
-        private Text m_progressText;
+        private Text m_ProgressText;
+        private Slider m_ProgressSlider;
         private List<ABInfo> downloadList;
         private int fileCount = 0;
 
         void Awake()
         {
-            m_progressSlider = transform.Find("Slider").GetComponent<Slider>();
-            m_progressText = transform.Find("Slider").Find("Text").GetComponent<Text>();
+            m_ProgressText = transform.Find("Slider").Find("Text").GetComponent<Text>();
+            m_ProgressSlider = transform.Find("Slider").GetComponent<Slider>();
             downloadList = new List<ABInfo>();
             fileCount = 0;
         }
 
         void Update()
         {
-            float progress = (float)fileCount / (float)downloadList.Count;
-            m_progressText.text = $"{(progress * 100).ToString("F0")}%";
-            m_progressSlider.value = fileCount;
+            float percent = (float)fileCount / (float)downloadList.Count;
+            m_ProgressText.text = $"{(percent * 100).ToString("F0")}%";
+            m_ProgressSlider.value = fileCount;
         }
 
         static IEnumerator BeginDownLoad(string downloadfileName, string desFileName)
         {
-            Debug.Log($"BeginDownLoad: {downloadfileName}\nTo: {desFileName}");
+            //Debug.Log($"BeginDownLoad: {downloadfileName}\nTo: {desFileName}");
             if (downloadfileName.Contains("http") == false)
             {
                 downloadfileName = $"http://{downloadfileName}";
@@ -132,8 +132,8 @@ namespace Client
                 downloadList.Add(ab);
             }
             Debug.Log("需要更新：" + downloadList.Count);
-            m_progressSlider.minValue = 0;
-            m_progressSlider.maxValue = downloadList.Count;
+            m_ProgressSlider.minValue = 0;
+            m_ProgressSlider.maxValue = downloadList.Count;
 
             // 4. 追条：确认文件存在 -> 对比md5 -> 下载
             fileCount = 0;

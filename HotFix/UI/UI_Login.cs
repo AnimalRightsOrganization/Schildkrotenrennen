@@ -32,8 +32,6 @@ namespace HotFix
         #endregion
 
         #region 内置方法
-        private int try_times = 0;
-        private bool trying = false;
         void Awake()
         {
             m_Foreground = transform.Find("Foreground").gameObject;
@@ -73,12 +71,6 @@ namespace HotFix
 
             NetPacketManager.RegisterEvent(OnNetCallback);
 
-            if (KcpChatClient.IsConnected() == false && trying == false)
-            {
-                TryConnect();
-                return;
-            }
-
             m_OAuthBtn.gameObject.SetActive(true);
         }
         void OnDisable()
@@ -88,33 +80,6 @@ namespace HotFix
         #endregion
 
         #region 按钮事件
-        async void TryConnect()
-        {
-            trying = true;
-            while (true)
-            {
-                await ConnectToServer();
-
-                if (try_times >= 3 || KcpChatClient.IsConnected())
-                {
-                    Debug.Log($"Finish: {try_times}");
-                    trying = false;
-                    var ui_connect = UIManager.Get().GetUI<UI_Connect>();
-                    ui_connect?.Pop();
-                    break;
-                }
-            }
-        }
-        async Task ConnectToServer()
-        {
-            m_OAuthBtn.gameObject.SetActive(false);
-            KcpChatClient.Connect();
-            UIManager.Get().Push<UI_Connect>();
-
-            try_times++;
-            Debug.Log($"Connect: {try_times}");
-            await Task.Delay(3000);
-        }
         void OnCloseSignUpPanel()
         {
             m_SignUp_Panel.SetActive(false);
@@ -167,11 +132,9 @@ namespace HotFix
         }
         void OnOAuthBtnClick()
         {
-            try_times = 0;
-
-            if (KcpChatClient.IsConnected() == false && trying == false)
+            if (KcpChatClient.IsConnected() == false && Main.trying == false)
             {
-                TryConnect();
+                Main.TryConnect(() => { m_OAuthBtn.gameObject.SetActive(false); });
                 return;
             }
 
