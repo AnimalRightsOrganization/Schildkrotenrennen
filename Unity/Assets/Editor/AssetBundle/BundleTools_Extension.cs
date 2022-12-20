@@ -332,7 +332,7 @@ public partial class BundleTools : Editor
         BuildPlayerOptions opt = new BuildPlayerOptions
         {
             scenes = new string[] { "Assets/Scenes/Client.unity" },
-            locationPathName = Path.Combine(build_dir, $"GameClient.{ext}"),
+            locationPathName = Path.Combine(build_dir, $"GameClient_{channel}.{ext}"),
             target = target,
             extraScriptingDefines = new string[] { $"Channel_{channel}" },
             options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development,

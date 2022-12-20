@@ -11,7 +11,7 @@ using Debug = UnityEngine.Debug;
 public class DeployWindow : EditorWindow
 {
     // 远程目录结构：
-    // (afk/fight/turtlerace)/(app/res)/(iOS/Android/StandaloneWindows64)
+    // (afk/fight/turtlerace)/(release/res)/(iOS/Android/StandaloneWindows64)
 
     //const string readme = "说明：" +
     //    "\n[线上版本] 请求服务器查询线上当前运营的应用和资源版本。" +
@@ -171,10 +171,6 @@ public class DeployWindow : EditorWindow
         GUILayout.Box("", GUILayout.Width(100));
         GUILayout.Box("", GUILayout.Width(100));
         GUILayout.EndHorizontal();
-
-        //GUILayout.Box("压缩", GUILayout.Width(100));
-        //if (GUILayout.Button("压缩应用", GUILayout.Width(175))) { PackAppZip(); }
-        //if (GUILayout.Button("压缩资源", GUILayout.Width(175))) { PackResZip(); }
 
         GUILayout.Space(10);
         GUILayout.BeginHorizontal();
@@ -339,10 +335,11 @@ public class DeployWindow : EditorWindow
     }
 
     // 压缩
-    static async void PackAppZip()
+    [MenuItem("Tools/PC压缩", true)]
+    static async Task PackStandaloneWindows64(int channel)
     {
-        string app_path = ConstValue.BuildDir;
-        string app_zip = Path.Combine(Environment.CurrentDirectory, $"{ConstValue.PLATFORM_NAME}.app.zip").Replace("/", "\\");
+        string app_path = Path.Combine(ConstValue.BuildDir, $"StandaloneWindows64").Replace("/", "\\");
+        string app_zip = Path.Combine(ConstValue.BuildDir, $"GameClient_{channel}.zip").Replace("/", "\\");
         Debug.Log($"压缩应用：{app_path} --->\n{app_zip}");
 
         EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0f);
@@ -358,19 +355,59 @@ public class DeployWindow : EditorWindow
         EditorUtility.ClearProgressBar();
         Debug.Log("压缩成功");
     }
-    [MenuItem("Tools/测试", false)]
-    static async void PackResZip()
+    [MenuItem("Tools/应用压缩", true)]
+    static async Task PackRelease(int channel)
     {
-        // 本地资源目录有杂项，使用局域网资源目录
-        string res_path = Path.Combine(ConstValue.GetDeployRoot, "res").Replace("/", "\\");
-        //string res_path = Path.Combine(Application.persistentDataPath, ConstValue.PLATFORM_NAME).Replace("/", "\\");
-        string res_zip = Path.Combine(Environment.CurrentDirectory, "res.zip").Replace("/", "\\");
-        Debug.Log($"压缩资源：{res_path} --->\n{res_zip}");
-        return;
+        string zip_path = Path.Combine(ConstValue.BuildDir, $"GameClient_{channel}.zip").Replace("/", "\\");
+        string apk_path = Path.Combine(ConstValue.BuildDir, $"Android/GameClient_{channel + 1}.apk").Replace("/", "\\");
 
         EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0f);
         await Task.Delay(100);
-        File.Delete(res_zip); //若已存在，删除
+        //放到同一个目录下
+        string src_dir = Path.Combine(ConstValue.BuildDir, "release").Replace("/", "\\");
+        if (Directory.Exists(ConstValue.ZipDeploy) == false)
+            Directory.CreateDirectory(ConstValue.ZipDeploy);
+        string dst_zip = Path.Combine(ConstValue.ZipDeploy, "release.zip").Replace("/", "\\");
+        if (Directory.Exists(src_dir))
+            Directory.Delete(src_dir, true);
+        Directory.CreateDirectory(src_dir);
+        Debug.Log($"压缩应用：{src_dir} --->\n{dst_zip}");
+
+        EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0.25f);
+        await Task.Delay(100);
+        string zip_copy_to = $"{src_dir}\\GameClient_{channel}.zip";
+        File.Copy(zip_path, zip_copy_to);
+        File.SetAttributes(zip_copy_to, FileAttributes.Normal);
+
+        EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0.5f);
+        await Task.Delay(100);
+        string apk_copy_to = $"{src_dir}\\GameClient_{channel + 1}.apk";
+        File.Copy(apk_path, apk_copy_to);
+        File.SetAttributes(apk_copy_to, FileAttributes.Normal);
+
+        EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0.75f);
+        await Task.Delay(1000);
+        ZipTools.PackFiles(dst_zip, src_dir); //生成.zip
+
+        EditorUtility.DisplayProgressBar("压缩", "压缩中...", 1f);
+        await Task.Delay(100);
+        EditorUtility.ClearProgressBar();
+        Debug.Log("压缩成功");
+    }
+    [MenuItem("Tools/资源压缩", true)]
+    static async Task PackRes()
+    {
+        // 本地资源目录包含杂项，使用局域网资源目录
+        string res_path = Path.Combine(ConstValue.GetDeployRoot, "res").Replace("/", "\\");
+        string res_zip = Path.Combine(ConstValue.ZipDeploy, "res.zip").Replace("/", "\\");
+        Debug.Log($"压缩资源：{res_path} --->\n{res_zip}");
+
+        EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0f);
+        await Task.Delay(100);
+        if (Directory.Exists(ConstValue.ZipDeploy) == false)
+            Directory.CreateDirectory(ConstValue.ZipDeploy);
+        if (File.Exists(res_zip))
+            File.Delete(res_zip); //若已存在，删除
 
         EditorUtility.DisplayProgressBar("压缩", "压缩中...", 0.5f);
         await Task.Delay(100);
@@ -380,6 +417,11 @@ public class DeployWindow : EditorWindow
         await Task.Delay(100);
         EditorUtility.ClearProgressBar();
         Debug.Log("压缩成功");
+    }
+    [MenuItem("Tools/Cancel", false)]
+    static void Cancel()
+    {
+        EditorUtility.ClearProgressBar();
     }
 
     // 查询版本
@@ -441,18 +483,28 @@ public class DeployWindow : EditorWindow
     }
 
     // 某渠道三个安装包、三份资源，压缩
-    static void BuildAll(int channel)
+    static async void BuildAll(int channel)
     {
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+
         // 所有渠道的资源，都共用一份！
         BundleTools.BuildRes(BuildTarget.StandaloneWindows64);
         BundleTools.BuildRes(BuildTarget.Android);
-        PackResZip(); //../res/
+        await PackRes(); //../Deploy/res/
 
         BundleTools.BuildClient(BuildTarget.StandaloneWindows64, channel);
-        PackAppZip();
+        await PackStandaloneWindows64(channel);
         BundleTools.BuildClient(BuildTarget.Android, channel + 1);
         //BundleTools.BuildClient(BuildTarget.iOS, channel + 2);
-        //PackAppZip(); //../app/
+        await PackRelease(channel); //../Deploy/release/
+
+        //总运行毫秒数，可多次分段取
+        stopwatch.Stop();
+        double TotalMilliseconds = stopwatch.Elapsed.TotalMilliseconds;
+        EditorUtility.DisplayDialog("打包完成", $"用时:{(TotalMilliseconds/1000).ToString("F0")}秒", "查看");
+        Process.Start("explorer", ConstValue.ZipDeploy);
     }
 
 

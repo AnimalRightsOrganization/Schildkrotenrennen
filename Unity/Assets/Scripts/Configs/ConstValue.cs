@@ -97,10 +97,12 @@ public class ConstValue
         }
     }
     public static string GetDeployRes { get { return $"{GetDeployRoot}\\res"; } }
-#endregion
+    // 部署，本地目录
+    public static string ZipDeploy = $"{UnityDir}\\Deploy";
+    #endregion
 
 
-#region Application
+    #region Application
     public const string APP_NANE = "turtlerace";
     public const string COMPANY_NANE = "moegijinka";
 

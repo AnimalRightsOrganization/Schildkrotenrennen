@@ -23,15 +23,15 @@ public class ZipTools : Editor
     /// <summary>
     /// 压缩
     /// </summary> 
-    /// <param name="filename"> 压缩后的文件名(包含物理路径)</param>
-    /// <param name="directory">待压缩的文件夹(包含物理路径)</param>
-    public static void PackFiles(string filename, string directory)
+    /// <param name="dst_zip"> 压缩后的文件名(包含物理路径)</param>
+    /// <param name="src_dir"> 待压缩的文件夹(包含物理路径)</param>
+    public static void PackFiles(string dst_zip, string src_dir)
     {
         try
         {
             FastZip fz = new FastZip();
             fz.CreateEmptyDirectories = true;
-            fz.CreateZip(filename, directory, true, "");
+            fz.CreateZip(dst_zip, src_dir, true, "");
             fz = null;
         }
         catch (Exception)

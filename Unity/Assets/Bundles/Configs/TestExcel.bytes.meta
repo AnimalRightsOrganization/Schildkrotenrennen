@@ -3,5 +3,5 @@ guid: a253eb847b3e18d4e8d2900265a6681a
 TextScriptImporter:
   externalObjects: {}
   userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+  assetBundleName: configs/testexcel
+  assetBundleVariant: unity3d
