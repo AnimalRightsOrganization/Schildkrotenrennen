@@ -1,23 +1,21 @@
 ﻿using System.Linq;
-using UnityEditor;
 using UnityEngine;
+using UnityEditor;
 
 #if UNITY_EDITOR
 [InitializeOnLoad]
 public class CustomHierarchy : Editor
 {
-    private static Vector2 offset = new Vector2(0, 2);
+    static Vector2 offset = new Vector2(0, 0);
 
     static CustomHierarchy()
     {
         EditorApplication.hierarchyWindowItemOnGUI += HandleHierarchyWindowItemOnGUI;
     }
 
-    private static void HandleHierarchyWindowItemOnGUI(int instanceID, Rect selectionRect)
+    static void HandleHierarchyWindowItemOnGUI(int instanceID, Rect selectionRect)
     {
         var gameObject = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
-
-        // Sceneはreturn
         if (gameObject == null)
             return;
 
