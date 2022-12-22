@@ -103,8 +103,8 @@ public class ConstValue
 
 
     #region Application
-    public const string APP_NANE = "turtlerace";
-    public const string COMPANY_NANE = "moegijinka";
+    public const string APP_NAME = "turtlerace";
+    public const string COMPANY_NAME = "moegijinka";
 
 #if UNITY_ANDROID
     public const string PLATFORM_NAME = "Android";

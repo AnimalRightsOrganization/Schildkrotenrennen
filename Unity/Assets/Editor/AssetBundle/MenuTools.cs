@@ -168,7 +168,7 @@ public partial class MenuTools : Editor
         string projRoot = currDirInfo.Parent.ToString();
         //Debug.Log($"WorkingDirectory: {projRoot}");
         string fileName = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\Common7\\IDE\\devenv.exe";
-        string args = "devenv D:\\Documents\\GitHub\\TurtleRace\\HotFix\\HotFix_Project.csproj /rebuild";
+        string args = $"devenv D:\\Documents\\GitHub\\{ConstValue.APP_NAME}\\HotFix\\HotFix_Project.csproj /rebuild";
         //Debug.Log($"WorkingDirectory: {fileName}");
 
         bool finish = false;

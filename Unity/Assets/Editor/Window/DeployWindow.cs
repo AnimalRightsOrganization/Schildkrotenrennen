@@ -11,7 +11,7 @@ using Debug = UnityEngine.Debug;
 public class DeployWindow : EditorWindow
 {
     // 远程目录结构：
-    // (afk/fight/turtlerace)/(release/res)/(iOS/Android/StandaloneWindows64)
+    // (afk/moefight/turtlerace)/(release/res)/(iOS/Android/StandaloneWindows64)
 
     //const string readme = "说明：" +
     //    "\n[线上版本] 请求服务器查询线上当前运营的应用和资源版本。" +
