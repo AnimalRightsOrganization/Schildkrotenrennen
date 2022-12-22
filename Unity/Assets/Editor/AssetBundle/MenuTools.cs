@@ -9,7 +9,7 @@ using UnityEditor;
 using UnityEditor.Build.Reporting;
 using Debug = UnityEngine.Debug;
 
-public partial class BundleTools : Editor
+public partial class MenuTools : Editor
 {
     // 执行批处理文件
     protected static void ExecuteBatch(string fileName, string args)
@@ -27,14 +27,14 @@ public partial class BundleTools : Editor
     const string hotfixCore = @"HotFix\Core";
     const string serverCore = @"Unity\Assets\Scenes\ServerOnly\Core";
     const int SLEEP_TIME = 1;
-    [MenuItem("Tools/同步代码/HotFix → Server", false, 1)]
+    [MenuItem("Tools/同步代码/HotFix → Server", true, 1)]
     static async void Sync_H2S()
     {
         string[] srcPaths = new string[] { hotfixCore, hotfixShared };
         string[] outPaths = new string[] { serverCore, serverShared };
         await Sync_SharedCode(srcPaths, outPaths);
     }
-    [MenuItem("Tools/同步代码/HotFix ← Server", false, 1)]
+    [MenuItem("Tools/同步代码/HotFix ← Server", true, 1)]
     static async void Sync_S2H()
     {
         string[] srcPaths = new string[] { serverCore, serverShared };
@@ -239,17 +239,17 @@ public partial class BundleTools : Editor
     [MenuItem("Tools/打包/资源/Windows", false, 1)]
     static void BuildRes_Win64()
     {
-        BuildRes(BuildTarget.StandaloneWindows64);
+        BundleTools.BuildRes(BuildTarget.StandaloneWindows64);
     }
     [MenuItem("Tools/打包/资源/Android", false, 1)]
     static void BuildRes_Android()
     {
-        BuildRes(BuildTarget.Android);
+        BundleTools.BuildRes(BuildTarget.Android);
     }
     [MenuItem("Tools/打包/资源/iOS", false, 1)]
     static void BuildRes_iOS()
     {
-        BuildRes(BuildTarget.iOS);
+        BundleTools.BuildRes(BuildTarget.iOS);
     }
 
     [MenuItem("Tools/打包/服务器/Windows", false, 2)]

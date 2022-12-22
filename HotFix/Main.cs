@@ -44,6 +44,21 @@ namespace HotFix
             Debug.Log($"控制权转交ILRuntime:{p.ToString()}");
             present = p;
 
+            // 检查App版本
+            var remote = new Version(present.app_version);
+            var local = new Version(Application.version);
+            Debug.Log($"remote:{present.app_version} vs local:{Application.version}");
+            if (remote > local)
+            {
+                var ui_dialog = UIManager.Get.Push<UI_Dialog>();
+                ui_dialog.Show("请更新客户端", () =>
+                {
+                    Application.OpenURL(present.app_url);
+                    Application.Quit();
+                }, "确定");
+                return;
+            }
+
             Debug.Log("创建UI");
             ui_loading = UIManager.Get.Push<UI_Loading>();
             Client.GameManager.Instance.ui_check.gameObject.SetActive(false);
@@ -58,20 +73,6 @@ namespace HotFix
                 ui_loading.OnUpdate(index);
             };
             CreatePoolAsync();
-
-            // 检查App版本
-            var remote = new Version(present.app_version);
-            var local = new Version(Application.version);
-            Debug.Log($"remote:{present.app_version} vs local:{Application.version}");
-            if (remote > local)
-            {
-                var ui_dialog = UIManager.Get.Push<UI_Dialog>();
-                ui_dialog.Show("请更新客户端", () =>
-                {
-                    Application.OpenURL(present.app_url);
-                    Application.Quit();
-                }, "确定");
-            }
         }
 
         const int total = 11;

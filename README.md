@@ -2,12 +2,11 @@
 
 
 ### 版本
-- Unity2020.3.38f1c1
+- Unity2021.3.15f1c1
 - VS2022 Professional
-- Proto 3.0.0-win32
+- Protobuf-net
 - ILRuntime 2.0.2
 - wampserver 3.2.4.2
-- .NetCore 3.1.0
 
 ### 环境配置
 - 1. 

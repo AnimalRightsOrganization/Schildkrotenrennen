@@ -494,9 +494,9 @@ public class DeployWindow : EditorWindow
         BundleTools.BuildRes(BuildTarget.Android);
         await PackRes(); //../Deploy/res/
 
-        BundleTools.BuildClient(BuildTarget.StandaloneWindows64, channel);
+        MenuTools.BuildClient(BuildTarget.StandaloneWindows64, channel);
         await PackStandaloneWindows64(channel);
-        BundleTools.BuildClient(BuildTarget.Android, channel + 1);
+        MenuTools.BuildClient(BuildTarget.Android, channel + 1);
         //BundleTools.BuildClient(BuildTarget.iOS, channel + 2);
         await PackRelease(channel); //../Deploy/release/
 
