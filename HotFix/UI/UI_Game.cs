@@ -59,7 +59,7 @@ namespace HotFix
         {
             m_MenuBtn = transform.Find("MenuBtn").GetComponent<Button>();
             m_MenuBtn.onClick.AddListener(OnMenuBtnClick);
-            idSprites = ResManager.LoadSprites("Sprites/identify"); //成员
+            idSprites = ResManager.LoadSprites("Sprites/identify.png"); //成员
 
             NextIcon = transform.Find("NextIcon").GetComponent<RectTransform>();
             var seatPanel = transform.Find("SeatPanel");
