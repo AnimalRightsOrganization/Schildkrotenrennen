@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using kcp2k.Examples;
@@ -51,6 +52,7 @@ namespace HotFix
                         Debug.Log("<color=green>与服务器连接成功</color>");
                         var packet = new EmptyPacket();
                         NetPacketManager.Trigger(type, packet);
+                        SendLoginByToken(); //连接成功，使用IPC获取的Token登录
                         break;
                     }
                 case PacketType.Disconnect: //被动断开（服务器没开等原因）
@@ -192,6 +194,25 @@ namespace HotFix
 
             var toast = UIManager.Get.Push<UI_Toast>();
             toast.Show($"{(ErrorCode)packet.Code}");
+        }
+
+        async void SendLoginByToken()
+        {
+            string token = Client.GameManager.Token;
+            Debug.Log($"连接服务器成功，尝试读取Token：'{token}'");
+
+            var connect = UIManager.Get.Push<UI_Connect>();
+            await Task.Delay(500);
+
+            // 使用Token登录
+            if (!string.IsNullOrEmpty(token))
+            {
+                KcpChatClient.SendLogin(token);
+            }
+            else
+            {
+                connect.Pop();
+            }
         }
     }
 

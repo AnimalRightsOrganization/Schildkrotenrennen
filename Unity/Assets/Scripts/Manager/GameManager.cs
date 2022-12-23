@@ -10,7 +10,7 @@ namespace Client
 
         private static bool Initialized = false;
         public static Present present; //通过请求返回
-        private readonly IPC _ipc = new IPC { ReceiveTimeout = 10 };
+        private readonly IPC _ipc = new IPC { ReceiveTimeout = 1000 };
         public static string Token { get; private set; }
 
         private Transform sceneRoot;
@@ -18,10 +18,11 @@ namespace Client
 
         void Awake()
         {
+            Debug.Log($"渠道:{ConstValue.CHANNEL_NAME}");
 #if USE_ASSETBUNDLE
-            Debug.Log($"使用热更 Initialized:{Initialized}");
+            Debug.Log($"使用热更, Initialized:{Initialized}");
 #else
-            Debug.Log($"不是热更 Initialized:{Initialized}");
+            Debug.Log($"不是热更, Initialized:{Initialized}");
 #endif
 
             if (!Initialized)
@@ -33,8 +34,8 @@ namespace Client
 
                 BindAssets();
 
-#if Channel_101 //官方大厅渠道
-                //IPC_Login();
+#if Channel_101 //内测PC，从大厅启动
+                IPC_Login();
 #endif
 
 #if UNITY_EDITOR && !USE_ASSETBUNDLE

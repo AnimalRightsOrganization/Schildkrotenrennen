@@ -120,8 +120,6 @@ namespace kcp2k.Examples
                 Debug.LogError($"token不能为空");
                 return;
             }
-            Debug.Log("SendLogin.Mid");
-
             var cmd = new C2S_LoginTokenPacket { Token = token };
             Debug.Log($"[C2S_LoginToken] {cmd.Token}");
             SendAsync(PacketType.C2S_LoginToken, cmd);

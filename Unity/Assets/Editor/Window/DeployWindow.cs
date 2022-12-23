@@ -67,9 +67,6 @@ public class DeployWindow : EditorWindow
             Page0();
         else
             Page1();
-
-        //GUILayout.Space(10);
-        //GUILayout.Box($"目标平台：{ConstValue.PLATFORM_NAME}");
     }
     // 打包
     static void Page0()
@@ -201,7 +198,7 @@ public class DeployWindow : EditorWindow
         {
             if (Directory.Exists(ConstValue.BuildDir) == false)
                 Directory.CreateDirectory(ConstValue.BuildDir);
-            System.Diagnostics.Process.Start("explorer", ConstValue.BuildDir);
+            Process.Start("explorer", ConstValue.BuildDir);
         }
         GUILayout.EndHorizontal();
 
@@ -212,7 +209,7 @@ public class DeployWindow : EditorWindow
         GUILayout.Space(10);
         if (GUILayout.Button(ConstValue.GetDeployRoot, GUILayout.Width(450)))
         {
-            System.Diagnostics.Process.Start("explorer", ConstValue.GetDeployRes);
+            Process.Start("explorer", ConstValue.GetDeployRes);
         }
         GUILayout.EndHorizontal();
 
@@ -224,7 +221,7 @@ public class DeployWindow : EditorWindow
         string path = Application.persistentDataPath.Replace("/", "\\");
         if (GUILayout.Button(path, GUILayout.Width(450)))
         {
-            System.Diagnostics.Process.Start("explorer", path);
+            Process.Start("explorer", path);
         }
         GUILayout.EndHorizontal();
 

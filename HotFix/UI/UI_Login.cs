@@ -163,31 +163,11 @@ namespace HotFix
             var connect = UIManager.Get.GetUI<UI_Connect>();
             connect.Pop();
             m_OAuthBtn.gameObject.SetActive(true);
-
-            SendLoginByToken();
-        }
-        async void SendLoginByToken()
-        {
-            string token = Client.GameManager.Token;
-            //string token = "DE8FD617D94B7EFD67E79314B3F0C665";
-            Debug.Log($"连接服务器成功，尝试读取Token：'{token}'");
-
-            var connect = UIManager.Get.Push<UI_Connect>();
-            await Task.Delay(500);
-
-            // 使用Token登录
-            if (!string.IsNullOrEmpty(token))
-            {
-                KcpChatClient.SendLogin(token);
-            }
-            else
-            {
-                connect.Pop();
-            }
         }
         void OnLoginResult(object reader)
         {
             var packet = (S2C_LoginResultPacket)reader;
+            Debug.Log($"code={packet.Code}, usr={packet.Username}");
             var playerData = new BasePlayerData
             {
                 UserName = packet.Username,

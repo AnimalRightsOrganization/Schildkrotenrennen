@@ -3,7 +3,27 @@ using UnityEngine;
 
 public class ConstValue
 {
-#region AssetBundle
+#if Channel_101 //内测PC
+    public const string CHANNEL_NAME = "Channel_101";
+#elif Channel_102 //内测Android
+    public const string CHANNEL_NAME = "Channel_102";
+#elif Channel_103 //内测iOS
+    public const string CHANNEL_NAME = "Channel_103";
+#elif Channel_1001 //自营PC
+    public const string CHANNEL_NAME = "Channel_1001";
+#elif Channel_1002 //自营Android
+    public const string CHANNEL_NAME = "Channel_1002";
+#elif Channel_1003 //自营iOS
+    public const string CHANNEL_NAME = "Channel_1003";
+#elif Channel_1011 //Steam
+    public const string CHANNEL_NAME = "Channel_1011";
+#elif Channel_2002 //华为
+    public const string CHANNEL_NAME = "Channel_2002";
+#else
+    public const string CHANNEL_NAME = "Channel_1"; //未设置，内测包
+#endif
+
+    #region AssetBundle
     public const string PATCH_NAME = "Bundles";
     // ab打包源文件
     static string _srcPath;
@@ -116,18 +136,18 @@ public class ConstValue
     public const string PLATFORM_NAME = "StandaloneWindows64";
     public static string LocationPath =  $"{BuildDir}\\{PLATFORM_NAME}\\{Application.productName}.exe";
 #endif
-#endregion
+    #endregion
 
 
-#region URL
+    #region URL
     public const string API_DOMAIN = "http://restapi.moegijinka.cn"; //使用Http请求
     public const string GAME_DATA = "api/v1/GameCenter/game_data";
     public const string PRESENT_GET = "turtlerace/v1/GetPresent/get";
     public const string PRESENT_DEPLOY = "turtlerace/v1/GetPresent/deploy";
-#endregion
+    #endregion
 
 
-#region GameLogic
+    #region GameLogic
     static string _replay_folder;
     static string REPLAY_FOLDER
     {
@@ -156,5 +176,5 @@ public class ConstValue
 
     public const int DROP_WAIT_TIME = 30; //掉线等待30s，未重连判负
     public const int TOTAL_SECOND = 90; //比赛时间（s）
-#endregion
+    #endregion
 }

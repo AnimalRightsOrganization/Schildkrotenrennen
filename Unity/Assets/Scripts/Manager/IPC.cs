@@ -3,7 +3,6 @@ using System.Text;
 using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
-using Debug = UnityEngine.Debug;
 
 public class IPC
 {
@@ -34,8 +33,8 @@ public class IPC
     private void Connect()
     {
         _client = new NamedPipeClientStream(PipeName);
-        //await _client.ConnectAsync(1000); //Net4.0无法异步
-        _client.Connect();
+        //_client.ConnectAsync(2000); //Net4.0无法异步
+        _client.Connect(2000);
     }
 
     private async Task SendToUnity(string message)
