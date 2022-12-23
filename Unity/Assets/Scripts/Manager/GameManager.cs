@@ -6,7 +6,7 @@ namespace Client
 {
     public class GameManager : MonoBehaviour
     {
-        public static GameManager Instance;
+        public static GameManager Get;
 
         private static bool Initialized = false;
         public static Present present; //通过请求返回
@@ -26,7 +26,7 @@ namespace Client
 
             if (!Initialized)
             {
-                Instance = this;
+                Get = this;
                 DontDestroyOnLoad(gameObject);
 
                 SystemSetting();

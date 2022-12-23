@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using LitJson;
+using Newtonsoft.Json;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -23,17 +23,16 @@ public class ResManager
     {
         string assetsPath = $"{Application.persistentDataPath}/{ConstValue.PLATFORM_NAME}/assets.bytes"; //解析文件
         string assetsJson = File.ReadAllText(assetsPath);
-        Debug.Log(assetsJson);
-        _assetsBytes = JsonMapper.ToObject<AssetsBytes>(assetsJson);
+        _assetsBytes = JsonConvert.DeserializeObject<AssetsBytes>(assetsJson);
     }
 
     public const string BUNDLES_FOLDER = "Assets/Bundles";
-    public const string PREFAB_FOLDER = "Assets/Bundles/Prefabs";
+    //public const string PREFAB_FOLDER = "Assets/Bundles/Prefabs";
 
     public static GameObject LoadPrefab(string fileName)
     {
 #if UNITY_EDITOR && !USE_ASSETBUNDLE
-        string filePath = $"Assets/Bundles/{fileName}.prefab";
+        string filePath = $"{BUNDLES_FOLDER}/{fileName}.prefab";
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(filePath);
 #else
         string filePath = GetFilePath($"{fileName}.unity3d");
@@ -46,14 +45,14 @@ public class ResManager
         for (int i = 0; i < depends.Length; i++)
         {
             string dependPath = GetFilePath(depends[i]);
-            Debug.Log($"{fileName}, 读取依赖：{i}---{dependPath}");
+            Debug.Log($"读取依赖：{i}---{dependPath}");
             AssetBundle dependAsset = AssetBundle.LoadFromFile(dependPath.ToLower());
             dependBundles.Add(dependAsset);
         }
 
         //Debug.Log($"111.filePath: {filePath}");
         //Debug.Log($"222.filePath.ToLower(): {filePath.ToLower()}");
-        var asset = AssetBundle.LoadFromFile(filePath); //这里不能小写，会导致iOS读不出。s
+        var asset = AssetBundle.LoadFromFile(filePath); //这里不能小写，会导致iOS读不出。
         //Debug.Log($"333.资源数={asset.GetAllAssetNames().Length}---[0]{asset.GetAllAssetNames()[0]}");
         GameObject prefab = asset.LoadAllAssets()[0] as GameObject;
         asset.Unload(false);
@@ -87,10 +86,26 @@ public class ResManager
         return clip;
     }
 
+    // Excel
+    public static string LoadBytes(string fileName)
+    {
+#if UNITY_EDITOR && !USE_ASSETBUNDLE
+        string filePath = $"{BUNDLES_FOLDER}/{fileName}.bytes";
+        TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>(filePath);
+#else
+        string filePath = GetFilePath($"{fileName}.unity3d");
+        AssetBundle asset = AssetBundle.LoadFromFile(filePath);
+        TextAsset ta = asset.LoadAllAssets()[0] as TextAsset;
+        asset.Unload(false);
+#endif
+        return ta.text;
+    }
+
+    // ScriptableObject
     public static object LoadConfig(string configName)
     {
 #if UNITY_EDITOR && !USE_ASSETBUNDLE
-        string filePath = $"Assets/Bundles/{configName}.asset";
+        string filePath = $"{BUNDLES_FOLDER}/{configName}.asset";
         object config = AssetDatabase.LoadAssetAtPath<Object>(filePath);
 #else
         string filePath = GetFilePath($"{configName}.unity3d");
@@ -101,10 +116,11 @@ public class ResManager
         return config;
     }
 
+    // ILRuntime
     public static byte[] LoadDLL()
     {
 #if UNITY_EDITOR && !USE_ASSETBUNDLE
-        string filePath = $"Assets/Bundles/Configs/Hotfix.dll.bytes";
+        string filePath = $"{BUNDLES_FOLDER}/Configs/Hotfix.dll.bytes";
         TextAsset textAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(filePath);
 #else
         string fileName = "configs/hotfix";
@@ -120,7 +136,7 @@ public class ResManager
     {
         Texture2D t2d;
 #if UNITY_EDITOR && !USE_ASSETBUNDLE
-        string filePath = $"Assets/Bundles/{fileName}.png";
+        string filePath = $"{BUNDLES_FOLDER}/{fileName}.png";
         t2d = AssetDatabase.LoadAssetAtPath<Texture2D>(filePath);
 #else
         string filePath = GetFilePath($"{fileName}.unity3d");
@@ -131,11 +147,15 @@ public class ResManager
         return t2d;
     }
 
-    public static Dictionary<string, Sprite> LoadSprite(string configName)
+    public static Dictionary<string, Sprite> LoadSprites(string fileName)
     {
+        var array = fileName.Split('.');
+        var configName = array[0];
+        var configType = array[1];
+
         Dictionary<string, Sprite> sp;
 #if UNITY_EDITOR && !USE_ASSETBUNDLE
-        string filePath = $"Assets/Bundles/{configName}.png";
+        string filePath = $"{BUNDLES_FOLDER}/{configName}.{configType}";
         var assets = AssetDatabase.LoadAllAssetsAtPath(filePath);
 #else
         string filePath = GetFilePath($"{configName}.unity3d");
@@ -153,7 +173,7 @@ public class ResManager
             if (subAsset != null)
             {
                 //Debug.Log($"{i}---{subAsset?.name}");
-                sp.Add(subAsset.name, subAsset);
+                sp.TryAdd(subAsset.name, subAsset);
             }
         }
         //Debug.Log($"字典：{sp.Count}个");
@@ -188,7 +208,7 @@ public class ResManager
         else
         {
             //Debug.Log($"新建：{key}");
-            obj = LoadPrefab(key);
+            obj = LoadPrefab($"Prefabs/{key}");
             GameObjectPool.Add(key, obj);
             return obj;
         }
