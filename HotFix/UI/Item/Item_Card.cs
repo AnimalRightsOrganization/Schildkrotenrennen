@@ -20,7 +20,7 @@ namespace HotFix
 
         void Awake()
         {
-            cardArray = ResManager.LoadSprite("Sprites/cards");
+            cardArray = ResManager.LoadSprites("Sprites/cards");
             m_Group = transform.GetComponent<CanvasGroup>();
             m_SelfBtn = transform.Find("Image").GetComponent<Button>();
             m_SelfBtn.onClick.AddListener(OnSelect);

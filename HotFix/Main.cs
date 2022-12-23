@@ -61,7 +61,7 @@ namespace HotFix
 
             Debug.Log("创建UI");
             ui_loading = UIManager.Get.Push<UI_Loading>();
-            Client.GameManager.Instance.ui_check.gameObject.SetActive(false);
+            Client.GameManager.Get.ui_check.gameObject.SetActive(false);
 
             TryConnect();
 

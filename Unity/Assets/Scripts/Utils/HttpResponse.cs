@@ -82,7 +82,7 @@ public class Present
         gate = "moegijinka.cn"; //本地host配了域名
         app_url = $"https://moegijinka.cn/{UnityEngine.Application.productName}";
         res_url = $"http://app.moegijinka.cn/{UnityEngine.Application.productName}/res";
-        app_version = "1.0.0";
+        app_version = "0.1.0";
         res_version = "1";
         notice = string.Empty;
     }
