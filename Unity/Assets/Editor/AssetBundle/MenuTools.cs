@@ -355,7 +355,7 @@ public partial class MenuTools : Editor
     [MenuItem("Tools/图标/SetIcon", true)]
     static void SetIcon()
     {
-        string filePath = $"Assets/Arts/Textures/Icon.png";
+        string filePath = $"Assets/Arts/Icon/{ConstValue.APP_NAME}.png";
         Texture2D t2d = AssetDatabase.LoadAssetAtPath<Texture2D>(filePath);
 
         Texture2D[] array_1 = new Texture2D[] { t2d };

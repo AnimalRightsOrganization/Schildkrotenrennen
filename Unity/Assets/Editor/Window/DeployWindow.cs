@@ -110,8 +110,13 @@ public class DeployWindow : EditorWindow
         GUILayout.Space(10);
         GUILayout.EndHorizontal();
 
+        GUILayout.Space(20);
         // 表格
-        GUILayout.Space(30);
+        GUILayout.BeginHorizontal();
+        GUILayout.Space(10);
+        GUILayout.Box("自营", GUILayout.Width(516));
+        GUILayout.EndHorizontal();
+        // 行
         GUILayout.BeginHorizontal();
         GUILayout.Space(10);
         GUILayout.Box("渠道打包", GUILayout.Width(100));
@@ -165,9 +170,14 @@ public class DeployWindow : EditorWindow
         // 行
         GUILayout.BeginHorizontal();
         GUILayout.Space(10);
+        GUILayout.Box("厂商", GUILayout.Width(516));
+        GUILayout.EndHorizontal();
+        // 行
+        GUILayout.BeginHorizontal();
+        GUILayout.Space(10);
         GUILayout.Box("华为", GUILayout.Width(100));
         GUILayout.Box("", GUILayout.Width(100));
-        if (GUILayout.Button("1022", GUILayout.Width(100))) { }
+        if (GUILayout.Button("2002", GUILayout.Width(100))) { }
         GUILayout.Box("", GUILayout.Width(100));
         GUILayout.Box("", GUILayout.Width(100));
         GUILayout.EndHorizontal();
@@ -474,11 +484,10 @@ public class DeployWindow : EditorWindow
     static async void DeployRes()
     {
         string src = @"C:\Users\Administrator\source\repos\QRCode\GameCenter\bin\Debug\net6.0-windows\Temp\StandaloneWindows64.zip";
-        string dst = @"C:\Users\Administrator\source\repos\QRCode\GameCenter\bin\Debug\net6.0-windows\Applications\turtlerace\";
+        string dst = $@"C:\Users\Administrator\source\repos\QRCode\GameCenter\bin\Debug\net6.0-windows\Applications\{ConstValue.APP_NAME}\";
         ZipTools.UnpackFiles(src, dst);
         await Task.CompletedTask;
         //return;
-
         //await PostDeployRes();
     }
 
