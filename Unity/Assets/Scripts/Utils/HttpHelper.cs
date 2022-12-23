@@ -3,7 +3,6 @@ using System.IO;
 using System.Text;
 using System.Net.Http;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
 
 public class HttpHelper
@@ -12,7 +11,7 @@ public class HttpHelper
 
     public static async Task<string> TryGetAsync(string api, string token = "")
     {
-        string url = $"{ConstValue.API_DOMAIN}/{api}?platform=pc";
+        string url = $"{ConstValue.API_DOMAIN}/{api}";
         string responseBody = string.Empty;
         try
         {
@@ -33,7 +32,7 @@ public class HttpHelper
     }
     public static async Task<string> TryPostAsync(string api, string json, string token = "")
     {
-        string url = $"{ConstValue.API_DOMAIN}/{api}?platform=pc";
+        string url = $"{ConstValue.API_DOMAIN}/{api}";
         string responseBody = string.Empty;
         try
         {

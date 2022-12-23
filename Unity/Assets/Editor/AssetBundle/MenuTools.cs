@@ -305,13 +305,13 @@ public partial class MenuTools : Editor
     }
     public static void BuildClient(BuildTarget target, int channel = 101)
     {
-        //EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Standalone, BuildTarget.StandaloneWindows64);
         SetIcon();
 
         if (Directory.Exists(ConstValue.BuildDir) == false)
             Directory.CreateDirectory(ConstValue.BuildDir);
 
-        string build_dir = $"{ConstValue.BuildDir}/{target}";
+        string fileName = $"GameClient_{channel}";
+        string build_dir = $"{ConstValue.BuildDir}/{fileName}";
         if (Directory.Exists(build_dir) == false)
             Directory.CreateDirectory(build_dir);
 
@@ -332,7 +332,7 @@ public partial class MenuTools : Editor
         BuildPlayerOptions opt = new BuildPlayerOptions
         {
             scenes = new string[] { "Assets/Scenes/Client.unity" },
-            locationPathName = Path.Combine(build_dir, $"GameClient_{channel}.{ext}"),
+            locationPathName = Path.Combine(build_dir, $"{fileName}.{ext}"),
             target = target,
             extraScriptingDefines = new string[] { $"Channel_{channel}" },
             options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development,

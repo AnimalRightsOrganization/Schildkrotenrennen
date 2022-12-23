@@ -437,7 +437,7 @@ public class DeployWindow : EditorWindow
     // 查询版本
     static async Task<string> GetVersionAsync()
     {
-        string responseBody = await HttpHelper.TryGetAsync(ConstValue.GAME_DATA);
+        string responseBody = await HttpHelper.TryGetAsync($"{ConstValue.GAME_DATA}?name={ConstValue.APP_NAME}");
         if (string.IsNullOrEmpty(responseBody))
         {
             Debug.LogError("获取远程资源版本失败");
