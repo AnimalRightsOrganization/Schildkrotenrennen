@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using UnityEngine;
-using LitJson;
+using Newtonsoft.Json;
 
 namespace Client
 {
@@ -9,20 +9,19 @@ namespace Client
         public static GameManager Get;
 
         private static bool Initialized = false;
-        public static Present present; //通过请求返回
         private readonly IPC _ipc = new IPC { ReceiveTimeout = 1000 };
         public static string Token { get; private set; }
+        public static Present present; //通过请求返回
 
-        private Transform sceneRoot;
+        private Transform canvasRoot;
         public UI_CheckUpdate ui_check;
 
         void Awake()
         {
-            Debug.Log($"渠道:{ConstValue.CHANNEL_NAME}");
 #if USE_ASSETBUNDLE
-            Debug.Log($"使用热更, Initialized:{Initialized}");
+            Debug.Log($"渠道:{ConstValue.CHANNEL_NAME}，使用热更，初始化:{Initialized}");
 #else
-            Debug.Log($"不是热更, Initialized:{Initialized}");
+            Debug.Log($"渠道:{ConstValue.CHANNEL_NAME}，不是热更，初始化:{Initialized}");
 #endif
 
             if (!Initialized)
@@ -38,14 +37,7 @@ namespace Client
                 IPC_Login();
 #endif
 
-#if UNITY_EDITOR && !USE_ASSETBUNDLE
-                Debug.Log("不检查更新");
-                present = new Present();
-                OnInited();
-#else
-                // 请求配置（需要启动资源服务器）
-                RequestConfig();
-#endif
+                GetConfig();
             }
             else
             {
@@ -55,7 +47,6 @@ namespace Client
 
         void OnApplicationQuit()
         {
-            //Debug.Log("Quit");
             Initialized = false;
         }
 
@@ -77,36 +68,49 @@ namespace Client
         // 绑定组件
         void BindAssets()
         {
+            // 初始化目录
             if (!Directory.Exists(ConstValue.AB_AppPath))
                 Directory.CreateDirectory(ConstValue.AB_AppPath);
 
-            transform.Find("ILGlobal").gameObject.AddComponent<Client.ILGlobal>();
-            sceneRoot = GameObject.Find("Canvas").transform;
-            Debug.Assert(sceneRoot);
+            // 初始化各种管理器
+            transform.Find("ILGlobal").gameObject.AddComponent<ILGlobal>();
 
+            // 初始UI
+            canvasRoot = GameObject.Find("Canvas").transform;
+            //Debug.Assert(canvasRoot);
             string ui_name = "UI_CheckUpdate";
             GameObject asset = Resources.Load<GameObject>(ui_name);
-            Debug.Assert(asset);
-
-            GameObject obj = Instantiate(asset, sceneRoot);
-            Debug.Assert(obj);
-
+            //Debug.Assert(asset);
+            GameObject obj = Instantiate(asset, canvasRoot);
+            //Debug.Assert(obj);
             obj.name = ui_name;
             if (obj.GetComponent<UI_CheckUpdate>() == false)
                 obj.AddComponent<UI_CheckUpdate>();
             ui_check = obj.GetComponent<UI_CheckUpdate>();
-            Debug.Assert(ui_check);
+            //Debug.Assert(ui_check);
         }
 
         // 请求游戏配置
-        async void RequestConfig()
+        async void GetConfig()
         {
             string text = await HttpHelper.TryGetAsync(ConstValue.PRESENT_GET);
+            if (string.IsNullOrEmpty(text))
+            {
+                Debug.LogError($"配置请求失败: {ConstValue.PRESENT_GET}");
+                return;
+            }
             Debug.Log($"success: {text}");
-            ServerResponse resp = JsonMapper.ToObject<ServerResponse>(text);
-            present = JsonMapper.ToObject<Present>(resp.data);
+            var obj = JsonConvert.DeserializeObject<ServerResponse>(text);
+            present = JsonConvert.DeserializeObject<Present>(obj.data);
 
+
+#if UNITY_EDITOR && !USE_ASSETBUNDLE
+            // 不检查更新
+            OnInited();
+#else
+            // 加载配置（需要启动资源服务器）
             StartCoroutine(ui_check.StartCheck(OnInited));
+#endif
         }
 
         // 初始化完成，控制权移交ILR

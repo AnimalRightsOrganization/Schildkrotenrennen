@@ -155,8 +155,6 @@ namespace Client
 
             // 6. 显示下一级界面
             onComplete?.Invoke();
-            //Destroy(gameObject);
-            //gameObject.SetActive(false);
         }
     }
 }

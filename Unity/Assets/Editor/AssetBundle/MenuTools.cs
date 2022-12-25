@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using Debug = UnityEngine.Debug;
 
@@ -255,6 +256,8 @@ public partial class MenuTools : Editor
     [MenuItem("Tools/打包/服务器/Windows", false, 2)]
     static void BuildServer_Win64()
     {
+        EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Server, BuildTarget.StandaloneWindows64);
+
         RemoveIcon();
 
         if (Directory.Exists(ConstValue.BuildDir) == false)
@@ -291,11 +294,15 @@ public partial class MenuTools : Editor
     [MenuItem("Tools/打包/客户端/Windows", false, 3)]
     static void BuildClient_Win64()
     {
+        EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Standalone, BuildTarget.StandaloneWindows64);
+
         BuildClient(BuildTarget.StandaloneWindows64, 101);
     }
     [MenuItem("Tools/打包/客户端/Android", false, 3)]
     static void BuildClient_Android()
     {
+        EditorUserBuildSettings.SwitchActiveBuildTarget(NamedBuildTarget.Android, BuildTarget.Android);
+
         BuildClient(BuildTarget.Android, 102);
     }
     [MenuItem("Tools/打包/客户端/iOS", false, 3)]
