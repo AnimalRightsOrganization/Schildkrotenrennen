@@ -46,7 +46,7 @@
         Connected = 0   ,   //连接成功（本地消息）
         Disconnect      ,   //连接断开（本地消息）
         Reconnect       ,   //尝试重连中（本地消息）
-        Beep            ,   //心跳
+        BeepBoop        ,   //心跳
         ///////////////////////////////////////////////
         C2S_RegisterReq ,   //注册请求
         C2S_LoginToken  ,   //登录请求Token

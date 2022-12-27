@@ -10,7 +10,7 @@ namespace Client
 
         private static bool Initialized = false;
         private readonly IPC _ipc = new IPC { ReceiveTimeout = 1000 };
-        public static string Token { get; private set; }
+        public static string Token;
         public static Present present; //通过请求返回
 
         private Transform canvasRoot;

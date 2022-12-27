@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using kcp2k.Examples;
 
@@ -138,10 +137,19 @@ namespace HotFix
                 return;
             }
 
-            //TODO: 判断渠道号（根据平台和包名）。弹出默认登录或三方SDKView。
-            Debug.Log($"当前渠道是：{Application.identifier}");
-            m_Login_Panel.SetActive(true);
-            m_SignUp_Panel.SetActive(false);
+            //#if Channel_102 //热更工程里没有宏，不能继承Unity的宏
+            bool checkInstall = HookManager.Get.CheckInstall();
+            if (ConstValue.CHANNEL_NAME == "Channel_102" && checkInstall)
+            {
+                // 判断渠道号（根据平台和包名）。弹出默认登录或三方SDKView。
+                Debug.Log("主动请求");
+                HookManager.Get.GetToken();
+            }
+            else
+            {
+                m_Login_Panel.SetActive(true);
+                m_SignUp_Panel.SetActive(false);
+            }
         }
         #endregion
 

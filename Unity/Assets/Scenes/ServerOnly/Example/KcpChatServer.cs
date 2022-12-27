@@ -191,7 +191,7 @@ namespace kcp2k.Examples
             UserInfo result = await MySQLTool.GetUserInfo(request.Token);
             if (result == null)
             {
-                Debug.Log($"用户名或密码错误");
+                Debug.Log("token is wrong");
                 var tempData = new BasePlayerData { PeerId = Id, };
                 var tempPlayer = new ServerPlayer(tempData);
                 ErrorPacket err_packet = new ErrorPacket { Code = (int)HotFix.ErrorCode.LOGIN_FAILED, Message = "用户名或密码错误" };

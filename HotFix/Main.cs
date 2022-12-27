@@ -124,12 +124,14 @@ namespace HotFix
 
         public static void Print()
         {
+            Debug.Log("this is Main.Print()");
             PoolManager.Get.Print();
-            //PoolManager.Get.Spawn("MapManager");
         }
         public static void LoginToken(string token)
         {
-            kcp2k.Examples.KcpChatClient.SendLogin(token);
+            Debug.Log($"this is Main.LoginToken: {token}");
+            Debug.Log($"check connect: {KcpChatClient.IsConnected()}");
+            KcpChatClient.SendLogin(token);
         }
     }
 }
