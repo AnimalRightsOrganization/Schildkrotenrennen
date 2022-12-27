@@ -34,7 +34,7 @@ namespace HotFix
                 GameObject obj = null;
 
                 //①没有缓存，新建key-value，新建obj
-                Debug.Log($"①①①:{assetName}");
+                //Debug.Log($"①①①:{assetName}");
                 if (dic_inactive.TryGetValue(assetName, out list_inactive) == false)
                 {
                     list_inactive = new List<GameObject>();
@@ -86,7 +86,7 @@ namespace HotFix
             List<GameObject> list_active = null;
 
             //①没有缓存，新建key-value，新建obj
-            Debug.Log($"①①①:{assetName}, {dic_inactive.ContainsKey(assetName)}");
+            //Debug.Log($"①①①:{assetName}, {dic_inactive.ContainsKey(assetName)}");
             if (dic_inactive.TryGetValue(assetName, out list_inactive) == false)
             {
                 //Debug.Log($"list_inactive: {list_inactive != null}"); //False, 就是null

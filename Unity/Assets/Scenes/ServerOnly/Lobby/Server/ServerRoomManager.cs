@@ -48,7 +48,7 @@ namespace NetCoreServer
             }
             else
             {
-                Debug.Log("严重的错误，无法移除房间");
+                Debug.Log("不存在的房间");
             }
         }
         // 移除用户（如果移除的是房主，则关闭房间）

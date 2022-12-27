@@ -78,8 +78,11 @@ namespace kcp2k.Examples
 
             var player = m_PlayerManager.GetPlayerByPeerId(connectionId);
             m_PlayerManager.RemovePlayer(connectionId);
-            int roomId = player.RoomId;
-            m_RoomManager.RemoveServerRoom(roomId);
+            if(player != null)
+            {
+                int roomId = player.RoomId;
+                m_RoomManager.RemoveServerRoom(roomId);
+            }
         }
         void OnError(int connectionId, ErrorCode error, string reason)
         {

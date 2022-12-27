@@ -288,7 +288,7 @@ public partial class MenuTools : Editor
         if (summary.result == BuildResult.Failed)
             Debug.LogError("打包失败");
     }
-    [MenuItem("Tools/打包/服务器/Linux", false, 2)]
+    [MenuItem("Tools/打包/服务器/Linux", true, 2)]
     static void BuildServer_Linux() { }
 
     [MenuItem("Tools/打包/客户端/Windows", false, 3)]

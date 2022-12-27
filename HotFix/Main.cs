@@ -127,5 +127,9 @@ namespace HotFix
             PoolManager.Get.Print();
             //PoolManager.Get.Spawn("MapManager");
         }
+        public static void LoginToken(string token)
+        {
+            kcp2k.Examples.KcpChatClient.SendLogin(token);
+        }
     }
 }
