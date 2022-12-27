@@ -29,7 +29,7 @@ namespace Client
 
         void Update()
         {
-            float percent = downloadList.Count == 0 ? 0 : (float)fileCount / (float)downloadList.Count;
+            float percent = downloadList.Count == 0 ? 0 : ((float)fileCount / (float)downloadList.Count);
             m_ProgressText.text = $"{(percent * 100).ToString("F0")}%";
             m_ProgressSlider.value = fileCount;
         }

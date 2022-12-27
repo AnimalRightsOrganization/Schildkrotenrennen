@@ -143,7 +143,7 @@ namespace HotFix
             {
                 // 判断渠道号（根据平台和包名）。弹出默认登录或三方SDKView。
                 Debug.Log("主动请求");
-                HookManager.Get.GetToken();
+                HookManager.Get.JumpActivity();
             }
             else
             {

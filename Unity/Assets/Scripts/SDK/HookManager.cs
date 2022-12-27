@@ -31,7 +31,7 @@ public class HookManager : MonoBehaviour
         return hook.CheckInstall();
     }
 
-    public void GetToken()
+    public void JumpActivity()
     {
         hook.JumpActivity();
     }
