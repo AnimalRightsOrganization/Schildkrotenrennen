@@ -59,7 +59,6 @@ namespace HotFix
                 return;
             }
 
-            Debug.Log("创建UI");
             ui_loading = UIManager.Get.Push<UI_Loading>();
             Client.GameManager.Get.ui_check.gameObject.SetActive(false);
 
@@ -89,18 +88,19 @@ namespace HotFix
             UIManager.Get.Push<UI_Login>();
         }
 
-        static int try_times = 0;
+        public static int try_times = 0;
         public static bool trying = false;
         public static async void TryConnect(Action action = null)
         {
             if (KcpChatClient.IsConnected() || trying)
                 return; //已连接，或连接中
 
+            try_times = 0;
             trying = true;
             while (true)
             {
                 ConnectToServer(action);
-                await Task.Delay(3000);
+                await Task.Delay(2000);
 
                 if (try_times >= 3 || KcpChatClient.IsConnected())
                 {
@@ -116,7 +116,7 @@ namespace HotFix
         {
             action?.Invoke();
             KcpChatClient.Connect();
-            UIManager.Get.Push<UI_Connect>();
+            UIManager.Get.Push<UI_Connect>(1);
 
             try_times++;
             Debug.Log($"Connect: {try_times} / 3");

@@ -69,13 +69,13 @@ namespace HotFix
                 case PacketType.Reconnect:
                     {
                         Debug.Log("<color=orange>重连中</color>");
-                        UIManager.Get.Push<UI_Connect>();
+                        UIManager.Get.Push<UI_Connect>(1);
                         break;
                     }
                 case PacketType.S2C_ErrorOperate:
                     {
                         var packet = ProtobufHelper.Deserialize<ErrorPacket>(stream);
-                        var toast = UIManager.Get.Push<UI_Toast>();
+                        var toast = UIManager.Get.Push<UI_Toast>(1);
                         toast.Show(packet.Message);
                         break;
                     }
@@ -196,12 +196,12 @@ namespace HotFix
             toast.Show($"{(ErrorCode)packet.Code}");
         }
 
-        async void SendLoginByToken()
+        public async void SendLoginByToken()
         {
             string token = Client.GameManager.Token;
             Debug.Log($"连接服务器成功，尝试读取Token：'{token}'");
 
-            var connect = UIManager.Get.Push<UI_Connect>();
+            var connect = UIManager.Get.Push<UI_Connect>(1);
             await Task.Delay(500);
 
             // 使用Token登录

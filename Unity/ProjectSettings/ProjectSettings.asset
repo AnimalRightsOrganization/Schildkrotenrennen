@@ -856,7 +856,7 @@ PlayerSettings:
   scriptingDefineSymbols:
     Android: Channel_102
     Server: 
-    Standalone: Channel_101;USE_ASSETBUNDLE
+    Standalone: Channel_101
     iPhone: USE_ASSETBUNDLE
   additionalCompilerArguments: {}
   platformArchitecture: {}

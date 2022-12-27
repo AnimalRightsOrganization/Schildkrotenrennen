@@ -43,16 +43,20 @@ namespace kcp2k.Examples
         {
             Debug.LogError($"KCP: OnDisonnected");
 
-            //if (MapManager.Get != null)
-            //    MapManager.Get.Dispose();
-            PoolManager.Get.DespawnAll();
+            //Debug.Log($"trying: {Main.trying}, times={Main.try_times}");
+            if (Main.trying == false)
+                Main.TryConnect();
 
-            UIManager.Get.PopAll();
-            UIManager.Get.Push<UI_Login>();
-            UIManager.Get.Push<UI_Connect>();
+            if (Main.try_times >= 3)
+            {
+                PoolManager.Get.DespawnAll();
+                UIManager.Get.PopAll();
+                UIManager.Get.Push<UI_Login>();
+                UIManager.Get.Push<UI_Connect>(1);
 
-            var ui_toast = UIManager.Get.Push<UI_Toast>();
-            ui_toast.Show("与服务器断开连接");
+                var ui_toast = UIManager.Get.Push<UI_Toast>();
+                ui_toast.Show("与服务器断开连接");
+            }
         }
         static void OnError(ErrorCode error, string reason)
         {

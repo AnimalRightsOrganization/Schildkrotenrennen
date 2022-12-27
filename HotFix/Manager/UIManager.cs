@@ -8,7 +8,8 @@ namespace HotFix
     {
         public static UIManager Get;
 
-        public Transform Parent;
+        public Transform MainCanvas;
+        public Transform SubCanvas;
 
         // UI存储栈
         public Dictionary<string, UIBase> stack;
@@ -18,14 +19,15 @@ namespace HotFix
         {
             Get = this;
 
-            Parent = GameObject.Find("Canvas").transform;
+            MainCanvas = GameObject.Find("MainCanvas").transform;
+            SubCanvas = GameObject.Find("SubCanvas").transform;
             stack = new Dictionary<string, UIBase>();
             recyclePool = new Dictionary<string, UIBase>();
         }
 
         public UIBase GetActiveUI()
         {
-            var child = Parent.GetChild(Parent.childCount - 1);
+            var child = MainCanvas.GetChild(MainCanvas.childCount - 1);
             //Debug.Log($"GetActive: {child.name}");
             string scriptName = child.name;
 
@@ -51,7 +53,7 @@ namespace HotFix
             return ui.GetComponent<T>();
         }
 
-        public T Push<T>() where T : UIBase
+        public T Push<T>(int order = 0) where T : UIBase
         {
             string scriptName = typeof(T).ToString().Split('.')[1];
             //Debug.Log($"Push<{scriptName}>");
@@ -71,8 +73,9 @@ namespace HotFix
             }
             else
             {
+                var canvas = order == 0 ? MainCanvas : SubCanvas;
                 GameObject prefab = ResManager.LoadPrefab($"UI/{scriptName}"); //iOS区分大小写？
-                GameObject obj = Instantiate(prefab, Parent);
+                GameObject obj = Instantiate(prefab, canvas);
                 obj.transform.localPosition = Vector3.zero;
                 obj.name = scriptName;
 
@@ -123,7 +126,6 @@ namespace HotFix
         }
 
         #region 测试
-
         public static void Test1()
         {
             Debug.Log("UIManager中的Test1");
@@ -136,7 +138,6 @@ namespace HotFix
         {
             Debug.Log("Test3: " + value);
         }
-
         #endregion
     }
 }

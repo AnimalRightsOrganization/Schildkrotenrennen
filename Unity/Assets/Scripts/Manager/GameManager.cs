@@ -76,7 +76,7 @@ namespace Client
             transform.Find("ILGlobal").gameObject.AddComponent<ILGlobal>();
 
             // 初始UI
-            canvasRoot = GameObject.Find("Canvas").transform;
+            canvasRoot = GameObject.Find("MainCanvas").transform;
             //Debug.Assert(canvasRoot);
             string ui_name = "UI_CheckUpdate";
             GameObject asset = Resources.Load<GameObject>(ui_name);
