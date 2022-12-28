@@ -28,12 +28,18 @@ public class HookManager : MonoBehaviour
 
     public bool CheckInstall()
     {
+#if UNITY_ANDROID
         return hook.CheckInstall();
+#else
+        return false;
+#endif
     }
 
     public void JumpActivity()
     {
+#if UNITY_ANDROID
         hook.JumpActivity();
+#endif
     }
 
     // 字符串消息返回
