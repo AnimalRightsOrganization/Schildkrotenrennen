@@ -7,11 +7,12 @@ namespace HotFix
 {
     public class Item_Turtle : UIBase
     {
-        const float TURTLE_HEIGHT = 0.25f;
+        const float GROUND_HEIGHT = 0.25f;
+        const float TURTLE_HEIGHT = 1;
         // 底层0.25; 叠1层0.5;
         static float TURTLE_Y(int layer)
         {
-            float result = TURTLE_HEIGHT * (layer + 1);
+            float result = TURTLE_HEIGHT * (layer) + GROUND_HEIGHT;
             return result;
         }
 

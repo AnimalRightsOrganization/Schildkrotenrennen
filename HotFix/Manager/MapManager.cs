@@ -15,11 +15,11 @@ namespace HotFix
         //public const float TURTLE_HEIGHT = 0.25f;
         public static Vector3[] START_POS = new Vector3[]
         {
-            new Vector3(1, 0.25f, 1.6f),
-            new Vector3(2, 0.25f, 1.6f),
-            new Vector3(3, 0.25f, 1.6f),
-            new Vector3(4, 0.25f, 1.6f),
-            new Vector3(5, 0.25f, 1.6f),
+            new Vector3(-2.0f, 0.25f, 1.6f),
+            new Vector3(-0.5f, 0.25f, 1.6f),
+            new Vector3(+1.0f, 0.25f, 1.6f),
+            new Vector3(+2.5f, 0.25f, 1.6f),
+            new Vector3(+4.0f, 0.25f, 1.6f),
         };
         public static Vector3 orig_p = new Vector3(0, 18, -2);
         public static Vector3 orig_r = new Vector3(60, 0, 0);

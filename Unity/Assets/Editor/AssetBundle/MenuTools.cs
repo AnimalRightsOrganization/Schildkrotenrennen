@@ -391,11 +391,6 @@ public partial class MenuTools : Editor
     //^ (ctrl on Windows, Linux, and macOS),
     //# (shift),
     //& (alt)
-    [MenuItem("Tools/运行/命令面板 %_F10", false, 11)]
-    static void RunEditor()
-    {
-        TestWindow.ShowWindow();
-    }
     [MenuItem("Tools/运行/客户端 %_F11", false, 11)]
     static void RunClient()
     {

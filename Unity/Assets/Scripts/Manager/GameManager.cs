@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 using Newtonsoft.Json;
 
 namespace Client
@@ -49,6 +50,32 @@ namespace Client
         {
             Initialized = false;
         }
+
+#if UNITY_EDITOR || Channel_1
+        static GUIStyle _custom;
+        static GUIStyle customButton { get { if (_custom == null) { _custom = new GUIStyle("button") { fontSize = 30 }; } return _custom; } }
+        void OnGUI()
+        {
+            if (GUI.Button(new Rect(0, 0, 300, 100), "自动填写.test1", customButton))
+            {
+                var ui_login = GameObject.Find("UI_Login");
+                if (ui_login == null) return;
+                var usrInput = ui_login.transform.Find("LoginPanel/UserInput").GetComponent<InputField>();
+                usrInput.text = "test1";
+                var pwdInput = ui_login.transform.Find("LoginPanel/PwdInput").GetComponent<InputField>();
+                pwdInput.text = "123456";
+            }
+            if (GUI.Button(new Rect(0, 100, 300, 100), "自动填写.test2", customButton))
+            {
+                var ui_login = GameObject.Find("UI_Login");
+                if (ui_login == null) return;
+                var usrInput = ui_login.transform.Find("LoginPanel/UserInput").GetComponent<InputField>();
+                usrInput.text = "test2";
+                var pwdInput = ui_login.transform.Find("LoginPanel/PwdInput").GetComponent<InputField>();
+                pwdInput.text = "123456";
+            }
+        }
+#endif
 
         // 系统设置
         void SystemSetting()
