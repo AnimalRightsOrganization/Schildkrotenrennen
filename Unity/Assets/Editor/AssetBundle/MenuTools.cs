@@ -394,7 +394,7 @@ public partial class MenuTools : Editor
     [MenuItem("Tools/运行/客户端 %_F11", false, 11)]
     static void RunClient()
     {
-        string filePath = Path.Combine(ConstValue.UnityDir, "Build/Client/GameClient.exe");
+        string filePath = Path.Combine(ConstValue.UnityDir, "Build/GameClient_101/GameClient_101.exe");
         Process.Start(filePath);
         Debug.Log(filePath);
     }

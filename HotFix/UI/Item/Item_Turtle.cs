@@ -21,6 +21,12 @@ namespace HotFix
         private int CurrentPos; //当前所在格子[0～9]
         private bool IsLock; //移动中锁定
         private UI_Game ui_game;
+        private Animator m_Animator;
+
+        void Awake()
+        {
+            m_Animator = GetComponent<Animator>();
+        }
 
         public void InitData(int id)
         {
@@ -48,6 +54,7 @@ namespace HotFix
                 Debug.Log($"原地不动：{CurrentPos} → {dest_id}");
                 UI_Game.onSetHandCard?.Invoke(true);
                 KcpChatClient.m_ClientRoom.SetStatus(TurtleAnime.Wait);
+                m_Animator.SetTrigger("Shake");
                 return tw;
             }
             CurrentPos = dest_id;

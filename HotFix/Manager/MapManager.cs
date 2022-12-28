@@ -1,7 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.EventSystems;
-using DG.Tweening;
-using kcp2k.Examples;
 
 namespace HotFix
 {
@@ -27,51 +24,6 @@ namespace HotFix
         void Awake()
         {
             Get = this;
-        }
-
-        void Update()
-        {
-            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-            {
-                // Check if finger is over a UI element
-                if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
-                {
-                    Debug.Log("Touched the UI");
-                    return;
-                }
-            }
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit))
-                {
-                    //Debug.Log($"click: {hit.transform.name}");
-                    string _name = hit.transform.name.Split('_')[1];
-                    int index = int.Parse(_name);
-
-                    var data = KcpChatClient.m_ClientRoom.GridData[index];
-
-                    if (index > 0 && data.Count > 1)
-                    {
-                        Debug.Log($"格子_{index}: {data.Count}个");
-
-                        // 显示堆叠详情
-                        var tw0 = Camera.main.transform.DOMove(hit.transform.position + new Vector3(0, 6, -6), 0.3f);
-                        var tw1 = Camera.main.transform.DORotate(new Vector3(30, 0, 0), 0.3f);
-                        tw0.OnComplete(() =>
-                        {
-                            var tw2 = Camera.main.transform.DOMove(orig_p, 0.3f);
-                            var tw3 = Camera.main.transform.DORotate(orig_r, 0.3f);
-                            tw2.SetDelay(1); //秒
-                            tw3.SetDelay(1);
-                            tw2.Play();
-                            tw3.Play();
-                        });
-                    }
-                }
-            }
         }
 
         public void InitAssets()
