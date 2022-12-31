@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 public partial class BundleTools : Editor
 {
     #region 标记
+    [MenuItem("Tools/打包/资源/设置标签", false, 1)]
     private static void SetLabels()
     {
         // 移除所有没有使用的标记
@@ -41,6 +42,7 @@ public partial class BundleTools : Editor
         AssetDatabase.Refresh();
         Debug.LogWarning("设置成功");
     }
+    [MenuItem("Tools/打包/资源/移除标签", false, 1)]
     private static void CleanLabels()
     {
         // 获取所有的AssetBundle名称
