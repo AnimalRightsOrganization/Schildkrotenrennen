@@ -138,8 +138,10 @@ namespace HotFix
             }
 
             //#if Channel_102 //热更工程里没有宏，不能继承Unity的宏
+            bool checkChannel = ConstValue.CHANNEL_NAME == "Channel_102";
             bool checkInstall = HookManager.Get.CheckInstall();
-            if (ConstValue.CHANNEL_NAME == "Channel_102" && checkInstall)
+            Debug.Log($"检查渠道({ConstValue.CHANNEL_NAME}):{checkChannel}, 大厅:{checkInstall}");
+            if (checkChannel && checkInstall)
             {
                 // 判断渠道号（根据平台和包名）。弹出默认登录或三方SDKView。
                 Debug.Log("主动请求");

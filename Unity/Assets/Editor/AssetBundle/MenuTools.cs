@@ -341,7 +341,7 @@ public partial class MenuTools : Editor
             scenes = new string[] { "Assets/Scenes/Client.unity" },
             locationPathName = Path.Combine(build_dir, $"{fileName}.{ext}"),
             target = target,
-            extraScriptingDefines = new string[] { $"Channel_{channel}" },
+            extraScriptingDefines = new string[] { $"Channel_{channel}", "UNITY_POST_PROCESSING_STACK_V2" },
             options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development,
         };
 
