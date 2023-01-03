@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D;
 using Newtonsoft.Json;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -178,6 +179,20 @@ public class ResManager
         }
         //Debug.Log($"字典：{sp.Count}个");
         return sp;
+    }
+
+    public static SpriteAtlas LoadSpriteAtlas(string fileName)
+    {
+#if UNITY_EDITOR && !USE_ASSETBUNDLE
+        string filePath = $"{BUNDLES_FOLDER}/{fileName}.spriteatlasv2";
+        SpriteAtlas sa = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(filePath);
+#else
+        string filePath = GetFilePath($"{fileName}.unity3d");
+        AssetBundle asset = AssetBundle.LoadFromFile(filePath);
+        SpriteAtlas sa = asset.LoadAllAssets()[0] as SpriteAtlas;
+        asset.Unload(false);
+#endif
+        return sa;
     }
 
     static string GetFilePath(string assetName)

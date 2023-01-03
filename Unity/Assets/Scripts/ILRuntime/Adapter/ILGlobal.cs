@@ -101,6 +101,8 @@ namespace Client
             // 注册Kcp委托
             appdomain.DelegateManager.RegisterMethodDelegate<System.ArraySegment<System.Byte>, kcp2k.KcpChannel>();
             appdomain.DelegateManager.RegisterMethodDelegate<kcp2k.ErrorCode, System.String>();
+            // 注册SpriteAtlas委托
+            appdomain.DelegateManager.RegisterMethodDelegate<System.String, System.Action<UnityEngine.U2D.SpriteAtlas>>();
 
 
             LitJson.JsonMapper.RegisterILRuntimeCLRRedirection(appdomain);
