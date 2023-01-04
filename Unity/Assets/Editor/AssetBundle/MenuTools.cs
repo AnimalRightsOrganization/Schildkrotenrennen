@@ -342,7 +342,8 @@ public partial class MenuTools : Editor
             locationPathName = Path.Combine(build_dir, $"{fileName}.{ext}"),
             target = target,
             extraScriptingDefines = new string[] { $"Channel_{channel}", "UNITY_POST_PROCESSING_STACK_V2" },
-            options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development,
+            //options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development,
+            options = BuildOptions.ShowBuiltPlayer,
         };
 
         BuildReport report = BuildPipeline.BuildPlayer(opt);

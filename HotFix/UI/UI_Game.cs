@@ -192,6 +192,8 @@ namespace HotFix
             }
 
             GetNewCard = false;
+
+            onSetHandCard?.Invoke(m_LocalPlayer.SeatId == 0);
         }
         public void ShowPlayPanel(int carcdid, System.Action noAction, System.Action yesAction)
         {
@@ -478,7 +480,7 @@ namespace HotFix
 
 
             var ui_dialog = UIManager.Get.GetUI<UI_Dialog>();
-            if (ui_dialog != null)
+            //if (ui_dialog != null)
             {
                 GameEndAction?.Invoke();
                 GameEndAction = null;
