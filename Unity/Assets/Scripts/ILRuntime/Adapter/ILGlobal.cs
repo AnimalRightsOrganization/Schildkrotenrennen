@@ -149,8 +149,13 @@ namespace Client
 #region HotFix调用C#的方法
         public void callCsharp()
         {
-            //Debug.Log("HotFix → C#");
+            Debug.Log("HotFix → C#");
         }
-#endregion
+        public string callChannel()
+        {
+            Debug.Log($"Runtime callChannel: {ConstValue.CHANNEL_NAME}");
+            return ConstValue.CHANNEL_NAME;
+        }
+        #endregion
     }
 }

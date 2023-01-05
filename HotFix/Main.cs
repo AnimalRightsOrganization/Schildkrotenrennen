@@ -23,6 +23,7 @@ namespace HotFix
 
         public static Present present;
         static UI_Loading ui_loading;
+        public static string CHANNEL_NAME;
 
         static void IL_InitAdapter<T>() where T : MonoBehaviour
         {
@@ -41,6 +42,8 @@ namespace HotFix
             //IL_InitAdapter<EventManager>();
             //IL_InitAdapter<PoolManager>();
 
+            //热更代码中检测渠道，不能用ConstValue（它只记录打包热更dll时的状态）。要通过函数实时获取。
+            CHANNEL_NAME = Client.ILGlobal.Instance.callChannel();
             Debug.Log($"控制权转交ILRuntime:{p.ToString()}");
             present = p;
 
